@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliiador | Lógica & Inglês para Ciência de Dados</title>
+    <meta name="description" content="Plataforma de avaliação para estudantes de tecnologia e ciência de dados.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <main id="app">
+        <!-- Screen 1: Welcome -->
+        <section id="screen-welcome" class="screen active">
+            <div class="card glass">
+                <header>
+                    <div class="logo">AVAL<span>II</span>ADOR</div>
+                    <h1>Bem-vindo à Avaliação</h1>
+                    <p>Lógica de Programação & Inglês Aplicado</p>
+                </header>
+                
+                <div class="input-group">
+                    <label for="student-name">Qual é o seu nome?</label>
+                    <input type="text" id="student-name" placeholder="Digite seu nome completo" autocomplete="off">
+                </div>
+
+                <div class="trimester-selector">
+                    <h2>Selecione o Trimestre</h2>
+                    <div class="trimester-options">
+                        <button class="btn-trimester active" data-trimester="1">
+                            <span class="num">1º</span>
+                            <span class="label">Trimestre</span>
+                        </button>
+                        <button class="btn-trimester disabled" data-trimester="2">
+                            <span class="num">2º</span>
+                            <span class="label">Em breve</span>
+                        </button>
+                        <button class="btn-trimester disabled" data-trimester="3">
+                            <span class="num">3º</span>
+                            <span class="label">Em breve</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button id="btn-start" class="btn-primary">Começar Avaliação</button>
+            </div>
+        </section>
+
+        <!-- Screen 2: Quiz -->
+        <section id="screen-quiz" class="screen">
+            <div class="quiz-header">
+                <div class="student-info">
+                    <span id="display-name">Aluno</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <div class="question-counter">Questão <span id="current-q">1</span>/15</div>
+            </div>
+
+            <div class="card glass quiz-card">
+                <div id="question-container">
+                    <h2 id="question-text">Carregando questão...</h2>
+                    <div id="options-container" class="options-grid">
+                        <!-- Options will be injected here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Screen 3: Results -->
+        <section id="screen-results" class="screen">
+            <div class="card glass results-card">
+                <div class="result-icon" id="result-icon">🏆</div>
+                <h1>Parabéns, <span id="final-name">Aluno</span>!</h1>
+                <p>Você concluiu a avaliação do 1º Trimestre.</p>
+                
+                <div class="score-display">
+                    <div class="score-value" id="final-score">0</div>
+                    <div class="score-label">Questões Corretas</div>
+                </div>
+
+                <div class="feedback-text" id="feedback-text">
+                    Ótimo trabalho! Continue praticando.
+                </div>
+
+                <button id="btn-restart" class="btn-secondary">Reiniciar Teste</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
