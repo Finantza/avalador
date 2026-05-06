@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avaliiador | Lógica & Inglês para Ciência de Dados</title>
+    <title>Avaliação Ciência de Dados | ONYX Core</title>
     <meta name="description" content="Plataforma de avaliação para estudantes de tecnologia e ciência de dados.">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,6 +11,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <div class="splash-logo">AVALIAÇÃO<span> CIÊNCIA DE DADOS</span></div>
+            <div class="loader-container">
+                <div class="loader-bar"></div>
+            </div>
+            <div class="status-text">Inicializando ONYX...</div>
+        </div>
+    </div>
+
     <div class="background-blobs">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
@@ -22,9 +33,10 @@
         <section id="screen-welcome" class="screen active">
             <div class="card glass">
                 <header>
-                    <div class="logo">AVAL<span>II</span>ADOR</div>
+                    <div class="logo">AVALIAÇÃO<span> CIÊNCIA DE DADOS</span></div>
                     <h1>Bem-vindo à Avaliação</h1>
-                    <p>Lógica de Programação & Inglês Aplicado</p>
+                    <p>TREINAMENTO EM TECNOLOGIA</p>
+                    <div class="db-stats" id="db-stats">Sincronizando Banco de Dados...</div>
                 </header>
                 
                 <div class="input-group">
@@ -32,20 +44,45 @@
                     <input type="text" id="student-name" placeholder="Digite seu nome completo" autocomplete="off">
                 </div>
 
-                <div class="trimester-selector">
-                    <h2>Selecione o Trimestre</h2>
-                    <div class="trimester-options">
-                        <button class="btn-trimester active" data-trimester="1">
-                            <span class="num">1º</span>
-                            <span class="label">Trimestre</span>
+                <div class="selection-group">
+                    <h2>Selecione a Matéria</h2>
+                    <div class="subject-options">
+                        <button class="btn-subject active" data-subject="logic">
+                            <span class="icon">💻</span>
+                            <span class="label">Lógica</span>
                         </button>
-                        <button class="btn-trimester disabled" data-trimester="2">
-                            <span class="num">2º</span>
-                            <span class="label">Em breve</span>
+                        <button class="btn-subject" data-subject="english">
+                            <span class="icon">🇬🇧</span>
+                            <span class="label">Inglês</span>
                         </button>
-                        <button class="btn-trimester disabled" data-trimester="3">
-                            <span class="num">3º</span>
-                            <span class="label">Em breve</span>
+                        <button class="btn-subject" data-subject="informatics">
+                            <span class="icon">🖥️</span>
+                            <span class="label">Informática</span>
+                        </button>
+                        <button class="btn-subject" data-subject="data_science">
+                            <span class="icon">📊</span>
+                            <span class="label">Armazenamento</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="selection-group">
+                    <h2>Selecione a Dificuldade</h2>
+                    <div class="difficulty-options">
+                        <button class="btn-difficulty active" data-difficulty="easy">
+                            <span class="label">Fácil</span>
+                        </button>
+                        <button class="btn-difficulty" data-difficulty="medium">
+                            <span class="label">Médio</span>
+                        </button>
+                        <button class="btn-difficulty" data-difficulty="hard">
+                            <span class="label">Difícil</span>
+                        </button>
+                        <button class="btn-difficulty" data-difficulty="extreme">
+                            <span class="label">Extremo</span>
+                        </button>
+                        <button class="btn-difficulty" data-difficulty="insane">
+                            <span class="label">Insano</span>
                         </button>
                     </div>
                 </div>
@@ -63,7 +100,10 @@
                 <div class="progress-container">
                     <div class="progress-bar" id="progress-bar"></div>
                 </div>
-                <div class="question-counter">Questão <span id="current-q">1</span>/15</div>
+                <div class="question-counter">
+                    <span class="reasoning-indicator" id="reasoning-indicator"></span>
+                    Questão <span id="current-q">1</span>/15
+                </div>
             </div>
 
             <div class="card glass quiz-card">
@@ -81,7 +121,7 @@
             <div class="card glass results-card">
                 <div class="result-icon" id="result-icon">🏆</div>
                 <h1>Parabéns, <span id="final-name">Aluno</span>!</h1>
-                <p>Você concluiu a avaliação do 1º Trimestre.</p>
+                <p>Você concluiu o simulado no nível <span id="final-level">Fácil</span>.</p>
                 
                 <div class="score-display">
                     <div class="score-value" id="final-score">0</div>
@@ -92,11 +132,15 @@
                     Ótimo trabalho! Continue praticando.
                 </div>
 
-                <button id="btn-restart" class="btn-secondary">Reiniciar Teste</button>
+                <div class="results-actions">
+                    <button id="btn-download" class="btn-primary">Baixar Relatório</button>
+                    <button id="btn-restart" class="btn-secondary">Reiniciar Teste</button>
+                </div>
             </div>
         </section>
     </main>
 
+    <script src="questions.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
