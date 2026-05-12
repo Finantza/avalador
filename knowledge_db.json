@@ -1,95 +1,176 @@
 {
   "logic": {
     "easy": [
-      { "question": "O que significa 'Lógica Booleana'?", "options": ["Lógica de números decimais", "Lógica de verdadeiro ou falso", "Lógica de cores", "Lógica de textos"], "answer": 1 },
-      { "question": "Qual o operador de 'Diferente' em Python?", "options": ["<>", "!=", "==", "not="], "answer": 1 },
-      { "question": "O que é uma 'Variável'?", "options": ["Valor fixo", "Espaço para guardar dados", "Um tipo de erro", "Hardware"], "answer": 1 }
+      { "question": "O que define a 'Lógica Booleana' no contexto de programação?", "options": ["Sistemas baseados em processamento de números decimais", "Sistemas que operam exclusivamente com valores binários", "Sistemas focados na manipulação de strings e textos", "Sistemas de gerenciamento de cores em interfaces gráficas"], "answer": 1 },
+      { "question": "Qual o operador de comparação para 'Diferente de' em Python?", "options": ["O operador de seta para esquerda e direita (<>)", "O operador de exclamação seguido de igual (!=)", "O operador de igualdade dupla para comparação (==)", "O operador literal 'not=' para negação lógica"], "answer": 1 },
+      { "question": "Qual a principal finalidade de uma 'Variável' em um algoritmo?", "options": ["Definir um valor constante que nunca pode ser alterado", "Reservar um espaço na memória para armazenar dados voláteis", "Identificar um erro de sintaxe durante a compilação", "Configurar um componente físico do hardware do computador"], "answer": 1 }
     ],
     "medium": [
-      { "question": "O que é um loop 'While'?", "options": ["Repete enquanto condição é verdadeira", "Repete 10 vezes", "Para o programa", "Soma números"], "answer": 0 },
-      { "question": "Diferença entre Array e Lista?", "options": ["Nenhuma", "Array tem tamanho fixo em algumas línguas", "Lista é mais lenta", "Array é apenas números"], "answer": 1 },
-      { "question": "O que faz o operador '%' (módulo)?", "options": ["Porcentagem", "Resto da divisão", "Divisão inteira", "Soma"], "answer": 1 }
+      { "question": "Como funciona o fluxo de execução de um loop do tipo 'While'?", "options": ["Repete o bloco de código enquanto a condição for verdadeira", "Executa o bloco de código exatamente dez vezes seguidas", "Interrompe imediatamente a execução de todo o programa", "Realiza a soma aritmética de todos os números da lista"], "answer": 0 },
+      { "question": "Qual a diferença estrutural entre um Array e uma Lista Dinâmica?", "options": ["Não existe diferença funcional entre as duas estruturas", "Arrays possuem tamanho fixo em diversas linguagens de baixo nível", "Listas dinâmicas são obrigatoriamente mais lentas que arrays", "Arrays só podem armazenar números inteiros ou decimais"], "answer": 1 },
+      { "question": "O que o operador aritmético de 'Módulo' (%) retorna ao desenvolvedor?", "options": ["O valor percentual relativo entre dois números inteiros", "O resto resultante da operação de divisão entre dois números", "O quociente inteiro ignorando a parte decimal da divisão", "A soma acumulada de todos os operandos na expressão"], "answer": 1 }
     ],
     "hard": [
-      { "question": "O que é 'Big O Notation'?", "options": ["Tamanho do código", "Análise de eficiência de algoritmos", "Nome de variável", "Erro de sintaxe"], "answer": 1 },
-      { "question": "O que é uma 'Pilha' (Stack)?", "options": ["Primeiro que entra, primeiro que sai", "Último que entra, primeiro que sai", "Lista aleatória", "Banco de dados"], "answer": 1 },
-      { "question": "O que é 'Recursão'?", "options": ["Loop infinito", "Função que chama a si mesma", "Erro de memória", "Divisão de tarefas"], "answer": 1 }
+      { "question": "O que a 'Notação Big O' (Big O Notation) busca medir?", "options": ["O número total de linhas de código escritas no projeto", "A eficiência e escalabilidade de um algoritmo computacional", "O nome atribuído a variáveis de escopo global no sistema", "A quantidade de erros de sintaxe encontrados pelo compilador"], "answer": 1 },
+      { "question": "Qual a característica principal de uma estrutura de dados 'Pilha'?", "options": ["O primeiro elemento a entrar é o primeiro a ser removido", "O último elemento a entrar é o primeiro a ser removido", "Os elementos são acessados de forma aleatória via índice", "Os dados são armazenados permanentemente em um disco rígido"], "answer": 1 },
+      { "question": "No desenvolvimento de software, o que caracteriza a 'Recursão'?", "options": ["Um loop infinito que causa o travamento total do sistema", "Uma função que realiza chamadas a si mesma para resolver problemas", "Um erro crítico de estouro de memória no servidor principal", "A divisão de tarefas entre diferentes núcleos do processador"], "answer": 1 }
     ],
     "extreme": [
-      { "question": "Complexidade do QuickSort no pior caso?", "options": ["O(n log n)", "O(n^2)", "O(n)", "O(1)"], "answer": 1 },
-      { "question": "O que é o problema 'P vs NP'?", "options": ["Hardware vs Software", "Complexidade de problemas computacionais", "Rede vs Local", "Nenhuma"], "answer": 1 },
-      { "question": "O que faz o algoritmo de Dijkstra?", "options": ["Ordena listas", "Caminho mais curto em grafos", "Comprime arquivos", "Criptografa"], "answer": 1 },
-      { "question": "O que é 'Memoization'?", "options": ["Esquecer dados", "Cache de resultados de funções", "Memória RAM", "Backup"], "answer": 1 }
+      { "question": "Qual a complexidade do algoritmo QuickSort em seu pior cenário?", "options": ["Complexidade logarítmica linear de ordem O(n log n)", "Complexidade quadrática de ordem O(n^2) em listas inversas", "Complexidade linear simples de ordem O(n) em todos os casos", "Complexidade constante de ordem O(1) para acesso direto"], "answer": 1 },
+      { "question": "O que aborda o famoso problema matemático-computacional 'P vs NP'?", "options": ["A compatibilidade entre componentes de hardware e software", "A relação de tempo entre verificar e encontrar uma solução", "A velocidade de transmissão entre redes locais e remotas", "A diferença de performance entre compiladores e interpretadores"], "answer": 1 },
+      { "question": "Qual o objetivo primordial da aplicação do Algoritmo de Dijkstra?", "options": ["Realizar a ordenação eficiente de grandes volumes de dados", "Encontrar o caminho mais curto entre nós em um grafo ponderado", "Comprimir arquivos de mídia sem perda de qualidade visual", "Criptografar mensagens usando chaves públicas e privadas"], "answer": 1 },
+      { "question": "O que define a técnica de otimização conhecida como 'Memoization'?", "options": ["A deleção automática de dados obsoletos da memória RAM", "O armazenamento em cache de resultados de funções dispendiosas", "A alocação dinâmica de novos pentes de memória no hardware", "O processo de backup incremental em servidores de nuvem"], "answer": 1 }
     ]
   },
   "english": {
     "easy": [
-      { "question": "Tradução de 'Database'?", "options": ["Base de dados", "Data nascimento", "PC Central", "Rede"], "answer": 0 },
-      { "question": "Tradução de 'File'?", "options": ["Fila", "Arquivo", "Fio", "Campo"], "answer": 1 },
-      { "question": "Tradução de 'Search'?", "options": ["Pesquisar", "Salvar", "Sair", "Subir"], "answer": 0 },
-      { "question": "Tradução de 'Login'?", "options": ["Sair", "Entrar", "Limpar", "Listar"], "answer": 1 },
-      { "question": "Tradução de 'Password'?", "options": ["Senha", "Papel", "Palavra", "Porta"], "answer": 0 }
+      { "question": "Qual a tradução técnica mais precisa para o termo 'Database'?", "options": ["Base de dados estruturada", "Data de nascimento pessoal", "Computador central da rede", "Sistema de conexão remota"], "answer": 0 },
+      { "question": "No contexto de sistemas, o que significa o termo 'File'?", "options": ["Uma fila de processos aguardando execução", "Um arquivo digital armazenado no sistema", "Um fio condutor de eletricidade do hardware", "Um campo de preenchimento obrigatório no form"], "answer": 1 },
+      { "question": "Qual a ação realizada pelo comando identificado como 'Search'?", "options": ["Pesquisar informações ou dados no sistema", "Salvar o progresso atual em um arquivo local", "Sair definitivamente da aplicação em execução", "Subir um arquivo para o servidor de produção"], "answer": 0 },
+      { "question": "O que representa o termo 'Login' em uma interface de usuário?", "options": ["Encerrar a sessão atual do usuário ativo", "Realizar o acesso ao sistema via credenciais", "Limpar todos os campos de texto do formulário", "Listar todos os arquivos disponíveis no diretório"], "answer": 1 },
+      { "question": "Qual o significado da palavra 'Password' em segurança digital?", "options": ["Uma senha secreta para autenticação do usuário", "Um papel de parede personalizado para o sistema", "Uma palavra qualquer usada como nome de variável", "Uma porta de comunicação entre dois servidores"], "answer": 0 }
     ],
     "medium": [
-      { "question": "Tradução de 'Immutable'?", "options": ["Mutável", "Imutável", "Imaturo", "Imediato"], "answer": 1 },
-      { "question": "Tradução de 'Iterate'?", "options": ["Interromper", "Repetir/Iterar", "Integrar", "Inverter"], "answer": 1 },
-      { "question": "O que é 'Range'?", "options": ["Rank", "Intervalo", "Regra", "Raio"], "answer": 1 }
+      { "question": "Como se traduz o adjetivo de programação 'Immutable'?", "options": ["Algo que pode ser modificado a qualquer momento", "Algo que não permite alterações após sua criação", "Algo que ainda não atingiu a maturidade de código", "Algo que deve ser executado de forma imediata"], "answer": 1 },
+      { "question": "O que significa realizar a ação de 'Iterate' sobre uma coleção?", "options": ["Interromper o fluxo de execução de um loop ativo", "Repetir um conjunto de instruções para cada item", "Integrar diferentes módulos de um sistema complexo", "Inverter a ordem dos elementos dentro de uma lista"], "answer": 1 },
+      { "question": "Em linguagens de programação, o que define o termo 'Range'?", "options": ["O ranking de performance de um determinado algoritmo", "O intervalo de valores entre um ponto inicial e final", "A regra de negócio aplicada a uma classe específica", "O raio de alcance de um sinal de rede sem fio"], "answer": 1 }
     ],
     "hard": [
-      { "question": "Tradução de 'Accuracy'?", "options": ["Acurácia", "Acúmulo", "Acesso", "Ação"], "answer": 0 },
-      { "question": "Tradução de 'Stakeholder'?", "options": ["Funcionário", "Interessado", "Dono", "Gerente"], "answer": 1 },
-      { "question": "O que é 'Throughput'?", "options": ["Capacidade", "Vazão", "Espera", "Entrada"], "answer": 1 }
+      { "question": "Qual a tradução correta para 'Accuracy' em Ciência de Dados?", "options": ["Acurácia ou grau de proximidade do valor real", "Acúmulo de informações em um banco de dados", "Acesso autorizado a áreas restritas do sistema", "Ação imediata disparada por um evento de erro"], "answer": 0 },
+      { "question": "Quem é identificado tecnicamente pelo termo 'Stakeholder'?", "options": ["Um funcionário responsável pela manutenção de rede", "Uma parte interessada ou afetada pelo projeto", "O proprietário legal do hardware do servidor", "O gerente de projetos focado em metodologias ágeis"], "answer": 1 },
+      { "question": "O que o termo 'Throughput' busca medir em um sistema?", "options": ["A capacidade máxima de armazenamento de um disco", "A vazão ou volume de dados processados por tempo", "O tempo de espera entre duas requisições de rede", "A porta de entrada de um firewall de segurança"], "answer": 1 }
     ],
     "extreme": [
-      { "question": "Tradução de 'Scalability'?", "options": ["Escalabilidade", "Escada", "Equilíbrio", "Estabilidade"], "answer": 0 },
-      { "question": "O que é 'Refactoring'?", "options": ["Criar falhas", "Reestruturar código", "Deletar", "Traduzir"], "answer": 1 },
-      { "question": "O que é 'Fault Tolerance'?", "options": ["Erro digitação", "Tolerância a falhas", "Aumento", "Fim"], "answer": 1 }
+      { "question": "Como se traduz o conceito de 'Scalability' para arquitetura?", "options": ["A capacidade de um sistema crescer sob demanda", "Uma escada de níveis de acesso para os usuários", "O equilíbrio de carga entre dois servidores locais", "A estabilidade de um sistema sob baixa carga"], "answer": 0 },
+      { "question": "O que define a prática de engenharia chamada 'Refactoring'?", "options": ["Inserir propositalmente falhas para testes de estresse", "Melhorar a estrutura interna do código sem mudar o comportamento", "Deletar módulos antigos que não são mais utilizados", "Traduzir o código fonte para uma linguagem diferente"], "answer": 1 },
+      { "question": "Qual a definição técnica para o termo 'Fault Tolerance'?", "options": ["Um erro comum de digitação em comandos de terminal", "A capacidade do sistema continuar operando após falhas", "O aumento da velocidade de processamento de dados", "O encerramento abrupto de um processo em execução"], "answer": 1 }
     ]
   },
   "informatics": {
     "easy": [
-      { "question": "O que é a CPU?", "options": ["Monitor", "Teclado", "Processador", "Mouse"], "answer": 2 },
-      { "question": "O que é RAM?", "options": ["Memória Volátil", "Monitor", "Cabo", "Fonte"], "answer": 0 },
-      { "question": "O que é o Windows?", "options": ["Browser", "Sistema Operacional", "Hardware", "Antivírus"], "answer": 1 }
+      { "question": "Qual o papel principal da Unidade Central de Processamento (CPU)?", "options": ["Exibir as imagens e a interface para o usuário", "Capturar os comandos enviados através do teclado", "Processar as instruções e realizar cálculos lógicos", "Mover o cursor e selecionar itens na tela do PC"], "answer": 2 },
+      { "question": "O que caracteriza a Memória de Acesso Aleatório (RAM)?", "options": ["Armazenamento volátil para dados em uso imediato", "Monitor de alta resolução para exibição de vídeo", "Cabo de conexão para transmissão de dados em rede", "Fonte de alimentação de energia para o computador"], "answer": 0 },
+      { "question": "Como o software 'Windows' é classificado tecnicamente?", "options": ["Um navegador para acesso a páginas da internet", "Um sistema operacional para gerenciamento de hardware", "Um componente físico interno do gabinete do PC", "Um programa antivírus para proteção de arquivos"], "answer": 1 }
     ],
     "medium": [
-      { "question": "O que faz o F5?", "options": ["Fecha", "Atualiza", "Abre", "Imprime"], "answer": 1 },
-      { "question": "O que é HTTP?", "options": ["Protocolo Transferência", "Processo Técnico", "Ferramenta", "Caminho"], "answer": 0 },
-      { "question": "O que é Kernel?", "options": ["Interface", "Núcleo SO", "Vírus", "Teclado"], "answer": 1 }
+      { "question": "Qual a função padrão da tecla de atalho 'F5' na maioria dos navegadores?", "options": ["Fechar a janela ativa do navegador imediatamente", "Atualizar ou recarregar a página que está sendo exibida", "Abrir o menu de configurações avançadas do sistema", "Enviar o documento atual para a fila de impressão"], "answer": 1 },
+      { "question": "O que representa a sigla 'HTTP' na comunicação web?", "options": ["Protocolo de transferência de hipertexto básico", "Processo técnico de criptografia de discos rígidos", "Ferramenta de busca de arquivos em servidores FTP", "Caminho absoluto de um diretório no sistema Linux"], "answer": 0 },
+      { "question": "O que define o 'Kernel' no contexto de sistemas computacionais?", "options": ["A interface gráfica de interação com o usuário final", "O núcleo do sistema que gerencia hardware e software", "Um tipo de vírus que infecta o setor de inicialização", "O driver responsável pelo funcionamento do teclado"], "answer": 1 }
     ],
     "hard": [
-      { "question": "O que é BIOS?", "options": ["SO Moderno", "Firmware Inicialização", "Vírus", "Manual"], "answer": 1 },
-      { "question": "O que é um ataque DDoS?", "options": ["Vírus", "Negação de Serviço", "Espionagem", "Soma"], "answer": 1 },
-      { "question": "O que é Virtualização?", "options": ["PC brinquedo", "Rodar múltiplos SOs", "Óculos VR", "Navegar"], "answer": 1 }
+      { "question": "Qual o propósito do sistema básico de entrada/saída (BIOS)?", "options": ["Um sistema operacional moderno baseado em nuvem", "Firmware responsável pela inicialização do hardware", "Um vírus que ataca a tabela de partição do disco", "Um manual de instruções digital para o usuário"], "answer": 1 },
+      { "question": "O que caracteriza um ataque cibernético do tipo 'DDoS'?", "options": ["Um vírus que sequestra arquivos e pede resgate", "A negação de serviço através de múltiplas requisições", "Uma tentativa de espionagem de senhas via teclado", "A soma de vulnerabilidades em um sistema legado"], "answer": 1 },
+      { "question": "Em computação, o que é o conceito de 'Virtualização'?", "options": ["Um computador de brinquedo para fins educacionais", "Executar múltiplos sistemas isolados num único hardware", "O uso de óculos de realidade virtual para jogos", "Navegar em sites de forma anônima e criptografada"], "answer": 1 }
     ],
     "extreme": [
-      { "question": "O que é o Modelo OSI?", "options": ["Monitor", "Padrão arquitetura rede", "SO novo", "Marca PC"], "answer": 1 },
-      { "question": "O que é Criptografia Assimétrica?", "options": ["Par chaves pública/privada", "Uma única chave", "Sem chave", "Nenhuma"], "answer": 0 },
-      { "question": "O que faz um Load Balancer?", "options": ["Limpa o HD", "Distribui tráfego", "Carrega bateria", "Muda cor"], "answer": 1 },
-      { "question": "O que é um ataque 'Zero-Day'?", "options": ["Dura 1 dia", "Explora falha desconhecida", "Senha expira", "Nenhuma"], "answer": 1 }
+      { "question": "O que representa o 'Modelo OSI' na arquitetura de redes?", "options": ["Um tipo de monitor de cristal líquido antigo", "Um modelo de referência com sete camadas para redes", "Um novo sistema operacional baseado em microkernel", "Uma marca famosa de computadores de alto desempenho"], "answer": 1 },
+      { "question": "Qual o princípio de funcionamento da 'Criptografia Assimétrica'?", "options": ["Uso de um par de chaves, uma pública e outra privada", "Uso de uma única chave secreta para cifrar e decifrar", "Transmissão de dados sem nenhuma camada de proteção", "Nenhuma das alternativas descreve o funcionamento"], "answer": 0 },
+      { "question": "Qual a função técnica de um 'Load Balancer' em infraestrutura?", "options": ["Limpar arquivos temporários e otimizar o HD", "Distribuir o tráfego de rede entre diversos servidores", "Carregar a bateria de dispositivos móveis via USB", "Alterar a paleta de cores da interface do usuário"], "answer": 1 },
+      { "question": "O que define uma vulnerabilidade do tipo 'Zero-Day'?", "options": ["Uma falha de segurança que dura apenas 24 horas", "Uma vulnerabilidade desconhecida pelos desenvolvedores", "Um erro que faz com que a senha expire em um dia", "Nenhuma das definições acima está tecnicamente correta"], "answer": 1 }
     ]
   },
   "data_science": {
     "easy": [
-      { "question": "O que é SGBD?", "options": ["Gestão Banco", "Software Gráfico", "Servidor", "Sequência"], "answer": 0 },
-      { "question": "O que é MER?", "options": ["Execução", "Entidade-Relacionamento", "Entrada", "Erro"], "answer": 1 },
-      { "question": "Comando SQL para extrair?", "options": ["INSERT", "CREATE", "SELECT", "UPDATE"], "answer": 2 }
+      { "question": "O que significa a sigla 'SGBD' em bancos de dados?", "options": ["Sistema de Gestão de Banco de Dados relacional", "Software Gráfico para Desenvolvedores de interface", "Servidor Geral de Backup e Dispositivos móveis", "Sequência Geral de Blocos de Dados estruturados"], "answer": 0 },
+      { "question": "O que representa o Modelo Entidade-Relacionamento (MER)?", "options": ["Um processo de execução de scripts de automação", "Um modelo conceitual para descrever objetos e relações", "Uma porta de entrada de dados para sistemas legados", "Um erro de comunicação entre o cliente e o servidor"], "answer": 1 },
+      { "question": "Qual comando SQL é utilizado para extrair dados de uma tabela?", "options": ["O comando INSERT para inserção de novos registros", "O comando CREATE para criação de novas estruturas", "O comando SELECT para consulta e recuperação de dados", "O comando UPDATE para modificação de dados existentes"], "answer": 2 }
     ],
     "medium": [
-      { "question": "Chave Primária serve para?", "options": ["Criptografar", "Identificar único", "Duplicar", "Ligar PC"], "answer": 1 },
-      { "question": "O que faz o UPDATE?", "options": ["Deleta", "Modifica", "Insere", "Cria"], "answer": 1 },
-      { "question": "O que é um Outlier?", "options": ["Dado comum", "Valor atípico/fora padrão", "Erro código", "Gráfico"], "answer": 1 }
+      { "question": "Para que serve a definição de uma 'Chave Primária' (Primary Key)?", "options": ["Criptografar os dados sensíveis dentro da tabela", "Identificar de forma única cada registro do banco", "Duplicar as informações para garantir a segurança", "Ligar o computador e iniciar o serviço de banco"], "answer": 1 },
+      { "question": "Qual a função do comando SQL identificado como 'UPDATE'?", "options": ["Deletar permanentemente um registro da tabela ativa", "Modificar os valores de dados já existentes no banco", "Inserir uma nova linha de dados no final da tabela", "Criar um novo banco de dados no servidor principal"], "answer": 1 },
+      { "question": "O que caracteriza um dado identificado como 'Outlier'?", "options": ["Um dado comum que segue a média da amostra total", "Um valor que foge drasticamente do padrão dos dados", "Um erro de sintaxe no código de processamento", "Um gráfico que mostra a evolução temporal do banco"], "answer": 1 }
     ],
     "hard": [
-      { "question": "O que é ETL?", "options": ["Lógica", "Extração, Transf, Carga", "Execução", "Edição"], "answer": 1 },
-      { "question": "O que é Data Warehouse?", "options": ["Sala Servidor", "Otimizado para análise", "Pendrive", "Download"], "answer": 1 },
-      { "question": "O que é Overfitting?", "options": ["Modelo perfeito", "Modelo decora dados", "Modelo rápido", "Nenhuma"], "answer": 1 }
+      { "question": "O que representa a sigla 'ETL' em Engenharia de Dados?", "options": ["Um tipo de lógica aplicada a redes neurais simples", "O processo de Extração, Transformação e Carga", "A execução de comandos em modo de superusuário", "A edição de metadados em arquivos de configuração"], "answer": 1 },
+      { "question": "Qual a definição mais precisa para 'Data Warehouse'?", "options": ["Uma sala física onde ficam os servidores da empresa", "Um sistema otimizado para análise e reporte de dados", "Um pendrive de alta capacidade para transporte de dados", "O download de grandes volumes de arquivos da internet"], "answer": 1 },
+      { "question": "Em Machine Learning, o que significa o termo 'Overfitting'?", "options": ["Um modelo perfeito que acerta todas as previsões", "Um modelo que decora os dados e perde a generalização", "Um modelo que processa informações em alta velocidade", "Nenhuma das alternativas descreve o termo técnico"], "answer": 1 }
     ],
     "extreme": [
-      { "question": "O que é Aprendizado Profundo (Deep Learning)?", "options": ["Redes Neurais multicamadas", "Ler livros", "Apenas SQL", "Nenhuma"], "answer": 0 },
-      { "question": "O que é o algoritmo Random Forest?", "options": ["Plantar árvores", "Conjunto de árvores decisão", "Mapa", "Nenhuma"], "answer": 1 },
-      { "question": "O que é Redução de Dimensionalidade?", "options": ["Diminuir PC", "Simplificar dados/variáveis", "Deletar banco", "Nenhuma"], "answer": 1 },
-      { "question": "O que é uma Redução MapReduce?", "options": ["Diminuir mapa", "Processamento distribuído", "Erro SQL", "Nenhuma"], "answer": 1 }
+      { "question": "O que define o campo do 'Aprendizado Profundo' (Deep Learning)?", "options": ["O uso de Redes Neurais com múltiplas camadas ocultas", "O hábito de ler livros técnicos de forma aprofundada", "O uso exclusivo de comandos SQL para análise de dados", "Nenhuma das definições acima está correta no contexto"], "answer": 0 },
+      { "question": "O que caracteriza o algoritmo de Machine Learning 'Random Forest'?", "options": ["Um programa para gerenciar o plantio de árvores reais", "Um conjunto de diversas árvores de decisão aleatórias", "Um mapa que mostra a localização de servidores físicos", "Nenhuma das opções descreve o funcionamento do modelo"], "answer": 1 },
+      { "question": "Em ciência de dados, o que é a 'Redução de Dimensionalidade'?", "options": ["Diminuir o tamanho físico dos componentes do computador", "Simplificar o conjunto de variáveis mantendo a essência", "Deletar todo o banco de dados para liberar espaço em disco", "Nenhuma das alternativas descreve o processo técnico"], "answer": 1 },
+      { "question": "O que representa o modelo de processamento 'MapReduce'?", "options": ["Diminuir o tamanho de mapas geográficos digitais", "Um modelo de processamento de dados em larga escala", "Um erro de sintaxe comum em consultas SQL complexas", "Nenhuma das definições acima corresponde ao modelo"], "answer": 1 }
+    ],
+    "impossible": [
+      { "question": "Qual o limite teórico de Landauer para dissipação de energia?", "options": ["kT ln 2 por bit de informação perdido", "Zero dissipação em sistemas reversíveis", "Constante de Planck dividida pela massa", "Energia total de um elétron em repouso"], "answer": 0 },
+      { "question": "O que resolve o algoritmo de Shor em tempo polinomial?", "options": ["Fatoração de números inteiros grandes", "Caminho mais curto em grafos infinitos", "Problema do caixeiro viajante asfixiado", "Ordenação de listas em memória quântica"], "answer": 0 }
+    ]
+  },
+  "cybersecurity": {
+    "easy": [
+      { "question": "Qual o principal objetivo de um Firewall em uma rede?", "options": ["Acelerar a velocidade de download de arquivos", "Bloquear tráfego não autorizado entre redes", "Limpar vírus automaticamente do disco rígido", "Gerenciar o consumo de energia dos servidores"], "answer": 1 },
+      { "question": "O que caracteriza uma senha considerada forte?", "options": ["Uma palavra comum do dicionário em minúsculas", "Combinação de letras, números e símbolos", "O nome do usuário repetido diversas vezes", "Uma sequência numérica simples como 123456"], "answer": 1 }
+    ],
+    "medium": [
+      { "question": "O que diferencia um vírus de um Worm em segurança?", "options": ["O vírus precisa de um hospedeiro para se espalhar", "O worm é inofensivo e serve apenas para testes", "O vírus ataca apenas sistemas baseados em Linux", "O worm apaga permanentemente a BIOS do computador"], "answer": 0 },
+      { "question": "Qual a função do protocolo HTTPS em sites web?", "options": ["Aumentar a resolução das imagens exibidas na página", "Criptografar a comunicação entre cliente e servidor", "Permitir o download mais rápido de arquivos grandes", "Bloquear o acesso de usuários não cadastrados"], "answer": 1 }
+    ],
+    "hard": [
+      { "question": "O que caracteriza um ataque de Engenharia Social?", "options": ["Uso de força bruta para quebrar senhas complexas", "Manipulação psicológica para obter dados sensíveis", "Exploração de falhas físicas no hardware do servidor", "Sobrecarga de rede através de pacotes corrompidos"], "answer": 1 },
+      { "question": "Qual o propósito de um teste de invasão (Pentest)?", "options": ["Instalar softwares piratas em servidores remotos", "Avaliar vulnerabilidades em um sistema controlado", "Deletar bancos de dados para testar o backup", "Mudar as senhas de todos os usuários do sistema"], "answer": 1 }
+    ],
+    "extreme": [
+      { "question": "O que define um ataque do tipo 'Man-in-the-Middle'?", "options": ["O atacante intercepta a comunicação entre dois nós", "O atacante desliga o roteador principal da empresa", "O atacante rouba fisicamente o servidor da rede", "O atacante cria uma conta de administrador no banco"], "answer": 0 },
+      { "question": "Qual a principal técnica da Injeção de SQL (SQLi)?", "options": ["Inserir comandos maliciosos em campos de entrada", "Aumentar o tamanho das tabelas para causar erro", "Trocar a senha do administrador do banco de dados", "Deletar as chaves estrangeiras de todas as tabelas"], "answer": 0 }
+    ],
+    "impossible": [
+      { "question": "O que é um 'ROP Chain' em exploração de binários?", "options": ["Cadeia de endereços para reaproveitar código", "Uma sequência de comandos de roteamento TCP", "Um tipo de criptografia de bloco de 512 bits", "Filtro de hardware para pacotes ICMP v6"], "answer": 0 },
+      { "question": "Vulnerabilidade 'Spectre' foca em qual CPU feature?", "options": ["Execução especulativa e cache side-channels", "Pipeline de decodificação de instruções RISC", "Unidade de ponto flutuante em sistemas ARM", "Gerenciamento de energia em núcleos híbridos"], "answer": 0 }
+    ]
+  },
+  "software_eng": {
+    "easy": [
+      { "question": "Qual a principal vantagem de usar controle de versão (Git)?", "options": ["Aumentar a velocidade de execução do programa final", "Rastrear e gerenciar mudanças no código fonte", "Criptografar os arquivos para evitar cópias ilegais", "Traduzir automaticamente o código para outras línguas"], "answer": 1 }
+    ],
+    "medium": [
+      { "question": "O que caracteriza a metodologia ágil Scrum?", "options": ["Desenvolvimento em ciclos curtos chamados Sprints", "Planejamento total do projeto antes de iniciar o código", "Ausência completa de reuniões entre a equipe técnica", "Uso obrigatório de apenas uma linguagem de programação"], "answer": 0 }
+    ],
+    "hard": [
+      { "question": "Qual o objetivo do padrão de projeto 'Singleton'?", "options": ["Permitir a criação de infinitas instâncias de uma classe", "Garantir que uma classe tenha apenas uma única instância", "Dividir uma classe em vários arquivos diferentes", "Deletar objetos da memória de forma automática"], "answer": 1 }
+    ],
+    "extreme": [
+      { "question": "O que define a Arquitetura de Microserviços?", "options": ["Um único bloco de código que executa todas as funções", "Sistemas compostos por pequenos serviços independentes", "Uso de apenas um servidor central para todo o tráfego", "A ausência de comunicação entre os módulos do sistema"], "answer": 1 }
+    ],
+    "impossible": [
+      { "question": "Qual a diferença entre Coerência e Consistência?", "options": ["Coerência foca no dado, Consistência no estado", "São termos sinônimos em sistemas distribuídos", "Coerência é hardware, Consistência é software", "Nenhuma das definições acima está correta"], "answer": 0 }
+    ]
+  },
+  "philosophy": {
+    "easy": [
+      { "question": "Qual a relação básica entre Lógica e Programação?", "options": ["A programação não utiliza princípios de lógica formal", "A lógica fornece a estrutura para o fluxo de execução", "A lógica é usada apenas para design de interfaces", "Programação e lógica são áreas totalmente distintas"], "answer": 1 }
+    ],
+    "medium": [
+      { "question": "O que aborda a Ética na Inteligência Artificial?", "options": ["A velocidade com que a IA processa grandes dados", "Os dilemas morais sobre as decisões tomadas pela IA", "O custo financeiro de manter servidores de IA ativos", "A cor dos LEDs nos servidores que rodam modelos de IA"], "answer": 1 }
+    ],
+    "hard": [
+      { "question": "O que afirma o experimento mental da 'Sala Chinesa'?", "options": ["Máquinas podem pensar exatamente como seres humanos", "Processar símbolos não garante a compreensão real", "Linguagens orientais são melhores para programação", "A IA superará a inteligência humana em cinco anos"], "answer": 1 }
+    ],
+    "extreme": [
+      { "question": "Qual o foco da 'Epistemologia da Computação'?", "options": ["O estudo sobre como o conhecimento é processado", "A venda de licenças de software para grandes empresas", "O conserto físico de componentes eletrônicos de PC", "A criação de novos cabos de fibra ótica para internet"], "answer": 0 }
+    ],
+    "impossible": [
+      { "question": "Qual o núcleo da 'Tese de Church-Turing'?", "options": ["Tudo que é calculável pode ser feito por uma TM", "Máquinas nunca atingirão o nível de consciência", "O hardware evolui exponencialmente a cada ano", "A criptografia RSA é inquebrável por humanos"], "answer": 0 }
+    ]
+  },
+  "cryptography": {
+    "easy": [
+      { "question": "O que é 'Criptografia' em termos simples?", "options": ["Tornar uma mensagem ilegível para terceiros", "Aumentar a velocidade de envio de e-mails", "Mudar a cor de fundo de um site seguro", "Deletar arquivos permanentemente do sistema"], "answer": 0 },
+      { "question": "O que é uma 'Chave' em criptografia?", "options": ["O botão físico para ligar o computador", "Um valor usado para cifrar ou decifrar dados", "O nome do usuário que acessa o sistema", "Um tipo de vírus que rouba fotos pessoais"], "answer": 1 }
+    ],
+    "medium": [
+      { "question": "Qual a diferença entre Criptografia Simétrica e Assimétrica?", "options": ["A simétrica usa a mesma chave para cifrar/decifrar", "A assimétrica é muito mais lenta e insegura", "A simétrica não utiliza chaves matemáticas", "A assimétrica funciona apenas em redes locais"], "answer": 0 },
+      { "question": "O que é uma 'Função Hash' (ex: SHA-256)?", "options": ["Um algoritmo que gera uma assinatura única fixa", "Um programa que recupera senhas esquecidas", "Um tipo de compressão de vídeo em alta definição", "Um firewall que bloqueia IPs de outros países"], "answer": 0 }
+    ],
+    "hard": [
+      { "question": "Qual o principal benefício do algoritmo RSA?", "options": ["Permitir a troca de chaves em canais inseguros", "Garantir que o computador nunca seja hackeado", "Aumentar o espaço de armazenamento do HD", "Criptografar apenas arquivos de texto simples"], "answer": 0 },
+      { "question": "O que é 'Salting' no armazenamento de senhas?", "options": ["Adicionar dados aleatórios antes de aplicar o Hash", "Limpar o banco de dados de senhas expiradas", "Mudar a senha do usuário a cada trinta dias", "Criptografar o nome do usuário junto com a senha"], "answer": 0 }
+    ],
+    "extreme": [
+      { "question": "O que é Criptografia de Curva Elíptica (ECC)?", "options": ["Uma técnica que usa geometria para chaves menores", "Um método de criptografia baseado em círculos", "Um antivírus focado em redes sociais modernas", "Uma forma de hackear sistemas via satélite"], "answer": 0 },
+      { "question": "O que caracteriza o conceito de 'Blockchain'?", "options": ["Uma corrente de blocos de dados imutáveis e cifrados", "Um cabo de rede que conecta vários servidores", "Um software de edição de planilhas financeiras", "Um tipo de bloqueio de tela para celulares"], "answer": 0 }
+    ],
+    "impossible": [
+      { "question": "Qual o ataque mais eficiente contra Curvas Elípticas?", "options": ["Algoritmo rho de Pollard para logaritmos discretos", "Força bruta simples em chaves de 256 bits", "Intercepção de pacotes via Wi-Fi público", "Injeção de scripts no cabeçalho do certificado"], "answer": 0 }
     ]
   }
 }

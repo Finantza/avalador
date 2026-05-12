@@ -10,6 +10,7 @@
     --success: #10b981;
     --error: #ef4444;
     --glass-border: rgba(255, 255, 255, 0.1);
+    --transition-speed: 0.2s; /* New variable for speed */
 }
 
 /* Splash Screen */
@@ -19,22 +20,52 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: #05050a;
+    background: radial-gradient(circle at center, #1e1b4b, #05050a);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 10000;
     transition: opacity 1s ease, visibility 1s;
+    overflow: hidden;
+}
+
+.code-rain {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.25;
+    pointer-events: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    color: var(--primary);
+    white-space: nowrap;
+    text-shadow: 0 0 8px var(--primary); /* Glow effect */
+}
+
+.code-line {
+    position: absolute;
+    animation: rain linear infinite;
+    writing-mode: vertical-rl; /* True waterfall style */
+    text-orientation: upright;
+}
+
+@keyframes rain {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(100vh); }
+}
+
+.splash-content {
+    text-align: center;
+    z-index: 10;
+    width: min(400px, 80vw);
+    animation: fadeInScale 1s ease-out;
 }
 
 #splash-screen.hidden {
     opacity: 0;
     visibility: hidden;
-}
-
-.splash-content {
-    text-align: center;
-    animation: fadeInScale 1s ease-out;
 }
 
 .splash-logo {
@@ -475,7 +506,7 @@ input[type="text"]:focus {
     color: var(--text-main);
     font-size: clamp(0.85rem, 2.5vw, 1.1rem); /* Fluid font */
     font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
-    white-space: pre;
+    white-space: pre-wrap; /* Allow wrapping while keeping spaces */
     cursor: pointer;
     transition: all 0.2s;
     display: flex;

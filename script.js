@@ -175,13 +175,58 @@ async function init() {
 
     await QuestionDB.init();
     updateDBStats();
+    initCodeRain();
 
     const splash = document.getElementById('splash-screen');
     const status = splash.querySelector('.status-text');
+    const loaderFill = splash.querySelector('.loader-fill');
     
-    setTimeout(() => { status.textContent = "Carregando ONYX Core..."; }, 1200);
-    setTimeout(() => { status.textContent = "Otimizando Neurônios..."; }, 2500);
-    setTimeout(() => { splash.classList.add('hidden'); }, 3500);
+    setTimeout(() => { 
+        status.textContent = "Carregando ONYX Core..."; 
+        if (loaderFill) loaderFill.style.width = "20%";
+    }, 1000);
+    
+    setTimeout(() => { 
+        status.textContent = "Sincronizando Banco Neural..."; 
+        if (loaderFill) loaderFill.style.width = "40%";
+    }, 2000);
+
+    setTimeout(() => { 
+        status.textContent = "Otimizando Neurônios..."; 
+        if (loaderFill) loaderFill.style.width = "70%";
+    }, 3500);
+    
+    setTimeout(() => { 
+        if (loaderFill) loaderFill.style.width = "100%";
+        splash.classList.add('hidden'); 
+    }, 5000);
+}
+
+function initCodeRain() {
+    const container = document.getElementById('code-rain');
+    if (!container) return;
+    
+    const width = window.innerWidth;
+    const columnWidth = 25; // Approximate width of each binary column in pixels
+    const columnCount = Math.floor(width / columnWidth) + 10; // Add extra for coverage
+
+    for (let i = 0; i < columnCount; i++) {
+        const line = document.createElement('div');
+        line.className = 'code-line';
+        
+        // Generate a random string of 0s and 1s
+        let binaryStr = "";
+        const len = Math.floor(Math.random() * 20) + 10;
+        for(let j=0; j<len; j++) binaryStr += Math.random() > 0.5 ? "1" : "0";
+        
+        line.textContent = binaryStr;
+        line.style.left = `${(i / columnCount) * 100}%`; // Evenly distributed
+        line.style.animationDuration = `${Math.random() * 2 + 1.5}s`;
+        line.style.animationDelay = `${Math.random() * 5}s`;
+        line.style.fontSize = `${Math.random() * 8 + 14}px`;
+        line.style.opacity = Math.random() * 0.4 + 0.1;
+        container.appendChild(line);
+    }
 }
 
 function toggleFullscreen() {
@@ -302,98 +347,87 @@ async function generateQuestions(subject, difficulty) {
 // Logical Heuristic Engine: Difficulty-Aware
 function engineLogic(diff) {
     const level = diff === 'easy' ? 0 : (diff === 'medium' ? 1 : (diff === 'hard' ? 2 : 3));
-    const scenarios = ['execution', 'complexity', 'logic_tree', 'interpretation', 'data_structures'];
+    const scenarios = ['execution', 'complexity', 'logic_tree', 'interpretation', 'data_structures', 'regex'];
     let scenario = scenarios[Math.floor(Math.random() * scenarios.length)];
     
     // Bias scenario by level
     if (level === 0) scenario = Math.random() > 0.3 ? 'execution' : 'interpretation';
-    if (level >= 2) scenario = Math.random() > 0.5 ? 'complexity' : (Math.random() > 0.5 ? 'data_structures' : 'logic_tree');
+    if (level >= 2) scenario = Math.random() > 0.5 ? 'complexity' : (Math.random() > 0.4 ? 'regex' : 'logic_tree');
 
     let q, options, answer;
 
     if (scenario === 'interpretation') {
-        const sub = ["O script", "A função", "O servidor", "O banco de dados"][Math.floor(Math.random() * 4)];
-        const traits = [
-            ["é rápido", "é eficiente"],
-            ["executa em paralelo", "usa async/await"],
-            ["tem vazamento de memória", "está sobrecarregado"],
-            ["lança uma exceção crítica", "está em deadlock"]
-        ][level];
-        const trait = traits[Math.floor(Math.random() * traits.length)];
-        
-        q = `[IA Nativa] Interpretação Lógica:\nPremissa: Se o evento X ocorre, então ${sub} ${trait}.\nO evento X ocorreu.\n\nQual a conclusão?`;
-        answer = `${sub} ${trait}`;
-        options = shuffle([answer, `${sub} não ${trait}`, "Nada acontece", "Erro de sintaxe"]);
+        const items = [
+            { q: "Premissa: Se X ocorre, o servidor para.", a: "O servidor para imediatamente", d: ["O script falha na linha 1", "A rede reinicia o fluxo", "O banco entra em backup"] },
+            { q: "Premissa: Async/Await evita o bloqueio.", a: "A execução continua em paralelo", d: ["O código trava até o retorno", "O loop de eventos é deletado", "O cache é limpo via hardware"] },
+            { q: "Premissa: Overfitting indica alta variância.", a: "O modelo falha em dados novos", d: ["O modelo decora os dados de teste", "A acurácia sobe no mundo real", "O erro de treino é muito alto"] },
+            { q: "Premissa: Sharding divide o banco.", a: "A carga é distribuída entre nós", d: ["Os dados são todos duplicados", "A latência sobe exponencialmente", "A chave primária é removida"] }
+        ];
+        const pick = items[level];
+        q = `[IA ONYX] Dedução Lógica:\n${pick.q}\nX ocorreu.\nConclusão:`;
+        answer = pick.a;
+        options = shuffle([answer, ...pick.d]);
 
     } else if (scenario === 'execution') {
-        const startVal = Math.floor(Math.random() * (10 * (level + 1)));
+        const startVal = Math.floor(Math.random() * (20 * (level + 1)));
         const ops = [['+', '-'], ['*', '+'], ['*', '//'], ['**', '%']][level];
         const op = ops[Math.floor(Math.random() * ops.length)];
         const mod = Math.floor(Math.random() * 5) + 2;
         let res;
         try { res = eval(`${startVal} ${op} ${mod}`); } catch(e) { res = startVal + mod; }
 
-        q = `[IA Nativa] Simulação de Código (Python):\nx = ${startVal}\nx = x ${op} ${mod}\nQual o valor final de x?`;
+        q = `[IA ONYX] Runtime Simulation:\nx = ${startVal}\nx = x ${op} ${mod}\nValue of x?`;
         answer = res.toString();
-        options = shuffle([answer, (res + 1).toString(), (res - 1).toString(), (res * 2).toString()]);
+        const dist1 = (res + (Math.random() > 0.5 ? 1 : -1)).toString();
+        const dist2 = (res * 2).toString();
+        const dist3 = Math.floor(res / 2).toString();
+        options = shuffle([answer, dist1, dist2, dist3]);
 
     } else if (scenario === 'complexity') {
         const complexities = ["O(1)", "O(log n)", "O(n)", "O(n log n)", "O(n^2)", "O(2^n)"];
-        const scenarios_bigo = [
-            "Acesso a um índice de lista",
-            "Busca Binária em lista ordenada",
-            "Busca Simples em lista desordenada",
-            "Merge Sort (Melhor caso)",
-            "Dois loops aninhados",
-            "Fibonacci Recursivo sem memoização",
-            "Acesso a elemento em Hash Table",
-            "Inversão de uma lista encadeada"
+        const cases = [
+            { s: "Hash Map lookup", a: "O(1)" },
+            { s: "Binary Search", a: "O(log n)" },
+            { s: "Linear Scan", a: "O(n)" },
+            { s: "Heap Sort", a: "O(n log n)" },
+            { s: "Nested Loops", a: "O(n^2)" },
+            { s: "TSP Brute Force", a: "O(2^n)" }
         ];
-        const idx = Math.min(level + Math.floor(Math.random() * 4), 5);
-        q = `[IA Nativa] Complexidade de Algoritmo:\nQual a complexidade Big O de: ${scenarios_bigo[idx]}?`;
-        answer = complexities[idx] || "O(n)";
-        options = shuffle([answer, "O(n)", "O(1)", "O(n^3)"]);
+        const pick = cases[Math.min(level + 2, 5)];
+        q = `[IA ONYX] Big O Analysis:\nComplexity of: ${pick.s}?`;
+        answer = pick.a;
+        options = shuffle([answer, "O(n log n)", "O(n!)", "O(n^3)"]);
+
+    } else if (scenario === 'regex') {
+        const patterns = [
+            { p: "^[0-9]+$", s: "123", a: "Match numérico completo", d: ["Contém apenas letras", "Inicia com dígito", "Formato de data ISO"] },
+            { p: "\\w+@\\w+", s: "a@b", a: "Padrão básico de e-mail", d: ["Inicia com caractere especial", "Busca por números decimais", "Fim de linha encontrado"] },
+            { p: ".*\\d{2}$", s: "abc12", a: "Termina com dois dígitos", d: ["Contém apenas 2 números", "Possui letras no início", "Não possui correspondência"] }
+        ];
+        const pick = patterns[Math.min(level, 2)];
+        q = `[IA ONYX] RegEx Engine:\nPattern: /${pick.p}/\nString: "${pick.s}"\nResult?`;
+        answer = pick.a;
+        options = shuffle([answer, ...pick.d]);
 
     } else if (scenario === 'data_structures') {
-        const ds_questions = [
-            { q: "Qual estrutura usa LIFO (Last-In, First-Out)?", a: "Pilha (Stack)" },
-            { q: "Qual estrutura usa FIFO (First-In, First-Out)?", a: "Fila (Queue)" },
-            { q: "Qual estrutura armazena pares Chave-Valor?", a: "Dicionário (Dict)" },
-            { q: "Qual estrutura garante que não há duplicatas?", a: "Conjunto (Set)" },
-            { q: "Qual estrutura é melhor para buscas por índice?", a: "Vetor (Array)" },
-            { q: "Qual estrutura representa relações hierárquicas?", a: "Árvore (Tree)" }
+        const items = [
+            { q: "Estrutura para Caminhamento BFS?", a: "Fila (Queue) com FIFO", d: ["Pilha (Stack) com LIFO", "Grafo Acíclico Dirigido", "Árvore Binária de Busca"] },
+            { q: "Melhor para remoção no início?", a: "Lista Encadeada (Linked List)", d: ["Vetor Dinâmico (ArrayList)", "Hash Table com Colisão", "Pilha com Array Fixo"] }
         ];
-        const pick = ds_questions[Math.floor(Math.random() * ds_questions.length)];
-        q = `[IA Nativa] Estrutura de Dados:\n${pick.q}`;
+        const pick = items[Math.min(level, 1)];
+        q = `[IA ONYX] Data Architecture:\n${pick.q}`;
         answer = pick.a;
-        options = shuffle([answer, "Lista", "Tupla", "Grafo"]);
+        options = shuffle([answer, ...pick.d]);
 
-    } else { // logic_tree / riddles
-        if (level >= 2 && Math.random() > 0.6) {
-            const riddles = [
-                { q: "Um caracol sobe 3m e escorrega 2m. Muro de 30m. Quanto tempo?", a: "28 horas" },
-                { q: "Três caixas (A, O, M) mal etiquetadas. Qual abrir para saber tudo?", a: "Mista (Mixed)" },
-                { q: "Se 5 máquinas levam 5min para fazer 5 itens, 100 máquinas levam quanto para 100?", a: "5 minutos" }
-            ];
-            const pick = riddles[Math.floor(Math.random() * riddles.length)];
-            q = `[IA Nativa] Desafio de Raciocínio:\n${pick.q}`;
-            answer = pick.a;
-            options = shuffle([answer, "30 horas", "100 minutos", "Caixa A"]);
-        } else {
-            const v1 = Math.random() > 0.5;
-            const v2 = Math.random() > 0.5;
-            const logic_ops = ["AND", "OR", "XOR", "NAND"];
-            const op = logic_ops[Math.min(level, 3)];
-            let res;
-            if (op === "AND") res = v1 && v2;
-            else if (op === "OR") res = v1 || v2;
-            else if (op === "XOR") res = (v1 || v2) && !(v1 && v2);
-            else res = !(v1 && v2);
-
-            q = `[IA Nativa] Lógica Booleana:\nQual o resultado de: ${v1} ${op} ${v2}?`;
-            answer = res ? "True" : "False";
-            options = shuffle(["True", "False", "None", "Error"]);
-        }
+    } else { // insane logic / extreme riddles
+        const insane = [
+            { q: "P vs NP: Se P=NP, o que é verdade?", a: "Toda solução verificável é fácil de achar", d: ["Criptografia AES torna-se impossível", "Algoritmos quânticos param de funcionar", "Problemas polinomiais são insolúveis"] },
+            { q: "Teorema de CAP: Num sistema distribuído...", a: "Não há Consistência, Disp. e Partição simultâneos", d: ["A latência é sempre zero na rede local", "A persistência é garantida via Hardware", "O consenso é atingido por força bruta"] }
+        ];
+        const pick = insane[Math.min(level - 2, 1)];
+        q = `[IA ONYX] Advanced Theory:\n${pick.q}`;
+        answer = pick.a;
+        options = shuffle([answer, ...pick.d]);
     }
 
     return { question: q, options: options, answer: options.indexOf(answer) };
@@ -402,50 +436,32 @@ function engineLogic(diff) {
 // English Heuristic Engine: Difficulty-Aware
 function engineEnglish(diff) {
     const level = diff === 'easy' ? 0 : (diff === 'medium' ? 1 : (diff === 'hard' ? 2 : 3));
-    const wordPool = [
-        [
-            ["Print", "Imprimir"], ["Save", "Salvar"], ["File", "Arquivo"], ["Back", "Voltar"],
-            ["Folder", "Pasta"], ["Key", "Chave"], ["Error", "Erro"], ["Name", "Nome"],
-            ["Code", "Código"], ["Text", "Texto"]
-        ],
-        [
-            ["Warning", "Aviso"], ["Success", "Sucesso"], ["Feature", "Recurso/Funcionalidade"], ["Bug", "Erro/Falha"],
-            ["Update", "Atualizar"], ["Delete", "Apagar"], ["Search", "Pesquisar"], ["Input", "Entrada"],
-            ["Output", "Saída"], ["Device", "Dispositivo"]
-        ],
-        [
-            ["Framework", "Arcabouço"], ["Legacy", "Legado"], ["Refactoring", "Refatoração"], ["Snippet", "Fragmento"],
-            ["Deployment", "Implantação"], ["Backend", "Retaguarda"], ["Frontend", "Interface"], ["Query", "Consulta"],
-            ["Database", "Banco de Dados"], ["Middleware", "Intermediário"]
-        ],
-        [
-            ["Scalability", "Escalabilidade"], ["Idempotency", "Idempotência"], ["Throughput", "Vazão/Capacidade"], ["Overhead", "Sobrecarga"],
-            ["Asynchronous", "Assíncrono"], ["Concurrency", "Concorrência"], ["Encryption", "Criptografia"], ["Resilience", "Resiliência"],
-            ["Infrastructure", "Infraestrutura"], ["Latency", "Latência"]
-        ]
-    ][level];
     
-    const pair = wordPool[Math.floor(Math.random() * wordPool.length)];
-    const types = ["translate", "context"];
-    const type = level > 1 ? types[Math.floor(Math.random() * 2)] : "translate";
+    const scenarios = {
+        0: [ // Easy
+            { q: "Qual a tradução para 'Save'?", a: "Salvar o progresso", d: ["Sair do sistema", "Excluir arquivo", "Mudar a senha"] },
+            { q: "O que significa 'File'?", a: "Arquivo de dados", d: ["Fila de espera", "Fio de conexão", "Pasta vazia"] }
+        ],
+        1: [ // Medium
+            { q: "Significado de 'Feature'?", a: "Recurso ou funcionalidade", d: ["Falha ou erro crítico", "Atraso no processamento", "Manual de instruções"] },
+            { q: "Tradução de 'Update'?", a: "Atualizar o software", d: ["Deletar o banco", "Criar novo perfil", "Enviar por e-mail"] }
+        ],
+        2: [ // Hard
+            { q: "O que é 'Refactoring'?", a: "Reestruturar o código interno", d: ["Criar novas funcionalidades", "Traduzir para outra língua", "Deletar módulos antigos"] },
+            { q: "Tradução de 'Middleware'?", a: "Software intermediário de rede", d: ["Hardware de baixo custo", "Interface final do usuário", "Criptografia de disco"] }
+        ],
+        3: [ // Insane
+            { q: "Definição de 'Idempotency'?", a: "Operação com resultado constante", d: ["Velocidade máxima de rede", "Criptografia de ponta a ponta", "Processamento em paralelo"] },
+            { q: "Tradução de 'Throughput'?", a: "Volume de dados por tempo", d: ["Latência mínima de resposta", "Capacidade total de disco", "Segurança contra ataques"] }
+        ]
+    };
 
-    let q, answer, options;
-
-    if (type === "translate") {
-        q = `[IA Nativa] Vocabulário Técnico:\nQual a tradução mais adequada para '${pair[0]}'?`;
-        answer = pair[1];
-        options = shuffle([answer, "Configuração", "Rede", "Interface", "Dispositivo"]);
-    } else {
-        const sentences = {
-            "Scalability": "The system's capacity to handle a growing amount of work.",
-            "Idempotency": "The property of certain operations that can be applied multiple times without changing the result.",
-            "Throughput": "The rate at which a system processes a certain amount of data.",
-            "Overhead": "Excess or indirect computation time or memory required by an operation."
-        };
-        q = `[IA Nativa] Technical Comprehension:\n'${sentences[pair[0]]}'\nWhich term matches this definition?`;
-        answer = pair[0];
-        options = shuffle([answer, "Latency", "Bandwidth", "Concurrency", "Availability"]);
-    }
+    const currentLevel = scenarios[level];
+    const pick = currentLevel[Math.floor(Math.random() * currentLevel.length)];
+    
+    const q = `[IA ONYX] Technical English:\n${pick.q}`;
+    const answer = pick.a;
+    const options = shuffle([answer, ...pick.d]);
 
     return { question: q, options: options, answer: options.indexOf(answer) };
 }
@@ -453,169 +469,69 @@ function engineEnglish(diff) {
 // Informatics Heuristic Engine: Difficulty-Aware
 function engineInformatics(diff) {
     const level = diff === 'easy' ? 0 : (diff === 'medium' ? 1 : (diff === 'hard' ? 2 : 3));
-    const topics = ['hardware', 'networking', 'security', 'os', 'cloud', 'devops'];
-    const topic = topics[Math.floor(Math.random() * topics.length)];
+    
+    const scenarios = {
+        0: [ // Easy
+            { q: "Qual a função principal da Memória RAM?", a: "Armazenamento volátil de dados em uso", d: ["Processamento central de cálculos lógicos", "Exibição de interfaces gráficas complexas", "Armazenamento permanente de arquivos locais"] }
+        ],
+        1: [ // Medium
+            { q: "O que define o 'Kernel' de um sistema?", a: "O núcleo que gerencia hardware e software", d: ["A interface visual de interação do usuário", "O antivírus que protege contra malwares", "O hardware responsável pela conexão de rede"] }
+        ],
+        2: [ // Hard
+            { q: "Qual o propósito do Modelo OSI em redes?", a: "Padronizar a comunicação entre sistemas", d: ["Criptografar dados sensíveis no disco rígido", "Otimizar o consumo de energia do processador", "Gerenciar o processo de boot do hardware"] }
+        ],
+        3: [ // Insane
+            { q: "O que é Criptografia de Chave Assimétrica?", a: "Uso de um par de chaves pública e privada", d: ["Uma única chave secreta para cifrar e decifrar", "Transmissão de dados sem nenhuma segurança real", "Um algoritmo focado apenas em compressão de ZIP"] }
+        ]
+    };
 
-    let q, answer, options;
+    const currentLevel = scenarios[level];
+    const pick = currentLevel[Math.floor(Math.random() * currentLevel.length)];
+    
+    const q = `[IA ONYX] Computing Infrastructure:\n${pick.q}`;
+    const answer = pick.a;
+    const options = shuffle([answer, ...pick.d]);
 
-    if (topic === 'hardware') {
-        const items = [
-            { q: "Qual componente é o 'cérebro' do PC?", a: "CPU" },
-            { q: "Qual memória é volátil e temporária?", a: "RAM" },
-            { q: "Onde os dados são salvos permanentemente?", a: "SSD/HD" },
-            { q: "O que é 'Overclocking'?", a: "Aumentar a frequência do clock" },
-            { q: "O que significa 'TDP' em processadores?", a: "Potência de Design Térmico" }
-        ];
-        const pick = items[Math.min(level + Math.floor(Math.random() * 2), items.length - 1)];
-        q = `[IA Nativa] Hardware:\n${pick.q}`;
-        answer = pick.a;
-        options = shuffle([answer, "GPU", "Placa Mãe", "Fonte", "Cache"]);
+    return { question: q, options: options, answer: options.indexOf(answer) };
+}
 
-    } else if (topic === 'networking') {
-        const items = [
-            { q: "Qual o protocolo padrão da Web?", a: "HTTP" },
-            { q: "Qual porta é usada pelo SSH?", a: "22" },
-            { q: "O que o DNS faz?", a: "Converte nomes em IPs" },
-            { q: "Em qual camada do modelo OSI opera o IP?", a: "Camada de Rede (3)" },
-            { q: "Qual protocolo garante a entrega de pacotes?", a: "TCP" }
-        ];
-        const pick = items[Math.min(level + Math.floor(Math.random() * 2), items.length - 1)];
-        q = `[IA Nativa] Redes:\n${pick.q}`;
-        answer = pick.a;
-        options = shuffle([answer, "UDP", "FTP", "ICMP", "MAC"]);
-
-    } else if (topic === 'cloud') {
-        const items = [
-            { q: "O que significa 'SaaS'?", a: "Software como Serviço" },
-            { q: "Qual o serviço de armazenamento da AWS?", a: "S3" },
-            { q: "O que é 'Serverless'?", a: "Execução de código sem gerenciar servidor" },
-            { q: "Qual a principal vantagem da Nuvem?", a: "Escalabilidade sob demanda" }
-        ];
-        const pick = items[Math.min(level, items.length - 1)];
-        q = `[IA Nativa] Cloud Computing:\n${pick.q}`;
-        answer = pick.a;
-        options = shuffle([answer, "Hardware local", "Backup físico", "VPN"]);
-
-    } else if (topic === 'devops') {
-        const items = [
-            { q: "O que significa 'CI/CD'?", a: "Integração e Entrega Contínua" },
-            { q: "Para que serve o Docker?", a: "Criação de containers isolados" },
-            { q: "O que é 'Infrastructure as Code' (IaC)?", a: "Gerenciar infra via scripts" },
-            { q: "Qual o objetivo do DevOps?", a: "Aproximar Dev e Ops" }
-        ];
-        const pick = items[Math.min(level, items.length - 1)];
-        q = `[IA Nativa] DevOps:\n${pick.q}`;
-        answer = pick.a;
-        options = shuffle([answer, "Apenas programar", "Limpar o HD", "Manual"]);
-
-    } else if (topic === 'security') {
-        const items = [
-            { q: "O que protege contra tráfego não autorizado?", a: "Firewall" },
-            { q: "O que é 'Phishing'?", a: "Isca para obter dados" },
-            { q: "O que é 'Ransomware'?", a: "Vírus que sequestra dados" },
-            { q: "O que é um ataque 'DDoS'?", a: "Ataque de negação de serviço distribuído" }
-        ];
-        const pick = items[Math.min(level + Math.floor(Math.random() * 2), items.length - 1)];
-        q = `[IA Nativa] Cibersegurança:\n${pick.q}`;
-        answer = pick.a;
-        options = shuffle([answer, "Antivírus", "Proxy", "VPN", "Hash"]);
-
-    } else { // os
-        const items = [
-            { q: "Qual atalho copia um arquivo?", a: "Ctrl + C" },
-            { q: "O que é o Kernel?", a: "Núcleo do sistema" },
-            { q: "O que é 'Virtualização'?", a: "Rodar um SO dentro de outro" },
-            { q: "O que significa 'Shell'?", a: "Interface de linha de comando" }
-        ];
-        const pick = items[Math.min(level + Math.floor(Math.random() * 2), items.length - 1)];
-        q = `[IA Nativa] Sistemas Operacionais:\n${pick.q}`;
-        answer = pick.a;
-        options = shuffle([answer, "Root", "Desktop", "Bios", "Log"]);
-    }
-
+function engineHybrid(subject, diff) {
+    const q = `[IA ONYX] Hybrid Intelligence:\nQual a relação entre ${subject} e ${diff}?`;
+    const answer = "Integração sistêmica de alta complexidade";
+    const options = shuffle([answer, "Independência total de fluxos de dados", "Conflito de hardware em ambiente local", "Erro de redundância cíclica no servidor"]);
     return { question: q, options: options, answer: options.indexOf(answer) };
 }
 
 // Data Science Heuristic Engine: Difficulty-Aware
 function engineDataScience(diff) {
     const level = diff === 'easy' ? 0 : (diff === 'medium' ? 1 : (diff === 'hard' ? 2 : 3));
-    const topics = ['storage', 'transformation', 'treatment', 'databases', 'ml', 'stats'];
+    const topics = ['ml', 'stats', 'storage', 'transformation', 'treatment', 'databases', 'architecture'];
     const topic = topics[Math.floor(Math.random() * topics.length)];
 
     let q, answer, options;
 
-    if (topic === 'ml') {
-        const items = [
-            { q: "O que é Aprendizado Supervisionado?", a: "Usa dados rotulados para prever saídas" },
-            { q: "O que é Overfitting?", a: "Modelo decora o ruído e não generaliza" },
-            { q: "Qual a diferença entre Classificação e Regressão?", a: "Classificação prevê categorias, Regressão prevê números" },
-            { q: "O que é uma Matriz de Confusão?", a: "Tabela para avaliar performance de classificação" }
-        ];
-        const pick = items[Math.min(level, items.length - 1)];
-        q = `[ONYX Core] Machine Learning:\n${pick.q}`;
-        answer = pick.a;
-        options = shuffle([answer, "Backup de dados", "Limpeza física", "Rede local"]);
+    const scenarios = {
+        'ml': [
+            { q: "O que é Aprendizado Supervisionado?", a: "Usa dados rotulados para prever saídas", d: ["Analisa padrões sem nenhuma supervisão", "Cria categorias baseadas em clusters", "Limpa dados ruidosos automaticamente"] },
+            { q: "O que é 'Regularização' em ML?", a: "Técnica para evitar overfitting do modelo", d: ["Aumento da taxa de aprendizado fixo", "Remoção de colunas duplicadas no CSV", "Processo de normalização de hardware"] },
+            { q: "Explique 'Backpropagation'?", a: "Ajuste de pesos via gradiente descendente", d: ["Cópia de segurança de redes neurais", "Processamento de dados do fim para o início", "Algoritmo de busca em largura em grafos"] }
+        ],
+        'stats': [
+            { q: "O que é o Desvio Padrão?", a: "Medida da dispersão em torno da média", d: ["Diferença entre o maior e menor valor", "Soma de todos os valores da amostra", "Valor central que divide os dados em dois"] },
+            { q: "O que é a 'Distribuição Normal'?", a: "Curva em sino onde média=mediana=moda", d: ["Sequência de números aleatórios lineares", "Padrão de crescimento exponencial de dados", "Gráfico que mostra apenas valores nulos"] }
+        ],
+        'architecture': [
+            { q: "Diferença entre OLTP e OLAP?", a: "OLTP foca transação, OLAP foca análise", d: ["OLTP é para Cloud, OLAP é para Local", "OLTP usa NoSQL, OLAP usa apenas SQL", "OLTP é assíncrono, OLAP é síncrono"] },
+            { q: "O que é 'Eventual Consistency'?", a: "Dados ficam iguais após tempo sem escrita", d: ["O banco de dados nunca perde informação", "A consistência é garantida via Hardware", "Os dados são validados por cada usuário"] }
+        ]
+    };
 
-    } else if (topic === 'stats') {
-        const items = [
-            { q: "O que é a Média?", a: "Soma de valores dividida pela quantidade" },
-            { q: "O que é o Desvio Padrão?", a: "Medida de dispersão dos dados" },
-            { q: "O que é uma Correlação?", a: "Relação entre duas variáveis" },
-            { q: "O que é um P-valor?", a: "Probabilidade de observar o resultado por acaso" }
-        ];
-        const pick = items[Math.min(level, items.length - 1)];
-        q = `[ONYX Core] Estatística:\n${pick.q}`;
-        answer = pick.a;
-        options = shuffle([answer, "Um erro de SQL", "Uma cor de gráfico", "Um tipo de HD"]);
-
-    } else if (topic === 'storage') {
-        const items = [
-            { q: "O que é um 'Data Warehouse'?", a: "Armazém central de dados integrados" },
-            { q: "Qual a principal característica de um 'Data Lake'?", a: "Armazena dados brutos e não estruturados" },
-            { q: "O que significa 'Redundância' no armazenamento?", a: "Duplicação de dados para segurança" },
-            { q: "Qual a diferença entre armazenamento SQL e NoSQL?", a: "SQL é relacional, NoSQL é não-relacional" }
-        ];
-        const pick = items[level];
-        q = `[ONYX Core] Armazenamento:\n${pick.q}`;
-        answer = pick.a;
-        options = shuffle([answer, "Backup físico", "Memória RAM", "Processamento", "Cache"]);
-
-    } else if (topic === 'transformation') {
-        const items = [
-            { q: "O que significa a sigla ETL?", a: "Extract, Transform, Load" },
-            { q: "O que é 'Data Normalization'?", a: "Redução de redundância e dependência" },
-            { q: "O que faz a operação 'Pivot' em dados?", a: "Transforma linhas em colunas" },
-            { q: "O que é 'MapReduce'?", a: "Modelo de processamento paralelo para Big Data" }
-        ];
-        const pick = items[level];
-        q = `[ONYX Core] Transformação:\n${pick.q}`;
-        answer = pick.a;
-        options = shuffle([answer, "Criptografia", "Compressão", "Backup", "Indexação"]);
-
-    } else if (topic === 'treatment') {
-        const items = [
-            { q: "O que é 'Data Cleaning'?", a: "Remoção de dados inconsistentes ou errados" },
-            { q: "O que são 'Outliers'?", a: "Dados que fogem drasticamente do padrão" },
-            { q: "Como tratamos 'Missing Values' (valores nulos)?", a: "Remoção ou Imputação (preenchimento)" },
-            { q: "O que é 'Anonymization'?", a: "Remoção de informações de identificação pessoal" }
-        ];
-        const pick = items[level];
-        q = `[ONYX Core] Tratamento:\n${pick.q}`;
-        answer = pick.a;
-        options = shuffle([answer, "Deleção total", "Cópia", "Impressão", "Ordenação"]);
-
-    } else { // databases
-        const items = [
-            { q: "O que é uma 'Primary Key'?", a: "Identificador único de um registro" },
-            { q: "O que faz o comando 'SELECT'?", a: "Consulta dados em uma tabela" },
-            { q: "O que é um 'Join' em SQL?", a: "Combinação de linhas de duas ou mais tabelas" },
-            { q: "O que é 'ACID' em bancos de dados?", a: "Conjunto de propriedades de transação" }
-        ];
-        const pick = items[level];
-        q = `[ONYX Core] Bancos de Dados:\n${pick.q}`;
-        answer = pick.a;
-        options = shuffle([answer, "Backup", "Update", "Delete", "Drop"]);
-    }
+    const currentTopic = scenarios[topic] || scenarios['ml'];
+    const pick = currentTopic[Math.min(level, currentTopic.length - 1)];
+    
+    q = `[IA ONYX] ${topic.toUpperCase()}:\n${pick.q}`;
+    answer = pick.a;
+    options = shuffle([answer, ...pick.d]);
 
     return { question: q, options: options, answer: options.indexOf(answer) };
 }
@@ -633,9 +549,20 @@ async function startQuiz() {
     currentState.score = 0;
     
     const subject = currentState.subject;
-    const difficulty = currentState.difficulty === 'insane' ? 'extreme' : currentState.difficulty;
+    let difficulty = currentState.difficulty;
     
-    let availablePool = await QuestionDB.getAll(subject, difficulty);
+    // Map internal difficulty keys
+    const diffMapping = {
+        'easy': 'easy',
+        'medium': 'medium',
+        'hard': 'hard',
+        'insane': 'extreme',
+        'impossible': 'impossible'
+    };
+    
+    const targetDifficulty = diffMapping[difficulty] || 'easy';
+    
+    let availablePool = await QuestionDB.getAll(subject, targetDifficulty);
     const seenList = await QuestionDB.getSeen(subject, difficulty);
     
     availablePool = availablePool.filter(q => !seenList.includes(q.question));
@@ -748,6 +675,73 @@ function finishQuiz() {
 
 function restartQuiz() { showScreen('welcome'); inputName.value = ""; }
 
+async function loadQuestion() {
+    currentState.isAnswered = false;
+    const q = currentState.activeQuestions[currentState.currentQuestionIndex];
+    
+    progressBar.style.width = `${(currentState.currentQuestionIndex / 15) * 100}%`;
+    currentQDisplay.textContent = currentState.currentQuestionIndex + 1;
+
+    // Scramble Effect for the question
+    scrambleText(questionText, q.question);
+    
+    optionsContainer.innerHTML = '';
+    const maxLen = Math.max(...q.options.map(opt => opt.toString().length)) + 2;
+    
+    q.options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        
+        let paddedOpt = opt.toString();
+        while (paddedOpt.length < maxLen) {
+            paddedOpt += ' ';
+        }
+        
+        btn.textContent = paddedOpt;
+        btn.onclick = () => selectOption(index, btn);
+        optionsContainer.appendChild(btn);
+    });
+}
+
+function scrambleText(element, targetText) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+';
+    let iteration = 0;
+    const interval = setInterval(() => {
+        element.textContent = targetText.split("")
+            .map((char, index) => {
+                if (index < iteration) return targetText[index];
+                return chars[Math.floor(Math.random() * chars.length)];
+            })
+            .join("");
+        
+        if (iteration >= targetText.length) clearInterval(interval);
+        iteration += 1 / 2; // Speed of decryption
+    }, 30);
+}
+
+function selectOption(index, btn) {
+    if (currentState.isAnswered) return;
+    currentState.isAnswered = true;
+    const q = currentState.activeQuestions[currentState.currentQuestionIndex];
+    const allBtns = optionsContainer.querySelectorAll('.option-btn');
+
+    if (index === q.answer) {
+        btn.classList.add('correct');
+        currentState.score++;
+        OnyxCore.playFeedback('success');
+    } else {
+        btn.classList.add('wrong');
+        allBtns[q.answer].classList.add('correct');
+        OnyxCore.playFeedback('error');
+    }
+
+    setTimeout(() => {
+        currentState.currentQuestionIndex++;
+        if (currentState.currentQuestionIndex < 15) loadQuestion();
+        else finishQuiz();
+    }, 800); // Faster next question
+}
+
 function downloadReport() {
     const date = new Date().toLocaleString('pt-BR');
     const total = 15;
@@ -756,7 +750,11 @@ function downloadReport() {
         'logic': 'Lógica de Programação', 
         'english': 'Inglês Aplicado', 
         'informatics': 'Informática Básica',
-        'data_science': 'Armazenamento, Transformação e Tratamento de Dados'
+        'data_science': 'Ciência de Dados e Armazenamento',
+        'cybersecurity': 'Cibersegurança e Infraestrutura',
+        'software_eng': 'Engenharia de Software e Padrões',
+        'philosophy': 'Filosofia da Computação e Ética',
+        'cryptography': 'Criptografia e Teoria da Informação'
     };
     const sub = subLabels[currentState.subject];
     
