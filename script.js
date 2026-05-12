@@ -148,22 +148,6 @@ async function init() {
     btnDownload.addEventListener('click', downloadReport);
     btnFullscreen.addEventListener('click', toggleFullscreen);
 
-    // Alignment Controls
-    const alignBtns = document.querySelectorAll('.btn-align');
-    alignBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const align = btn.dataset.align;
-            alignBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            
-            const cards = document.querySelectorAll('.card');
-            cards.forEach(card => {
-                card.classList.remove('align-left', 'align-center', 'align-right');
-                card.classList.add(`align-${align}`);
-            });
-        });
-    });
-    
     subjectBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             subjectBtns.forEach(b => b.classList.remove('active'));
@@ -180,8 +164,6 @@ async function init() {
         });
     });
 
-    initDraggable();
-    
     await QuestionDB.init();
     updateDBStats();
 
@@ -210,37 +192,6 @@ function toggleFullscreen() {
 async function updateDBStats() {
     const count = await QuestionDB.getStats();
     dbStatsDisplay.textContent = `ONYX Intelligence | ${count + 350} Casos de Treinamento`;
-}
-
-function initDraggable() {
-    const draggables = document.querySelectorAll('.draggable');
-    
-    draggables.forEach(card => {
-        const handle = card.querySelector('.drag-handle');
-        let isDragging = false;
-        let offsetX, offsetY;
-
-        handle.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            offsetX = e.clientX - card.getBoundingClientRect().left;
-            offsetY = e.clientY - card.getBoundingClientRect().top;
-            card.style.position = 'absolute';
-            card.style.margin = '0';
-            card.style.zIndex = '1000';
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            const x = e.clientX - offsetX;
-            const y = e.clientY - offsetY;
-            card.style.left = `${x}px`;
-            card.style.top = `${y}px`;
-        });
-
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-        });
-    });
 }
 
 // --- ONYX INTELLIGENCE MODULE ---

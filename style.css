@@ -112,8 +112,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow-x: hidden; /* Prevent horizontal scroll only */
-    overflow-y: auto;   /* Allow vertical scroll if content is too big */
+    overflow: auto; /* Standard scrollbars as needed */
 }
 
 /* Background Blobs */
@@ -192,38 +191,11 @@ body {
     backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
     border-radius: 24px;
-    padding: clamp(20px, 5vw, 40px); /* Fluid padding */
+    padding: 40px;
     width: min(900px, 95vw);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     position: relative;
     z-index: 10;
-    transition: all 0.3s ease;
-}
-
-.drag-handle {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 30px;
-    cursor: grab;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-top-left-radius: 24px;
-    border-top-right-radius: 24px;
-}
-
-.drag-handle::after {
-    content: "";
-    width: 40px;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 2px;
-}
-
-.drag-handle:active {
-    cursor: grabbing;
 }
 header {
     text-align: center;
@@ -295,56 +267,6 @@ header p {
     border-color: var(--primary);
     transform: scale(1.1);
 }
-
-.align-controls {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    display: flex;
-    gap: 5px;
-}
-
-@media (max-width: 500px) {
-    .align-controls, .btn-icon-glass {
-        position: static;
-        margin: 10px auto;
-        justify-content: center;
-    }
-    header {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-}
-
-.btn-align {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--glass-border);
-    color: var(--text-main);
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.btn-align:hover, .btn-align.active {
-    background: var(--primary);
-    border-color: var(--primary);
-    color: white;
-}
-
-/* Global Alignment Overrides */
-.card.align-left { align-items: flex-start !important; text-align: left !important; }
-.card.align-right { align-items: flex-end !important; text-align: right !important; }
-.card.align-center { align-items: center !important; text-align: center !important; }
-
-.card.align-left .options-grid, .card.align-left #question-container { align-items: flex-start !important; text-align: left !important; }
-.card.align-right .options-grid, .card.align-right #question-container { align-items: flex-end !important; text-align: right !important; }
 
 /* Inputs & Buttons */
 .input-group {
@@ -695,7 +617,7 @@ input[type="text"]:focus {
     align-items: center;
     padding: 2vh 4vw;
     gap: 1vh;
-    overflow: hidden;
+    overflow: auto; /* Enable scroll in fullscreen if needed */
 }
 
 :fullscreen .card > * {
