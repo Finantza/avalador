@@ -31,12 +31,21 @@
     <main id="app">
         <!-- Screen 1: Welcome -->
         <section id="screen-welcome" class="screen active">
-            <div class="card glass">
+            <div class="card glass draggable">
+                <div class="drag-handle"></div>
                 <header>
                     <div class="logo">AVALIAÇÃO<span> CIÊNCIA DE DADOS</span></div>
                     <h1>Bem-vindo à Avaliação</h1>
                     <p>TREINAMENTO EM TECNOLOGIA</p>
                     <div class="db-stats" id="db-stats">Sincronizando Banco de Dados...</div>
+                    <button id="btn-fullscreen" class="btn-icon-glass" title="Tela Cheia">
+                        <span class="icon">⛶</span>
+                    </button>
+                    <div class="align-controls">
+                        <button class="btn-align" data-align="left" title="Alinhar à Esquerda">⇠</button>
+                        <button class="btn-align active" data-align="center" title="Centralizar">⦿</button>
+                        <button class="btn-align" data-align="right" title="Alinhar à Direita">⇢</button>
+                    </div>
                 </header>
                 
                 <div class="input-group">
@@ -106,7 +115,8 @@
                 </div>
             </div>
 
-            <div class="card glass quiz-card">
+            <div class="card glass quiz-card draggable">
+                <div class="drag-handle"></div>
                 <div id="question-container">
                     <h2 id="question-text">Carregando questão...</h2>
                     <div id="options-container" class="options-grid">
@@ -118,7 +128,8 @@
 
         <!-- Screen 3: Results -->
         <section id="screen-results" class="screen">
-            <div class="card glass results-card">
+            <div class="card glass results-card draggable">
+                <div class="drag-handle"></div>
                 <div class="result-icon" id="result-icon">🏆</div>
                 <h1>Parabéns, <span id="final-name">Aluno</span>!</h1>
                 <p>Você concluiu o simulado no nível <span id="final-level">Fácil</span>.</p>
@@ -140,7 +151,6 @@
         </section>
     </main>
 
-    <script src="questions.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

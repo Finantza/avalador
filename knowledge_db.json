@@ -1,0 +1,95 @@
+{
+  "logic": {
+    "easy": [
+      { "question": "O que significa 'Lógica Booleana'?", "options": ["Lógica de números decimais", "Lógica de verdadeiro ou falso", "Lógica de cores", "Lógica de textos"], "answer": 1 },
+      { "question": "Qual o operador de 'Diferente' em Python?", "options": ["<>", "!=", "==", "not="], "answer": 1 },
+      { "question": "O que é uma 'Variável'?", "options": ["Valor fixo", "Espaço para guardar dados", "Um tipo de erro", "Hardware"], "answer": 1 }
+    ],
+    "medium": [
+      { "question": "O que é um loop 'While'?", "options": ["Repete enquanto condição é verdadeira", "Repete 10 vezes", "Para o programa", "Soma números"], "answer": 0 },
+      { "question": "Diferença entre Array e Lista?", "options": ["Nenhuma", "Array tem tamanho fixo em algumas línguas", "Lista é mais lenta", "Array é apenas números"], "answer": 1 },
+      { "question": "O que faz o operador '%' (módulo)?", "options": ["Porcentagem", "Resto da divisão", "Divisão inteira", "Soma"], "answer": 1 }
+    ],
+    "hard": [
+      { "question": "O que é 'Big O Notation'?", "options": ["Tamanho do código", "Análise de eficiência de algoritmos", "Nome de variável", "Erro de sintaxe"], "answer": 1 },
+      { "question": "O que é uma 'Pilha' (Stack)?", "options": ["Primeiro que entra, primeiro que sai", "Último que entra, primeiro que sai", "Lista aleatória", "Banco de dados"], "answer": 1 },
+      { "question": "O que é 'Recursão'?", "options": ["Loop infinito", "Função que chama a si mesma", "Erro de memória", "Divisão de tarefas"], "answer": 1 }
+    ],
+    "extreme": [
+      { "question": "Complexidade do QuickSort no pior caso?", "options": ["O(n log n)", "O(n^2)", "O(n)", "O(1)"], "answer": 1 },
+      { "question": "O que é o problema 'P vs NP'?", "options": ["Hardware vs Software", "Complexidade de problemas computacionais", "Rede vs Local", "Nenhuma"], "answer": 1 },
+      { "question": "O que faz o algoritmo de Dijkstra?", "options": ["Ordena listas", "Caminho mais curto em grafos", "Comprime arquivos", "Criptografa"], "answer": 1 },
+      { "question": "O que é 'Memoization'?", "options": ["Esquecer dados", "Cache de resultados de funções", "Memória RAM", "Backup"], "answer": 1 }
+    ]
+  },
+  "english": {
+    "easy": [
+      { "question": "Tradução de 'Database'?", "options": ["Base de dados", "Data nascimento", "PC Central", "Rede"], "answer": 0 },
+      { "question": "Tradução de 'File'?", "options": ["Fila", "Arquivo", "Fio", "Campo"], "answer": 1 },
+      { "question": "Tradução de 'Search'?", "options": ["Pesquisar", "Salvar", "Sair", "Subir"], "answer": 0 },
+      { "question": "Tradução de 'Login'?", "options": ["Sair", "Entrar", "Limpar", "Listar"], "answer": 1 },
+      { "question": "Tradução de 'Password'?", "options": ["Senha", "Papel", "Palavra", "Porta"], "answer": 0 }
+    ],
+    "medium": [
+      { "question": "Tradução de 'Immutable'?", "options": ["Mutável", "Imutável", "Imaturo", "Imediato"], "answer": 1 },
+      { "question": "Tradução de 'Iterate'?", "options": ["Interromper", "Repetir/Iterar", "Integrar", "Inverter"], "answer": 1 },
+      { "question": "O que é 'Range'?", "options": ["Rank", "Intervalo", "Regra", "Raio"], "answer": 1 }
+    ],
+    "hard": [
+      { "question": "Tradução de 'Accuracy'?", "options": ["Acurácia", "Acúmulo", "Acesso", "Ação"], "answer": 0 },
+      { "question": "Tradução de 'Stakeholder'?", "options": ["Funcionário", "Interessado", "Dono", "Gerente"], "answer": 1 },
+      { "question": "O que é 'Throughput'?", "options": ["Capacidade", "Vazão", "Espera", "Entrada"], "answer": 1 }
+    ],
+    "extreme": [
+      { "question": "Tradução de 'Scalability'?", "options": ["Escalabilidade", "Escada", "Equilíbrio", "Estabilidade"], "answer": 0 },
+      { "question": "O que é 'Refactoring'?", "options": ["Criar falhas", "Reestruturar código", "Deletar", "Traduzir"], "answer": 1 },
+      { "question": "O que é 'Fault Tolerance'?", "options": ["Erro digitação", "Tolerância a falhas", "Aumento", "Fim"], "answer": 1 }
+    ]
+  },
+  "informatics": {
+    "easy": [
+      { "question": "O que é a CPU?", "options": ["Monitor", "Teclado", "Processador", "Mouse"], "answer": 2 },
+      { "question": "O que é RAM?", "options": ["Memória Volátil", "Monitor", "Cabo", "Fonte"], "answer": 0 },
+      { "question": "O que é o Windows?", "options": ["Browser", "Sistema Operacional", "Hardware", "Antivírus"], "answer": 1 }
+    ],
+    "medium": [
+      { "question": "O que faz o F5?", "options": ["Fecha", "Atualiza", "Abre", "Imprime"], "answer": 1 },
+      { "question": "O que é HTTP?", "options": ["Protocolo Transferência", "Processo Técnico", "Ferramenta", "Caminho"], "answer": 0 },
+      { "question": "O que é Kernel?", "options": ["Interface", "Núcleo SO", "Vírus", "Teclado"], "answer": 1 }
+    ],
+    "hard": [
+      { "question": "O que é BIOS?", "options": ["SO Moderno", "Firmware Inicialização", "Vírus", "Manual"], "answer": 1 },
+      { "question": "O que é um ataque DDoS?", "options": ["Vírus", "Negação de Serviço", "Espionagem", "Soma"], "answer": 1 },
+      { "question": "O que é Virtualização?", "options": ["PC brinquedo", "Rodar múltiplos SOs", "Óculos VR", "Navegar"], "answer": 1 }
+    ],
+    "extreme": [
+      { "question": "O que é o Modelo OSI?", "options": ["Monitor", "Padrão arquitetura rede", "SO novo", "Marca PC"], "answer": 1 },
+      { "question": "O que é Criptografia Assimétrica?", "options": ["Par chaves pública/privada", "Uma única chave", "Sem chave", "Nenhuma"], "answer": 0 },
+      { "question": "O que faz um Load Balancer?", "options": ["Limpa o HD", "Distribui tráfego", "Carrega bateria", "Muda cor"], "answer": 1 },
+      { "question": "O que é um ataque 'Zero-Day'?", "options": ["Dura 1 dia", "Explora falha desconhecida", "Senha expira", "Nenhuma"], "answer": 1 }
+    ]
+  },
+  "data_science": {
+    "easy": [
+      { "question": "O que é SGBD?", "options": ["Gestão Banco", "Software Gráfico", "Servidor", "Sequência"], "answer": 0 },
+      { "question": "O que é MER?", "options": ["Execução", "Entidade-Relacionamento", "Entrada", "Erro"], "answer": 1 },
+      { "question": "Comando SQL para extrair?", "options": ["INSERT", "CREATE", "SELECT", "UPDATE"], "answer": 2 }
+    ],
+    "medium": [
+      { "question": "Chave Primária serve para?", "options": ["Criptografar", "Identificar único", "Duplicar", "Ligar PC"], "answer": 1 },
+      { "question": "O que faz o UPDATE?", "options": ["Deleta", "Modifica", "Insere", "Cria"], "answer": 1 },
+      { "question": "O que é um Outlier?", "options": ["Dado comum", "Valor atípico/fora padrão", "Erro código", "Gráfico"], "answer": 1 }
+    ],
+    "hard": [
+      { "question": "O que é ETL?", "options": ["Lógica", "Extração, Transf, Carga", "Execução", "Edição"], "answer": 1 },
+      { "question": "O que é Data Warehouse?", "options": ["Sala Servidor", "Otimizado para análise", "Pendrive", "Download"], "answer": 1 },
+      { "question": "O que é Overfitting?", "options": ["Modelo perfeito", "Modelo decora dados", "Modelo rápido", "Nenhuma"], "answer": 1 }
+    ],
+    "extreme": [
+      { "question": "O que é Aprendizado Profundo (Deep Learning)?", "options": ["Redes Neurais multicamadas", "Ler livros", "Apenas SQL", "Nenhuma"], "answer": 0 },
+      { "question": "O que é o algoritmo Random Forest?", "options": ["Plantar árvores", "Conjunto de árvores decisão", "Mapa", "Nenhuma"], "answer": 1 },
+      { "question": "O que é Redução de Dimensionalidade?", "options": ["Diminuir PC", "Simplificar dados/variáveis", "Deletar banco", "Nenhuma"], "answer": 1 },
+      { "question": "O que é uma Redução MapReduce?", "options": ["Diminuir mapa", "Processamento distribuído", "Erro SQL", "Nenhuma"], "answer": 1 }
+    ]
+  }
+}
