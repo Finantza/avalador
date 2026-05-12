@@ -41,9 +41,13 @@ const QuestionDB = {
     },
 
     async save(subject, difficulty, questionData) {
-        const transaction = this.db.transaction(['questions'], 'readwrite');
-        const store = transaction.objectStore('questions');
-        store.add({ ...questionData, subject, difficulty, timestamp: Date.now() });
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction(['questions'], 'readwrite');
+            const store = transaction.objectStore('questions');
+            const request = store.add({ ...questionData, subject, difficulty, timestamp: Date.now() });
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject();
+        });
     },
 
     async getAll(subject, difficulty) {
@@ -60,22 +64,27 @@ const QuestionDB = {
     },
 
     async markSeen(subject, difficulty, questions) {
-        const key = `${subject}_${difficulty}`;
-        const transaction = this.db.transaction(['seen'], 'readwrite');
-        const store = transaction.objectStore('seen');
-        const request = store.get(key);
-        
-        const questionTexts = Array.isArray(questions) ? questions.map(q => q.question) : [questions.question];
-        
-        request.onsuccess = () => {
-            let data = request.result || { key, list: [] };
-            questionTexts.forEach(txt => {
-                if (!data.list.includes(txt)) {
-                    data.list.push(txt);
-                }
-            });
-            store.put(data);
-        };
+        return new Promise((resolve, reject) => {
+            const key = `${subject}_${difficulty}`;
+            const transaction = this.db.transaction(['seen'], 'readwrite');
+            const store = transaction.objectStore('seen');
+            const getRequest = store.get(key);
+            
+            const questionTexts = Array.isArray(questions) ? questions.map(q => q.question) : [questions.question];
+            
+            getRequest.onsuccess = () => {
+                let data = getRequest.result || { key, list: [] };
+                questionTexts.forEach(txt => {
+                    if (!data.list.includes(txt)) {
+                        data.list.push(txt);
+                    }
+                });
+                const putRequest = store.put(data);
+                putRequest.onsuccess = () => resolve();
+                putRequest.onerror = () => reject();
+            };
+            getRequest.onerror = () => reject();
+        });
     },
 
     async getSeen(subject, difficulty) {
@@ -631,31 +640,36 @@ async function startQuiz() {
     
     availablePool = availablePool.filter(q => !seenList.includes(q.question));
     
-    // If pool is too small, reset cycle but keep very recent ones excluded
-    if (availablePool.length < 10) {
-        console.log(`[ONYX] Pool de questões (${subject}/${difficulty}) esgotado. Reiniciando ciclo...`);
-        const recentlySeen = seenList.slice(-7); // Keep the last 7 to avoid immediate repeats
-        await QuestionDB.resetSeen(subject, difficulty);
-        
-        // Re-mark recently seen questions
-        recentlySeen.forEach(async txt => {
-            await QuestionDB.markSeen(subject, difficulty, { question: txt });
-        });
-        
-        const freshPool = await QuestionDB.getAll(subject, difficulty);
-        availablePool = freshPool.filter(q => !recentlySeen.includes(q.question));
-    }
+        // If pool is too small, reset cycle but keep very recent ones excluded
+        if (availablePool.length < 10) {
+            console.log(`[ONYX] Pool de questões (${subject}/${difficulty}) esgotado. Reiniciando ciclo...`);
+            const recentlySeen = seenList.slice(-7); // Keep the last 7 to avoid immediate repeats
+            await QuestionDB.resetSeen(subject, difficulty);
+            
+            // Re-mark recently seen questions (sequentially to avoid race conditions)
+            for (const txt of recentlySeen) {
+                await QuestionDB.markSeen(subject, difficulty, { question: txt });
+            }
+            
+            const freshPool = await QuestionDB.getAll(subject, difficulty);
+            availablePool = freshPool.filter(q => !recentlySeen.includes(q.question));
+        }
 
-    // Mix 10 static questions with 5 fresh AI questions
-    const selectedStatic = shuffleAndSlice(availablePool, 10);
-    const selectedAI = (await generateQuestions(subject, difficulty)).slice(0, 5);
-    
-    // Mark static questions as seen
-    QuestionDB.markSeen(subject, difficulty, selectedStatic);
-    // Mark AI questions as seen as well (even though they are new, they shouldn't repeat in next test)
-    QuestionDB.markSeen(subject, difficulty, selectedAI);
+        // Mix 10 static questions with 5 fresh AI questions
+        const selectedStatic = shuffleAndSlice(availablePool, 10);
+        const selectedAI = (await generateQuestions(subject, difficulty)).slice(0, 5);
+        
+        const finalPool = [...selectedStatic, ...selectedAI];
+        if (finalPool.length === 0) {
+            alert("Erro crítico: Não foi possível carregar ou gerar questões para este nível. Tente mudar a dificuldade.");
+            return;
+        }
 
-    currentState.activeQuestions = shuffle([...selectedStatic, ...selectedAI]);
+        // Mark as seen (sequentially)
+        await QuestionDB.markSeen(subject, difficulty, selectedStatic);
+        await QuestionDB.markSeen(subject, difficulty, selectedAI);
+
+        currentState.activeQuestions = shuffle(finalPool);
     
     const subLabels = { 'logic': 'Lógica', 'english': 'Inglês', 'informatics': 'Informática', 'data_science': 'Armazenamento e Tratamento' };
     displayName.textContent = `${name} | ${subLabels[currentState.subject]} (${getDifficultyLabel(currentState.difficulty)})`;
