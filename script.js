@@ -1,5 +1,5 @@
-import { OnyxEngines } from './onyx_engines.js';
-import { OnyxUI } from './onyx_ui.js';
+// ONYX APP CORE
+// Global scripts used for local file compatibility (no modules needed)
 
 // --- ADVANCED KNOWLEDGE DATABASE MANAGER (IndexedDB) ---
 const QuestionDB = {
@@ -310,22 +310,34 @@ const difficultyBtns = document.querySelectorAll('.btn-difficulty');
 
 // --- INITIALIZATION ---
 async function init() {
+    console.log("[ONYX] Iniciando sistema...");
     OnyxUI.updateStatus('init...');
     OnyxUI.initClock();
 
+    // Force splash hide after delay
     setTimeout(() => {
-        showScreen('welcome');
         const splash = document.getElementById('splash-screen');
-        if (splash) splash.style.display = 'none';
-        OnyxUI.updateStatus('ready');
-    }, 800);
+        if (splash && splash.style.display !== 'none') {
+            console.log("[ONYX] Ocultando splash screen.");
+            splash.style.opacity = '0';
+            setTimeout(() => {
+                splash.style.display = 'none';
+                showScreen('welcome');
+            }, 600);
+        }
+    }, 1500);
 
     try {
+        console.log("[ONYX] Inicializando Banco de Dados...");
         await QuestionDB.init();
+        console.log("[ONYX] DB pronto. Atualizando interface...");
         updateDBStats();
         updateDifficultyLocks();
+        OnyxUI.updateStatus('ready');
     } catch (err) {
-        console.error("[ONYX] DB Init Fail:", err);
+        console.error("[ONYX] Erro crítico na inicialização:", err);
+        OnyxUI.updateStatus('error');
+        showScreen('welcome');
     }
 
     setupEventListeners();
@@ -399,7 +411,6 @@ async function startQuiz() {
     const subject = currentState.subject;
     const difficulty = currentState.difficulty;
     
-    // Load Initial Pool
     let availablePool = await QuestionDB.getAll(subject, difficulty);
     const seenList = await QuestionDB.getSeen(subject, difficulty);
     availablePool = availablePool.filter(q => !seenList.includes(q.question));
@@ -409,17 +420,14 @@ async function startQuiz() {
         availablePool = await QuestionDB.getAll(subject, difficulty);
     }
 
-    // Select up to 10 questions
     const selectedFromPool = OnyxEngines.shuffle(availablePool).slice(0, 10);
     
-    // AI / Heuristic questions if needed
     let selectedAI = [];
     if (selectedFromPool.length < 10) {
         selectedAI = await generateAIQuestions(subject, difficulty, 10 - selectedFromPool.length);
     }
     
     currentState.activeQuestions = OnyxEngines.shuffle([...selectedFromPool, ...selectedAI]);
-
     await QuestionDB.markSeen(subject, difficulty, currentState.activeQuestions);
 
     OnyxUI.updateStatus('active');
@@ -495,7 +503,6 @@ function selectOption(index, btn) {
     const allBtns = optionsContainer.querySelectorAll('.option-btn');
     const isCorrect = (index === q.answer);
 
-    // Update Profile
     if (currentState.profile) {
         currentState.profile.update(q, isCorrect);
     }
@@ -518,7 +525,6 @@ function selectOption(index, btn) {
         }
     }
 
-    // Show reasoning or feedback
     if (q.explanation) {
         OnyxUI.addReasoningLog(`Explicação: ${q.explanation}`);
     }
@@ -527,7 +533,6 @@ function selectOption(index, btn) {
     setTimeout(async () => {
         currentState.currentQuestionIndex++;
         if (currentState.currentQuestionIndex < currentState.activeQuestions.length) {
-            // Adaptive logic: if we reached question 5, maybe adjust remaining questions
             if (currentState.currentQuestionIndex === 5 && currentState.profile) {
                 await adaptRemainingQuestions();
             }
@@ -549,7 +554,6 @@ async function adaptRemainingQuestions() {
     
     if (newBatch.length > 0) {
         const replacement = OnyxEngines.shuffle(newBatch).slice(0, 5);
-        // Replace questions from index currentQuestionIndex to the end
         currentState.activeQuestions.splice(currentState.currentQuestionIndex, 5, ...replacement);
     }
 }
@@ -572,7 +576,6 @@ function finishQuiz() {
         difficulty: currentState.difficulty
     });
 
-    // Progression
     if (currentState.score / currentState.activeQuestions.length >= 0.6) {
         const progression = ['easy', 'medium', 'hard', 'insane', 'impossible'];
         const next = progression[progression.indexOf(currentState.difficulty) + 1];
@@ -615,8 +618,10 @@ function handleTimeOut() {
 }
 
 function showScreen(key) {
-    Object.values(screens).forEach(s => s.classList.remove('active'));
-    screens[key].classList.add('active');
+    Object.values(screens).forEach(s => {
+        if (s) s.classList.remove('active');
+    });
+    if (screens[key]) screens[key].classList.add('active');
 }
 
 function getSubjectLabel(s) {
@@ -716,35 +721,6 @@ function hideRanking() {
 
 function restartQuiz() {
     showScreen('welcome');
-}
-
-// Audio Feedback System
-OnyxUI.playFeedback = (type) => {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    
-    if (type === 'success') {
-        osc.frequency.setValueAtTime(880, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.1);
-    } else if (type === 'error') {
-        osc.frequency.setValueAtTime(220, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(110, ctx.currentTime + 0.2);
-    } else {
-        osc.frequency.setValueAtTime(440, ctx.currentTime);
-    }
-
-    gain.gain.setValueAtTime(0.1, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-    
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.3);
-};
-
-async function checkChallenge() {
-    // Basic challenge logic kept for compatibility
 }
 
 init();

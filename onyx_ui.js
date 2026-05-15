@@ -1,9 +1,9 @@
 /**
  * ONYX UI MODULE
- * Handles animations, particles, code rain, and system status updates.
+ * Global scope assignment for local file compatibility.
  */
 
-export const OnyxUI = {
+window.OnyxUI = {
     // Particle Burst Effect
     createParticles(x, y, color) {
         const count = 12;
@@ -66,6 +66,38 @@ export const OnyxUI = {
         // Keep only last 10 logs
         if (container.children.length > 10) {
             container.removeChild(container.firstChild);
+        }
+    },
+
+    // Audio Feedback System
+    playFeedback(type) {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            
+            if (type === 'success') {
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.1);
+            } else if (type === 'error') {
+                osc.frequency.setValueAtTime(220, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(110, ctx.currentTime + 0.2);
+            } else if (type === 'click') {
+                osc.frequency.setValueAtTime(440, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.05);
+            } else {
+                osc.frequency.setValueAtTime(440, ctx.currentTime);
+            }
+
+            gain.gain.setValueAtTime(0.1, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+            
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.3);
+        } catch (e) {
+            console.warn("[ONYX] Audio Error:", e);
         }
     },
 

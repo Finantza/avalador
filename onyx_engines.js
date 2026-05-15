@@ -1,9 +1,9 @@
 /**
  * ONYX ENGINES MODULE
- * Specialized heuristic question generators for various technical subjects.
+ * Global scope assignment for local file compatibility.
  */
 
-export const OnyxEngines = {
+window.OnyxEngines = {
     // Helper to shuffle options
     shuffle(array) {
         const arr = [...array];

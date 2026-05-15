@@ -22,6 +22,11 @@
         0 10px 10px -5px rgba(0, 0, 0, 0.4),
         inset 0 1px 1px rgba(255, 255, 255, 0.05);
     --shadow-glow: 0 0 30px var(--primary-glow);
+    
+    /* Text Variants */
+    --text-bright: #ffffff;
+    --text-dim: #94a3b8;
+    --accent-primary: #6366f1;
 }
 
 /* Base Styles */
