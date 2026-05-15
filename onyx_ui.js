@@ -4,26 +4,26 @@
  */
 
 window.OnyxUI = {
-    // Particle Burst Effect
+    // Particle Burst Effect (Enhanced)
     createParticles(x, y, color) {
-        const count = 12;
+        const count = 16;
         for (let i = 0; i < count; i++) {
             const p = document.createElement('div');
             p.className = 'particle';
             p.style.cssText = `
                 position: fixed;
-                width: 6px;
-                height: 6px;
+                width: ${Math.random() * 6 + 4}px;
+                height: ${Math.random() * 6 + 4}px;
                 background-color: ${color};
                 border-radius: 50%;
                 pointer-events: none;
                 z-index: 20000;
                 left: ${x}px;
                 top: ${y}px;
-                box-shadow: 0 0 10px ${color};
+                box-shadow: 0 0 15px ${color};
             `;
             const angle = Math.random() * Math.PI * 2;
-            const velocity = Math.random() * 100 + 40;
+            const velocity = Math.random() * 120 + 60;
             const tx = Math.cos(angle) * velocity;
             const ty = Math.sin(angle) * velocity;
             
@@ -33,12 +33,12 @@ window.OnyxUI = {
                 { transform: 'translate(0, 0) scale(1)', opacity: 1 },
                 { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }
             ], {
-                duration: 800,
+                duration: 1000,
                 easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)',
                 fill: 'forwards'
             });
             
-            setTimeout(() => p.remove(), 800);
+            setTimeout(() => p.remove(), 1000);
         }
     },
 
@@ -63,8 +63,7 @@ window.OnyxUI = {
         container.appendChild(line);
         container.scrollTop = container.scrollHeight;
 
-        // Keep only last 10 logs
-        if (container.children.length > 10) {
+        if (container.children.length > 12) {
             container.removeChild(container.firstChild);
         }
     },
@@ -86,10 +85,10 @@ window.OnyxUI = {
                 osc.frequency.setValueAtTime(440, ctx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.05);
             } else {
-                osc.frequency.setValueAtTime(440, ctx.currentTime);
+                osc.frequency.setValueAtTime(660, ctx.currentTime);
             }
 
-            gain.gain.setValueAtTime(0.1, ctx.currentTime);
+            gain.gain.setValueAtTime(0.05, ctx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
             
             osc.connect(gain);
@@ -106,6 +105,55 @@ window.OnyxUI = {
         const insightArea = document.getElementById('reasoning-insight');
         if (container) container.innerHTML = '';
         if (insightArea) insightArea.classList.remove('active');
+    },
+
+    // --- PREMIUM SPLASH SYSTEM ---
+    initCodeRain() {
+        const container = document.getElementById('code-rain');
+        if (!container) return;
+        container.innerHTML = '';
+        const columns = Math.floor(window.innerWidth / 20);
+        
+        for (let i = 0; i < columns; i++) {
+            const drop = document.createElement('div');
+            drop.className = 'code-line';
+            drop.style.left = `${i * 20}px`;
+            drop.style.animationDuration = `${Math.random() * 3 + 2}s`;
+            drop.style.animationDelay = `${Math.random() * 2}s`;
+            
+            let text = "";
+            for(let j=0; j<20; j++) text += String.fromCharCode(0x30A0 + Math.random() * 96);
+            drop.textContent = text;
+            container.appendChild(drop);
+        }
+    },
+
+    async startBootSequence() {
+        const logs = [
+            "KERNEL: ONYX_CORE_v2.0.4 LOADED",
+            "MEM: 64GB VIRTUAL ALLOCATED",
+            "NET: SYNCING WITH GLOBAL_INTEL_NET...",
+            "DB: INDEXED_DB_v2 CONNECTED",
+            "AI: HEURISTIC_ENGINE_v4 ONLINE",
+            "SEC: ENCRYPTION_LAYERS_ACTIVE",
+            "UI: GLASSMORPHISM_v2 RENDERED",
+            "STATUS: SYSTEM_READY_FOR_ASSESSMENT"
+        ];
+        
+        for (const log of logs) {
+            this.addLogToSplash(log);
+            await new Promise(r => setTimeout(r, 80 + Math.random() * 100));
+        }
+    },
+
+    addLogToSplash(text) {
+        const container = document.getElementById('terminal-logs');
+        if (!container) return;
+        const line = document.createElement('div');
+        line.className = 'log-line';
+        line.textContent = `> ${text}`;
+        container.appendChild(line);
+        if (container.children.length > 6) container.removeChild(container.firstChild);
     },
 
     // Time Clock

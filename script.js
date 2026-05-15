@@ -55,6 +55,17 @@ const QuestionDB = {
     },
 
     async getByNivel(subject, level) {
+        if (subject === 'random') {
+            let pool = [];
+            if (this.staticPool) {
+                Object.keys(this.staticPool).forEach(sub => {
+                    if (this.staticPool[sub][level]) {
+                        pool = [...pool, ...this.staticPool[sub][level]];
+                    }
+                });
+            }
+            return pool;
+        }
         return (this.staticPool && this.staticPool[subject] && this.staticPool[subject][level]) || [];
     },
 
@@ -70,14 +81,31 @@ const QuestionDB = {
 
     async getAll(subject, difficulty) {
         return new Promise((resolve) => {
-            const staticSet = (this.staticPool && this.staticPool[subject] && this.staticPool[subject][difficulty]) || [];
+            let staticSet = [];
+            if (subject === 'random') {
+                if (this.staticPool) {
+                    Object.keys(this.staticPool).forEach(sub => {
+                        if (this.staticPool[sub][difficulty]) {
+                            staticSet = [...staticSet, ...this.staticPool[sub][difficulty]];
+                        }
+                    });
+                }
+            } else {
+                staticSet = (this.staticPool && this.staticPool[subject] && this.staticPool[subject][difficulty]) || [];
+            }
+            
             if (!this.db) return resolve([...staticSet]);
             
             const transaction = this.db.transaction(['questions'], 'readonly');
             const store = transaction.objectStore('questions');
             const request = store.getAll();
             request.onsuccess = () => {
-                const filtered = request.result.filter(q => q.subject === subject && q.difficulty === difficulty);
+                let filtered;
+                if (subject === 'random') {
+                    filtered = request.result.filter(q => q.difficulty === difficulty);
+                } else {
+                    filtered = request.result.filter(q => q.subject === subject && q.difficulty === difficulty);
+                }
                 resolve([...staticSet, ...filtered]);
             };
         });
@@ -441,16 +469,23 @@ async function startQuiz() {
 
 async function generateAIQuestions(subject, difficulty, count) {
     const questions = [];
+    const subjectsWithEngines = ['frontend', 'backend', 'cybersecurity', 'cloud_devops', 'logic', 'python', 'sql', 'data_science'];
+    
     for (let i = 0; i < count; i++) {
+        let activeSubject = subject;
+        if (subject === 'random') {
+            activeSubject = subjectsWithEngines[Math.floor(Math.random() * subjectsWithEngines.length)];
+        }
+
         let q;
-        if (subject === 'frontend') q = OnyxEngines.engineFrontend(difficulty);
-        else if (subject === 'backend') q = OnyxEngines.engineBackend(difficulty);
-        else if (subject === 'cybersecurity') q = OnyxEngines.engineCybersecurity(difficulty);
-        else if (subject === 'cloud_devops') q = OnyxEngines.engineCloudDevops(difficulty);
-        else q = OnyxEngines.engineHybrid(subject, difficulty);
+        if (activeSubject === 'frontend') q = OnyxEngines.engineFrontend(difficulty);
+        else if (activeSubject === 'backend') q = OnyxEngines.engineBackend(difficulty);
+        else if (activeSubject === 'cybersecurity') q = OnyxEngines.engineCybersecurity(difficulty);
+        else if (activeSubject === 'cloud_devops') q = OnyxEngines.engineCloudDevops(difficulty);
+        else q = OnyxEngines.engineHybrid(activeSubject, difficulty);
         
         questions.push(q);
-        await QuestionDB.save(subject, difficulty, q);
+        await QuestionDB.save(activeSubject, difficulty, q);
     }
     return questions;
 }
@@ -643,7 +678,8 @@ function getSubjectLabel(s) {
         poo: 'POO',
         algoritmos: 'Algoritmos',
         philosophy: 'Filosofia',
-        cryptography: 'Criptografia'
+        cryptography: 'Criptografia',
+        random: 'Aleatórios'
     };
     return labels[s] || s;
 }
