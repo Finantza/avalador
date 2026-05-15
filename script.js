@@ -568,12 +568,63 @@ function selectOption(index, btn) {
     setTimeout(async () => {
         currentState.currentQuestionIndex++;
         if (currentState.currentQuestionIndex < currentState.activeQuestions.length) {
+            // Random Challenge Trigger (15% chance)
+            if (Math.random() < 0.15) {
+                triggerRandomChallenge();
+                return; // Stop until challenge is done
+            }
+
             if (currentState.currentQuestionIndex === 5 && currentState.profile) {
                 await adaptRemainingQuestions();
             }
             loadQuestion();
         } else finishQuiz();
     }, isCorrect ? 800 : 3000);
+}
+
+function triggerRandomChallenge() {
+    const challenges = [
+        { t: "Qual o comando para listar arquivos em Linux?", a: "ls" },
+        { t: "O que significa CSS?", a: "Cascading Style Sheets" },
+        { t: "Qual a tag HTML para links?", a: "a" },
+        { t: "Quanto é 2 + 2 * 2?", a: "6" },
+        { t: "Qual o protocolo padrão da Web?", a: "http" }
+    ];
+    const pick = challenges[Math.floor(Math.random() * challenges.length)];
+    
+    challengeTask.textContent = pick.t;
+    challengeInput.value = "";
+    challengeInput.dataset.answer = pick.a;
+    
+    challengeWarning.classList.add('active');
+    setTimeout(() => {
+        challengeWarning.classList.remove('active');
+        challengeOverlay.classList.add('active');
+        challengeInput.focus();
+    }, 2000);
+}
+
+function checkChallenge() {
+    const val = challengeInput.value.trim().toLowerCase();
+    const ans = challengeInput.dataset.answer.toLowerCase();
+    
+    challengeOverlay.classList.remove('active');
+    
+    if (val === ans) {
+        OnyxUI.addReasoningLog("DESAFIO CONCLUÍDO: Bônus de XP concedido.");
+        currentState.score += 0.5; // Bonus
+        OnyxUI.playFeedback('success');
+    } else {
+        OnyxUI.addReasoningLog("DESAFIO FALHOU: Resposta incorreta.");
+        OnyxUI.playFeedback('error');
+    }
+    
+    // Continue quiz
+    if (currentState.currentQuestionIndex === 5 && currentState.profile) {
+        adaptRemainingQuestions().then(() => loadQuestion());
+    } else {
+        loadQuestion();
+    }
 }
 
 async function adaptRemainingQuestions() {
