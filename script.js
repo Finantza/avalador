@@ -583,6 +583,7 @@ function selectOption(index, btn) {
 }
 
 function triggerRandomChallenge() {
+    OnyxUI.playFeedback('alert');
     const challenges = [
         { t: "Qual o comando para listar arquivos em Linux?", a: "ls" },
         { t: "O que significa CSS?", a: "Cascading Style Sheets" },

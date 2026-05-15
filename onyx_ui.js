@@ -84,6 +84,12 @@ window.OnyxUI = {
             } else if (type === 'click') {
                 osc.frequency.setValueAtTime(440, ctx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.05);
+            } else if (type === 'alert') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(440, ctx.currentTime + 0.1);
+                osc.frequency.linearRampToValueAtTime(220, ctx.currentTime + 0.2);
+                osc.frequency.linearRampToValueAtTime(440, ctx.currentTime + 0.3);
             } else {
                 osc.frequency.setValueAtTime(660, ctx.currentTime);
             }
