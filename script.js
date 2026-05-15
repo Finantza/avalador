@@ -122,7 +122,9 @@ let currentState = {
     currentQuestionIndex: 0,
     score: 0,
     isAnswered: false,
-    activeQuestions: []
+    activeQuestions: [],
+    timer: null,
+    timeLeft: 15
 };
 
 // DOM Elements
@@ -146,6 +148,8 @@ const finalName = document.getElementById('final-name');
 const finalScore = document.getElementById('final-score');
 const finalLevel = document.getElementById('final-level');
 const dbStatsDisplay = document.getElementById('db-stats');
+const timerContainer = document.getElementById('timer-container');
+const timerText = document.getElementById('timer-text');
 
 const subjectBtns = document.querySelectorAll('.btn-subject');
 const difficultyBtns = document.querySelectorAll('.btn-difficulty');
@@ -608,82 +612,72 @@ function getDifficultyLabel(diff) {
     return { 'easy': 'Fácil', 'medium': 'Médio', 'hard': 'Difícil', 'extreme': 'Extremo', 'insane': 'Insano' }[diff];
 }
 
-async function loadQuestion() {
-    currentState.isAnswered = false;
-    const q = currentState.activeQuestions[currentState.currentQuestionIndex];
+function startTimer() {
+    stopTimer();
+    currentState.timeLeft = 15;
+    updateTimerDisplay();
     
-    // GEMMA 4: Reasoning phase for precision
-    await OnyxCore.simulateReasoning();
-
-    progressBar.style.width = `${(currentState.currentQuestionIndex / 15) * 100}%`;
-    currentQDisplay.textContent = currentState.currentQuestionIndex + 1;
-
-    questionText.style.opacity = 0;
-    setTimeout(() => {
-        questionText.innerHTML = q.question;
-        questionText.style.opacity = 1;
-        optionsContainer.innerHTML = '';
+    currentState.timer = setInterval(() => {
+        currentState.timeLeft--;
+        updateTimerDisplay();
         
-        // Find max length for character alignment
-        const maxLen = Math.max(...q.options.map(opt => opt.toString().length)) + 2;
+        if (currentState.timeLeft <= 5) {
+            timerContainer.classList.add('warning');
+        } else {
+            timerContainer.classList.remove('warning');
+        }
         
-        q.options.forEach((opt, index) => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            
-            // Pad options to have the same number of characters
-            let paddedOpt = opt.toString();
-            while (paddedOpt.length < maxLen) {
-                paddedOpt += ' '; // Use normal space (white-space: pre handles it)
-            }
-            
-            btn.textContent = paddedOpt;
-            btn.onclick = () => selectOption(index, btn);
-            optionsContainer.appendChild(btn);
-        });
-    }, 200);
+        if (currentState.timeLeft <= 0) {
+            stopTimer();
+            handleTimeOut();
+        }
+    }, 1000);
 }
 
-function selectOption(index, btn) {
+function stopTimer() {
+    if (currentState.timer) {
+        clearInterval(currentState.timer);
+        currentState.timer = null;
+    }
+}
+
+function updateTimerDisplay() {
+    timerText.textContent = `${currentState.timeLeft}s`;
+}
+
+function handleTimeOut() {
     if (currentState.isAnswered) return;
-    currentState.isAnswered = true;
+    
     const q = currentState.activeQuestions[currentState.currentQuestionIndex];
     const allBtns = optionsContainer.querySelectorAll('.option-btn');
-
-    if (index === q.answer) {
-        currentState.score++;
-        btn.classList.add('correct');
-    } else {
-        btn.classList.add('wrong');
-        allBtns[q.answer].classList.add('correct');
-    }
-
+    
+    currentState.isAnswered = true;
+    
+    // Show correct answer
+    allBtns[q.answer].classList.add('correct');
+    
+    // Scramble the question text to say "TIME EXPIRED"
+    scrambleText(questionText, "TEMPO ESGOTADO!");
+    
     setTimeout(() => {
         currentState.currentQuestionIndex++;
         if (currentState.currentQuestionIndex < 15) loadQuestion();
         else finishQuiz();
-    }, 1200);
+    }, 2000);
 }
-
-function finishQuiz() {
-    progressBar.style.width = '100%';
-    finalName.textContent = currentState.studentName;
-    finalScore.textContent = currentState.score;
-    finalLevel.textContent = getDifficultyLabel(currentState.difficulty);
-    showScreen('results');
-}
-
-function restartQuiz() { showScreen('welcome'); inputName.value = ""; }
 
 async function loadQuestion() {
     currentState.isAnswered = false;
     const q = currentState.activeQuestions[currentState.currentQuestionIndex];
     
+    // Show reasoning indicator without blocking
+    if (OnyxCore.simulateReasoning) OnyxCore.simulateReasoning();
+
     progressBar.style.width = `${(currentState.currentQuestionIndex / 15) * 100}%`;
     currentQDisplay.textContent = currentState.currentQuestionIndex + 1;
 
-    // Scramble Effect for the question
-    scrambleText(questionText, q.question);
+    // Set text instantly instead of scrambling
+    questionText.textContent = q.question;
     
     optionsContainer.innerHTML = '';
     const maxLen = Math.max(...q.options.map(opt => opt.toString().length)) + 2;
@@ -701,6 +695,54 @@ async function loadQuestion() {
         btn.onclick = () => selectOption(index, btn);
         optionsContainer.appendChild(btn);
     });
+
+    startTimer();
+}
+
+function selectOption(index, btn) {
+    if (currentState.isAnswered) return;
+    stopTimer();
+    currentState.isAnswered = true;
+    
+    const q = currentState.activeQuestions[currentState.currentQuestionIndex];
+    const allBtns = optionsContainer.querySelectorAll('.option-btn');
+
+    const isCorrect = (index === q.answer);
+
+    if (isCorrect) {
+        btn.classList.add('correct');
+        currentState.score++;
+        if (OnyxCore.playFeedback) OnyxCore.playFeedback('success');
+    } else {
+        btn.classList.add('wrong');
+        allBtns[q.answer].classList.add('correct');
+        if (OnyxCore.playFeedback) OnyxCore.playFeedback('error');
+    }
+
+    // "quando o jogador acerta a questao ela deve iir automaticamente para proximo"
+    // If correct, go fast. If wrong, wait a bit to show correct answer.
+    const delay = isCorrect ? 600 : 1200;
+
+    setTimeout(() => {
+        currentState.currentQuestionIndex++;
+        if (currentState.currentQuestionIndex < 15) loadQuestion();
+        else finishQuiz();
+    }, delay);
+}
+
+function finishQuiz() {
+    stopTimer();
+    progressBar.style.width = '100%';
+    finalName.textContent = currentState.studentName;
+    finalScore.textContent = currentState.score;
+    finalLevel.textContent = getDifficultyLabel(currentState.difficulty);
+    showScreen('results');
+}
+
+function restartQuiz() { 
+    stopTimer();
+    showScreen('welcome'); 
+    inputName.value = ""; 
 }
 
 function scrambleText(element, targetText) {
@@ -717,29 +759,6 @@ function scrambleText(element, targetText) {
         if (iteration >= targetText.length) clearInterval(interval);
         iteration += 1 / 2; // Speed of decryption
     }, 30);
-}
-
-function selectOption(index, btn) {
-    if (currentState.isAnswered) return;
-    currentState.isAnswered = true;
-    const q = currentState.activeQuestions[currentState.currentQuestionIndex];
-    const allBtns = optionsContainer.querySelectorAll('.option-btn');
-
-    if (index === q.answer) {
-        btn.classList.add('correct');
-        currentState.score++;
-        OnyxCore.playFeedback('success');
-    } else {
-        btn.classList.add('wrong');
-        allBtns[q.answer].classList.add('correct');
-        OnyxCore.playFeedback('error');
-    }
-
-    setTimeout(() => {
-        currentState.currentQuestionIndex++;
-        if (currentState.currentQuestionIndex < 15) loadQuestion();
-        else finishQuiz();
-    }, 800); // Faster next question
 }
 
 function downloadReport() {

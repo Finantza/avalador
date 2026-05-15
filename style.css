@@ -465,6 +465,36 @@ input[type="text"]:focus {
     transition: width 0.4s ease;
 }
 
+/* Timer Styles */
+.timer-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    font-weight: 700;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    min-width: 85px;
+    justify-content: center;
+    color: var(--accent);
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.1);
+}
+
+.timer-container.warning {
+    color: var(--error);
+    border-color: var(--error);
+    background: rgba(239, 68, 68, 0.1);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+    animation: pulse-timer 0.5s infinite alternate;
+}
+
+@keyframes pulse-timer {
+    from { transform: scale(1); }
+    to { transform: scale(1.08); }
+}
+
 #question-text {
     font-size: clamp(1.2rem, 4vw, 1.5rem);
     line-height: 1.4;
