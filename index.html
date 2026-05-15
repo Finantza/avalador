@@ -1,25 +1,20 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avaliação Ciência de Dados | ONYX Core</title>
-    <meta name="description" content="Plataforma de avaliação para estudantes de tecnologia e ciência de dados.">
+    <title>AVALIAÇÃO DE TECNOLOGIA | Plataforma Premium</title>
+    <meta name="description" content="Sistema avançado de avaliação técnica e acadêmica com inteligência artificial.">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Splash Screen -->
     <div id="splash-screen">
         <div class="code-rain" id="code-rain"></div>
         <div class="splash-content">
-            <div class="onyx-logo">AVALIAÇÃO<span> CIÊNCIA DE DADOS</span></div>
-            <div class="loader-bar">
-                <div class="loader-fill"></div>
-            </div>
-            <div class="status-text">Inicializando Sistemas Neural...</div>
+            <div class="onyx-logo">AVALIAÇÃO DE<span> TECNOLOGIA</span></div>
         </div>
     </div>
 
@@ -33,8 +28,9 @@
         <!-- Screen 1: Welcome -->
         <section id="screen-welcome" class="screen active">
             <div class="card glass">
+                <div class="card-glare"></div>
                 <header>
-                    <div class="logo">AVALIAÇÃO<span> CIÊNCIA DE DADOS</span></div>
+                    <div class="logo">AVALIAÇÃO DE<span> TECNOLOGIA</span></div>
                     <h1>Bem-vindo à Avaliação</h1>
                     <p>TREINAMENTO EM TECNOLOGIA</p>
                     <div class="db-stats" id="db-stats">Sincronizando Banco de Dados...</div>
@@ -42,72 +38,97 @@
                         <span class="icon">⛶</span>
                     </button>
                 </header>
-                
+
                 <div class="input-group">
-                    <label for="student-name">Qual é o seu nome?</label>
-                    <input type="text" id="student-name" placeholder="Digite seu nome completo" autocomplete="off">
+                    <label for="student-name">NOME DO ALUNO (NOME COMPLETO)</label>
+                    <input type="text" id="student-name" placeholder="Ex: João Silva Santos" autocomplete="off">
                 </div>
 
-                <div class="selection-group">
-                    <h2>Selecione a Matéria</h2>
-                    <div class="subject-options">
-                        <button class="btn-subject active" data-subject="logic">
-                            <span class="icon">💻</span>
-                            <span class="label">Lógica</span>
-                        </button>
-                        <button class="btn-subject" data-subject="english">
-                            <span class="icon">🇬🇧</span>
-                            <span class="label">Inglês</span>
-                        </button>
-                        <button class="btn-subject" data-subject="informatics">
-                            <span class="icon">🖥️</span>
-                            <span class="label">Informática</span>
-                        </button>
-                        <button class="btn-subject" data-subject="data_science">
-                            <span class="icon">📊</span>
-                            <span class="label">C. de Dados</span>
-                        </button>
-                        <button class="btn-subject" data-subject="cybersecurity">
-                            <span class="icon">🛡️</span>
-                            <span class="label">Cibersegurança</span>
-                        </button>
-                        <button class="btn-subject" data-subject="software_eng">
-                            <span class="icon">⚙️</span>
-                            <span class="label">Eng. Software</span>
-                        </button>
-                        <button class="btn-subject" data-subject="philosophy">
-                            <span class="icon">🏛️</span>
-                            <span class="label">Filosofia</span>
-                        </button>
-                        <button class="btn-subject" data-subject="cryptography">
-                            <span class="icon">🔑</span>
-                            <span class="label">Criptografia</span>
-                        </button>
+                <div id="welcome-controls">
+                    <div class="selection-group">
+                        <h2>Selecione a Matéria</h2>
+                        <div class="subject-options">
+                            <button class="btn-subject active" data-subject="logic">
+                                <span class="icon">💻</span>
+                                <span class="label">Lógica</span>
+                            </button>
+                            <button class="btn-subject" data-subject="informatics">
+                                <span class="icon">🖥️</span>
+                                <span class="label">Informática</span>
+                            </button>
+                            <button class="btn-subject" data-subject="english">
+                                <span class="icon">🇬🇧</span>
+                                <span class="label">Inglês</span>
+                            </button>
+                            <button class="btn-subject" data-subject="data_science">
+                                <span class="icon">📊</span>
+                                <span class="label">C. de Dados</span>
+                            </button>
+                            <button class="btn-subject" data-subject="frontend">
+                                <span class="icon">🎨</span>
+                                <span class="label">Frontend</span>
+                            </button>
+                            <button class="btn-subject" data-subject="backend">
+                                <span class="icon">⚙️</span>
+                                <span class="label">Backend</span>
+                            </button>
+                            <button class="btn-subject" data-subject="software_eng">
+                                <span class="icon">🏗️</span>
+                                <span class="label">Eng. Software</span>
+                            </button>
+                            <button class="btn-subject" data-subject="cybersecurity">
+                                <span class="icon">🛡️</span>
+                                <span class="label">Segurança</span>
+                            </button>
+                            <button class="btn-subject" data-subject="cloud_devops">
+                                <span class="icon">☁️</span>
+                                <span class="label">DevOps</span>
+                            </button>
+                            <button class="btn-subject" data-subject="cryptography">
+                                <span class="icon">🔑</span>
+                                <span class="label">Cripto</span>
+                            </button>
+                            <button class="btn-subject" data-subject="philosophy">
+                                <span class="icon">🧠</span>
+                                <span class="label">Filosofia</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="selection-group">
+                        <h2>Nível de Desafio</h2>
+                        <div class="difficulty-options">
+                            <button class="btn-difficulty active" data-difficulty="easy">
+                                <span class="label">Fácil</span>
+                            </button>
+                            <button class="btn-difficulty" data-difficulty="medium">
+                                <span class="label">Médio</span>
+                            </button>
+                            <button class="btn-difficulty" data-difficulty="hard">
+                                <span class="label">Difícil</span>
+                            </button>
+                            <button class="btn-difficulty" data-difficulty="insane">
+                                <span class="label">Insano</span>
+                            </button>
+                            <button class="btn-difficulty btn-impossible" data-difficulty="impossible">
+                                <span class="label">Impossível</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button id="btn-start" class="btn-primary">Começar Avaliação</button>
+                    <button id="btn-show-ranking" class="btn-secondary" style="margin-top: 15px; width: 100%;">VISUALIZAR RANKING</button>
+                </div>
+
+                <div id="ranking-section" style="display: none; margin-top: 30px;">
+                    <div class="selection-group">
+                        <h2>TOP 10 PERFORMANCES</h2>
+                        <div id="ranking-list" class="ranking-list">
+                            <!-- Injected by JS -->
+                        </div>
+                        <button id="btn-hide-ranking" class="btn-secondary" style="margin-top: 20px; width: 100%;">VOLTAR</button>
                     </div>
                 </div>
-
-                <div class="selection-group">
-                    <h2>Selecione a Dificuldade</h2>
-                    <div class="difficulty-options">
-                        <button class="btn-difficulty active" data-difficulty="easy">
-                            <span class="label">Fácil</span>
-                        </button>
-                        <button class="btn-difficulty" data-difficulty="medium">
-                            <span class="label">Médio</span>
-                        </button>
-                        <button class="btn-difficulty" data-difficulty="hard">
-                            <span class="label">Difícil</span>
-                        </button>
-                        <button class="btn-difficulty" data-difficulty="insane">
-                            <span class="label">Insano</span>
-                        </button>
-                        <button class="btn-difficulty btn-impossible" data-difficulty="impossible">
-                            <span class="label">Impossível</span>
-                        </button>
-                    </div>
-                </div>
-
-                <button id="btn-start" class="btn-primary">Começar Avaliação</button>
             </div>
         </section>
 
@@ -116,13 +137,17 @@
             <div class="quiz-header">
                 <div class="student-info">
                     <span id="display-name">Aluno</span>
+                    <div class="streak-badge" id="streak-badge">
+                        <span class="fire-icon">🔥</span>
+                        <span id="streak-count">0</span>
+                    </div>
                 </div>
                 <div class="progress-container">
                     <div class="progress-bar" id="progress-bar"></div>
                 </div>
                 <div class="timer-container" id="timer-container">
                     <span class="timer-icon">⏳</span>
-                    <span id="timer-text">15s</span>
+                    <span id="timer-text">20s</span>
                 </div>
                 <div class="question-counter">
                     <span class="reasoning-indicator" id="reasoning-indicator"></span>
@@ -131,10 +156,11 @@
             </div>
 
             <div class="card glass quiz-card">
+                <div class="card-glare"></div>
                 <div id="question-container">
                     <h2 id="question-text">Carregando questão...</h2>
                     <div id="options-container" class="options-grid">
-                        <!-- Options will be injected here -->
+                        <!-- Options injected by JS -->
                     </div>
                 </div>
             </div>
@@ -143,6 +169,7 @@
         <!-- Screen 3: Results -->
         <section id="screen-results" class="screen">
             <div class="card glass results-card">
+                <div class="card-glare"></div>
                 <div class="result-icon" id="result-icon">🏆</div>
                 <h1>Parabéns, <span id="final-name">Aluno</span>!</h1>
                 <p>Você concluiu o simulado no nível <span id="final-level">Fácil</span>.</p>
@@ -162,8 +189,54 @@
                 </div>
             </div>
         </section>
+
+        <!-- Random Challenge Modal -->
+        <div id="challenge-warning" class="challenge-warning-overlay">
+            <div class="warning-text">DESAFIO ALEATÓRIO</div>
+        </div>
+
+        <div id="random-challenge" class="challenge-overlay">
+            <div class="challenge-card glass">
+                <div class="challenge-header">
+                    <span class="challenge-icon">⚡</span>
+                    <h2>DESAFIO RELÂMPAGO!</h2>
+                </div>
+                <div id="challenge-content">
+                    <p id="challenge-task"></p>
+                    <input type="text" id="challenge-input" placeholder="Sua resposta...">
+                    <button id="btn-submit-challenge" class="btn-primary">VERIFICAR</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reasoning Insight -->
+        <div id="reasoning-insight" class="reasoning-insight glass">
+            <div class="insight-header">
+                <span class="insight-icon">🧠</span>
+                <h3>ONYX ANALYSIS</h3>
+            </div>
+            <div id="insight-logs" class="insight-logs">
+                <!-- Logs injected by JS -->
+            </div>
+        </div>
     </main>
 
-    <script src="script.js"></script>
+    <footer id="system-status">
+        <div class="status-item">
+            <span class="status-dot"></span>
+            SYSTEM: <span id="status-mode">READY</span>
+        </div>
+        <div class="status-item">
+            LATENCY: <span id="status-latency">0.00ms</span>
+        </div>
+        <div class="status-item">
+            DATABASE: <span id="status-db">LOCAL_INDEXED_DB</span>
+        </div>
+        <div class="status-item time" id="current-time">
+            00:00:00
+        </div>
+    </footer>
+
+    <script type="module" src="script.js"></script>
 </body>
 </html>
