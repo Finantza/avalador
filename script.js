@@ -45,13 +45,17 @@ const QuestionDB = {
 
     async loadStaticPool() {
         try {
-            const response = await fetch('knowledge_db.json');
+            const response = await fetch('onyx_knowledge_expanded.json');
             this.staticPool = await response.json();
-            console.log("[ONYX] Base de conhecimento carregada.");
+            console.log("[ONYX] Base de conhecimento expandida carregada.");
         } catch (e) {
-            console.warn("[ONYX] Usando pool estático fallback.");
-            this.staticPool = { logic: { easy: [], medium: [], hard: [], extreme: [] } };
+            console.warn("[ONYX] Erro ao carregar base expandida. Usando fallback.");
+            this.staticPool = { logic: { easy: [], medium: [], hard: [] } };
         }
+    },
+
+    async getByNivel(subject, level) {
+        return (this.staticPool && this.staticPool[subject] && this.staticPool[subject][level]) || [];
     },
 
     async save(subject, difficulty, questionData) {
@@ -166,6 +170,88 @@ const QuestionDB = {
     }
 };
 
+// --- ASSESSMENT ENGINE PROFILE ---
+class StudentProfile {
+    constructor(name) {
+        this.name = name;
+        this.level = "easy"; // easy, medium, hard
+        this.score = 0;
+        this.totalAnswered = 0;
+        this.correctAnswers = 0;
+        this.strengths = [];
+        this.weaknesses = [];
+        this.themeHistory = {}; // theme -> {correct, total}
+        this.streak = 0;
+        this.startTime = Date.now();
+    }
+
+    update(question, isCorrect) {
+        this.totalAnswered++;
+        if (isCorrect) {
+            this.correctAnswers++;
+            this.streak++;
+        } else {
+            this.streak = 0;
+        }
+
+        const themes = question.tags || [question.subject || 'geral'];
+        themes.forEach(theme => {
+            if (!this.themeHistory[theme]) this.themeHistory[theme] = { correct: 0, total: 0 };
+            this.themeHistory[theme].total++;
+            if (isCorrect) this.themeHistory[theme].correct++;
+        });
+
+        this.recalculateStrengthsAndWeaknesses();
+        this.updateAdaptiveLevel();
+    }
+
+    recalculateStrengthsAndWeaknesses() {
+        this.strengths = [];
+        this.weaknesses = [];
+        for (const [theme, stats] of Object.entries(this.themeHistory)) {
+            if (stats.total >= 2) {
+                const rate = stats.correct / stats.total;
+                if (rate >= 0.8) this.strengths.push(theme);
+                else if (rate <= 0.4) this.weaknesses.push(theme);
+            }
+        }
+    }
+
+    updateAdaptiveLevel() {
+        const rate = this.correctAnswers / this.totalAnswered;
+        if (this.totalAnswered >= 5) {
+            if (rate >= 0.8) this.level = "hard";
+            else if (rate >= 0.6) this.level = "medium";
+            else this.level = "easy";
+        }
+    }
+
+    getReport() {
+        return {
+            name: this.name,
+            score: this.correctAnswers,
+            total: this.totalAnswered,
+            level: this.level,
+            strengths: this.strengths,
+            weaknesses: this.weaknesses,
+            recommendations: this.generateRecommendations()
+        };
+    }
+
+    generateRecommendations() {
+        const recs = [];
+        if (this.weaknesses.length > 0) {
+            recs.push(`Foque em estudar: ${this.weaknesses.join(', ')}`);
+        }
+        if (this.level === "hard") {
+            recs.push("Você está dominando o conteúdo! Tente desafios extremos.");
+        } else if (this.level === "easy") {
+            recs.push("Continue praticando os fundamentos para subir de nível.");
+        }
+        return recs;
+    }
+}
+
 // --- APP STATE ---
 let currentState = {
     studentName: "",
@@ -177,7 +263,8 @@ let currentState = {
     activeQuestions: [],
     timer: null,
     timeLeft: 20,
-    streak: 0
+    streak: 0,
+    profile: null
 };
 
 // --- DOM ELEMENTS ---
@@ -282,7 +369,7 @@ function setupEventListeners() {
 
     // Keyboard shortcuts
     window.addEventListener('keydown', (e) => {
-        if (currentState.isAnswered || screens.quiz.classList.contains('hidden')) return;
+        if (currentState.isAnswered || !screens.quiz.classList.contains('active')) return;
         if (['1', '2', '3', '4'].includes(e.key)) {
             const index = parseInt(e.key) - 1;
             const btns = optionsContainer.querySelectorAll('.option-btn');
@@ -304,6 +391,7 @@ async function startQuiz() {
     btnStart.textContent = "PROCESSANDO...";
 
     currentState.studentName = name;
+    currentState.profile = new StudentProfile(name);
     currentState.currentQuestionIndex = 0;
     currentState.score = 0;
     currentState.streak = 0;
@@ -311,21 +399,26 @@ async function startQuiz() {
     const subject = currentState.subject;
     const difficulty = currentState.difficulty;
     
-    // Load and Filter Pool
+    // Load Initial Pool
     let availablePool = await QuestionDB.getAll(subject, difficulty);
     const seenList = await QuestionDB.getSeen(subject, difficulty);
     availablePool = availablePool.filter(q => !seenList.includes(q.question));
 
-    if (availablePool.length < 5) {
+    if (availablePool.length < 10) {
         await QuestionDB.resetSeen(subject, difficulty);
         availablePool = await QuestionDB.getAll(subject, difficulty);
     }
 
-    // Mix Static and Heuristic
-    const selectedStatic = OnyxEngines.shuffle(availablePool).slice(0, 5);
-    const selectedAI = await generateAIQuestions(subject, difficulty, 5);
+    // Select up to 10 questions
+    const selectedFromPool = OnyxEngines.shuffle(availablePool).slice(0, 10);
     
-    currentState.activeQuestions = OnyxEngines.shuffle([...selectedStatic, ...selectedAI]);
+    // AI / Heuristic questions if needed
+    let selectedAI = [];
+    if (selectedFromPool.length < 10) {
+        selectedAI = await generateAIQuestions(subject, difficulty, 10 - selectedFromPool.length);
+    }
+    
+    currentState.activeQuestions = OnyxEngines.shuffle([...selectedFromPool, ...selectedAI]);
 
     await QuestionDB.markSeen(subject, difficulty, currentState.activeQuestions);
 
@@ -402,6 +495,11 @@ function selectOption(index, btn) {
     const allBtns = optionsContainer.querySelectorAll('.option-btn');
     const isCorrect = (index === q.answer);
 
+    // Update Profile
+    if (currentState.profile) {
+        currentState.profile.update(q, isCorrect);
+    }
+
     if (isCorrect) {
         btn.classList.add('correct');
         currentState.score++;
@@ -419,13 +517,41 @@ function selectOption(index, btn) {
             setTimeout(() => quizCard.classList.remove('shake'), 400);
         }
     }
+
+    // Show reasoning or feedback
+    if (q.explanation) {
+        OnyxUI.addReasoningLog(`Explicação: ${q.explanation}`);
+    }
     
     updateStreakDisplay();
-    setTimeout(() => {
+    setTimeout(async () => {
         currentState.currentQuestionIndex++;
-        if (currentState.currentQuestionIndex < currentState.activeQuestions.length) loadQuestion();
-        else finishQuiz();
-    }, isCorrect ? 800 : 1500);
+        if (currentState.currentQuestionIndex < currentState.activeQuestions.length) {
+            // Adaptive logic: if we reached question 5, maybe adjust remaining questions
+            if (currentState.currentQuestionIndex === 5 && currentState.profile) {
+                await adaptRemainingQuestions();
+            }
+            loadQuestion();
+        } else finishQuiz();
+    }, isCorrect ? 800 : 3000);
+}
+
+async function adaptRemainingQuestions() {
+    const p = currentState.profile;
+    const currentSubject = currentState.subject;
+    const nextLevel = p.level;
+    
+    OnyxUI.addReasoningLog(`Adaptando dificuldade para: ${nextLevel.toUpperCase()}`);
+    
+    let newBatch = await QuestionDB.getByNivel(currentSubject, nextLevel);
+    const seen = await QuestionDB.getSeen(currentSubject, nextLevel);
+    newBatch = newBatch.filter(q => !seen.includes(q.question));
+    
+    if (newBatch.length > 0) {
+        const replacement = OnyxEngines.shuffle(newBatch).slice(0, 5);
+        // Replace questions from index currentQuestionIndex to the end
+        currentState.activeQuestions.splice(currentState.currentQuestionIndex, 5, ...replacement);
+    }
 }
 
 function finishQuiz() {
@@ -434,6 +560,11 @@ function finishQuiz() {
     finalScore.textContent = currentState.score;
     finalLevel.textContent = getDifficultyLabel(currentState.difficulty);
     
+    const report = currentState.profile ? currentState.profile.getReport() : null;
+    if (report) {
+        OnyxUI.showDetailedReport(report);
+    }
+
     QuestionDB.saveRanking({
         name: currentState.studentName,
         score: currentState.score,
@@ -489,7 +620,26 @@ function showScreen(key) {
 }
 
 function getSubjectLabel(s) {
-    const labels = { logic: 'Lógica', frontend: 'Frontend', backend: 'Backend', cybersecurity: 'Segurança', cloud_devops: 'DevOps' };
+    const labels = { 
+        logic: 'Lógica', 
+        informatics: 'Informática',
+        english: 'Inglês',
+        data_science: 'Ciência de Dados',
+        frontend: 'Frontend', 
+        backend: 'Backend', 
+        cybersecurity: 'Segurança', 
+        cloud_devops: 'DevOps',
+        python: 'Python',
+        numpy: 'NumPy',
+        pandas: 'Pandas',
+        sql: 'SQL',
+        machine_learning: 'Machine Learning',
+        testes: 'Testes',
+        poo: 'POO',
+        algoritmos: 'Algoritmos',
+        philosophy: 'Filosofia',
+        cryptography: 'Criptografia'
+    };
     return labels[s] || s;
 }
 
@@ -500,7 +650,7 @@ function getDifficultyLabel(d) {
 
 async function updateDBStats() {
     const count = await QuestionDB.getStats();
-    dbStatsDisplay.textContent = `ONYX DB | ${count + 420} ANALYTICS`;
+    dbStatsDisplay.textContent = `ONYX DB | ${count > 0 ? count : 420} ANALYTICS`;
 }
 
 async function updateDifficultyLocks() {

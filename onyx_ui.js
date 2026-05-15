@@ -104,5 +104,33 @@ export const OnyxUI = {
             if (iteration >= totalIterations) clearInterval(interval);
             iteration += 0.5;
         }, intervalTime);
+    },
+
+    // Detailed Report Rendering
+    showDetailedReport(report) {
+        const container = document.getElementById('feedback-text');
+        if (!container) return;
+        
+        let html = `<div class="detailed-report">
+            <p>${report.recommendations.length > 0 ? report.recommendations[0] : 'Excelente trabalho!'}</p>
+            <div class="report-stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">Forças</span>
+                    <div class="tags-container">
+                        ${report.strengths.map(s => `<span class="tag tag-strength">${s}</span>`).join('') || '<span class="tag">Analisando...</span>'}
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">A Melhorar</span>
+                    <div class="tags-container">
+                        ${report.weaknesses.map(w => `<span class="tag tag-weakness">${w}</span>`).join('') || '<span class="tag">Nenhuma</span>'}
+                    </div>
+                </div>
+            </div>
+            <div class="recom-list">
+                ${report.recommendations.slice(1).map(r => `<div class="recom-item">💡 ${r}</div>`).join('')}
+            </div>
+        </div>`;
+        container.innerHTML = html;
     }
 };

@@ -36,6 +36,7 @@
     display: none;
     justify-content: center;
     align-items: center;
+    -webkit-backdrop-filter: blur(10px) brightness(0.5);
     backdrop-filter: blur(10px) brightness(0.5);
 }
 
@@ -74,6 +75,7 @@
     width: 100%;
     height: 100%;
     background: rgba(2, 2, 5, 0.95);
+    -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
     z-index: 15000;
     display: none;
@@ -182,6 +184,7 @@ body {
     font-family: 'JetBrains Mono', monospace;
     font-size: 16px;
     color: var(--primary);
+    -webkit-mask-image: radial-gradient(circle, black, transparent 80%);
     mask-image: radial-gradient(circle, black, transparent 80%);
 }
 
@@ -379,8 +382,8 @@ body {
 /* --- PREMIUM CARD --- */
 .card {
     background: var(--card-bg);
-    backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid var(--glass-border);
     border-radius: 40px;
     padding: 48px;
@@ -1003,6 +1006,20 @@ input[type="text"]:focus {
     color: var(--text-muted);
 }
 
+#btn-show-ranking, #btn-hide-ranking {
+    margin-top: 15px;
+    width: 100%;
+}
+
+#btn-hide-ranking {
+    margin-top: 20px;
+}
+
+#ranking-section {
+    display: none;
+    margin-top: 30px;
+}
+
 /* --- SYSTEM STATUS BAR --- */
 #system-status {
     position: fixed;
@@ -1010,6 +1027,7 @@ input[type="text"]:focus {
     left: 0;
     width: 100%;
     background: rgba(5, 7, 10, 0.8);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     border-top: 1px solid var(--glass-border);
     padding: 10px 40px;
@@ -1113,8 +1131,79 @@ input[type="text"]:focus {
 /* Glass Enhancement */
 .glass {
     background: var(--card-bg);
-    backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid var(--glass-border);
 }
 
+/* --- DETAILED REPORT & PROFILING --- */
+.detailed-report {
+    text-align: left;
+    margin-top: 20px;
+}
+
+.report-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.tag {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    color: var(--text-bright);
+}
+
+.tag-strength {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.tag-weakness {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.recom-list {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    border-radius: 12px;
+    border-left: 3px solid var(--accent-primary, #6366f1);
+}
+
+.recom-item {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    color: var(--text-bright);
+}
+
+.recom-item:last-child {
+    margin-bottom: 0;
+}

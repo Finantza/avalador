@@ -1,0 +1,1015 @@
+{
+  "python": {
+    "easy": [
+      {
+        "id": "DS-PY-001",
+        "question": "Qual é a saída do seguinte código?\n\n```python\nx = [1, 2, 3]\ny = x\ny.append(4)\nprint(x)\n```",
+        "options": [
+          "[1, 2, 3]",
+          "[1, 2, 3, 4]",
+          "[1, 2, 3, [4]]",
+          "Erro: list object has no attribute 'append'"
+        ],
+        "answer": 1,
+        "explanation": "Em Python, y = x não cria uma cópia, mas sim uma referência ao mesmo objeto. Alterar y também altera x.",
+        "difficulty": 2,
+        "tags": [
+          "listas",
+          "referencias",
+          "mutabilidade",
+          "Python Básico",
+          "python"
+        ],
+        "time_limit": 60,
+        "subject": "python"
+      },
+      {
+        "id": "DS-PY-002",
+        "question": "Qual expressão avalia corretamente se uma string contém apenas dígitos?",
+        "options": [
+          "string.isdigit()",
+          "string.isnumeric()",
+          "string.isdecimal()",
+          "Todas as anteriores"
+        ],
+        "answer": 3,
+        "explanation": "isdigit(), isnumeric() e isdecimal() são métodos que verificam se a string contém apenas caracteres numéricos, com diferenças sutis na cobertura de Unicode.",
+        "difficulty": 1,
+        "tags": [
+          "strings",
+          "Python Básico",
+          "python",
+          "metodos"
+        ],
+        "time_limit": 45,
+        "subject": "python"
+      },
+      {
+        "id": "DS-PY-003",
+        "question": "O que é um 'generator' em Python?",
+        "options": [
+          "Uma função que retorna múltiplos valores de uma vez",
+          "Uma função que usa 'yield' e produz valores sob demanda, economizando memória",
+          "Um iterador que só funciona com listas",
+          "Um decorador que gera código automaticamente"
+        ],
+        "answer": 1,
+        "explanation": "Generators usam 'yield' para produzir uma sequência de valores lazy, um de cada vez, sem armazenar todos na memória.",
+        "difficulty": 3,
+        "tags": [
+          "iteradores",
+          "generators",
+          "memoria",
+          "Python Básico",
+          "python"
+        ],
+        "time_limit": 60,
+        "subject": "python"
+      }
+    ],
+    "medium": [
+      {
+        "id": "DS-PY-004",
+        "question": "Qual a diferença entre `deepcopy` e `shallow copy`?",
+        "options": [
+          "Não há diferença, ambos criam cópias independentes",
+          "Shallow copy copia apenas o primeiro nível; deepcopy copia recursivamente todos os níveis aninhados",
+          "Deepcopy é mais rápido que shallow copy",
+          "Shallow copy só funciona com dicionários"
+        ],
+        "answer": 1,
+        "explanation": "Shallow copy (copy.copy) cria um novo objeto mas insere referências aos objetos originais. Deepcopy (copy.deepcopy) cria cópias completas e independentes de todos os objetos aninhados.",
+        "difficulty": 4,
+        "tags": [
+          "referencias",
+          "copias",
+          "objetos",
+          "python",
+          "Python Intermediário"
+        ],
+        "time_limit": 60,
+        "subject": "python"
+      }
+    ],
+    "hard": []
+  },
+  "numpy": {
+    "easy": [
+      {
+        "id": "DS-NP-001",
+        "question": "Qual comando cria um array NumPy 3x3 preenchido com zeros?",
+        "options": [
+          "np.zeros(3, 3)",
+          "np.zeros((3, 3))",
+          "np.zero_array(3, 3)",
+          "np.array([0]*9).reshape(3, 3)"
+        ],
+        "answer": 1,
+        "explanation": "np.zeros((3, 3)) cria um array 3x3 de zeros. O parâmetro deve ser uma tupla com as dimensões.",
+        "difficulty": 1,
+        "tags": [
+          "arrays",
+          "numpy",
+          "inicializacao",
+          "NumPy"
+        ],
+        "time_limit": 30,
+        "subject": "numpy"
+      }
+    ],
+    "medium": [
+      {
+        "id": "DS-NP-002",
+        "question": "O que é 'broadcasting' em NumPy?",
+        "options": [
+          "Enviar arrays para outros processos",
+          "Mecanismo que permite operações entre arrays de diferentes shapes, estendendo dimensões automaticamente",
+          "Uma função para exibir arrays no console",
+          "Um método para converter listas em arrays"
+        ],
+        "answer": 1,
+        "explanation": "Broadcasting permite operações vetorizadas entre arrays de diferentes formatos, estendendo dimensões menores para compatibilidade sem copiar dados desnecessariamente.",
+        "difficulty": 4,
+        "tags": [
+          "vetorizacao",
+          "numpy",
+          "NumPy",
+          "broadcasting"
+        ],
+        "time_limit": 90,
+        "subject": "numpy"
+      }
+    ],
+    "hard": [
+      {
+        "id": "DS-NP-003",
+        "question": "Considerando eficiência computacional, qual a melhor forma de normalizar um array 2D (10000x100) para média 0 e desvio 1 (por coluna)?",
+        "options": [
+          "Usar um loop for iterando sobre as colunas",
+          "Usar sklearn.preprocessing.StandardScaler",
+          "Calcular mean/std com np.mean/np.std e broadcasting",
+          "Usar pandas.DataFrame.apply com lambda"
+        ],
+        "answer": 2,
+        "explanation": "A abordagem mais eficiente é usar np.mean e np.std com axis=0 e broadcasting: (arr - arr.mean(axis=0)) / arr.std(axis=0). Isso aproveita a vetorização do NumPy sem overhead de loops ou bibliotecas externas.",
+        "difficulty": 5,
+        "tags": [
+          "NumPy Avançado",
+          "normalizacao",
+          "broadcasting",
+          "eficiencia",
+          "numpy"
+        ],
+        "time_limit": 120,
+        "subject": "numpy"
+      }
+    ]
+  },
+  "pandas": {
+    "easy": [
+      {
+        "id": "DS-PD-001",
+        "question": "Como selecionar a coluna 'idade' de um DataFrame df?",
+        "options": [
+          "df['idade']",
+          "df.idade",
+          "df.get('idade')",
+          "df[['idade']]"
+        ],
+        "answer": 0,
+        "explanation": "df['idade'] retorna uma Series. df.idade também funciona, mas df['idade'] é a forma mais explícita e segura (funciona com nomes de coluna com espaços).",
+        "difficulty": 1,
+        "tags": [
+          "pandas",
+          "dataframe",
+          "Pandas",
+          "selecao"
+        ],
+        "time_limit": 30,
+        "subject": "pandas"
+      }
+    ],
+    "medium": [
+      {
+        "id": "DS-PD-002",
+        "question": "Como lidar com valores ausentes (NaN) em um DataFrame?",
+        "options": [
+          "Apenas removendo todas as linhas com NaN",
+          "Usando fillna() para preencher ou dropna() para remover, dependendo do contexto",
+          "Convertendo NaN para zero sempre",
+          "Ignorando os valores ausentes"
+        ],
+        "answer": 1,
+        "explanation": "A melhor prática depende do contexto: fillna() com média/mediana/moda para dados numéricos, dropna() quando poucas linhas são afetadas, ou métodos avançados como interpolação ou KNN imputation.",
+        "difficulty": 3,
+        "tags": [
+          "pandas",
+          "NaN",
+          "Pandas",
+          "dados_ausentes",
+          "limpeza"
+        ],
+        "time_limit": 60,
+        "subject": "pandas"
+      }
+    ],
+    "hard": [
+      {
+        "id": "DS-PD-003",
+        "question": "Qual operação o código abaixo realiza?\n\n```python\ndf.groupby('categoria')['valor'].agg(['mean', 'std', 'count'])\n```",
+        "options": [
+          "Agrupa por 'categoria', calcula média, desvio padrão e contagem da coluna 'valor'",
+          "Cria uma tabela dinâmica (pivot table)",
+          "Filtra o DataFrame por categorias específicas",
+          "Ordena o DataFrame por categoria e valor"
+        ],
+        "answer": 0,
+        "explanation": "O método groupby() seguido de agg() aplica múltiplas funções de agregação (mean, std, count) à coluna 'valor' para cada grupo de 'categoria'.",
+        "difficulty": 3,
+        "tags": [
+          "agregacao",
+          "groupby",
+          "analise",
+          "pandas",
+          "Pandas Avançado"
+        ],
+        "time_limit": 60,
+        "subject": "pandas"
+      },
+      {
+        "id": "DS-PD-004",
+        "question": "Qual a diferença entre `merge` e `join` no Pandas?",
+        "options": [
+          "São idênticos, apenas nomes diferentes",
+          "merge() é baseado em colunas; join() é baseado em índices",
+          "merge() só funciona com DataFrames; join() com Series",
+          "join() é mais rápido que merge()"
+        ],
+        "answer": 1,
+        "explanation": "merge() combina DataFrames baseado em valores de colunas (como SQL JOIN). join() combina baseado em índices. merge() é mais flexível para joins complexos.",
+        "difficulty": 4,
+        "tags": [
+          "combinacao",
+          "join",
+          "pandas",
+          "Pandas Avançado",
+          "merge"
+        ],
+        "time_limit": 60,
+        "subject": "pandas"
+      }
+    ]
+  },
+  "estatistica": {
+    "easy": [
+      {
+        "id": "DS-ST-001",
+        "question": "O que é o Teorema Central do Limite?",
+        "options": [
+          "A média da população sempre se aproxima de zero",
+          "A distribuição das médias amostrais tende a uma distribuição normal à medida que o tamanho da amostra aumenta",
+          "O desvio padrão da amostra é sempre igual ao da população",
+          "A mediana é sempre igual à média em distribuições simétricas"
+        ],
+        "answer": 1,
+        "explanation": "O TCL afirma que, para amostras suficientemente grandes (n > 30), a distribuição das médias amostrais se aproxima de uma distribuição normal, independentemente da distribuição original.",
+        "difficulty": 3,
+        "tags": [
+          "amostragem",
+          "distribuicao",
+          "estatistica",
+          "Estatística",
+          "tcl"
+        ],
+        "time_limit": 60,
+        "subject": "estatistica"
+      }
+    ],
+    "medium": [
+      {
+        "id": "DS-ST-002",
+        "question": "Qual a interpretação correta de um p-valor = 0.03 em um teste de hipótese?",
+        "options": [
+          "Há 3% de chance da hipótese nula ser verdadeira",
+          "Há 3% de probabilidade de observar os dados (ou mais extremos) se a hipótese nula for verdadeira",
+          "A hipótese alternativa tem 97% de chance de ser verdadeira",
+          "O erro tipo I é garantido em 3% dos casos"
+        ],
+        "answer": 1,
+        "explanation": "O p-valor é a probabilidade de observar os dados obtidos (ou valores mais extremos) assumindo que a hipótese nula é verdadeira. p < 0.05 sugere evidência contra H0, mas não é a probabilidade de H0 ser falsa.",
+        "difficulty": 4,
+        "tags": [
+          "estatistica",
+          "Estatística",
+          "inferencia",
+          "hipotese",
+          "p-valor"
+        ],
+        "time_limit": 90,
+        "subject": "estatistica"
+      }
+    ],
+    "hard": [
+      {
+        "id": "DS-ST-003",
+        "question": "Qual a diferença entre correlação de Pearson e Spearman?",
+        "options": [
+          "Não há diferença significativa",
+          "Pearson mede relações lineares; Spearman mede relações monotônicas (baseado em ranks)",
+          "Spearman é sempre mais preciso que Pearson",
+          "Pearson só funciona com dados categóricos"
+        ],
+        "answer": 1,
+        "explanation": "Pearson assume relação linear e dados normalmente distribuídos. Spearman é baseado em ranks (ordenação) e detecta qualquer relação monotônica (linear ou não), sendo mais robusto a outliers.",
+        "difficulty": 4,
+        "tags": [
+          "Estatística Avançada",
+          "pearson",
+          "estatistica",
+          "correlacao",
+          "spearman"
+        ],
+        "time_limit": 60,
+        "subject": "estatistica"
+      }
+    ]
+  },
+  "machine_learning": {
+    "easy": [
+      {
+        "id": "DS-ML-001",
+        "question": "Qual a diferença entre aprendizado supervisionado e não supervisionado?",
+        "options": [
+          "Supervisionado usa dados rotulados; não supervisionado usa dados sem rótulos",
+          "Supervisionado é mais rápido; não supervisionado é mais preciso",
+          "Não supervisionado requer rede neural; supervisionado usa regressão",
+          "Ambos são idênticos, apenas nomes diferentes"
+        ],
+        "answer": 0,
+        "explanation": "Aprendizado supervisionado treina com dados rotulados (ex: classificação, regressão). Não supervisionado encontra padrões em dados não rotulados (ex: clustering, redução de dimensionalidade).",
+        "difficulty": 1,
+        "tags": [
+          "Machine Learning",
+          "supervisionado",
+          "machine_learning",
+          "conceitos",
+          "ml",
+          "nao_supervisionado"
+        ],
+        "time_limit": 45,
+        "subject": "machine_learning"
+      }
+    ],
+    "medium": [
+      {
+        "id": "DS-ML-002",
+        "question": "O que é overfitting e como evitá-lo?",
+        "options": [
+          "Overfitting é quando o modelo não aprende nada; evita-se com mais dados",
+          "Overfitting é quando o modelo decora os dados de treino mas não generaliza; evita-se com regularização, validação cruzada e mais dados",
+          "Overfitting é desejável em ML; não precisa ser evitado",
+          "Overfitting ocorre apenas em redes neurais profundas"
+        ],
+        "answer": 1,
+        "explanation": "Overfitting ocorre quando o modelo se ajusta excessivamente aos dados de treino, capturando ruído. Prevenção inclui: regularização (L1/L2), validação cruzada, early stopping, dropout, mais dados de treino e redução de complexidade.",
+        "difficulty": 3,
+        "tags": [
+          "Machine Learning",
+          "machine_learning",
+          "ml",
+          "regularizacao",
+          "overfitting",
+          "generalizacao"
+        ],
+        "time_limit": 60,
+        "subject": "machine_learning"
+      },
+      {
+        "id": "DS-ML-003",
+        "question": "Para um problema de classificação binária com classes desbalanceadas (5% positivos, 95% negativos), qual métrica é MAIS adequada?",
+        "options": [
+          "Acurácia (accuracy)",
+          "Precisão (precision)",
+          "Recall",
+          "F1-Score ou AUC-ROC"
+        ],
+        "answer": 3,
+        "explanation": "Com classes desbalanceadas, acurácia é enganosa (classificar tudo como negativo dá 95%). F1-Score balanceia precisão e recall. AUC-ROC avalia a capacidade de discriminação independente de threshold.",
+        "difficulty": 4,
+        "tags": [
+          "Machine Learning",
+          "avaliacao",
+          "machine_learning",
+          "desbalanceamento",
+          "ml",
+          "metricas"
+        ],
+        "time_limit": 90,
+        "subject": "machine_learning"
+      }
+    ],
+    "hard": [
+      {
+        "id": "DS-ML-004",
+        "question": "O que é o 'bias-variance tradeoff'?",
+        "options": [
+          "Um método para escolher entre viés alto e variância alta",
+          "O dilema entre underfitting (bias alto) e overfitting (variância alta); modelos complexos reduzem bias mas aumentam variância",
+          "Uma técnica de regularização automática",
+          "Um tipo de validação cruzada"
+        ],
+        "answer": 1,
+        "explanation": "Bias-variance tradeoff descreve que modelos muito simples têm alto bias (underfitting) e modelos muito complexos têm alta variância (overfitting). O objetivo é encontrar o ponto ótimo que minimize o erro total (bias² + variância + ruído).",
+        "difficulty": 5,
+        "tags": [
+          "machine_learning",
+          "Machine Learning Avançado",
+          "ml",
+          "tradeoff",
+          "variance",
+          "underfitting",
+          "bias"
+        ],
+        "time_limit": 90,
+        "subject": "machine_learning"
+      }
+    ]
+  },
+  "visualizacao": {
+    "easy": [
+      {
+        "id": "DS-VZ-001",
+        "question": "Qual gráfico é mais adequado para mostrar a distribuição de uma variável numérica?",
+        "options": [
+          "Gráfico de pizza",
+          "Histograma",
+          "Gráfico de barras",
+          "Gráfico de dispersão"
+        ],
+        "answer": 1,
+        "explanation": "Histograma é ideal para visualizar distribuição de dados numéricos, mostrando frequências em bins. Gráfico de barras é para categóricos. Dispersão mostra relação entre duas variáveis.",
+        "difficulty": 1,
+        "tags": [
+          "distribuicao",
+          "vizualizacao",
+          "visualizacao",
+          "Visualização",
+          "histograma"
+        ],
+        "time_limit": 30,
+        "subject": "visualizacao"
+      }
+    ],
+    "medium": [
+      {
+        "id": "DS-VZ-002",
+        "question": "No Matplotlib, qual a diferença entre as interfaces pyplot e orientada a objetos?",
+        "options": [
+          "Não há diferença, são equivalentes",
+          "Pyplot (plt.xxx) é mais simples para uso rápido; OO (fig, ax) oferece mais controle e é recomendada para gráficos complexos",
+          "A interface OO é mais antiga e está obsoleta",
+          "Pyplot só funciona em Jupyter Notebooks"
+        ],
+        "answer": 1,
+        "explanation": "Pyplot mantém estado global e é conveniente para exploração rápida. A interface OO permite controle granular sobre múltiplos subplots, eixos e personalização, sendo preferível para produção e gráficos complexos.",
+        "difficulty": 3,
+        "tags": [
+          "matplotlib",
+          "OO",
+          "vizualizacao",
+          "visualizacao",
+          "pyplot",
+          "Visualização"
+        ],
+        "time_limit": 60,
+        "subject": "visualizacao"
+      }
+    ],
+    "hard": []
+  },
+  "sql": {
+    "easy": [
+      {
+        "id": "DS-SQL-001",
+        "question": "Qual comando SQL seleciona todos os registros da tabela 'clientes' onde a cidade é 'São Paulo'?",
+        "options": [
+          "SELECT * FROM clientes WHERE cidade = 'São Paulo'",
+          "SELECT ALL FROM clientes HAVING cidade = 'São Paulo'",
+          "SELECT * FROM clientes FILTER cidade = 'São Paulo'",
+          "GET * FROM clientes WHERE cidade LIKE 'São Paulo'"
+        ],
+        "answer": 0,
+        "explanation": "SELECT * seleciona todas as colunas, FROM especifica a tabela, WHERE filtra registros. É a sintaxe SQL padrão.",
+        "difficulty": 1,
+        "tags": [
+          "filtro",
+          "sql",
+          "SQL",
+          "select",
+          "where"
+        ],
+        "time_limit": 30,
+        "subject": "sql"
+      }
+    ],
+    "medium": [
+      {
+        "id": "DS-SQL-002",
+        "question": "Qual a diferença entre INNER JOIN e LEFT JOIN?",
+        "options": [
+          "INNER JOIN retorna apenas registros correspondentes em ambas as tabelas; LEFT JOIN retorna todos da esquerda e correspondentes da direita",
+          "LEFT JOIN é mais rápido que INNER JOIN",
+          "INNER JOIN funciona apenas com duas tabelas; LEFT JOIN com várias",
+          "São equivalentes, apenas sinônimos"
+        ],
+        "answer": 0,
+        "explanation": "INNER JOIN retorna apenas linhas com correspondência em ambas as tabelas. LEFT JOIN retorna todas as linhas da tabela esquerda, com NULL onde não há correspondência na direita.",
+        "difficulty": 3,
+        "tags": [
+          "left_join",
+          "sql",
+          "SQL",
+          "joins",
+          "inner_join"
+        ],
+        "time_limit": 45,
+        "subject": "sql"
+      }
+    ],
+    "hard": [
+      {
+        "id": "DS-SQL-003",
+        "question": "Como calcular a média de vendas por categoria, mostrando apenas categorias com média > 1000?",
+        "options": [
+          "SELECT categoria, AVG(vendas) FROM vendas WHERE AVG(vendas) > 1000 GROUP BY categoria",
+          "SELECT categoria, AVG(vendas) FROM vendas GROUP BY categoria HAVING AVG(vendas) > 1000",
+          "SELECT categoria, MEAN(vendas) FROM vendas GROUP BY categoria FILTER AVG(vendas) > 1000",
+          "SELECT categoria, AVG(vendas) > 1000 FROM vendas GROUP BY categoria"
+        ],
+        "answer": 1,
+        "explanation": "HAVING é usado para filtrar grupos após GROUP BY (diferente de WHERE que filtra linhas antes da agregação). A ordem correta é: WHERE -> GROUP BY -> HAVING -> ORDER BY.",
+        "difficulty": 4,
+        "tags": [
+          "agregacao",
+          "group_by",
+          "having",
+          "sql",
+          "SQL Avançado"
+        ],
+        "time_limit": 60,
+        "subject": "sql"
+      }
+    ]
+  },
+  "git": {
+    "easy": [
+      {
+        "id": "DEV-GT-001",
+        "question": "Qual comando cria um novo repositório Git local?",
+        "options": [
+          "git create",
+          "git init",
+          "git new",
+          "git start"
+        ],
+        "answer": 1,
+        "explanation": "git init inicializa um novo repositório Git no diretório atual, criando a pasta .git com toda a estrutura necessária.",
+        "difficulty": 1,
+        "tags": [
+          "repositorio",
+          "init",
+          "Git & GitHub",
+          "git"
+        ],
+        "time_limit": 20,
+        "subject": "git"
+      }
+    ],
+    "medium": [
+      {
+        "id": "DEV-GT-002",
+        "question": "Qual a diferença entre `git merge` e `git rebase`?",
+        "options": [
+          "São funcionalmente idênticos",
+          "merge cria um commit de junção preservando o histórico; rebase reescreve o histórico aplicando commits linearmente",
+          "rebase é mais seguro que merge",
+          "merge só funciona em branches locais"
+        ],
+        "answer": 1,
+        "explanation": "Merge preserva a bifurcação do histórico com um commit de merge. Rebase reescreve o histórico aplicando commits de uma branch sobre outra, resultando em histórico linear, mas alterando hashes dos commits.",
+        "difficulty": 4,
+        "tags": [
+          "rebase",
+          "Git & GitHub",
+          "branch",
+          "merge",
+          "git"
+        ],
+        "time_limit": 90,
+        "subject": "git"
+      }
+    ],
+    "hard": [
+      {
+        "id": "DEV-GT-003",
+        "question": "Como reverter o último commit mantendo as alterações nos arquivos (working directory)?",
+        "options": [
+          "git revert HEAD",
+          "git reset --soft HEAD~1",
+          "git reset --hard HEAD~1",
+          "git checkout HEAD~1"
+        ],
+        "answer": 1,
+        "explanation": "git reset --soft HEAD~1 remove o último commit mas mantém as alterações staged. git revert cria um novo commit desfazendo as alterações. git reset --hard remove tudo.",
+        "difficulty": 4,
+        "tags": [
+          "revert",
+          "reset",
+          "Git & GitHub",
+          "commits",
+          "git"
+        ],
+        "time_limit": 60,
+        "subject": "git"
+      }
+    ]
+  },
+  "poo": {
+    "easy": [
+      {
+        "id": "DEV-OO-001",
+        "question": "O que é encapsulamento em POO?",
+        "options": [
+          "Esconder a implementação interna de um objeto e expor apenas uma interface controlada",
+          "Agrupar funções em módulos",
+          "Criar múltiplas instâncias de uma classe",
+          "Herdar propriedades de outra classe"
+        ],
+        "answer": 0,
+        "explanation": "Encapsulamento é o princípio de ocultar detalhes internos de implementação e expor apenas uma interface pública, protegendo a integridade dos dados e reduzindo acoplamento.",
+        "difficulty": 2,
+        "tags": [
+          "encapsulamento",
+          "Programação Orientada a Objetos",
+          "poo",
+          "conceitos"
+        ],
+        "time_limit": 45,
+        "subject": "poo"
+      }
+    ],
+    "medium": [
+      {
+        "id": "DEV-OO-002",
+        "question": "Qual a diferença entre herança e composição?",
+        "options": [
+          "Herança é 'é um'; composição é 'tem um'",
+          "Herança é mais moderna que composição",
+          "Composição é 'é um'; herança é 'tem um'",
+          "São sinônimos em POO"
+        ],
+        "answer": 0,
+        "explanation": "Herança (extends) representa relação 'é um' (Carro é um Veículo). Composição representa relação 'tem um' (Carro tem um Motor). 'Prefira composição sobre herança' é um princípio de design.",
+        "difficulty": 3,
+        "tags": [
+          "Programação Orientada a Objetos",
+          "poo",
+          "composicao",
+          "heranca",
+          "design"
+        ],
+        "time_limit": 60,
+        "subject": "poo"
+      }
+    ],
+    "hard": [
+      {
+        "id": "DEV-OO-003",
+        "question": "O que são SOLID principles? Cite os cinco.",
+        "options": [
+          "Single Responsibility, Open-Closed, Liskov Substitution, Interface Segregation, Dependency Inversion",
+          "Simple, Organized, Logical, Integrated, Dynamic",
+          "Structure, Object, Logic, Interface, Data",
+          "São 3 princípios: Single, Open, Liskov"
+        ],
+        "answer": 0,
+        "explanation": "SOLID: S - Single Responsibility (uma classe, uma responsabilidade), O - Open-Closed (aberto para extensão, fechado para modificação), L - Liskov Substitution (subclasses substituem classes base), I - Interface Segregation (interfaces específicas), D - Dependency Inversion (depender de abstrações, não implementações).",
+        "difficulty": 5,
+        "tags": [
+          "poo",
+          "arquitetura",
+          "POO Avançada",
+          "solid",
+          "design_patterns"
+        ],
+        "time_limit": 120,
+        "subject": "poo"
+      }
+    ]
+  },
+  "apis": {
+    "easy": [
+      {
+        "id": "DEV-API-001",
+        "question": "O que significa REST?",
+        "options": [
+          "Representational State Transfer",
+          "Remote Execution Service Tool",
+          "Rapid Entity State Transfer",
+          "Representational Entity Service Technology"
+        ],
+        "answer": 0,
+        "explanation": "REST (Representational State Transfer) é um estilo arquitetural para APIs que usa HTTP como protocolo, com recursos identificados por URLs e operações definidas por métodos HTTP (GET, POST, PUT, DELETE).",
+        "difficulty": 1,
+        "tags": [
+          "api",
+          "apis",
+          "arquitetura",
+          "http",
+          "rest",
+          "APIs REST"
+        ],
+        "time_limit": 30,
+        "subject": "apis"
+      }
+    ],
+    "medium": [
+      {
+        "id": "DEV-API-002",
+        "question": "Qual a diferença entre PUT e PATCH em APIs REST?",
+        "options": [
+          "São equivalentes",
+          "PUT substitui o recurso completo; PATCH aplica uma atualização parcial",
+          "PATCH substitui o recurso completo; PUT atualiza parcialmente",
+          "PUT é para criar; PATCH é para deletar"
+        ],
+        "answer": 1,
+        "explanation": "PUT substitui todo o recurso (requer todos os campos). PATCH aplica modificações parciais (apenas campos que mudam). PATCH é mais eficiente para atualizações parciais.",
+        "difficulty": 3,
+        "tags": [
+          "api",
+          "apis",
+          "rest",
+          "http",
+          "put",
+          "APIs REST",
+          "patch"
+        ],
+        "time_limit": 45,
+        "subject": "apis"
+      }
+    ],
+    "hard": []
+  },
+  "testes": {
+    "easy": [
+      {
+        "id": "DEV-TS-001",
+        "question": "Qual a diferença entre teste unitário e teste de integração?",
+        "options": [
+          "Unitário testa funções isoladamente; integração testa a interação entre componentes",
+          "Integração é mais simples que unitário",
+          "Unitário é feito por QA; integração por desenvolvedores",
+          "Ambos testam a mesma coisa em níveis diferentes"
+        ],
+        "answer": 0,
+        "explanation": "Testes unitários verificam a menor unidade de código (função/método) isoladamente, usando mocks. Testes de integração verificam como múltiplos componentes interagem (banco, API, serviços externos).",
+        "difficulty": 2,
+        "tags": [
+          "testes",
+          "unitario",
+          "integracao",
+          "Testes",
+          "qa"
+        ],
+        "time_limit": 45,
+        "subject": "testes"
+      }
+    ],
+    "medium": [],
+    "hard": [
+      {
+        "id": "DEV-TS-002",
+        "question": "O que é TDD (Test-Driven Development)?",
+        "options": [
+          "Desenvolver testes depois do código",
+          "Ciclo: escrever teste que falha -> escrever código mínimo para passar -> refatorar",
+          "Testar apenas funcionalidades críticas",
+          "Usar apenas testes manuais antes do deploy"
+        ],
+        "answer": 1,
+        "explanation": "TDD segue o ciclo Red-Green-Refactor: escreve um teste que falha (Red), escreve código mínimo para passar (Green), refatora mantendo os testes verdes (Refactor). Isso garante código testável e design mais limpo.",
+        "difficulty": 4,
+        "tags": [
+          "qualidade",
+          "metodologia",
+          "Testes Avançados",
+          "testes",
+          "tdd"
+        ],
+        "time_limit": 90,
+        "subject": "testes"
+      }
+    ]
+  },
+  "banco_dados": {
+    "easy": [
+      {
+        "id": "DEV-DB-001",
+        "question": "Qual a diferença entre bancos SQL e NoSQL?",
+        "options": [
+          "SQL é relacional (tabelas, schemas fixos); NoSQL é não-relacional (documentos, chave-valor, grafos, flexível)",
+          "SQL é mais rápido que NoSQL",
+          "NoSQL não suporta consultas complexas",
+          "SQL é mais moderno que NoSQL"
+        ],
+        "answer": 0,
+        "explanation": "SQL (PostgreSQL, MySQL) usa esquema fixo, tabelas relacionadas e ACID. NoSQL (MongoDB, Redis, Neo4j) oferece flexibilidade de schema, escalabilidade horizontal e modelos variados (documentos, chave-valor, grafos, colunas).",
+        "difficulty": 2,
+        "tags": [
+          "relacional",
+          "sql",
+          "Banco de Dados",
+          "banco_dados",
+          "nosql"
+        ],
+        "time_limit": 45,
+        "subject": "banco_dados"
+      }
+    ],
+    "medium": [
+      {
+        "id": "DEV-DB-002",
+        "question": "O que é um índice de banco de dados e quando usar?",
+        "options": [
+          "Uma estrutura que acelera consultas SELECT mas pode reduzir performance de INSERT/UPDATE",
+          "Uma cópia de segurança do banco",
+          "Um tipo especial de tabela",
+          "Uma constraint que garante unicidade"
+        ],
+        "answer": 0,
+        "explanation": "Índices são estruturas (B-tree, hash) que aceleram buscas (SELECT/WHERE) mas precisam ser mantidos em operações de escrita (INSERT/UPDATE/DELETE). Use em colunas frequentemente consultadas mas com muitas escritas.",
+        "difficulty": 4,
+        "tags": [
+          "indices",
+          "Banco de Dados",
+          "performance",
+          "otimizacao",
+          "banco_dados"
+        ],
+        "time_limit": 60,
+        "subject": "banco_dados"
+      }
+    ],
+    "hard": [
+      {
+        "id": "DEV-DB-003",
+        "question": "O que são transações ACID?",
+        "options": [
+          "Atomicity, Consistency, Isolation, Durability",
+          "Automated, Coordinated, Integrated, Distributed",
+          "Access, Control, Integrity, Data",
+          "Association, Composition, Inheritance, Dependency"
+        ],
+        "answer": 0,
+        "explanation": "ACID: Atomicity (tudo ou nada), Consistency (estado válido), Isolation (transações concorrentes não interferem), Durability (dados persistem mesmo após falha). Essencial para integridade em sistemas transacionais.",
+        "difficulty": 4,
+        "tags": [
+          "transacoes",
+          "acid",
+          "Banco de Dados Avançado",
+          "banco_dados",
+          "integridade"
+        ],
+        "time_limit": 60,
+        "subject": "banco_dados"
+      }
+    ]
+  },
+  "devops": {
+    "easy": [
+      {
+        "id": "DEV-DO-001",
+        "question": "O que é um contêiner Docker?",
+        "options": [
+          "Uma máquina virtual leve que executa um sistema operacional completo",
+          "Uma unidade padronizada de software que empacota código e todas as dependências para executar de forma isolada",
+          "Um gerenciador de pacotes para Linux",
+          "Um serviço de cloud computing"
+        ],
+        "answer": 1,
+        "explanation": "Contêiner Docker é uma unidade leve e executável que empacota código, runtime, bibliotecas e configurações. Diferente de VMs, compartilha o kernel do host, tornando-os mais rápidos e eficientes.",
+        "difficulty": 2,
+        "tags": [
+          "virtualizacao",
+          "DevOps",
+          "devops",
+          "docker",
+          "container"
+        ],
+        "time_limit": 45,
+        "subject": "devops"
+      }
+    ],
+    "medium": [
+      {
+        "id": "DEV-DO-002",
+        "question": "Qual a diferença entre Dockerfile e docker-compose.yml?",
+        "options": [
+          "Dockerfile define uma imagem; docker-compose define e orquestra múltiplos contêineres",
+          "São equivalentes, apenas formatos diferentes",
+          "Dockerfile é para produção; docker-compose é para desenvolvimento",
+          "docker-compose substituiu Dockerfile"
+        ],
+        "answer": 0,
+        "explanation": "Dockerfile é um script para construir uma imagem (FROM, RUN, COPY, CMD). Docker Compose define serviços multi-contêiner (versão 3: services, networks, volumes), simplificando a orquestração local.",
+        "difficulty": 3,
+        "tags": [
+          "docker-compose",
+          "devops",
+          "docker",
+          "dockerfile",
+          "DevOps"
+        ],
+        "time_limit": 60,
+        "subject": "devops"
+      }
+    ],
+    "hard": [
+      {
+        "id": "DEV-DO-003",
+        "question": "O que é CI/CD e quais seus benefícios?",
+        "options": [
+          "Continuous Integration (integração contínua) + Continuous Delivery/Deployment (entrega/deploy contínuo); automatiza build, teste e deploy",
+          "Um tipo de banco de dados distribuído",
+          "Um framework de desenvolvimento web",
+          "Uma ferramenta de monitoramento"
+        ],
+        "answer": 0,
+        "explanation": "CI integra código frequentemente com builds e testes automatizados. CD entrega/implanta automaticamente em produção. Benefícios: detecção precoce de erros, deploy rápido e confiável, feedback imediato, redução de retrabalho.",
+        "difficulty": 4,
+        "tags": [
+          "DevOps Avançado",
+          "cd",
+          "devops",
+          "deploy",
+          "automacao",
+          "ci"
+        ],
+        "time_limit": 60,
+        "subject": "devops"
+      }
+    ]
+  },
+  "algoritmos": {
+    "easy": [
+      {
+        "id": "DEV-AL-001",
+        "question": "Qual a complexidade do algoritmo de busca binária?",
+        "options": [
+          "O(n)",
+          "O(log n)",
+          "O(n²)",
+          "O(n log n)"
+        ],
+        "answer": 1,
+        "explanation": "Busca binária tem complexidade O(log n). A cada iteração, o espaço de busca é reduzido pela metade. Requer que os dados estejam ordenados.",
+        "difficulty": 2,
+        "tags": [
+          "Algoritmos",
+          "complexidade",
+          "algoritmos",
+          "big_o",
+          "busca"
+        ],
+        "time_limit": 45,
+        "subject": "algoritmos"
+      }
+    ],
+    "medium": [
+      {
+        "id": "DEV-AL-002",
+        "question": "Qual a diferença entre uma lista (array) e uma lista encadeada (linked list)?",
+        "options": [
+          "Array tem acesso O(1) por índice; linked list tem inserção/remoção O(1) no início",
+          "Linked list usa menos memória que array",
+          "Array é sempre mais rápido que linked list",
+          "São estruturas equivalentes"
+        ],
+        "answer": 0,
+        "explanation": "Array: acesso aleatório O(1), inserção/remoção O(n). Linked List: acesso sequencial O(n), inserção/remoção no início O(1). A escolha depende do caso de uso (acesso vs modificação frequente).",
+        "difficulty": 4,
+        "tags": [
+          "array",
+          "Algoritmos",
+          "estruturas_dados",
+          "algoritmos",
+          "linked_list"
+        ],
+        "time_limit": 60,
+        "subject": "algoritmos"
+      }
+    ],
+    "hard": []
+  }
+}

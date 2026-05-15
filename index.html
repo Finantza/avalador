@@ -48,6 +48,38 @@
                     <div class="selection-group">
                         <h2>Selecione a Matéria</h2>
                         <div class="subject-options">
+                            <button class="btn-subject" data-subject="python">
+                                <span class="icon">🐍</span>
+                                <span class="label">Python</span>
+                            </button>
+                            <button class="btn-subject" data-subject="numpy">
+                                <span class="icon">🔢</span>
+                                <span class="label">NumPy</span>
+                            </button>
+                            <button class="btn-subject" data-subject="pandas">
+                                <span class="icon">🐼</span>
+                                <span class="label">Pandas</span>
+                            </button>
+                            <button class="btn-subject" data-subject="sql">
+                                <span class="icon">🗄️</span>
+                                <span class="label">SQL</span>
+                            </button>
+                            <button class="btn-subject" data-subject="machine_learning">
+                                <span class="icon">🤖</span>
+                                <span class="label">ML IA</span>
+                            </button>
+                            <button class="btn-subject" data-subject="testes">
+                                <span class="icon">🧪</span>
+                                <span class="label">Testes</span>
+                            </button>
+                            <button class="btn-subject" data-subject="poo">
+                                <span class="icon">📦</span>
+                                <span class="label">POO</span>
+                            </button>
+                            <button class="btn-subject" data-subject="algoritmos">
+                                <span class="icon">🔄</span>
+                                <span class="label">Algoritmos</span>
+                            </button>
                             <button class="btn-subject active" data-subject="logic">
                                 <span class="icon">💻</span>
                                 <span class="label">Lógica</span>
@@ -117,16 +149,16 @@
                     </div>
 
                     <button id="btn-start" class="btn-primary">Começar Avaliação</button>
-                    <button id="btn-show-ranking" class="btn-secondary" style="margin-top: 15px; width: 100%;">VISUALIZAR RANKING</button>
+                    <button id="btn-show-ranking" class="btn-secondary">VISUALIZAR RANKING</button>
                 </div>
 
-                <div id="ranking-section" style="display: none; margin-top: 30px;">
+                <div id="ranking-section">
                     <div class="selection-group">
                         <h2>TOP 10 PERFORMANCES</h2>
                         <div id="ranking-list" class="ranking-list">
                             <!-- Injected by JS -->
                         </div>
-                        <button id="btn-hide-ranking" class="btn-secondary" style="margin-top: 20px; width: 100%;">VOLTAR</button>
+                        <button id="btn-hide-ranking" class="btn-secondary">VOLTAR</button>
                     </div>
                 </div>
             </div>
