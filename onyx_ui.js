@@ -218,5 +218,79 @@ window.OnyxUI = {
             </div>
         </div>`;
         container.innerHTML = html;
+    },
+
+    // Theme Engine
+    applyTheme(subject) {
+        const root = document.documentElement;
+        const themes = {
+            python: { p: 'hsl(140, 80%, 60%)', a: 'hsl(60, 100%, 50%)' },
+            sql: { p: 'hsl(200, 90%, 60%)', a: 'hsl(180, 100%, 50%)' },
+            cybersecurity: { p: 'hsl(0, 90%, 60%)', a: 'hsl(20, 100%, 50%)' },
+            machine_learning: { p: 'hsl(280, 90%, 65%)', a: 'hsl(320, 100%, 60%)' },
+            frontend: { p: 'hsl(30, 90%, 60%)', a: 'hsl(45, 100%, 50%)' },
+            backend: { p: 'hsl(210, 80%, 50%)', a: 'hsl(190, 90%, 60%)' },
+            logic: { p: 'hsl(180, 70%, 50%)', a: 'hsl(160, 80%, 60%)' },
+            philosophy: { p: 'hsl(40, 30%, 70%)', a: 'hsl(30, 40%, 80%)' },
+            random: { p: 'hsl(245, 90%, 65%)', a: 'hsl(190, 90%, 50%)' }
+        };
+
+        const theme = themes[subject] || themes.random;
+        root.style.setProperty('--primary', theme.p);
+        root.style.setProperty('--primary-glow', theme.p.replace(')', ', 0.4)').replace('hsl', 'hsla'));
+        root.style.setProperty('--accent', theme.a);
+        root.style.setProperty('--accent-glow', theme.a.replace(')', ', 0.4)').replace('hsl', 'hsla'));
+    },
+
+    // XP Notification
+    showXPGain(amount) {
+        const x = window.innerWidth / 2 + (Math.random() * 200 - 100);
+        const y = window.innerHeight / 2 + (Math.random() * 100 - 50);
+        
+        const el = document.createElement('div');
+        el.className = 'floating-xp';
+        el.textContent = `+${amount} XP`;
+        el.style.left = `${x}px`;
+        el.style.top = `${y}px`;
+        document.body.appendChild(el);
+        
+        el.animate([
+            { transform: 'translateY(0) scale(1)', opacity: 1 },
+            { transform: 'translateY(-100px) scale(1.5)', opacity: 0 }
+        ], {
+            duration: 1500,
+            easing: 'ease-out'
+        });
+        
+        setTimeout(() => el.remove(), 1500);
+    },
+
+    // XP Bar Rendering
+    renderXPProgress(stats, gainedInSession) {
+        const container = document.getElementById('feedback-text');
+        if (!container) return;
+        
+        const currentXP = stats.xp % 1000;
+        const progressPercent = (currentXP / 1000) * 100;
+        
+        const xpSection = `
+            <div class="xp-progress-wrapper">
+                <div class="xp-label-row">
+                    <span>NÍVEL ${stats.level}</span>
+                    <span>${currentXP} / 1000 XP</span>
+                </div>
+                <div class="xp-bar-outer">
+                    <div class="xp-bar-inner" id="xp-bar-inner"></div>
+                </div>
+                <div class="xp-gain-msg">+${gainedInSession} XP recebido nesta sessão</div>
+            </div>
+        `;
+        
+        container.insertAdjacentHTML('afterbegin', xpSection);
+        
+        setTimeout(() => {
+            const bar = document.getElementById('xp-bar-inner');
+            if (bar) bar.style.width = `${progressPercent}%`;
+        }, 100);
     }
 };

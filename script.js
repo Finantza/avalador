@@ -26,6 +26,9 @@ const QuestionDB = {
                 if (!db.objectStoreNames.contains('progress')) {
                     db.createObjectStore('progress', { keyPath: 'subject' });
                 }
+                if (!db.objectStoreNames.contains('global_stats')) {
+                    db.createObjectStore('global_stats', { keyPath: 'id' });
+                }
             };
 
             request.onsuccess = async (e) => {
@@ -111,43 +114,35 @@ const QuestionDB = {
         });
     },
 
-    async markSeen(subject, difficulty, questions) {
+    async markSeen(questions) {
         return new Promise((resolve) => {
             if (!this.db) return resolve();
-            const key = `${subject}_${difficulty}`;
             const transaction = this.db.transaction(['seen'], 'readwrite');
             const store = transaction.objectStore('seen');
-            const getRequest = store.get(key);
             
             const questionTexts = Array.isArray(questions) ? questions.map(q => q.question) : [questions.question];
             
-            getRequest.onsuccess = () => {
-                let data = getRequest.result || { key, list: [] };
-                questionTexts.forEach(txt => {
-                    if (!data.list.includes(txt)) data.list.push(txt);
-                });
-                store.put(data);
-                transaction.oncomplete = () => resolve();
-            };
+            questionTexts.forEach(txt => {
+                store.put({ key: txt, timestamp: Date.now() });
+            });
+            transaction.oncomplete = () => resolve();
         });
     },
 
-    async getSeen(subject, difficulty) {
+    async getSeen() {
         return new Promise((resolve) => {
             if (!this.db) return resolve([]);
-            const key = `${subject}_${difficulty}`;
             const transaction = this.db.transaction(['seen'], 'readonly');
             const store = transaction.objectStore('seen');
-            const request = store.get(key);
-            request.onsuccess = () => resolve(request.result ? request.result.list : []);
+            const request = store.getAll();
+            request.onsuccess = () => resolve(request.result ? request.result.map(r => r.key) : []);
         });
     },
 
-    async resetSeen(subject, difficulty) {
+    async resetSeen() {
         if (!this.db) return;
-        const key = `${subject}_${difficulty}`;
         const transaction = this.db.transaction(['seen'], 'readwrite');
-        transaction.objectStore('seen').delete(key);
+        transaction.objectStore('seen').clear();
     },
 
     async getStats() {
@@ -195,6 +190,20 @@ const QuestionDB = {
                 store.put(data);
             }
         };
+    },
+
+    async getGlobalStats() {
+        return new Promise((resolve) => {
+            if (!this.db) return resolve({ id: 'main', xp: 0, level: 1 });
+            const request = this.db.transaction(['global_stats'], 'readonly').objectStore('global_stats').get('main');
+            request.onsuccess = () => resolve(request.result || { id: 'main', xp: 0, level: 1 });
+        });
+    },
+
+    async saveGlobalStats(stats) {
+        if (!this.db) return;
+        const transaction = this.db.transaction(['global_stats'], 'readwrite');
+        transaction.objectStore('global_stats').put({ ...stats, id: 'main' });
     }
 };
 
@@ -210,6 +219,7 @@ class StudentProfile {
         this.weaknesses = [];
         this.themeHistory = {}; // theme -> {correct, total}
         this.streak = 0;
+        this.xpGained = 0;
         this.startTime = Date.now();
     }
 
@@ -231,6 +241,20 @@ class StudentProfile {
 
         this.recalculateStrengthsAndWeaknesses();
         this.updateAdaptiveLevel();
+        this.calculateXPGain(question, isCorrect);
+    }
+
+    calculateXPGain(question, isCorrect) {
+        if (!isCorrect) return;
+        let base = 50;
+        if (question.difficulty === 'medium') base = 100;
+        if (question.difficulty === 'hard') base = 200;
+        
+        const bonus = this.streak * 10;
+        const total = base + bonus;
+        this.xpGained += total;
+        
+        OnyxUI.showXPGain(total);
     }
 
     recalculateStrengthsAndWeaknesses() {
@@ -262,6 +286,7 @@ class StudentProfile {
             level: this.level,
             strengths: this.strengths,
             weaknesses: this.weaknesses,
+            xp: this.xpGained,
             recommendations: this.generateRecommendations()
         };
     }
@@ -390,6 +415,7 @@ function setupEventListeners() {
             btn.classList.add('active');
             currentState.subject = btn.dataset.subject;
             await updateDifficultyLocks();
+            OnyxUI.applyTheme(btn.dataset.subject);
             OnyxUI.playFeedback('click');
         });
     });
@@ -440,11 +466,11 @@ async function startQuiz() {
     const difficulty = currentState.difficulty;
     
     let availablePool = await QuestionDB.getAll(subject, difficulty);
-    const seenList = await QuestionDB.getSeen(subject, difficulty);
+    const seenList = await QuestionDB.getSeen();
     availablePool = availablePool.filter(q => !seenList.includes(q.question));
 
     if (availablePool.length < 10) {
-        await QuestionDB.resetSeen(subject, difficulty);
+        await QuestionDB.resetSeen();
         availablePool = await QuestionDB.getAll(subject, difficulty);
     }
 
@@ -456,7 +482,7 @@ async function startQuiz() {
     }
     
     currentState.activeQuestions = OnyxEngines.shuffle([...selectedFromPool, ...selectedAI]);
-    await QuestionDB.markSeen(subject, difficulty, currentState.activeQuestions);
+    await QuestionDB.markSeen(currentState.activeQuestions);
 
     OnyxUI.updateStatus('active');
     displayName.textContent = `${name} | ${getSubjectLabel(subject)} (${getDifficultyLabel(difficulty)})`;
@@ -582,20 +608,31 @@ function selectOption(index, btn) {
     }, isCorrect ? 800 : 3000);
 }
 
-function triggerRandomChallenge() {
+const globalChallenges = [
+    { t: "Qual o comando para listar arquivos em Linux?", a: "ls" },
+    { t: "O que significa CSS?", a: "Cascading Style Sheets" },
+    { t: "Qual a tag HTML para links?", a: "a" },
+    { t: "Quanto é 2 + 2 * 2?", a: "6" },
+    { t: "Qual o protocolo padrão da Web?", a: "http" },
+    { t: "Qual comando Git inicia um repositório?", a: "git init" },
+    { t: "O que significa SQL?", a: "Structured Query Language" },
+    { t: "Qual a porta padrão do HTTP?", a: "80" }
+];
+
+async function triggerRandomChallenge() {
     OnyxUI.playFeedback('alert');
-    const challenges = [
-        { t: "Qual o comando para listar arquivos em Linux?", a: "ls" },
-        { t: "O que significa CSS?", a: "Cascading Style Sheets" },
-        { t: "Qual a tag HTML para links?", a: "a" },
-        { t: "Quanto é 2 + 2 * 2?", a: "6" },
-        { t: "Qual o protocolo padrão da Web?", a: "http" }
-    ];
-    const pick = challenges[Math.floor(Math.random() * challenges.length)];
+    
+    const seen = await QuestionDB.getSeen();
+    const available = globalChallenges.filter(c => !seen.includes(c.t));
+    
+    const pool = available.length > 0 ? available : globalChallenges;
+    const pick = pool[Math.floor(Math.random() * pool.length)];
     
     challengeTask.textContent = pick.t;
     challengeInput.value = "";
     challengeInput.dataset.answer = pick.a;
+    
+    await QuestionDB.markSeen([{ question: pick.t }]);
     
     challengeWarning.classList.add('active');
     setTimeout(() => {
@@ -636,12 +673,13 @@ async function adaptRemainingQuestions() {
     OnyxUI.addReasoningLog(`Adaptando dificuldade para: ${nextLevel.toUpperCase()}`);
     
     let newBatch = await QuestionDB.getByNivel(currentSubject, nextLevel);
-    const seen = await QuestionDB.getSeen(currentSubject, nextLevel);
+    const seen = await QuestionDB.getSeen();
     newBatch = newBatch.filter(q => !seen.includes(q.question));
     
     if (newBatch.length > 0) {
         const replacement = OnyxEngines.shuffle(newBatch).slice(0, 5);
         currentState.activeQuestions.splice(currentState.currentQuestionIndex, 5, ...replacement);
+        await QuestionDB.markSeen(replacement);
     }
 }
 
@@ -671,6 +709,25 @@ function finishQuiz() {
 
     showScreen('results');
     OnyxUI.updateStatus('completed');
+    handleGlobalProgress(currentState.profile.xpGained);
+}
+
+async function handleGlobalProgress(xpToAdd) {
+    const stats = await QuestionDB.getGlobalStats();
+    stats.xp += xpToAdd;
+    
+    // Simple level logic: every 1000 XP is a level
+    const newLevel = Math.floor(stats.xp / 1000) + 1;
+    const levelUp = newLevel > stats.level;
+    stats.level = newLevel;
+    
+    await QuestionDB.saveGlobalStats(stats);
+    
+    OnyxUI.renderXPProgress(stats, xpToAdd);
+    if (levelUp) {
+        OnyxUI.playFeedback('success');
+        OnyxUI.addReasoningLog(`PROMOÇÃO: Nível global elevado para ${stats.level}`);
+    }
 }
 
 // --- HELPERS ---
@@ -713,27 +770,28 @@ function showScreen(key) {
 
 function getSubjectLabel(s) {
     const labels = { 
-        logic: 'Lógica', 
-        informatics: 'Informática',
-        english: 'Inglês',
-        data_science: 'Ciência de Dados',
-        frontend: 'Frontend', 
-        backend: 'Backend', 
-        cybersecurity: 'Segurança', 
-        cloud_devops: 'DevOps',
-        python: 'Python',
-        numpy: 'NumPy',
-        pandas: 'Pandas',
-        sql: 'SQL',
-        machine_learning: 'Machine Learning',
-        testes: 'Testes',
-        poo: 'POO',
-        algoritmos: 'Algoritmos',
-        philosophy: 'Filosofia',
-        cryptography: 'Criptografia',
-        random: 'Aleatórios'
+        python: 'Python Pro',
+        numpy: 'NumPy Data Science',
+        pandas: 'Pandas Data Analysis',
+        sql: 'Database SQL',
+        machine_learning: 'ML & AI',
+        testes: 'Software Testing',
+        poo: 'OOP Architecture',
+        algoritmos: 'Algorithms & Data',
+        logic: 'Lógica & Raciocínio', 
+        informatics: 'Sistemas & Hardware',
+        english: 'Technical English',
+        data_science: 'Data Science & AI',
+        frontend: 'Frontend Engineering', 
+        backend: 'Backend Architecture', 
+        software_eng: 'Software Engineering',
+        cybersecurity: 'Cybersecurity Ops', 
+        cloud_devops: 'Cloud & DevOps',
+        cryptography: 'Cryptography & Sec',
+        philosophy: 'Ethics & Philosophy',
+        random: 'Aleatórios (Mixed)'
     };
-    return labels[s] || s;
+    return labels[s] || s.toUpperCase();
 }
 
 function getDifficultyLabel(d) {
