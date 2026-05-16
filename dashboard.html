@@ -117,6 +117,13 @@
         </div>
     </div>
 
+    <!-- Random Challenge Alert -->
+    <div id="emergency-alert" class="emergency-alert">
+        <div style="font-weight:900; font-size:1.2rem; margin-bottom:5px;">🚨 DESAFIO PRIORITÁRIO</div>
+        <p style="font-size:0.8rem;">O sistema detectou uma oportunidade de ganho de XP crítico. Responda agora!</p>
+        <button id="btn-accept-challenge" class="emergency-btn">ACEITAR DESAFIO</button>
+    </div>
+
     <script src="onyx_core.js"></script>
     <script src="onyx_database.js"></script>
     <script src="onyx_engines.js"></script>
@@ -317,7 +324,84 @@
         document.getElementById('btn-show-profile').onclick = () => renderProfile();
         document.getElementById('btn-logout').onclick = () => OnyxCore.Session.logout();
 
+        // --- RANDOM CHALLENGE LOGIC ---
+        let challengeTimer = null;
+        function initRandomChallenges() {
+            challengeTimer = setInterval(() => {
+                if (Math.random() > 0.7) { // 30% chance every check
+                    triggerChallenge();
+                }
+            }, 60000); // Check every minute
+        }
+
+        async function triggerChallenge() {
+            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('alert');
+            const alertBox = document.getElementById('emergency-alert');
+            alertBox.style.display = 'block';
+            
+            document.getElementById('btn-accept-challenge').onclick = async () => {
+                alertBox.style.display = 'none';
+                
+                // Pick a random unlocked subject
+                const subjects = ['matematica', 'portugues', 'historia', 'biologia', 'fisica', 'quimica', 'python', 'estatistica', 'machine_learning', 'cybersecurity'];
+                const unlocked = subjects.filter(s => userStats.level >= (OnyxCore.ProgressionConfig.subjects[s] || 1));
+                const sub = unlocked[Math.floor(Math.random() * unlocked.length)];
+                
+                const questions = OnyxEngines.QuestionEngine.generateQuestions(sub, 'easy', 1);
+                const q = questions[0];
+                
+                const questionHTML = `
+                    <div style="padding:20px;">
+                        <h3 class="u-mb-25">${q.text}</h3>
+                        <div class="nav-menu">
+                            ${q.options.map((opt, i) => `
+                                <button class="btn-onyx u-mb-10 u-w-full btn-challenge-opt" data-idx="${i}">${opt}</button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                openOverlay("DESAFIO RELÂMPAGO", questionHTML);
+                
+                document.querySelectorAll('.btn-challenge-opt').forEach(btn => {
+                    btn.onclick = async () => {
+                        const idx = parseInt(btn.dataset.idx);
+                        const isCorrect = idx === q.correct;
+                        
+                        if (isCorrect) {
+                            userStats.xp += 50;
+                            if (typeof OnyxUI !== 'undefined') {
+                                OnyxUI.playFeedback('success');
+                                OnyxUI.showXPGain(50);
+                            }
+                            openOverlay("SUCESSO!", `<div class="u-p-20 u-text-primary">CERTO! Você ganhou 50 XP.</div>`);
+                        } else {
+                            userStats.xp = Math.max(0, userStats.xp - 25);
+                            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
+                            openOverlay("FALHA!", `<div class="u-p-20" style="color:var(--error);">ERRADO! Você perdeu 25 XP.</div>`);
+                        }
+                        
+                        // Level up check
+                        const nextXP = userStats.level * 100;
+                        if (userStats.xp >= nextXP) {
+                            userStats.level++;
+                            userStats.xp = 0;
+                            if (typeof OnyxUI !== 'undefined') OnyxUI.showLevelUpAnimation(userStats.level);
+                        }
+                        
+                        await OnyxCore.DB.saveUser(userStats);
+                        renderLeveling();
+                        updateLocks();
+                    };
+                });
+            };
+
+            // Hide after 15 seconds if not accepted
+            setTimeout(() => { alertBox.style.display = 'none'; }, 15000);
+        }
+
         boot();
+        initRandomChallenges();
     </script>
 </body>
 </html>

@@ -449,6 +449,44 @@ body {
 .u-left-40 { left: 40px; }
 .u-font-06 { font-size: 0.6rem; }
 .u-border-glass { border: 1px solid rgba(255,255,255,0.1); }
+
+/* --- RANDOM CHALLENGE UI --- */
+.emergency-alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 350px;
+    background: rgba(239, 68, 68, 0.9);
+    color: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    z-index: 11000;
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
+    display: none;
+    animation: slideInRight 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28), pulseEmergency 2s infinite;
+}
+
+@keyframes pulseEmergency {
+    0% { transform: scale(1); box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
+    50% { transform: scale(1.02); box-shadow: 0 0 50px rgba(239, 68, 68, 0.8); }
+    100% { transform: scale(1); box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
+}
+
+.emergency-btn {
+    width: 100%;
+    margin-top: 15px;
+    background: #fff;
+    color: #ef4444;
+    border: none;
+    padding: 10px;
+    font-weight: 900;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.emergency-btn:hover { background: #fecaca; }
+
 @media (max-width: 1024px) {
     .sidebar { width: 80px; padding: 20px 10px; }
     .nav-item span { display: none; }
