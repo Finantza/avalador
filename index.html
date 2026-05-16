@@ -3,61 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ONYX - Acesso ao Sistema</title>
+    <title>ONYX - Supernova Assessment</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@700;900&family=JetBrains+Mono:wght@500;800&display=swap" rel="stylesheet">
 </head>
 <body class="theme-dark">
-    <div class="bg-elements">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
-    </div>
+    <div class="bg-ambient"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
 
-    <div class="cyber-overlay">
-        <div class="scanline"></div>
-        <div class="noise"></div>
-    </div>
+    <div class="main-viewport">
+        <div class="hero-wrapper">
+            <!-- Left Side: Educational System Info -->
+            <div class="hero-text">
+                <div class="hero-tag">OPERANDO EM MODO SUPERNOVA</div>
+                <h1 class="hero-title">
+                    O Futuro da<span>Avaliação Técnica</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Onyx é um ecossistema de assessment de elite, projetado para diagnosticar competências acadêmicas e de ciência de dados com precisão heurística.
+                </p>
 
-    <main id="app">
-        <section id="screen-login" class="screen active">
-            <div class="card glass">
-                <header>
-                    <div class="logo">AVALIAÇÃO DE<span> TECNOLOGIA</span></div>
-                    <h1>Acesso ao Sistema</h1>
-                    <p>Entre com seu usuário e senha de operador</p>
-                </header>
-
-                <div class="auth-form-standalone">
-                    <div id="login-status" class="u-status-msg"></div>
-                    <div class="input-group">
-                        <label for="login-name">USUÁRIO / NOME</label>
-                        <input type="text" id="login-name" placeholder="Insira seu nome" autocomplete="off">
+                <div class="feature-strip">
+                    <div class="f-item">
+                        <div class="f-icon">🤖</div>
+                        <div>
+                            <p style="color:#fff;">Motor Heurístico</p>
+                            <span style="font-size:0.7rem; opacity:0.6;">Análise de performance Real-time</span>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <label for="login-pass">SENHA DE ACESSO</label>
-                        <input type="password" id="login-pass" placeholder="••••••••" autocomplete="off">
-                    </div>
-                    <div class="auth-form-actions">
-                        <button id="btn-do-login" class="btn-primary">ENTRAR NO SISTEMA</button>
-                        <button onclick="location.href='register.html'" class="btn-text">Não possui conta? Cadastre-se</button>
+                    <div class="f-item">
+                        <div class="f-icon">🛡️</div>
+                        <div>
+                            <p style="color:#fff;">Evolução Gated</p>
+                            <span style="font-size:0.7rem; opacity:0.6;">Progresso baseado em mérito</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </section>
-    </main>
 
-    <footer id="system-status">
-        <div class="status-item"><span class="status-dot"></span>ONYX_CORE: <span id="status-mode">READY</span></div>
-        <div class="status-item">DATABASE: LOCAL_INDEXED_DB</div>
+            <!-- Right Side: Login Card -->
+            <div class="hero-auth">
+                <div class="glass card-login">
+                    <div class="u-mb-25">
+                        <h2 style="font-family: var(--font-header);">ACESSO AO SISTEMA</h2>
+                        <p class="u-text-muted">Inicie sua sessão de treinamento</p>
+                    </div>
+
+                    <div class="auth-form-standalone">
+                        <div id="login-status" class="u-status-msg"></div>
+                        <div class="input-group">
+                            <label for="login-name">IDENTIDADE OPERACIONAL</label>
+                            <input type="text" id="login-name" placeholder="Insira seu nome" autocomplete="off">
+                        </div>
+                        <div class="input-group">
+                            <label for="login-pass">CHAVE DE ACESSO</label>
+                            <input type="password" id="login-pass" placeholder="••••••••" autocomplete="off">
+                        </div>
+                        <div class="u-mt-30">
+                            <button id="btn-do-login" class="btn-onyx btn-primary u-w-full">AUTENTICAR NO NÚCLEO</button>
+                            <button onclick="location.href='register.html'" class="btn-onyx u-w-full u-mt-10" style="background:rgba(255,255,255,0.05); color:#fff;">CRIAR NOVA CREDENCIAL</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="system-status" style="position:fixed; bottom:20px; left:40px; border:none; background:none; gap:30px;">
+        <div class="status-item"><span class="status-dot"></span>ONYX_ENGINE: <span style="color:var(--primary);">ACTIVE</span></div>
+        <div class="status-item">LATENCY: <span id="ping">12ms</span></div>
+        <div class="status-item">V.3.1.0-STABLE</div>
     </footer>
 
-    <script src="onyx_ui.js"></script>
     <script src="onyx_core.js"></script>
     <script>
         const UI = {
             status: document.getElementById('login-status'),
             name: document.getElementById('login-name'),
-            pass: document.getElementById('login-pass')
+            pass: document.getElementById('login-pass'),
+            ping: document.getElementById('ping')
         };
 
         function showMsg(msg, isError) {
@@ -73,21 +96,23 @@
             const pass = UI.pass.value.trim();
             
             if (!name || !pass) {
-                if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
                 showMsg("Identificação necessária.", true);
                 return;
             }
 
             const user = await OnyxCore.DB.getUser(name);
             if (user && user.password === pass) {
-                if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
                 showMsg("ACESSO AUTORIZADO. Conectando...", false);
                 setTimeout(() => OnyxCore.Session.login(name), 1000);
             } else {
-                if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
                 showMsg("USUÁRIO OU SENHA INVÁLIDOS.", true);
             }
         };
+
+        // Random Ping Fluctuation
+        setInterval(() => {
+            UI.ping.textContent = Math.floor(Math.random() * 15 + 5) + 'ms';
+        }, 3000);
 
         window.onload = async () => {
             await OnyxCore.DB.init();
