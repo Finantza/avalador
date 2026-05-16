@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ONYX - Relatório de Missão</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@500;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Outfit:wght@700;900&family=JetBrains+Mono:wght@500;800&display=swap" rel="stylesheet">
 </head>
 <body class="theme-dark">
     <div class="bg-elements"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
@@ -13,59 +13,82 @@
 
     <main id="app">
         <section id="screen-results" class="screen active">
-            <div class="results-card glass">
+            <div class="results-card">
                 <header class="results-header">
-                    <div class="report-badge">RELATÓRIO TÉCNICO</div>
-                    <h1 class="glitch-text" data-text="MISSÃO CONCLUÍDA">MISSÃO CONCLUÍDA</h1>
-                    <p class="res-sub">Protocolo de avaliação encerrado com sucesso.</p>
+                    <div class="report-badge">ANÁLISE DE PERFORMANCE FINALIZADA</div>
+                    <h1 class="u-font-header u-font-15" style="font-size:3rem; letter-spacing:-2px;">MISSÃO CONCLUÍDA</h1>
+                    <p class="u-text-muted">Protocolo de avaliação encerrado. Sincronizando dados com o núcleo.</p>
                 </header>
 
                 <div class="results-main-content">
                     <div class="rank-display">
-                        <div class="rank-circle">
-                            <span id="res-rank">B</span>
+                        <div id="rank-circle" class="rank-circle">
+                            <span id="res-rank">-</span>
                         </div>
-                        <span class="rank-label">CLASSIFICAÇÃO</span>
+                        <p class="u-text-muted u-mt-20 u-weight-900" style="text-align:center; font-size:0.7rem;">CLASSIFICAÇÃO</p>
                     </div>
 
                     <div class="stats-breakdown">
                         <div class="stat-row">
-                            <span class="s-label">OPERADOR:</span>
-                            <span class="s-value" id="res-name">---</span>
+                            <span class="s-label">OPERADOR IDENTIFICADO</span>
+                            <span class="s-value" id="res-name">CARREGANDO...</span>
                         </div>
                         <div class="stat-row">
-                            <span class="s-label">PRECISÃO:</span>
+                            <span class="s-label">PRECISÃO DE RESPOSTA</span>
                             <span class="s-value" id="res-accuracy">0%</span>
                         </div>
                         <div class="stat-row">
-                            <span class="s-label">XP OBTIDO:</span>
-                            <span class="s-value" id="res-xp">+0</span>
+                            <span class="s-label">XP RECOMPENSA</span>
+                            <span class="s-value u-text-primary" id="res-xp">+0 XP</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="s-label">NOVO NÍVEL OPERACIONAL</span>
+                            <span class="s-value" id="res-level">LVL -</span>
                         </div>
                     </div>
                 </div>
 
+                <div class="heuristic-panel">
+                    <p class="u-text-accent u-mb-15">INSIGHT HEURÍSTICO DO MOTOR</p>
+                    <div id="heuristic-text" class="u-line-16 u-font-08">
+                        Analisando sua performance em tempo real... O motor está calculando as métricas de proficiência com base no tempo de resposta e precisão acadêmica.
+                    </div>
+                </div>
+
                 <div class="results-actions">
-                    <button onclick="location.href='dashboard.html'" class="btn-primary btn-massive">VOLTAR AO TERMINAL</button>
-                    <button onclick="OnyxCore.Session.logout()" class="btn-text">DESCONECTAR</button>
+                    <button onclick="location.href='dashboard.html'" class="btn-onyx btn-primary btn-massive">RETORNAR AO DASHBOARD</button>
+                    <button onclick="location.href='quiz.html'" class="btn-onyx u-w-200" style="background:rgba(255,255,255,0.05); color:#fff; border:1px solid rgba(255,255,255,0.1);">REPETIR MISSÃO</button>
                 </div>
             </div>
         </section>
     </main>
 
+    <footer id="system-status" class="u-pos-fixed u-bottom-20 u-left-40 u-border-none u-bg-none u-flex-gap-30">
+        <div class="status-item"><span class="status-dot"></span>SYNC_STATUS: <span class="u-text-primary">COMPLETE</span></div>
+        <div class="status-item u-opacity-06">DESENVOLVIDO POR <strong style="color:#fff;">TECHNOVIE</strong></div>
+    </footer>
+
     <script src="onyx_core.js"></script>
+    <script src="onyx_engines.js"></script>
     <script>
         async function loadResults() {
-            const user = await OnyxCore.Session.checkAuth();
-            if (!user) return;
+            await OnyxCore.DB.init();
+            const user = OnyxCore.Session.getCurrentUser();
+            if (!user) { location.href = 'index.html'; return; }
 
-            const score = parseInt(sessionStorage.getItem('onyx_final_score') || 0);
-            const accuracy = (score / 10) * 100;
-            const xpGained = score * 10 + (score >= 8 ? 50 : 0);
+            const stats = await OnyxCore.DB.getUser(user);
+            const history = await OnyxCore.DB.getHistory(user);
+            const lastMission = history[history.length - 1];
 
+            if (!lastMission) { location.href = 'dashboard.html'; return; }
+
+            const accuracy = (lastMission.score / 10) * 100;
+            
             // Display
-            document.getElementById('res-name').textContent = user;
+            document.getElementById('res-name').textContent = user.toUpperCase();
             document.getElementById('res-accuracy').textContent = `${accuracy}%`;
-            document.getElementById('res-xp').textContent = `+${xpGained}`;
+            document.getElementById('res-xp').textContent = `+${lastMission.xpGained} XP`;
+            document.getElementById('res-level').textContent = `LVL ${stats.level}`;
             
             // Rank Logic
             let rank = 'F';
@@ -75,11 +98,19 @@
             else if (accuracy >= 40) rank = 'C';
             
             const rankEl = document.getElementById('res-rank');
+            const circle = document.getElementById('rank-circle');
             rankEl.textContent = rank;
-            rankEl.parentElement.className = `rank-circle rank-${rank.toLowerCase()}`;
+            circle.className = `rank-circle rank-${rank.toLowerCase()}`;
+
+            // Heuristic Recommendation
+            const insight = await OnyxEngines.generateProfileInsight(user);
+            document.getElementById('heuristic-text').innerHTML = `
+                <p>${insight.recommendation}</p>
+                <div class="u-mt-10 u-opacity-06">Sua precisão média global está em <strong>${insight.accuracyAvg}%</strong>. Seu ponto focal de melhoria atual foi identificado em <strong>${insight.weakness}</strong>.</div>
+            `;
         }
 
-        loadResults();
+        window.onload = loadResults;
     </script>
 </body>
 </html>
