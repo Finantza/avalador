@@ -342,12 +342,11 @@
             document.getElementById('btn-accept-challenge').onclick = async () => {
                 alertBox.style.display = 'none';
                 
-                // Pick a random unlocked subject
-                const subjects = ['matematica', 'portugues', 'historia', 'biologia', 'fisica', 'quimica', 'python', 'estatistica', 'machine_learning', 'cybersecurity'];
-                const unlocked = subjects.filter(s => userStats.level >= (OnyxCore.ProgressionConfig.subjects[s] || 1));
-                const sub = unlocked[Math.floor(Math.random() * unlocked.length)];
+                const diffs = ['easy', 'medium', 'hard', 'insane', 'impossible'];
+                const unlockedDiffs = diffs.filter(d => userStats.level >= (OnyxCore.ProgressionConfig.difficulties[d] || 1));
+                const diff = unlockedDiffs[Math.floor(Math.random() * unlockedDiffs.length)];
                 
-                const questions = OnyxEngines.QuestionEngine.generateQuestions(sub, 'easy', 1);
+                const questions = OnyxEngines.QuestionEngine.generateQuestions(sub, diff, 1);
                 const q = questions[0];
                 
                 const questionHTML = `
@@ -400,8 +399,11 @@
             setTimeout(() => { alertBox.style.display = 'none'; }, 15000);
         }
 
-        boot();
-        initRandomChallenges();
+        window.onload = async () => {
+            await OnyxCore.DB.init();
+            await boot();
+            initRandomChallenges();
+        };
     </script>
 </body>
 </html>

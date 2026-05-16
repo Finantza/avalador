@@ -63,18 +63,8 @@
         async function startMission() {
             if (typeof OnyxUI !== 'undefined') OnyxUI.init();
             
-            // Check for cached questions first
-            console.log(`[QUIZ] Carregando protocolo: ${subject} (${difficulty})`);
-            const cached = await OnyxCore.DB.getQuestions(subject, difficulty);
-            
-            if (cached && cached.length >= 10) {
-                console.log("[QUIZ] Usando banco de questões persistente.");
-                questions = cached;
-            } else {
-                console.log("[QUIZ] Gerando novo banco de questões e salvando...");
-                questions = OnyxEngines.QuestionEngine.generateQuestions(subject, difficulty, 10);
-                await OnyxCore.DB.saveQuestions(subject, difficulty, questions);
-            }
+            console.log(`[QUIZ] Gerando novo banco de questões: ${subject} (${difficulty})`);
+            questions = OnyxEngines.QuestionEngine.generateQuestions(subject, difficulty, 10);
             
             renderQuestion();
         }
@@ -191,7 +181,10 @@
             location.href = 'results.html';
         }
 
-        startMission();
+        window.onload = async () => {
+            await OnyxCore.DB.init();
+            startMission();
+        };
     </script>
 </body>
 </html>
