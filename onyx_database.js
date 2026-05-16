@@ -50,21 +50,28 @@ window.OnyxDatabase = (function() {
                 {q: "Variável inteira?", a: "x = 5", d: ["int x = 5", "var x = 5", "let x = 5"]},
                 {q: "Comentário uma linha?", a: "#", d: ["//", "/*", "--"]},
                 {q: "Tipo de 'True'?", a: "bool", d: ["int", "string", "logic"]},
-                {q: "Operador resto?", a: "%", d: ["/", "//", "**"]}
+                {q: "Operador resto?", a: "%", d: ["/", "//", "**"]},
+                {q: "Como ler input do usuário?", a: "input()", d: ["read()", "get()", "scan()"]},
+                {q: "Símbolo de igualdade?", a: "==", d: ["=", "===", "eq"]},
+                {q: "Extensão de arquivo Python?", a: ".py", d: [".pt", ".python", ".pyx"]}
             ],
             medium: [
                 {q: "Adicionar item lista?", a: ".append()", d: [".add()", ".push()", ".insert()"]},
                 {q: "Tamanho string?", a: "len()", d: [".size()", ".length", "count()"]},
                 {q: "Fatiar lista [0,1,2]?", a: "l[0:2]", d: ["l(0,2)", "l{0-2}", "l.slice(0,2)"]},
                 {q: "Dicionário vazio?", a: "{}", d: ["[]", "()", "dict()"]},
-                {q: "Loop em lista?", a: "for x in l:", d: ["foreach x in l:", "while x in l:", "for(x; l)"]}
+                {q: "Loop em lista?", a: "for x in l:", d: ["foreach x in l:", "while x in l:", "for(x; l)"]},
+                {q: "Transformar para maiúscula?", a: ".upper()", d: [".toUpperCase()", ".caps()", ".big()"]},
+                {q: "Remover último item da lista?", a: ".pop()", d: [".remove()", ".delete()", ".shift()"]}
             ],
             hard: [
                 {q: "List Comprehension?", a: "[x for x in l]", d: ["{x: x}", "(x for x)", "map(x)"]},
                 {q: "Módulo para JSON?", a: "import json", d: ["import js", "import struct", "import files"]},
                 {q: "Abrir arquivo?", a: "open()", d: ["file()", "read()", "load()"]},
                 {q: "Tratar erro?", a: "try/except", d: ["try/catch", "if/else", "error/stop"]},
-                {q: "Gerador?", a: "yield", d: ["return", "break", "continue"]}
+                {q: "Gerador?", a: "yield", d: ["return", "break", "continue"]},
+                {q: "Função anônima?", a: "lambda", d: ["def", "anon", "function"]},
+                {q: "Decorador em Python?", a: "@func", d: ["#func", "$func", "&func"]}
             ],
             insane: [
                 {q: "Metaclasse?", a: "type", d: ["object", "class", "def"]},
@@ -153,6 +160,148 @@ window.OnyxDatabase = (function() {
                 {q: "Reinforcement?", a: "Agente/Recompensa", d: ["Supervisionado", "Estatístico", "Manual"]},
                 {q: "Bias vs Variance?", a: "Trade-off", d: ["Soma", "Divisão", "Multiplicação"]},
                 {q: "Curva ROC?", a: "Performance do modelo", d: ["Crescimento", "Memória", "Disco"]}
+            ]
+        },
+        portugues: {
+            easy: [
+                {q: "Plural de cidadão?", a: "Cidadãos", d: ["Cidadões", "Cidadães", "Cidadãoes"]},
+                {q: "Sinônimo de feliz?", a: "Alegre", d: ["Triste", "Raivoso", "Cansado"]},
+                {q: "Antônimo de escuro?", a: "Claro", d: ["Preto", "Noite", "Sombra"]}
+            ],
+            medium: [
+                {q: "Verbo transitivo direto exige?", a: "Objeto direto", d: ["Objeto indireto", "Sujeito", "Adjunto"]},
+                {q: "Uso da crase indica?", a: "Fusão de preposição e artigo", d: ["Acento tônico", "Plural", "Pausa"]},
+                {q: "O que é um pronome relativo?", a: "Que", d: ["Eu", "Meu", "Aquele"]}
+            ],
+            hard: [
+                {q: "Oração subordinada substantiva?", a: "Exerce função de substantivo", d: ["Adjetivo", "Advérbio", "Verbo"]},
+                {q: "Mesóclise ocorre em qual tempo verbal?", a: "Futuro do presente", d: ["Pretérito", "Presente", "Imperativo"]},
+                {q: "Figura de linguagem: 'Chorou rios de lágrimas'?", a: "Hipérbole", d: ["Metáfora", "Eufemismo", "Ironia"]}
+            ],
+            insane: [
+                {q: "Plural de 'caráter'?", a: "Caracteres", d: ["Caráteres", "Caraters", "Caracteres com acento"]},
+                {q: "Oração coordenada assindética?", a: "Sem conjunção", d: ["Com 'mas'", "Subordinada", "Adverbial"]},
+                {q: "Pleonasmo vicioso?", a: "Subir para cima", d: ["Chorou um rio", "Cegueira branca", "Doce amargo"]}
+            ],
+            impossible: [
+                {q: "Anacoluto?", a: "Quebra sintática na frase", d: ["Exagero", "Omissão de termo", "Inversão da ordem"]},
+                {q: "Etimologia de 'aluno' (falsa)?", a: "Sem luz (a-luno)", d: ["Aquele que é nutrido", "Estudante", "Criança"]},
+                {q: "Zeugma?", a: "Omissão de termo já citado", d: ["Repetição de som", "Ironia sutil", "Apelo dramático"]}
+            ]
+        },
+        historia: {
+            easy: [
+                {q: "Descobrimento do Brasil?", a: "1500", d: ["1492", "1822", "1889"]},
+                {q: "Primeiro presidente do Brasil?", a: "Deodoro da Fonseca", d: ["Getúlio Vargas", "D. Pedro II", "JK"]},
+                {q: "Em que ano começou a 2ª Guerra Mundial?", a: "1939", d: ["1914", "1945", "1929"]}
+            ],
+            medium: [
+                {q: "Fim do Império Romano do Ocidente?", a: "476 d.C.", d: ["1453 d.C.", "395 d.C.", "753 a.C."]},
+                {q: "Quem liderou a Revolução Russa de 1917?", a: "Lenin", d: ["Stalin", "Trotsky", "Tsar Nicolau II"]},
+                {q: "Tratado que dividiu o mundo entre Portugal e Espanha?", a: "Tordesilhas", d: ["Versalhes", "Madrid", "Utrecht"]}
+            ],
+            hard: [
+                {q: "Qual dinastia governou a França antes da Revolução?", a: "Bourbon", d: ["Tudor", "Habsburgo", "Romanov"]},
+                {q: "Nome da guerra entre Esparta e Atenas?", a: "Guerra do Peloponeso", d: ["Guerras Médicas", "Guerra de Troia", "Guerras Púnicas"]},
+                {q: "Conferência que partilhou a África?", a: "Conferência de Berlim", d: ["Tratado de Versalhes", "Paz de Vestfália", "Tratado de Paris"]}
+            ]
+        },
+        biologia: {
+            easy: [
+                {q: "Maior órgão do corpo humano?", a: "Pele", d: ["Fígado", "Coração", "Intestino"]},
+                {q: "O que as plantas usam para fotossíntese?", a: "Luz solar", d: ["Oxigênio", "Gelo", "Vento"]},
+                {q: "Qual a base da genética?", a: "DNA", d: ["RNA", "Proteína", "Glicose"]}
+            ],
+            medium: [
+                {q: "Qual organela produz energia celular?", a: "Mitocôndria", d: ["Ribossomo", "Núcleo", "Lisossomo"]},
+                {q: "Qual o sangue doador universal?", a: "O-", d: ["AB+", "A+", "O+"]},
+                {q: "Doença causada por falta de vitamina C?", a: "Escorbuto", d: ["Raquitismo", "Anemia", "Beribéri"]}
+            ],
+            hard: [
+                {q: "Divisão celular que forma gametas?", a: "Meiose", d: ["Mitose", "Bipartição", "Brotamento"]},
+                {q: "Qual enzima inicia a digestão na boca?", a: "Ptialina", d: ["Pepsina", "Lipase", "Tripsina"]},
+                {q: "Período da interfase com duplicação do DNA?", a: "Fase S", d: ["Fase G1", "Fase G2", "Fase M"]}
+            ]
+        },
+        fisica: {
+            easy: [
+                {q: "Unidade de força no SI?", a: "Newton", d: ["Joule", "Watt", "Pascal"]},
+                {q: "Aceleração da gravidade na Terra?", a: "~9.8 m/s²", d: ["1.6 m/s²", "15 m/s²", "5.2 m/s²"]},
+                {q: "A água ferve a quantos graus Celsius?", a: "100", d: ["0", "50", "200"]}
+            ],
+            medium: [
+                {q: "Qual a fórmula da energia cinética?", a: "mv²/2", d: ["mgh", "ma", "mc²"]},
+                {q: "Lei de Ohm?", a: "V = R.I", d: ["F = m.a", "E = mc²", "P = V.I"]},
+                {q: "Velocidade da luz no vácuo?", a: "~300.000 km/s", d: ["340 m/s", "150.000 km/s", "1.000.000 km/s"]}
+            ],
+            insane: [
+                {q: "Princípio da Incerteza?", a: "Heisenberg", d: ["Einstein", "Bohr", "Newton"]},
+                {q: "Bosão de Higgs?", a: "Partícula que dá massa", d: ["Velocidade da luz", "Anti-matéria", "Buraco Negro"]},
+                {q: "Equação de Schrödinger?", a: "Função de onda quântica", d: ["Órbita planetária", "Eletromagnetismo", "Termodinâmica"]}
+            ],
+            impossible: [
+                {q: "Teorema de Noether?", a: "Simetria = Conservação", d: ["Relatividade do tempo", "Expansão do Universo", "Cálculo vetorial"]},
+                {q: "Constante cosmológica (Λ)?", a: "Energia escura", d: ["Matéria escura", "Velocidade da luz", "Gravidade"]},
+                {q: "Gato de Schrödinger?", a: "Superposição Quântica", d: ["Velocidade terminal", "Refração da luz", "Magnetismo"]}
+            ],
+            hard: [
+                {q: "Equação da Relatividade Geral de Einstein?", a: "G_uv = 8πT_uv", d: ["E = mc²", "F = dp/dt", "∇.E = ρ/ε0"]},
+                {q: "Constante de Planck (h)?", a: "~6.626 x 10^-34 J.s", d: ["~3.1415", "~9.8 m/s²", "~8.31 J/mol.K"]},
+                {q: "Primeira lei da termodinâmica?", a: "Conservação da Energia", d: ["Aumento da Entropia", "Zero Absoluto", "Ação e Reação"]}
+            ]
+        },
+        quimica: {
+            easy: [
+                {q: "Fórmula da água?", a: "H2O", d: ["CO2", "O2", "NaCl"]},
+                {q: "Gás que respiramos (vital)?", a: "Oxigênio", d: ["Nitrogênio", "Hélio", "Argônio"]},
+                {q: "Símbolo do Ouro?", a: "Au", d: ["Ag", "Fe", "Cu"]}
+            ],
+            medium: [
+                {q: "pH neutro?", a: "7", d: ["0", "14", "3"]},
+                {q: "Ligação entre não-metais?", a: "Covalente", d: ["Iônica", "Metálica", "Ponte de Hidrogênio"]},
+                {q: "Gás mais abundante na atmosfera terrestre?", a: "Nitrogênio", d: ["Oxigênio", "Gás Carbônico", "Hélio"]}
+            ],
+            insane: [
+                {q: "Hibridização sp³ do carbono tem ângulo?", a: "109°28'", d: ["120°", "180°", "90°"]},
+                {q: "Regra de Markovnikov?", a: "Hidrogênio no carbono mais hidrogenado", d: ["Carbono menos hidrogenado", "Ligação dupla quebra", "Forma isômero trans"]},
+                {q: "Efeito Tyndall?", a: "Dispersão da luz em coloides", d: ["Mudança de pH", "Ebulioscopia", "Oxidação do ferro"]}
+            ],
+            impossible: [
+                {q: "Energia de Ativação?", a: "Energia mínima para reação", d: ["Energia liberada", "Calor específico", "Entalpia"]},
+                {q: "Eletrodo de Sacrifício?", a: "Proteção catódica", d: ["Bateria recarregável", "Ponte salina", "Anodo inerte"]},
+                {q: "Constante de Avogadro?", a: "6.022 x 10^23", d: ["3.1415", "9.8", "2.718"]}
+            ],
+            hard: [
+                {q: "Configuração eletrônica do Carbono (Z=6)?", a: "1s² 2s² 2p²", d: ["1s² 2s² 2p⁶", "1s² 2s²", "1s² 2s¹ 2p³"]},
+                {q: "O que é Isomeria Óptica?", a: "Desvio do plano da luz polarizada", d: ["Mesma fórmula, diferentes cadeias", "Diferente número de prótons", "Ligação dupla rotacional"]},
+                {q: "Lei de Lavoisier?", a: "Conservação das massas", d: ["Proporções definidas", "Gases perfeitos", "Ação e reação"]}
+            ]
+        },
+        estatistica: {
+            easy: [
+                {q: "O que é média?", a: "Soma dividida pela quantidade", d: ["Valor central", "Valor mais frequente", "Maior menos menor"]},
+                {q: "O que é moda?", a: "Valor mais frequente", d: ["Valor central", "Média ponderada", "Soma total"]},
+                {q: "O que é mediana?", a: "Valor central ordenado", d: ["Média simples", "Valor máximo", "Diferença do min/max"]}
+            ],
+            medium: [
+                {q: "O que é desvio padrão?", a: "Raiz da variância", d: ["Soma dos desvios", "Média dos quadrados", "Amplitude"]},
+                {q: "Distribuição normal?", a: "Curva de Gauss", d: ["Distribuição de Poisson", "Binomial", "Uniforme"]},
+                {q: "Probabilidade de jogar uma moeda e dar cara?", a: "50%", d: ["100%", "25%", "75%"]}
+            ],
+            insane: [
+                {q: "Cadeias de Markov?", a: "Processo estocástico sem memória", d: ["Regressão linear", "Árvore de Decisão", "Distribuição Binomial"]},
+                {q: "Viés de Sobrevivência?", a: "Focar em dados que passaram", d: ["Erro de digitação", "Amostra pequena", "P-valor falso"]},
+                {q: "ANOVA?", a: "Análise de Variância", d: ["Rede Neural", "Teste T", "Correlação"]}
+            ],
+            impossible: [
+                {q: "Teorema de Bayes?", a: "Probabilidade condicional", d: ["Limite Central", "Soma dos quadrados", "Desvio Padrão"]},
+                {q: "Homocedasticidade?", a: "Variância constante dos erros", d: ["Média zero", "Distribuição normal", "Independência linear"]},
+                {q: "Fator de Inflação da Variância (VIF)?", a: "Mede multicolinearidade", d: ["Mede precisão", "Calcula P-valor", "Define amostra"]}
+            ],
+            hard: [
+                {q: "Teorema do Limite Central?", a: "Média amostral tende a normal", d: ["Variância é constante", "Amostra é aleatória", "Probabilidade é 1"]},
+                {q: "P-valor?", a: "Probabilidade de rejeitar H0 verdadeira", d: ["Tamanho da amostra", "Nível de confiança", "Erro Tipo II"]},
+                {q: "Correlação de Pearson mede?", a: "Relação linear", d: ["Causalidade", "Variação exp", "Média quadrática"]}
             ]
         }
     };

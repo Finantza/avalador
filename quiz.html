@@ -19,6 +19,13 @@
                         <span class="fire-icon">🔥</span>
                         <span id="streak-count">0</span>
                     </div>
+                    <div class="streak-badge active" style="border-color: #10b981; background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                        <span>COMBO</span>
+                        <span id="combo-multiplier" class="u-weight-900">1.0x</span>
+                    </div>
+                    <div class="streak-badge active" style="border-color: #ef4444; background: rgba(239, 68, 68, 0.1); color: #ef4444; gap: 4px;" id="lives-container">
+                        <span class="life-icon">❤️</span><span class="life-icon">❤️</span><span class="life-icon">❤️</span>
+                    </div>
                 </div>
                 <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
                 <div class="quiz-stats">QUESTÃO <span id="current-q">1</span>/10</div>
@@ -55,6 +62,9 @@
         let currentQuestionIndex = 0;
         let score = 0;
         let streak = 0;
+        let lives = 3;
+        let comboMultiplier = 1.0;
+        let totalXPGained = 0;
         let questions = [];
         let timerInterval;
         let timeLeft = 20;
@@ -64,7 +74,7 @@
             if (typeof OnyxUI !== 'undefined') OnyxUI.init();
             
             console.log(`[QUIZ] Gerando novo banco de questões: ${subject} (${difficulty})`);
-            questions = OnyxEngines.QuestionEngine.generateQuestions(subject, difficulty, 10);
+            questions = await OnyxEngines.QuestionEngine.generateQuestions(userName, subject, difficulty, 10);
             
             renderQuestion();
         }
@@ -119,14 +129,32 @@
 
             const q = questions[currentQuestionIndex];
             const isCorrect = idx === q.correct;
+            
+            const difficultyMultiplier = { easy: 10, medium: 20, hard: 40, insane: 80, impossible: 150 };
+            const baseXP = difficultyMultiplier[difficulty] || 10;
 
             if (isCorrect) {
                 score++;
                 streak++;
+                
+                // Speed Bonus
+                const speedBonus = (timeLeft / 20); // up to +1.0
+                comboMultiplier = Math.min(3.0, 1.0 + (streak * 0.1) + speedBonus).toFixed(1);
+                
+                const earnedXP = Math.floor(baseXP * parseFloat(comboMultiplier));
+                totalXPGained += earnedXP;
+                
                 if (clickedBtn) clickedBtn.classList.add('correct');
-                if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
+                if (typeof OnyxUI !== 'undefined') {
+                    OnyxUI.playFeedback('success');
+                    OnyxUI.showXPGain(earnedXP);
+                }
             } else {
                 streak = 0;
+                comboMultiplier = 1.0;
+                lives--;
+                updateLivesUI();
+                
                 if (clickedBtn) clickedBtn.classList.add('wrong');
                 // Show correct one
                 const btns = document.querySelectorAll('.option-btn');
@@ -135,34 +163,42 @@
             }
 
             document.getElementById('streak-count').textContent = streak;
+            document.getElementById('combo-multiplier').textContent = `${comboMultiplier}x`;
             if (streak >= 3) document.getElementById('streak-badge').classList.add('active');
             else document.getElementById('streak-badge').classList.remove('active');
 
             setTimeout(() => {
                 currentQuestionIndex++;
-                if (currentQuestionIndex < questions.length) {
+                if (lives <= 0) {
+                    finishMission(true); // Failed
+                } else if (currentQuestionIndex < questions.length) {
                     renderQuestion();
                 } else {
-                    finishMission();
+                    finishMission(false);
                 }
             }, 1500);
         }
 
-        async function finishMission() {
+        function updateLivesUI() {
+            const lc = document.getElementById('lives-container');
+            lc.innerHTML = '';
+            for(let i=0; i<3; i++) {
+                lc.innerHTML += `<span class="life-icon" style="${i >= lives ? 'opacity:0.2; filter:grayscale(1);' : ''}">❤️</span>`;
+            }
+        }
+
+        async function finishMission(failed = false) {
             sessionStorage.setItem('onyx_final_score', score);
             
             try {
                 let stats = await OnyxCore.DB.getUser(userName);
                 if (!stats) stats = { id: userName, level: 1, xp: 0 };
                 
-                // Proportional XP Calculation
-                const difficultyMultiplier = { easy: 10, medium: 20, hard: 40, insane: 80, impossible: 150 };
-                const baseXP = difficultyMultiplier[difficulty] || 10;
+                if (failed) {
+                    totalXPGained = Math.floor(totalXPGained * 0.2); // 80% penalty for failure
+                }
                 
-                // XP = (Correct Answers * Multiplier) + Streak Bonus
-                const xpGained = (score * baseXP) + (streak >= 5 ? (baseXP * 2) : 0);
-                
-                stats.xp = (stats.xp || 0) + xpGained;
+                stats.xp = (stats.xp || 0) + totalXPGained;
                 
                 let nextXP = (stats.level || 1) * 100;
                 while (stats.xp >= nextXP) {
@@ -171,9 +207,21 @@
                     nextXP = stats.level * 100;
                 }
                 
+                // Update Bounties
+                if (!failed && stats.bounties) {
+                    const q = stats.bounties.quests.find(x => x.type === 'play_subject' && x.target === subject && !x.done);
+                    if (q) {
+                        q.current++;
+                        if (q.current >= q.amount) {
+                            q.done = true;
+                            stats.xp += q.reward;
+                        }
+                    }
+                }
+
                 await OnyxCore.DB.saveUser(stats);
-                await OnyxCore.DB.saveHistory({ user: userName, subject, difficulty, score, xpGained });
-                console.log(`[QUIZ] Missão concluída: +${xpGained} XP`);
+                await OnyxCore.DB.saveHistory({ user: userName, subject, difficulty, score, xpGained: totalXPGained, failed });
+                console.log(`[QUIZ] Missão concluída: +${totalXPGained} XP`);
             } catch (err) {
                 console.error("[QUIZ] Erro ao salvar progresso:", err);
             }

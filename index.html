@@ -103,6 +103,15 @@
             UI.status.style.border = `1px solid ${isError ? '#ef4444' : '#10b981'}`;
         }
 
+        // Overlay container for Cyber Boot
+        const bootOverlay = document.createElement('div');
+        bootOverlay.style.cssText = `
+            position: fixed; inset: 0; background: #000; z-index: 99999; 
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            color: var(--primary); font-family: var(--font-mono); font-size: 1.2rem;
+        `;
+        document.body.appendChild(bootOverlay);
+
         document.getElementById('btn-do-login').onclick = async () => {
             const name = UI.name.value.trim();
             const pass = UI.pass.value.trim();
@@ -114,8 +123,26 @@
 
             const user = await OnyxCore.DB.getUser(name);
             if (user && user.password === pass) {
-                showMsg("ACESSO AUTORIZADO. Conectando...", false);
-                setTimeout(() => OnyxCore.Session.login(name), 1000);
+                showMsg("ACESSO AUTORIZADO.", false);
+                
+                // Start Boot Sequence
+                bootOverlay.style.display = 'flex';
+                const bootSteps = [
+                    "INICIALIZANDO NÚCLEO ONYX...",
+                    "CARREGANDO PERFIL DE OPERADOR...",
+                    "DESCRIPTOGRAFANDO BASE DE DADOS HEURÍSTICA...",
+                    "ESTABELECENDO CONEXÃO COM A REDE GLOBAL...",
+                    "ACESSO CONCEDIDO."
+                ];
+                
+                let htmlContent = "";
+                for(let i=0; i<bootSteps.length; i++) {
+                    htmlContent += `<div>> ${bootSteps[i]}</div>`;
+                    bootOverlay.innerHTML = htmlContent;
+                    await new Promise(r => setTimeout(r, 600));
+                }
+                
+                setTimeout(() => OnyxCore.Session.login(name), 500);
             } else {
                 showMsg("USUÁRIO OU SENHA INVÁLIDOS.", true);
             }

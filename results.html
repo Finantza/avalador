@@ -16,7 +16,7 @@
             <div class="results-card">
                 <header class="results-header">
                     <div class="report-badge">ANÁLISE DE PERFORMANCE FINALIZADA</div>
-                    <h1 class="u-font-header u-font-15 u-ls-n2">MISSÃO CONCLUÍDA</h1>
+                    <h1 id="mission-status-title" class="u-font-header u-font-15 u-ls-n2">MISSÃO CONCLUÍDA</h1>
                     <p class="u-text-muted">Protocolo de avaliação encerrado. Sincronizando dados com o núcleo.</p>
                 </header>
 
@@ -29,21 +29,30 @@
                     </div>
 
                     <div class="stats-breakdown">
-                        <div class="stat-row">
-                            <span class="s-label">OPERADOR IDENTIFICADO</span>
-                            <span class="s-value" id="res-name">CARREGANDO...</span>
+                        <div class="stat-row" style="flex-direction: column; gap: 10px;">
+                            <div class="u-flex-between">
+                                <span class="s-label">OPERADOR IDENTIFICADO</span>
+                                <span class="s-value" id="res-name" style="font-size: 1rem;">CARREGANDO...</span>
+                            </div>
                         </div>
-                        <div class="stat-row">
-                            <span class="s-label">PRECISÃO DE RESPOSTA</span>
-                            <span class="s-value" id="res-accuracy">0%</span>
+                        <div class="stat-row" style="flex-direction: column; gap: 10px;">
+                            <div class="u-flex-between">
+                                <span class="s-label">PRECISÃO DA MISSÃO</span>
+                                <span class="s-value" id="res-accuracy">0%</span>
+                            </div>
+                            <div style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; width: 100%;">
+                                <div id="accuracy-bar" style="height: 100%; width: 0%; background: var(--primary); transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--primary);"></div>
+                            </div>
                         </div>
-                        <div class="stat-row">
-                            <span class="s-label">XP RECOMPENSA</span>
-                            <span class="s-value u-text-primary" id="res-xp">+0 XP</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="s-label">NOVO NÍVEL OPERACIONAL</span>
-                            <span class="s-value" id="res-level">LVL -</span>
+                        <div class="u-grid-2">
+                            <div class="glass u-p-20 u-text-center">
+                                <span class="s-label" style="display:block; margin-bottom:5px;">XP RECOMPENSA</span>
+                                <span class="s-value u-text-primary" id="res-xp" style="font-size:1.5rem;">+0 XP</span>
+                            </div>
+                            <div class="glass u-p-20 u-text-center">
+                                <span class="s-label" style="display:block; margin-bottom:5px;">NÍVEL ATUAL</span>
+                                <span class="s-value" id="res-level" style="font-size:1.5rem;">LVL -</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -90,9 +99,25 @@
             document.getElementById('res-xp').textContent = `+${lastMission.xpGained} XP`;
             document.getElementById('res-level').textContent = `LVL ${stats.level}`;
             
+            // Animate Accuracy Bar
+            setTimeout(() => {
+                const bar = document.getElementById('accuracy-bar');
+                if (bar) bar.style.width = `${accuracy}%`;
+            }, 100);
+
+            // Handle Failure Status
+            const titleEl = document.getElementById('mission-status-title');
+            if (lastMission.failed) {
+                titleEl.textContent = 'FALHA CRÍTICA NA MISSÃO';
+                titleEl.style.color = 'var(--error)';
+                document.getElementById('accuracy-bar').style.background = 'var(--error)';
+                document.getElementById('accuracy-bar').style.boxShadow = '0 0 10px var(--error)';
+            }
+            
             // Rank Logic
             let rank = 'F';
-            if (accuracy >= 100) rank = 'S';
+            if (lastMission.failed) rank = 'F';
+            else if (accuracy >= 100) rank = 'S';
             else if (accuracy >= 80) rank = 'A';
             else if (accuracy >= 60) rank = 'B';
             else if (accuracy >= 40) rank = 'C';

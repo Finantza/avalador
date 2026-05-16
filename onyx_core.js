@@ -11,11 +11,11 @@ window.OnyxCore = {
             return new Promise((resolve) => {
                 const timeout = setTimeout(() => resolve(null), 3000);
                 try {
-                    // Increased version to 12 to ensure all stores are created
-                    const request = indexedDB.open('OnyxEliteDB', 12);
+                    // Increased version to 13 to support Cloud Sync
+                    const request = indexedDB.open('OnyxEliteDB', 13);
                     request.onupgradeneeded = (e) => {
                         const db = e.target.result;
-                        console.log("[ONYX] Upgrading DB to v12...");
+                        console.log("[ONYX] Upgrading DB to v13...");
                         if (!db.objectStoreNames.contains('global_stats')) {
                             db.createObjectStore('global_stats', { keyPath: 'id' });
                         }
@@ -24,6 +24,9 @@ window.OnyxCore = {
                         }
                         if (!db.objectStoreNames.contains('cached_questions')) {
                             db.createObjectStore('cached_questions', { keyPath: 'id' });
+                        }
+                        if (!db.objectStoreNames.contains('dynamic_questions')) {
+                            db.createObjectStore('dynamic_questions', { autoIncrement: true });
                         }
                     };
                     request.onsuccess = (e) => {
@@ -56,6 +59,27 @@ window.OnyxCore = {
                     timestamp: Date.now()
                 });
             } catch(e) { console.error("[ONYX] Erro ao salvar cache:", e); }
+        },
+
+        async saveDynamicQuestions(questionsArray) {
+            const db = await this.init();
+            if (!db) return;
+            try {
+                const tx = db.transaction(['dynamic_questions'], 'readwrite');
+                const store = tx.objectStore('dynamic_questions');
+                questionsArray.forEach(q => store.put(q));
+            } catch(e) { console.error("[ONYX] Erro ao salvar questões dinâmicas:", e); }
+        },
+
+        async getDynamicQuestions() {
+            const db = await this.init();
+            if (!db) return [];
+            return new Promise((resolve) => {
+                const tx = db.transaction(['dynamic_questions'], 'readonly');
+                const request = tx.objectStore('dynamic_questions').getAll();
+                request.onsuccess = () => resolve(request.result || []);
+                request.onerror = () => resolve([]);
+            });
         },
 
         async getQuestions(subject, difficulty) {
@@ -128,6 +152,70 @@ window.OnyxCore = {
                 };
                 request.onerror = () => resolve([]);
             });
+        },
+
+        async exportDatabase() {
+            const db = await this.init();
+            if (!db) return null;
+            
+            const dump = { global_stats: [], history: [], dynamic_questions: [] };
+            const stores = Object.keys(dump);
+            
+            for (let s of stores) {
+                dump[s] = await new Promise(resolve => {
+                    const tx = db.transaction([s], 'readonly');
+                    const req = tx.objectStore(s).getAll();
+                    req.onsuccess = () => resolve(req.result || []);
+                    req.onerror = () => resolve([]);
+                });
+            }
+            
+            return JSON.stringify(dump);
+        },
+
+        async importDatabase(jsonData) {
+            const db = await this.init();
+            if (!db) return false;
+            
+            try {
+                const dump = JSON.parse(jsonData);
+                const stores = Object.keys(dump);
+                
+                for (let s of stores) {
+                    if (db.objectStoreNames.contains(s) && dump[s].length > 0) {
+                        await new Promise((resolve, reject) => {
+                            const tx = db.transaction([s], 'readwrite');
+                            const store = tx.objectStore(s);
+                            store.clear().onsuccess = () => {
+                                dump[s].forEach(item => store.put(item));
+                            };
+                            tx.oncomplete = () => resolve(true);
+                            tx.onerror = () => reject();
+                        });
+                    }
+                }
+                return true;
+            } catch(e) {
+                console.error("[ONYX] Erro ao importar BD:", e);
+                return false;
+            }
+        },
+
+        async createInternalSnapshot() {
+            try {
+                const dataStr = await this.exportDatabase();
+                if (dataStr) {
+                    localStorage.setItem('onyx_internal_vault', dataStr);
+                    return true;
+                }
+                return false;
+            } catch(e) { return false; }
+        },
+
+        async restoreInternalSnapshot() {
+            const dataStr = localStorage.getItem('onyx_internal_vault');
+            if (!dataStr) return false;
+            return await this.importDatabase(dataStr);
         }
     },
 

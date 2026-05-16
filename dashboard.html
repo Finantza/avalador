@@ -97,12 +97,40 @@
                         <button class="btn-onyx btn-diff" data-difficulty="impossible">IMPOSSÍVEL</button>
                     </div>
 
-                    <div class="glass u-p-20">
+                    <div class="glass u-p-20 u-mb-30" id="bounties-panel">
+                        <div class="u-flex-between u-mb-15">
+                            <h4 class="u-font-header u-text-accent">🎯 DAILY BOUNTIES</h4>
+                            <span class="status-dot"></span>
+                        </div>
+                        <div id="bounties-list" class="nav-menu">
+                            <!-- Bounties injected here -->
+                        </div>
+                    </div>
+
+                    <div class="glass u-p-20 u-mb-30">
                         <h4 id="briefing-subject" class="u-text-primary u-mb-10">SELECIONE UM TEMA</h4>
                         <p id="briefing-desc" class="u-text-muted u-line-16 u-mb-20">
                             Selecione um domínio para visualizar os detalhes da missão.
                         </p>
                         <button id="btn-start" class="btn-onyx btn-primary u-w-full">INICIAR OPERAÇÃO</button>
+                    </div>
+
+                    <div class="glass u-p-20 u-mb-30">
+                        <h4 class="u-font-header u-text-muted u-mb-10">REDE ONYX</h4>
+                        <p class="u-font-07 u-text-muted u-mb-15">Atualize seu banco de dados local com missões globais (Cloud).</p>
+                        <button id="btn-cloud-sync" class="btn-onyx u-w-full" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);">
+                            SINCRONIZAR BANCO
+                        </button>
+                    </div>
+
+                    <div class="glass u-p-20" id="backup-panel">
+                        <div class="u-flex-between u-mb-10">
+                            <h4 class="u-font-header u-text-muted">ONYX VAULT</h4>
+                        </div>
+                        <p class="u-font-07 u-text-muted u-mb-15">O seu perfil está protegido pelo Cofre Interno Automático.</p>
+                        <button id="btn-restore-internal" class="btn-onyx u-w-full" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);">
+                            RESTAURAR DO COFRE INTERNO
+                        </button>
                     </div>
                 </aside>
 
@@ -294,7 +322,7 @@
         async function startBattle(advName) {
             if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('alert');
             
-            const questions = OnyxEngines.QuestionEngine.generateQuestions('cybersecurity', 'medium', 3);
+            const questions = await OnyxEngines.QuestionEngine.generateQuestions(userStats.id, 'cybersecurity', 'medium', 3);
             let battleScore = 0;
             let currentB = 0;
             
@@ -344,8 +372,21 @@
 
             async function finishBattle() {
                 const win = battleScore >= 2;
-                const xp = win ? 200 : 50;
+                let xp = win ? 200 : 50;
                 
+                if (win && userStats.bounties) {
+                    const q = userStats.bounties.quests.find(x => x.type === 'arena_win' && !x.done);
+                    if (q) {
+                        q.current++;
+                        if (q.current >= q.amount) {
+                            q.done = true;
+                            xp += q.reward;
+                            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
+                        }
+                        renderBounties();
+                    }
+                }
+
                 userStats.xp += xp;
                 await OnyxCore.DB.saveUser(userStats);
                 renderLeveling();
@@ -376,8 +417,10 @@
             renderSubjectGrid();
             renderLeveling();
             renderInsights();
+            renderBounties();
             updateLocks();
             startClock();
+            checkBackupStatus();
             
             // Start Online Simulation
             updateOnlineCounter();
@@ -410,13 +453,45 @@
             if (insight.status === 'OPERATIONAL') {
                 container.innerHTML = `
                     <p>Precisão Média: <span style="color: #fff;">${insight.accuracyAvg}%</span></p>
+                    <p class="u-mt-5">Tendência: <span style="color: ${insight.trendColor}; font-weight:900;">${insight.trend}</span></p>
                     <p class="u-mt-5">Ponto Focal: <span style="color: var(--error);">${insight.weakness}</span></p>
-                    <p class="u-mt-10" style="color: var(--success);">${insight.recommendation}</p>
                 `;
             } else {
                 container.textContent = insight.recommendation;
             }
         }
+
+        async function renderBounties() {
+            const today = new Date().toDateString();
+            if (!userStats.bounties || userStats.bounties.date !== today) {
+                // Generate new bounties for today
+                const subjects = Object.keys(OnyxCore.ProgressionConfig.subjects);
+                const randomSub = subjects[Math.floor(Math.random() * subjects.length)];
+                userStats.bounties = {
+                    date: today,
+                    quests: [
+                        { id: 1, type: 'play_subject', target: randomSub, amount: 1, current: 0, reward: 300, desc: `Complete 1 missão de ${randomSub.toUpperCase()}`, done: false },
+                        { id: 2, type: 'arena_win', target: 'any', amount: 1, current: 0, reward: 500, desc: `Vença 1 Batalha na Arena`, done: false }
+                    ]
+                };
+                await OnyxCore.DB.saveUser(userStats);
+            }
+
+            const list = document.getElementById('bounties-list');
+            if (!list) return;
+            list.innerHTML = userStats.bounties.quests.map(q => `
+                <div class="u-mb-10 u-p-10" style="background: rgba(255,255,255,0.02); border: 1px solid ${q.done ? 'var(--success)' : 'rgba(255,255,255,0.1)'}; border-radius: 8px;">
+                    <div class="u-flex-between u-mb-5">
+                        <span class="u-font-08 u-weight-800" style="color: ${q.done ? 'var(--success)' : '#fff'}">${q.desc}</span>
+                        <span class="u-font-07 u-text-accent">+${q.reward} XP</span>
+                    </div>
+                    <div class="u-font-06 u-text-muted">
+                        ${q.done ? '✅ CONCLUÍDA' : `PROGRESSO: ${q.current} / ${q.amount}`}
+                    </div>
+                </div>
+            `).join('');
+        }
+
 
         function renderSubjectGrid() {
             const subjects = [
@@ -501,6 +576,79 @@
             sessionStorage.setItem('onyx_difficulty', selectedDiff);
             location.href = 'quiz.html';
         };
+
+        const btnSync = document.getElementById('btn-cloud-sync');
+        if (btnSync) {
+            btnSync.onclick = async () => {
+                if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
+                btnSync.disabled = true;
+                btnSync.innerHTML = '<span class="loader"></span> ESTABELECENDO CONEXÃO...';
+                
+                openOverlay("SINC. EM NUVEM", `
+                    <div class="u-text-center u-p-20">
+                        <div class="loader u-mb-20" style="width:50px; height:50px; border-width:4px;"></div>
+                        <h3 class="u-font-header u-text-primary">ACESSANDO REDE GLOBAL</h3>
+                        <p class="u-text-muted u-mt-10">Buscando pacotes de dados heurísticos...</p>
+                    </div>
+                `);
+
+                const count = await OnyxEngines.CloudSyncEngine.syncOpenTDB();
+
+                if (count > 0) {
+                    if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
+                    openOverlay("SINC. CONCLUÍDA", `
+                        <div class="u-text-center u-p-20">
+                            <h1 class="u-font-header u-text-success">SUCESSO</h1>
+                            <p class="u-mt-10">O banco de dados foi expandido.</p>
+                            <p class="u-text-accent u-font-12 u-mt-10">+${count} NOVAS MISSÕES INJETADAS.</p>
+                        </div>
+                    `);
+                } else {
+                    if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
+                    openOverlay("FALHA NA SINC.", `
+                        <div class="u-text-center u-p-20">
+                            <h1 class="u-font-header" style="color:var(--error);">ERRO 503</h1>
+                            <p class="u-mt-10">Não foi possível conectar à rede ou não há pacotes novos disponíveis.</p>
+                        </div>
+                    `);
+                }
+
+                btnSync.disabled = false;
+                btnSync.innerHTML = 'SINCRONIZAR BANCO';
+            };
+        }
+
+        // Onyx Vault Logic (Internal Auto-Backup)
+        const btnRestore = document.getElementById('btn-restore-internal');
+
+        if (btnRestore) {
+            btnRestore.onclick = async () => {
+                if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('alert');
+                const success = await OnyxCore.DB.restoreInternalSnapshot();
+                if (success) {
+                    openOverlay("RESTAURAÇÃO BEM-SUCEDIDA", "<div class='u-p-20 u-text-center'><h3 class='u-text-success'>SISTEMA RECUPERADO</h3><p class='u-mt-10'>O núcleo será reiniciado para aplicar os dados.</p></div>");
+                    setTimeout(() => location.reload(), 2500);
+                } else {
+                    openOverlay("FALHA CRÍTICA", "<div class='u-p-20 u-text-center'><h3 style='color:var(--error);'>COFRE VAZIO</h3><p class='u-mt-10'>Não há dados salvos no cofre interno ou ocorreu um erro na leitura.</p></div>");
+                }
+            };
+        }
+        
+        async function checkBackupStatus() {
+            if (!userStats) return;
+            const today = new Date().toDateString();
+            if (userStats.lastBackup !== today) {
+                // Auto-trigger internal snapshot
+                const success = await OnyxCore.DB.createInternalSnapshot();
+                if (success) {
+                    userStats.lastBackup = today;
+                    await OnyxCore.DB.saveUser(userStats);
+                    console.log("[ONYX VAULT] Snapshot diário realizado com sucesso no LocalStorage.");
+                } else {
+                    console.error("[ONYX VAULT] Falha ao criar snapshot.");
+                }
+            }
+        }
 
         // Overlay Management
         const UI_OVERLAY = {
@@ -630,7 +778,7 @@
                         const chosenSub = btn.dataset.sub;
                         if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
                         
-                        const questions = OnyxEngines.QuestionEngine.generateQuestions(chosenSub, diff, 1);
+                        const questions = await OnyxEngines.QuestionEngine.generateQuestions(userStats.id, chosenSub, diff, 1);
                         const q = questions[0];
                         
                         const questionHTML = `
