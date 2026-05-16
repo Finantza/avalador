@@ -5,51 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ONYX - Novo Cadastro</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Outfit:wght@700;900&family=JetBrains+Mono:wght@500;800&display=swap" rel="stylesheet">
 </head>
 <body class="theme-dark">
-    <div class="bg-elements">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
-    </div>
+    <div class="bg-elements"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
+    <div class="cyber-overlay"><div class="scanline"></div></div>
 
-    <div class="cyber-overlay">
-        <div class="scanline"></div>
-        <div class="noise"></div>
-    </div>
+    <main id="app" class="auth-standalone-wrapper">
+        <section id="screen-register" class="auth-card">
+            <header>
+                <div class="report-badge">REGISTRO DE OPERADOR</div>
+                <h1 class="u-font-header">CRIAR CONTA</h1>
+                <p>Estabeleça sua identidade no ecossistema Onyx.</p>
+            </header>
 
-    <main id="app">
-        <section id="screen-register" class="screen active">
-            <div class="card glass">
-                <header>
-                    <div class="logo">AVALIAÇÃO DE<span> TECNOLOGIA</span></div>
-                    <h1>Novo Cadastro</h1>
-                    <p>Preencha os dados para criar sua credencial</p>
-                </header>
+            <div class="auth-form">
+                <div id="reg-status" class="u-status-msg"></div>
+                
+                <div class="input-group">
+                    <label for="reg-name">IDENTIFICAÇÃO (NOME)</label>
+                    <input type="text" id="reg-name" placeholder="Ex: Operator_Zero" autocomplete="off">
+                </div>
 
-                <div class="auth-form-standalone">
-                    <div id="reg-status" class="u-status-msg"></div>
-                    <div class="input-group">
-                        <label for="reg-name">NOME COMPLETO</label>
-                        <input type="text" id="reg-name" placeholder="Seu nome completo" autocomplete="off">
-                    </div>
-                    <div class="input-group">
-                        <label for="reg-pass">DEFINA UMA SENHA</label>
-                        <input type="password" id="reg-pass" placeholder="Sua senha segura" autocomplete="off">
-                        <p class="input-hint">Mínimo de 4 caracteres</p>
-                    </div>
-                    <div class="auth-form-actions">
-                        <button id="btn-do-register" class="btn-primary">CRIAR CREDENCIAL</button>
-                        <button onclick="location.href='index.html'" class="btn-text">Já possui conta? Faça Login</button>
-                    </div>
+                <div class="input-group">
+                    <label for="reg-pass">CÓDIGO DE ACESSO (SENHA)</label>
+                    <input type="password" id="reg-pass" placeholder="••••••••" autocomplete="off">
+                    <p class="input-hint">Segurança mínima: 4 caracteres alfanuméricos.</p>
+                </div>
+
+                <div class="u-mt-30">
+                    <button id="btn-do-register" class="btn-onyx btn-primary u-w-full u-mb-15">GERAR CREDENCIAIS</button>
+                    <button onclick="location.href='index.html'" class="btn-onyx u-w-full" style="background:transparent; border:1px solid rgba(255,255,255,0.1); color:var(--text-muted);">JÁ POSSUI ACESSO? LOGIN</button>
                 </div>
             </div>
         </section>
     </main>
 
     <footer id="system-status" class="u-pos-fixed u-bottom-20 u-left-40 u-border-none u-bg-none u-flex-gap-30">
-        <div class="status-item"><span class="status-dot"></span>ONYX_CORE: <span class="u-text-primary">READY</span></div>
-        <div class="status-item u-opacity-06">DESENVOLVIDO POR <strong style="color:#fff;">TECHNOVIE</strong></div>
+        <div class="status-item"><span class="status-dot"></span>DB_STATUS: <span class="u-text-primary">ENCRYPTED</span></div>
+        <div class="status-item u-opacity-06">DESENVOLVIDO POR <strong class="u-color-white">TECHNOVIE</strong></div>
     </footer>
 
     <script src="onyx_ui.js"></script>
@@ -61,12 +55,25 @@
             pass: document.getElementById('reg-pass')
         };
 
+        async function init() {
+            await OnyxCore.DB.init();
+        }
+
         function showMsg(msg, isError) {
             UI.status.textContent = msg;
+            UI.status.className = 'u-status-msg';
             UI.status.style.display = 'block';
-            UI.status.style.background = isError ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)';
-            UI.status.style.color = isError ? '#ef4444' : '#10b981';
-            UI.status.style.border = `1px solid ${isError ? '#ef4444' : '#10b981'}`;
+            
+            if (isError) {
+                UI.status.classList.add('status-error'); // I should define this in CSS or use inline-style replacement
+                UI.status.style.background = 'rgba(239, 68, 68, 0.1)';
+                UI.status.style.color = '#ef4444';
+                UI.status.style.border = '1px solid #ef4444';
+            } else {
+                UI.status.style.background = 'rgba(16, 185, 129, 0.1)';
+                UI.status.style.color = '#10b981';
+                UI.status.style.border = '1px solid #10b981';
+            }
         }
 
         document.getElementById('btn-do-register').onclick = async () => {
@@ -75,32 +82,27 @@
             
             if (!name || !pass || pass.length < 4) {
                 if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
-                showMsg("Preencha o nome e uma senha válida (mín. 4 caracteres).", true);
+                showMsg("ERRO: Preencha todos os campos corretamente.", true);
                 return;
             }
 
             const existing = await OnyxCore.DB.getUser(name);
-            
-            if (existing && existing.password) {
+            if (existing) {
                 if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
-                showMsg("USUÁRIO JÁ CADASTRADO NO SISTEMA.", true);
+                showMsg("ERRO: Identificação já registrada no núcleo.", true);
                 return;
             }
 
-            const newUser = {
-                id: name,
-                password: pass,
-                xp: 0,
-                level: 1
-            };
-            
+            const newUser = { id: name, password: pass, xp: 0, level: 1 };
             await OnyxCore.DB.saveUser(newUser);
             
             if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
-            showMsg("CADASTRO REALIZADO COM SUCESSO! Redirecionando...", false);
+            showMsg("SUCESSO: Credenciais geradas. Redirecionando...", false);
             
-            setTimeout(() => location.href = 'index.html', 2000);
+            setTimeout(() => location.href = 'index.html', 1500);
         };
+
+        window.onload = init;
     </script>
 </body>
 </html>

@@ -367,7 +367,42 @@ body {
     letter-spacing: 1px;
 }
 
-/* --- BUTTONS --- */
+/* --- AUTH STANDALONE --- */
+.auth-standalone-wrapper {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 450px;
+    padding: 50px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--glass-border);
+    border-radius: 30px;
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    animation: fadeIn 0.5s ease-out;
+}
+
+.auth-card header { text-align: center; margin-bottom: 40px; }
+.auth-card h1 { font-family: var(--font-header); font-size: 2rem; margin: 15px 0 5px; }
+.auth-card p { color: var(--text-muted); font-size: 0.9rem; }
+
+.input-group { margin-bottom: 25px; }
+.input-group label { display: block; font-size: 0.7rem; font-weight: 800; color: var(--primary); margin-bottom: 10px; letter-spacing: 1px; }
+.input-group input { 
+    width: 100%; padding: 15px 20px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); 
+    border-radius: 12px; color: #fff; font-family: var(--font-mono); font-size: 0.9rem; transition: 0.3s;
+}
+.input-group input:focus { border-color: var(--primary); background: rgba(255,255,255,0.08); outline: none; box-shadow: 0 0 15px var(--primary-glow); }
+
+.input-hint { font-size: 0.65rem; color: var(--text-muted); margin-top: 8px; }
+
+/* --- BUTTONS & ACTIONS --- */
 .btn-onyx {
     padding: 16px 32px;
     border-radius: 14px;
@@ -449,6 +484,13 @@ body {
 .u-left-40 { left: 40px; }
 .u-font-06 { font-size: 0.6rem; }
 .u-border-glass { border: 1px solid rgba(255,255,255,0.1); }
+.u-footer-layout { display: flex; gap: 20px; border-top: 1px solid var(--glass-border); padding-top: 20px; }
+.u-weight-800 { font-weight: 800; }
+.u-weight-900 { font-weight: 900; }
+.u-font-12 { font-size: 1.2rem; }
+.u-ls-n2 { letter-spacing: -2px; }
+.u-bg-glass-btn { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
+.u-text-center { text-align: center; }
 
 /* --- RANDOM CHALLENGE UI --- */
 .emergency-alert {
