@@ -324,7 +324,7 @@ window.OnyxDatabase = (function() {
             base.forEach(item => {
                 if (out.length < target) {
                     out.push({
-                        q: out.length >= base.length ? `${item.q} (PROTOCOLO_VAR_${out.length})` : item.q,
+                        q: item.q,
                         a: item.a,
                         d: item.d
                     });

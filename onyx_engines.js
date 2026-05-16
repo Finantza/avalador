@@ -127,6 +127,17 @@ window.OnyxEngines = {
                 pool = [...pool, ...matchedDynQ];
             }
             
+            // Deduplicate pool to ensure we never have identical questions
+            const uniquePool = [];
+            const seenText = new Set();
+            pool.forEach(item => {
+                if (item && item.q && !seenText.has(item.q)) {
+                    seenText.add(item.q);
+                    uniquePool.push(item);
+                }
+            });
+            pool = uniquePool;
+            
             if (!pool || pool.length === 0) return [];
 
             // Adaptive Anti-Repetition Engine
@@ -140,8 +151,13 @@ window.OnyxEngines = {
             // Prioritize unseen questions
             let unseenPool = pool.filter(q => !stats.seenQuestions.includes(q.q));
             
-            // Fallback if we exhaust unseen pool
+            // Fallback if we exhaust unseen pool (Reset seen registry for this pool's items)
             if (unseenPool.length < count) {
+                if (userId) {
+                    // Remove current pool's questions from global seen list so they can be recycled
+                    const poolQuestionTexts = pool.map(p => p.q);
+                    stats.seenQuestions = stats.seenQuestions.filter(qText => !poolQuestionTexts.includes(qText));
+                }
                 unseenPool = pool; 
             }
 
