@@ -28,6 +28,7 @@
                 </header>
 
                 <div class="auth-form-standalone">
+                    <div id="login-status" class="u-status-msg"></div>
                     <div class="input-group">
                         <label for="login-name">USUÁRIO / NOME</label>
                         <input type="text" id="login-name" placeholder="Insira seu nome" autocomplete="off">
@@ -53,31 +54,43 @@
     <script src="onyx_ui.js"></script>
     <script src="onyx_core.js"></script>
     <script>
+        const UI = {
+            status: document.getElementById('login-status'),
+            name: document.getElementById('login-name'),
+            pass: document.getElementById('login-pass')
+        };
+
+        function showMsg(msg, isError) {
+            UI.status.textContent = msg;
+            UI.status.style.display = 'block';
+            UI.status.style.background = isError ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)';
+            UI.status.style.color = isError ? '#ef4444' : '#10b981';
+            UI.status.style.border = `1px solid ${isError ? '#ef4444' : '#10b981'}`;
+        }
+
         document.getElementById('btn-do-login').onclick = async () => {
-            const name = document.getElementById('login-name').value.trim();
-            const pass = document.getElementById('login-pass').value.trim();
+            const name = UI.name.value.trim();
+            const pass = UI.pass.value.trim();
             
             if (!name || !pass) {
-                OnyxUI.playFeedback('error');
-                alert("Identificação necessária.");
+                if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
+                showMsg("Identificação necessária.", true);
                 return;
             }
 
             const user = await OnyxCore.DB.getUser(name);
             if (user && user.password === pass) {
-                OnyxUI.playFeedback('success');
-                OnyxCore.Session.setCurrentUser(name);
-                location.href = 'dashboard.html';
+                if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
+                showMsg("ACESSO AUTORIZADO. Conectando...", false);
+                setTimeout(() => OnyxCore.Session.login(name), 1000);
             } else {
-                OnyxUI.playFeedback('error');
-                alert("Usuário ou senha inválidos.");
+                if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
+                showMsg("USUÁRIO OU SENHA INVÁLIDOS.", true);
             }
         };
 
-        // Auto-login check
         window.onload = async () => {
             await OnyxCore.DB.init();
-            await OnyxCore.DB.createTestUser();
             if (OnyxCore.Session.getCurrentUser()) {
                 location.href = 'dashboard.html';
             }

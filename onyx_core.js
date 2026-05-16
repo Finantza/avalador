@@ -1,107 +1,161 @@
 /**
  * ONYX CORE SYSTEM
- * Shared logic for Database and Global State management across multiple pages.
+ * Centralized Database, Session, and Progression Engine.
  */
 
 window.OnyxCore = {
-    // Database Interface (IndexedDB)
     DB: {
-        dbName: "OnyxEvolutionDB",
-        version: 4,
-        db: null,
-
+        instance: null,
         async init() {
-            return new Promise((resolve, reject) => {
-                const request = indexedDB.open(this.dbName, this.version);
-                request.onupgradeneeded = (e) => {
-                    const db = e.target.result;
-                    if (!db.objectStoreNames.contains('global_stats')) {
-                        db.createObjectStore('global_stats', { keyPath: 'id' });
-                    }
-                    if (!db.objectStoreNames.contains('history')) {
-                        db.createObjectStore('history', { keyPath: 'id', autoIncrement: true });
-                    }
-                };
-                request.onsuccess = (e) => {
-                    this.db = e.target.result;
-                    resolve(this.db);
-                };
-                request.onerror = (e) => reject(e.target.error);
-            });
-        },
-
-        async getUser(name) {
-            if (!this.db) await this.init();
+            if (this.instance) return this.instance;
             return new Promise((resolve) => {
-                const tx = this.db.transaction('global_stats', 'readonly');
-                const store = tx.objectStore('global_stats');
-                const request = store.get(name);
-                request.onsuccess = () => resolve(request.result || { id: name, xp: 0, level: 1 });
-            });
-        },
-
-        async saveUser(data) {
-            if (!this.db) await this.init();
-            return new Promise((resolve) => {
-                const tx = this.db.transaction('global_stats', 'readwrite');
-                const store = tx.objectStore('global_stats');
-                store.put(data);
-                tx.oncomplete = () => resolve();
-            });
-        },
-
-        async saveHistory(entry) {
-            if (!this.db) await this.init();
-            return new Promise((resolve) => {
-                const tx = this.db.transaction('history', 'readwrite');
-                const store = tx.objectStore('history');
-                store.add({ ...entry, timestamp: Date.now() });
-                tx.oncomplete = () => resolve();
-            });
-        },
-
-        async getRanking() {
-            if (!this.db) await this.init();
-            return new Promise((resolve) => {
-                const tx = this.db.transaction('global_stats', 'readonly');
-                const store = tx.objectStore('global_stats');
-                const request = store.getAll();
-                request.onsuccess = () => {
-                    const users = request.result;
-                    resolve(users.sort((a, b) => b.xp - a.xp).slice(0, 10));
-                };
+                const timeout = setTimeout(() => resolve(null), 3000);
+                try {
+                    // Increased version to 12 to ensure all stores are created
+                    const request = indexedDB.open('OnyxEliteDB', 12);
+                    request.onupgradeneeded = (e) => {
+                        const db = e.target.result;
+                        console.log("[ONYX] Upgrading DB to v12...");
+                        if (!db.objectStoreNames.contains('global_stats')) {
+                            db.createObjectStore('global_stats', { keyPath: 'id' });
+                        }
+                        if (!db.objectStoreNames.contains('history')) {
+                            db.createObjectStore('history', { keyPath: 'timestamp' });
+                        }
+                        if (!db.objectStoreNames.contains('cached_questions')) {
+                            db.createObjectStore('cached_questions', { keyPath: 'id' });
+                        }
+                    };
+                    request.onsuccess = (e) => {
+                        clearTimeout(timeout);
+                        this.instance = e.target.result;
+                        this.createTestUser();
+                        resolve(this.instance);
+                    };
+                    request.onerror = () => resolve(null);
+                } catch (err) { resolve(null); }
             });
         },
 
         async createTestUser() {
-            const testName = "OPERADOR TESTE";
-            const user = await this.getUser(testName);
-            if (!user.password) {
-                user.password = "1234";
-                user.xp = 500;
-                user.level = 2;
-                await this.saveUser(user);
-                console.log("[ONYX] Usuário de teste criado.");
-            }
+            if (!this.instance) return;
+            try {
+                const tx = this.instance.transaction(['global_stats'], 'readwrite');
+                tx.objectStore('global_stats').put({ id: 'OPERADOR TESTE', password: '1234', level: 1, xp: 0 });
+            } catch(e) {}
+        },
+
+        async saveQuestions(subject, difficulty, questions) {
+            const db = await this.init();
+            if (!db) return;
+            try {
+                const tx = db.transaction(['cached_questions'], 'readwrite');
+                tx.objectStore('cached_questions').put({
+                    id: `${subject}_${difficulty}`,
+                    data: questions,
+                    timestamp: Date.now()
+                });
+            } catch(e) { console.error("[ONYX] Erro ao salvar cache:", e); }
+        },
+
+        async getQuestions(subject, difficulty) {
+            const db = await this.init();
+            if (!db) return null;
+            try {
+                return new Promise((resolve) => {
+                    const tx = db.transaction(['cached_questions'], 'readonly');
+                    const request = tx.objectStore('cached_questions').get(`${subject}_${difficulty}`);
+                    request.onsuccess = () => resolve(request.result ? request.result.data : null);
+                    request.onerror = () => resolve(null);
+                });
+            } catch(e) { return null; }
+        },
+
+        async getUser(id) {
+            const db = await this.init();
+            if (!db) return { id, level: 1, xp: 0 };
+            return new Promise((resolve) => {
+                const tx = db.transaction(['global_stats'], 'readonly');
+                const request = tx.objectStore('global_stats').get(id);
+                request.onsuccess = () => resolve(request.result || null);
+                request.onerror = () => resolve(null);
+            });
+        },
+
+        async saveUser(user) {
+            const db = await this.init();
+            if (!db) return false;
+            return new Promise((resolve) => {
+                const tx = db.transaction(['global_stats'], 'readwrite');
+                tx.objectStore('global_stats').put(user);
+                tx.oncomplete = () => resolve(true);
+            });
+        },
+
+        async saveHistory(entry) {
+            const db = await this.init();
+            if (!db) return;
+            entry.timestamp = Date.now();
+            try {
+                const tx = db.transaction(['history'], 'readwrite');
+                tx.objectStore('history').add(entry);
+            } catch(e) {}
+        },
+
+        async getHistory(userId) {
+            const db = await this.init();
+            if (!db) return [];
+            return new Promise((resolve) => {
+                const tx = db.transaction(['history'], 'readonly');
+                const store = tx.objectStore('history');
+                const request = store.getAll();
+                request.onsuccess = () => {
+                    const filtered = request.result
+                        .filter(h => h.user === userId)
+                        .sort((a, b) => b.timestamp - a.timestamp);
+                    resolve(filtered);
+                };
+                request.onerror = () => resolve([]);
+            });
         }
     },
 
-    // Session Management
     Session: {
-        getCurrentUser() {
-            return localStorage.getItem('onyx_active_user');
-        },
-        setCurrentUser(name) {
-            localStorage.setItem('onyx_active_user', name);
+        login(user) {
+            localStorage.setItem('onyx_active_user', user);
+            window.location.href = 'dashboard.html';
         },
         logout() {
             localStorage.removeItem('onyx_active_user');
             window.location.href = 'index.html';
         },
-        checkAuth() {
-            if (!this.getCurrentUser()) {
+        getCurrentUser() {
+            return localStorage.getItem('onyx_active_user');
+        },
+        async checkAuth() {
+            const user = this.getCurrentUser();
+            if (!user) {
                 window.location.href = 'index.html';
+                return null;
             }
+            await OnyxCore.DB.init();
+            return user;
+        }
+    },
+
+    ProgressionConfig: {
+        subjects: {
+            matematica: 1, portugues: 1, historia: 2, geografia: 2, biologia: 3, fisica: 3, quimica: 3,
+            filosofia: 4, sociologia: 4, ingles: 5, artes: 5, literatura: 5,
+            python: 6, estatistica: 6, probabilidade: 6, data_manipulation: 7, data_viz: 7,
+            big_data: 8, machine_learning: 9, deep_learning: 10, nlp: 10, cybersecurity: 11
+        },
+        difficulties: { 
+            easy: 1, 
+            medium: 2, 
+            hard: 3, 
+            insane: 4, 
+            impossible: 5 
         }
     }
 };

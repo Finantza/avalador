@@ -3,32 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ONYX - Relatório Final</title>
+    <title>ONYX - Relatório de Missão</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@500;800&display=swap" rel="stylesheet">
 </head>
 <body class="theme-dark">
+    <div class="bg-elements"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
+    <div class="cyber-overlay"><div class="scanline"></div></div>
+
     <main id="app">
         <section id="screen-results" class="screen active">
-            <div class="card glass">
-                <header>
-                    <div class="logo">ONYX <span>REPORT</span></div>
-                    <h1>Missão Concluída</h1>
+            <div class="results-card glass">
+                <header class="results-header">
+                    <div class="report-badge">RELATÓRIO TÉCNICO</div>
+                    <h1 class="glitch-text" data-text="MISSÃO CONCLUÍDA">MISSÃO CONCLUÍDA</h1>
+                    <p class="res-sub">Protocolo de avaliação encerrado com sucesso.</p>
                 </header>
 
-                <div class="results-summary">
-                    <div class="res-item">
-                        <span class="res-label">OPERADOR</span>
-                        <span class="res-value" id="res-name">...</span>
+                <div class="results-main-content">
+                    <div class="rank-display">
+                        <div class="rank-circle">
+                            <span id="res-rank">B</span>
+                        </div>
+                        <span class="rank-label">CLASSIFICAÇÃO</span>
                     </div>
-                    <div class="res-item">
-                        <span class="res-label">ACERTOS</span>
-                        <span class="res-value" id="res-score">0</span>
+
+                    <div class="stats-breakdown">
+                        <div class="stat-row">
+                            <span class="s-label">OPERADOR:</span>
+                            <span class="s-value" id="res-name">---</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="s-label">PRECISÃO:</span>
+                            <span class="s-value" id="res-accuracy">0%</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="s-label">XP OBTIDO:</span>
+                            <span class="s-value" id="res-xp">+0</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="auth-form-actions">
-                    <button onclick="location.href='dashboard.html'" class="btn-primary">NOVA MISSÃO</button>
-                    <button onclick="OnyxCore.Session.logout()" class="btn-text">SAIR</button>
+                <div class="results-actions">
+                    <button onclick="location.href='dashboard.html'" class="btn-primary btn-massive">VOLTAR AO TERMINAL</button>
+                    <button onclick="OnyxCore.Session.logout()" class="btn-text">DESCONECTAR</button>
                 </div>
             </div>
         </section>
@@ -36,9 +54,32 @@
 
     <script src="onyx_core.js"></script>
     <script>
-        OnyxCore.Session.checkAuth();
-        document.getElementById('res-name').textContent = OnyxCore.Session.getCurrentUser();
-        document.getElementById('res-score').textContent = sessionStorage.getItem('onyx_final_score');
+        async function loadResults() {
+            const user = await OnyxCore.Session.checkAuth();
+            if (!user) return;
+
+            const score = parseInt(sessionStorage.getItem('onyx_final_score') || 0);
+            const accuracy = (score / 10) * 100;
+            const xpGained = score * 10 + (score >= 8 ? 50 : 0);
+
+            // Display
+            document.getElementById('res-name').textContent = user;
+            document.getElementById('res-accuracy').textContent = `${accuracy}%`;
+            document.getElementById('res-xp').textContent = `+${xpGained}`;
+            
+            // Rank Logic
+            let rank = 'F';
+            if (accuracy >= 100) rank = 'S';
+            else if (accuracy >= 80) rank = 'A';
+            else if (accuracy >= 60) rank = 'B';
+            else if (accuracy >= 40) rank = 'C';
+            
+            const rankEl = document.getElementById('res-rank');
+            rankEl.textContent = rank;
+            rankEl.parentElement.className = `rank-circle rank-${rank.toLowerCase()}`;
+        }
+
+        loadResults();
     </script>
 </body>
 </html>

@@ -7,94 +7,190 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="theme-dark">
+    <div class="bg-elements"><div class="blob blob-1"></div></div>
+    <div class="cyber-overlay"><div class="scanline"></div></div>
+
     <main id="app">
         <section id="screen-quiz" class="screen active">
             <div class="quiz-header">
                 <div class="student-info">
-                    <span id="display-name">...</span>
-                    <div class="streak-badge" id="streak-badge">🔥 <span id="streak-count">0</span></div>
+                    <span id="display-name">OPERADOR</span>
+                    <div class="streak-badge" id="streak-badge">
+                        <span class="fire-icon">🔥</span>
+                        <span id="streak-count">0</span>
+                    </div>
                 </div>
                 <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
-                <div class="quiz-stats">Questão <span id="current-q">1</span>/10</div>
+                <div class="quiz-stats">QUESTÃO <span id="current-q">1</span>/10</div>
             </div>
 
             <div class="quiz-card glass">
                 <div id="timer-container" class="timer-container">
+                    <svg class="timer-svg" viewBox="0 0 100 100">
+                        <circle class="timer-bg" cx="50" cy="50" r="45"></circle>
+                        <circle class="timer-path" id="timer-path" cx="50" cy="50" r="45"></circle>
+                    </svg>
                     <span id="timer-text">20s</span>
                 </div>
                 <div class="question-section">
-                    <p id="question-text">Inicializando análise...</p>
+                    <p id="question-text" class="glitch-text">INICIALIZANDO PROTOCOLO...</p>
                     <div id="options-container" class="options-container"></div>
                 </div>
             </div>
         </section>
     </main>
 
-    <script src="onyx_engines.js"></script>
     <script src="onyx_ui.js"></script>
+    <script src="onyx_engines.js"></script>
     <script src="onyx_core.js"></script>
     <script>
         OnyxCore.Session.checkAuth();
-        const user = OnyxCore.Session.getCurrentUser();
-        const subject = sessionStorage.getItem('onyx_subject');
-        const difficulty = sessionStorage.getItem('onyx_difficulty');
+        const userName = OnyxCore.Session.getCurrentUser();
+        const subject = sessionStorage.getItem('onyx_subject') || 'python';
+        const difficulty = sessionStorage.getItem('onyx_difficulty') || 'easy';
         
-        document.getElementById('display-name').textContent = user;
+        document.getElementById('display-name').textContent = userName;
 
         let currentQuestionIndex = 0;
         let score = 0;
+        let streak = 0;
         let questions = [];
+        let timerInterval;
+        let timeLeft = 20;
+        let isAnswering = false;
 
-        async function start() {
-            questions = OnyxEngines.QuestionEngine.generateQuestions(subject, difficulty, 10);
+        async function startMission() {
+            if (typeof OnyxUI !== 'undefined') OnyxUI.init();
+            
+            // Check for cached questions first
+            console.log(`[QUIZ] Carregando protocolo: ${subject} (${difficulty})`);
+            const cached = await OnyxCore.DB.getQuestions(subject, difficulty);
+            
+            if (cached && cached.length >= 10) {
+                console.log("[QUIZ] Usando banco de questões persistente.");
+                questions = cached;
+            } else {
+                console.log("[QUIZ] Gerando novo banco de questões e salvando...");
+                questions = OnyxEngines.QuestionEngine.generateQuestions(subject, difficulty, 10);
+                await OnyxCore.DB.saveQuestions(subject, difficulty, questions);
+            }
+            
             renderQuestion();
         }
 
         function renderQuestion() {
+            isAnswering = false;
             const q = questions[currentQuestionIndex];
             document.getElementById('question-text').textContent = q.text;
             document.getElementById('current-q').textContent = currentQuestionIndex + 1;
             
+            // Progress
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+
+            // Reset Timer
+            resetTimer();
+
             const container = document.getElementById('options-container');
             container.innerHTML = '';
             q.options.forEach((opt, i) => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
-                btn.textContent = opt;
-                btn.onclick = () => handleAnswer(i);
+                btn.innerHTML = `<span class="opt-index">${String.fromCharCode(65 + i)}</span> ${opt}`;
+                btn.onclick = () => handleAnswer(i, btn);
                 container.appendChild(btn);
             });
         }
 
-        function handleAnswer(idx) {
-            if (idx === questions[currentQuestionIndex].correct) {
-                score++;
-                OnyxUI.playFeedback('success');
-            } else {
-                OnyxUI.playFeedback('error');
-            }
-            
-            currentQuestionIndex++;
-            if (currentQuestionIndex < questions.length) {
-                renderQuestion();
-            } else {
-                finish();
-            }
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 20;
+            updateTimerUI();
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerUI();
+                if (timeLeft <= 0) {
+                    handleAnswer(-1); // Timeout
+                }
+            }, 1000);
         }
 
-        async function finish() {
+        function updateTimerUI() {
+            document.getElementById('timer-text').textContent = `${timeLeft}s`;
+            const offset = 283 - (timeLeft / 20) * 283;
+            document.getElementById('timer-path').style.strokeDashoffset = offset;
+        }
+
+        function handleAnswer(idx, clickedBtn = null) {
+            if (isAnswering) return;
+            isAnswering = true;
+            clearInterval(timerInterval);
+
+            const q = questions[currentQuestionIndex];
+            const isCorrect = idx === q.correct;
+
+            if (isCorrect) {
+                score++;
+                streak++;
+                if (clickedBtn) clickedBtn.classList.add('correct');
+                if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
+            } else {
+                streak = 0;
+                if (clickedBtn) clickedBtn.classList.add('wrong');
+                // Show correct one
+                const btns = document.querySelectorAll('.option-btn');
+                if (btns[q.correct]) btns[q.correct].classList.add('correct-hint');
+                if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
+            }
+
+            document.getElementById('streak-count').textContent = streak;
+            if (streak >= 3) document.getElementById('streak-badge').classList.add('active');
+            else document.getElementById('streak-badge').classList.remove('active');
+
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questions.length) {
+                    renderQuestion();
+                } else {
+                    finishMission();
+                }
+            }, 1500);
+        }
+
+        async function finishMission() {
             sessionStorage.setItem('onyx_final_score', score);
-            // Update DB
-            const stats = await OnyxCore.DB.getUser(user);
-            stats.xp += score * 10;
-            if (stats.xp >= stats.level * 100) stats.level++;
-            await OnyxCore.DB.saveUser(stats);
-            await OnyxCore.DB.saveHistory({ user, subject, difficulty, score });
+            
+            try {
+                let stats = await OnyxCore.DB.getUser(userName);
+                if (!stats) stats = { id: userName, level: 1, xp: 0 };
+                
+                // Proportional XP Calculation
+                const difficultyMultiplier = { easy: 10, medium: 20, hard: 40, insane: 80, impossible: 150 };
+                const baseXP = difficultyMultiplier[difficulty] || 10;
+                
+                // XP = (Correct Answers * Multiplier) + Streak Bonus
+                const xpGained = (score * baseXP) + (streak >= 5 ? (baseXP * 2) : 0);
+                
+                stats.xp = (stats.xp || 0) + xpGained;
+                
+                let nextXP = (stats.level || 1) * 100;
+                while (stats.xp >= nextXP) {
+                    stats.level++;
+                    stats.xp -= nextXP;
+                    nextXP = stats.level * 100;
+                }
+                
+                await OnyxCore.DB.saveUser(stats);
+                await OnyxCore.DB.saveHistory({ user: userName, subject, difficulty, score, xpGained });
+                console.log(`[QUIZ] Missão concluída: +${xpGained} XP`);
+            } catch (err) {
+                console.error("[QUIZ] Erro ao salvar progresso:", err);
+            }
             
             location.href = 'results.html';
         }
 
-        start();
+        startMission();
     </script>
 </body>
 </html>

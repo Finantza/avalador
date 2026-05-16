@@ -28,6 +28,7 @@
                 </header>
 
                 <div class="auth-form-standalone">
+                    <div id="reg-status" class="u-status-msg"></div>
                     <div class="input-group">
                         <label for="reg-name">NOME COMPLETO</label>
                         <input type="text" id="reg-name" placeholder="Seu nome completo" autocomplete="off">
@@ -54,30 +55,51 @@
     <script src="onyx_ui.js"></script>
     <script src="onyx_core.js"></script>
     <script>
+        const UI = {
+            status: document.getElementById('reg-status'),
+            name: document.getElementById('reg-name'),
+            pass: document.getElementById('reg-pass')
+        };
+
+        function showMsg(msg, isError) {
+            UI.status.textContent = msg;
+            UI.status.style.display = 'block';
+            UI.status.style.background = isError ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)';
+            UI.status.style.color = isError ? '#ef4444' : '#10b981';
+            UI.status.style.border = `1px solid ${isError ? '#ef4444' : '#10b981'}`;
+        }
+
         document.getElementById('btn-do-register').onclick = async () => {
-            const name = document.getElementById('reg-name').value.trim();
-            const pass = document.getElementById('reg-pass').value.trim();
+            const name = UI.name.value.trim();
+            const pass = UI.pass.value.trim();
             
-            if (!name || !pass || name.split(/\s+/).length < 2) {
-                OnyxUI.playFeedback('error');
-                alert("Nome completo e senha são obrigatórios.");
+            if (!name || !pass || pass.length < 4) {
+                if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
+                showMsg("Preencha o nome e uma senha válida (mín. 4 caracteres).", true);
                 return;
             }
 
             const existing = await OnyxCore.DB.getUser(name);
-            if (existing.password) {
-                alert("Usuário já cadastrado.");
+            
+            if (existing && existing.password) {
+                if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
+                showMsg("USUÁRIO JÁ CADASTRADO NO SISTEMA.", true);
                 return;
             }
 
-            existing.password = pass;
-            existing.xp = 0;
-            existing.level = 1;
-            await OnyxCore.DB.saveUser(existing);
+            const newUser = {
+                id: name,
+                password: pass,
+                xp: 0,
+                level: 1
+            };
             
-            OnyxUI.playFeedback('success');
-            alert("Cadastro realizado com sucesso!");
-            location.href = 'index.html';
+            await OnyxCore.DB.saveUser(newUser);
+            
+            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
+            showMsg("CADASTRO REALIZADO COM SUCESSO! Redirecionando...", false);
+            
+            setTimeout(() => location.href = 'index.html', 2000);
         };
     </script>
 </body>

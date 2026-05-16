@@ -3,208 +3,315 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ONYX - Painel do Operador</title>
+    <title>ONYX - Central de Comando</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@700;900&family=JetBrains+Mono:wght@500;800&display=swap" rel="stylesheet">
 </head>
 <body class="theme-dark">
-    <div class="bg-elements"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
-    <div class="cyber-overlay"><div class="scanline"></div></div>
+    <div class="bg-ambient"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
 
     <main id="app">
-        <section id="screen-welcome" class="screen active">
-            <div class="card glass console-card">
-                <header class="console-header">
-                    <div class="user-main-info">
-                        <div class="avatar-box">👤</div>
-                        <div class="user-text">
-                            <span class="u-greeting">BEM-VINDO, OPERADOR</span>
-                            <h2 id="logged-user-name">...</h2>
-                        </div>
-                    </div>
-                    <div class="console-actions">
-                        <button class="btn-icon" id="btn-show-ranking">🏆</button>
-                        <button class="btn-icon" id="btn-logout">🚪</button>
-                    </div>
-                </header>
-
-                <div id="welcome-controls">
-                    <div id="global-stats-container"></div>
-
-                    <div class="console-body">
-                        <div class="selection-column main-selection">
-                            <div class="section-title">
-                                <span class="title-index">01</span>
-                                <h3>ESCOLHA O DOMÍNIO</h3>
-                            </div>
-                            <div class="subject-grid-modern" id="subject-options">
-                                <button class="btn-subject active" data-subject="python">🐍<span class="sub-name">PYTHON PRO</span></button>
-                                <button class="btn-subject" data-subject="sql">🗄️<span class="sub-name">DATABASE SQL</span></button>
-                                <button class="btn-subject" data-subject="machine_learning">🤖<span class="sub-name">AI & ML</span></button>
-                                <button class="btn-subject" data-subject="cybersecurity">🛡️<span class="sub-name">CYBERSECURITY</span></button>
-                                <button class="btn-subject" data-subject="frontend">🎨<span class="sub-name">FRONTEND ENG</span></button>
-                                <button class="btn-subject" data-subject="backend">⚙️<span class="sub-name">BACKEND ARCH</span></button>
-                                <button class="btn-subject" data-subject="logic">🧠<span class="sub-name">LOGIC & ALGO</span></button>
-                                <button class="btn-subject" data-subject="cloud">☁️<span class="sub-name">CLOUD DEVOPS</span></button>
-                                <button class="btn-subject" data-subject="data_science">📊<span class="sub-name">DATA SCIENCE</span></button>
-                                <button class="btn-subject" data-subject="testing">🧪<span class="sub-name">SW TESTING</span></button>
-                                <button class="btn-subject" data-subject="mobile">📱<span class="sub-name">MOBILE DEV</span></button>
-                                <button class="btn-subject" data-subject="design">🖌️<span class="sub-name">UI/UX DESIGN</span></button>
-                                <button class="btn-subject" data-subject="cryptography">🔑<span class="sub-name">CRYPTOGRAPHY</span></button>
-                                <button class="btn-subject" data-subject="project">📋<span class="sub-name">PROJECT MGMT</span></button>
-                                <button class="btn-subject" data-subject="agile">🔄<span class="sub-name">AGILE SCRUM</span></button>
-                                <button class="btn-subject" data-subject="linux">🐧<span class="sub-name">LINUX ADMIN</span></button>
-                                <button class="btn-subject" data-subject="network">🌐<span class="sub-name">NETWORK ENG</span></button>
-                                <button class="btn-subject" data-subject="blockchain">⛓️<span class="sub-name">BLOCKCHAIN</span></button>
-                                <button class="btn-subject" data-subject="random">🎲<span class="sub-name">MIXED</span></button>
-                            </div>
-                        </div>
-
-                        <div class="selection-column side-selection">
-                            <div class="section-title">
-                                <span class="title-index">02</span>
-                                <h3>COMPLEXIDADE</h3>
-                            </div>
-                            <div class="difficulty-stack" id="difficulty-options">
-                                <button class="btn-difficulty active" data-difficulty="easy">FÁCIL</button>
-                                <button class="btn-difficulty" data-difficulty="medium">MÉDIO</button>
-                                <button class="btn-difficulty" data-difficulty="hard">DIFÍCIL</button>
-                                <button class="btn-difficulty locked" data-difficulty="insane">INSANO</button>
-                                <button class="btn-difficulty locked" data-difficulty="impossible">IMPOSSÍVEL</button>
-                            </div>
-                            <div class="start-action-box">
-                                <p id="next-unlocks-hint" class="unlock-hint"></p>
-                                <button id="btn-start" class="btn-primary btn-massive btn-glitch">INICIAR MISSÃO</button>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Professional Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo-text">ONYX<span>AI</span></div>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active">🏠 <span>Dashboard</span></a>
+                <a href="#" class="nav-item" id="btn-show-ranking">🏆 <span>Classificação</span></a>
+                <a href="#" class="nav-item" id="btn-show-profile">👤 <span>Perfil</span></a>
+                <a href="#" class="nav-item" id="btn-logout">🚪 <span>Desconectar</span></a>
+            </nav>
+            <div class="glass u-p-20 u-mt-20" id="insight-panel">
+                <p class="u-text-accent">ANÁLISE HEURÍSTICA</p>
+                <div id="insight-content" class="u-text-muted u-mt-10">
+                    Processando dados históricos...
                 </div>
             </div>
-        </section>
-    </main>
+            <div class="glass u-p-20 u-mt-auto">
+                <p class="u-text-muted u-font-07">SISTEMA ATIVO</p>
+                <div class="u-font-mono u-font-08" id="sys-clock">00:00:00</div>
+            </div>
+        </aside>
 
-    <script src="onyx_ui.js"></script>
-    <script src="onyx_core.js"></script>
-    <script>
-        OnyxCore.Session.checkAuth();
-        const userName = OnyxCore.Session.getCurrentUser();
-        document.getElementById('logged-user-name').textContent = userName;
-
-        let selectedSubject = 'python';
-        let selectedDifficulty = 'easy';
-        let userStats = { level: 1, xp: 0 };
-
-        async function initDashboard() {
-            await OnyxCore.DB.init();
-            userStats = await OnyxCore.DB.getUser(userName);
-            
-            updateProgressionUI();
-            updateLocks();
-            loadHistory();
-        }
-
-        async function loadHistory() {
-            const historyContainer = document.getElementById('recent-history');
-            if (!OnyxCore.DB.db) await OnyxCore.DB.init();
-            
-            const tx = OnyxCore.DB.db.transaction('history', 'readonly');
-            const store = tx.objectStore('history');
-            const request = store.getAll();
-            
-            request.onsuccess = () => {
-                const history = request.result
-                    .filter(h => h.user === userName)
-                    .sort((a, b) => b.timestamp - a.timestamp)
-                    .slice(0, 3);
-
-                if (history.length > 0) {
-                    historyContainer.innerHTML = history.map(h => `
-                        <div class="history-item">
-                            <div class="h-meta">
-                                <span class="h-subject">${h.subject.toUpperCase()}</span>
-                                <span class="h-date">${new Date(h.timestamp).toLocaleDateString()}</span>
-                            </div>
-                            <div class="h-score">${h.score}/10 ACERTOS</div>
-                        </div>
-                    `).join('');
-                }
-            };
-        }
-
-        function updateProgressionUI() {
-            const container = document.getElementById('global-stats-container');
-            const nextXP = userStats.level * 100;
-            const progress = (userStats.xp / nextXP) * 100;
-
-            container.innerHTML = `
-                <div class="global-stats-header">
-                    <div class="level-badge">
-                        <div class="lvl-box">${userStats.level}</div>
-                        <div class="lvl-label">NÍVEL ATUAL</div>
+        <!-- Main Viewport -->
+        <div class="main-viewport">
+            <header class="dashboard-header">
+                <div class="user-profile-header">
+                    <div class="avatar-ring">
+                        <div class="avatar-inner">OP</div>
                     </div>
-                    <div class="xp-mini-bar-container">
-                        <div class="xp-mini-info">
-                            <span>${userStats.xp} XP</span>
-                            <span>${nextXP} XP</span>
-                        </div>
-                        <div class="xp-mini-bar-outer">
-                            <div class="xp-mini-bar-inner" style="width: ${progress}%"></div>
-                        </div>
+                    <div>
+                        <h2 id="logged-user-name" class="glitch-text">...</h2>
+                        <p class="u-text-muted u-font-08">OPERADOR DE SISTEMAS</p>
                     </div>
                 </div>
-            `;
+
+                <div class="glass u-p-20 u-flex-gap-30">
+                    <div class="u-text-right">
+                        <span class="u-text-accent">NÍVEL ATUAL</span>
+                        <div class="u-font-15 u-weight-900" id="global-level">1</div>
+                    </div>
+                    <div class="u-w-200">
+                        <div class="u-flex-between u-font-07 u-mb-5">
+                            <span>XP PROGRESS</span>
+                            <span id="xp-mini-current">0 / 100</span>
+                        </div>
+                        <div class="xp-mini-bar-outer"><div class="xp-mini-bar-inner" id="xp-mini-bar-inner"></div></div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="u-grid-layout">
+                <!-- Subject Selection -->
+                <section>
+                    <div class="u-mb-25 u-flex-center-gap-15">
+                        <div class="u-divider-h"></div>
+                        <h3 class="u-font-header">DOMÍNIOS DE TREINAMENTO</h3>
+                    </div>
+                    <div class="subject-grid-master" id="subject-options">
+                        <!-- Dynamic Buttons -->
+                    </div>
+                </section>
+
+                <!-- Difficulty & Action -->
+                <aside>
+                    <div class="u-mb-25">
+                        <h3 class="u-font-header u-font-09 u-text-muted">NÍVEL DE RISCO</h3>
+                    </div>
+                    <div class="nav-menu u-mb-30" id="difficulty-options">
+                        <button class="btn-onyx btn-diff active" data-difficulty="easy">FÁCIL</button>
+                        <button class="btn-onyx btn-diff" data-difficulty="medium">MÉDIO</button>
+                        <button class="btn-onyx btn-diff" data-difficulty="hard">DIFÍCIL</button>
+                        <button class="btn-onyx btn-diff" data-difficulty="insane">INSANO</button>
+                        <button class="btn-onyx btn-diff" data-difficulty="impossible">IMPOSSÍVEL</button>
+                    </div>
+
+                    <div class="glass u-p-20">
+                        <h4 id="briefing-subject" class="u-text-primary u-mb-10">SELECIONE UM TEMA</h4>
+                        <p id="briefing-desc" class="u-text-muted u-line-16 u-mb-20">
+                            Selecione um domínio para visualizar os detalhes da missão.
+                        </p>
+                        <button id="btn-start" class="btn-onyx btn-primary u-w-full">INICIAR OPERAÇÃO</button>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <!-- Global Overlay System -->
+    <div id="global-overlay" class="overlay-container">
+        <div class="overlay-card glass">
+            <header class="overlay-header">
+                <h2 id="overlay-title">TÍTULO</h2>
+                <button id="btn-close-overlay" class="btn-close">&times;</button>
+            </header>
+            <div id="overlay-content" class="overlay-content">
+                <!-- Dynamic Content -->
+            </div>
+        </div>
+    </div>
+
+    <script src="onyx_core.js"></script>
+    <script src="onyx_engines.js"></script>
+    <script>
+        let selectedSub = 'matematica';
+        let selectedDiff = 'easy';
+        let userStats = null;
+
+        async function boot() {
+            const user = await OnyxCore.Session.checkAuth();
+            if (!user) return;
+
+            userStats = await OnyxCore.DB.getUser(user);
+            if (!userStats) userStats = { id: user, level: 1, xp: 0 };
+
+            document.getElementById('logged-user-name').textContent = userStats.id;
+            
+            renderSubjectGrid();
+            renderLeveling();
+            renderInsights();
+            updateLocks();
+            startClock();
+        }
+
+        async function renderInsights() {
+            if (typeof OnyxEngines === 'undefined') return;
+            const insight = await OnyxEngines.generateProfileInsight(userStats.id);
+            const container = document.getElementById('insight-content');
+            
+            if (insight.status === 'OPERATIONAL') {
+                container.innerHTML = `
+                    <p>Precisão Média: <span style="color: #fff;">${insight.accuracyAvg}%</span></p>
+                    <p class="u-mt-5">Ponto Focal: <span style="color: var(--error);">${insight.weakness}</span></p>
+                    <p class="u-mt-10" style="color: var(--success);">${insight.recommendation}</p>
+                `;
+            } else {
+                container.textContent = insight.recommendation;
+            }
+        }
+
+        function renderSubjectGrid() {
+            const subjects = [
+                { id: 'matematica', n: 'MATEMÁTICA', i: '📐', d: 'Cálculos e lógica.' },
+                { id: 'portugues', n: 'PORTUGUÊS', i: '📚', d: 'Gramática e texto.' },
+                { id: 'historia', n: 'HISTÓRIA', i: '⏳', d: 'Cronologia global.' },
+                { id: 'biologia', n: 'BIOLOGIA', i: '🧬', d: 'Sistemas vitais.' },
+                { id: 'fisica', n: 'FÍSICA', i: '⚛️', d: 'Leis naturais.' },
+                { id: 'quimica', n: 'QUÍMICA', i: '🧪', d: 'Matéria e reações.' },
+                { id: 'python', n: 'PYTHON PRO', i: '🐍', d: 'Automação de elite.' },
+                { id: 'estatistica', n: 'ESTATÍSTICA', i: '📊', d: 'Análise de dados.' },
+                { id: 'machine_learning', n: 'ML / IA', i: '🤖', d: 'Modelos preditivos.' },
+                { id: 'cybersecurity', n: 'CYBER', i: '🛡️', d: 'Defesa digital.' }
+            ];
+
+            const grid = document.getElementById('subject-options');
+            grid.innerHTML = subjects.map(s => {
+                const config = OnyxCore.ProgressionConfig.subjects[s.id] || 1;
+                const isLocked = userStats.level < config;
+                return `
+                    <div class="card-subject glass ${isLocked ? 'locked' : ''} ${selectedSub === s.id ? 'active' : ''}" 
+                         data-subject="${s.id}" data-desc="${s.d}">
+                        ${isLocked ? `<div class="lock-overlay">🔒 LVL ${config}</div>` : ''}
+                        <span class="card-icon">${s.i}</span>
+                        <span class="card-title">${s.n}</span>
+                    </div>
+                `;
+            }).join('');
+
+            document.querySelectorAll('.card-subject').forEach(card => {
+                card.onclick = () => {
+                    if (card.classList.contains('locked')) return;
+                    document.querySelectorAll('.card-subject').forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    selectedSub = card.dataset.subject;
+                    document.getElementById('briefing-subject').textContent = card.querySelector('.card-title').textContent;
+                    document.getElementById('briefing-desc').textContent = card.dataset.desc;
+                };
+            });
+        }
+
+        function renderLeveling() {
+            const nextXP = userStats.level * 100;
+            document.getElementById('global-level').textContent = userStats.level;
+            document.getElementById('xp-mini-current').textContent = `${userStats.xp} / ${nextXP}`;
+            const progress = (userStats.xp / nextXP) * 100;
+            document.getElementById('xp-mini-bar-inner').style.width = `${progress}%`;
         }
 
         function updateLocks() {
-            // Simplified lock logic for the demo
-            document.querySelectorAll('.btn-difficulty').forEach(btn => {
+            const config = OnyxCore.ProgressionConfig.difficulties;
+            document.querySelectorAll('.btn-diff').forEach(btn => {
                 const diff = btn.dataset.difficulty;
-                if (diff === 'insane' && userStats.level < 3) btn.classList.add('locked');
-                else if (diff === 'impossible' && userStats.level < 5) btn.classList.add('locked');
-                else btn.classList.remove('locked');
+                const req = config[diff] || 1;
+                const isLocked = userStats.level < req;
+                if (isLocked) {
+                    btn.classList.add('locked');
+                    btn.innerHTML = `🔒 LVL ${req}`;
+                    btn.style.opacity = '0.5';
+                    btn.style.cursor = 'not-allowed';
+                }
             });
-
-            const hint = document.getElementById('next-unlocks-hint');
-            if (userStats.level < 3) hint.textContent = "🔒 Nível 3 necessário para Modo INSANO";
-            else if (userStats.level < 5) hint.textContent = "🔒 Nível 5 necessário para Modo IMPOSSÍVEL";
-            else hint.textContent = "✅ Todos os protocolos desbloqueados";
         }
 
-        document.querySelectorAll('.btn-subject').forEach(btn => {
-            btn.onclick = () => {
-                if (btn.classList.contains('locked')) {
-                    OnyxUI.playFeedback('error');
-                    return;
-                }
-                document.querySelectorAll('.btn-subject').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                selectedSubject = btn.dataset.subject;
-                OnyxUI.playFeedback('click');
-            };
-        });
+        function startClock() {
+            setInterval(() => {
+                document.getElementById('sys-clock').textContent = new Date().toLocaleTimeString();
+            }, 1000);
+        }
 
-        document.querySelectorAll('.btn-difficulty').forEach(btn => {
+        document.querySelectorAll('.btn-diff').forEach(btn => {
             btn.onclick = () => {
-                if (btn.classList.contains('locked')) {
-                    OnyxUI.playFeedback('error');
-                    return;
-                }
-                document.querySelectorAll('.btn-difficulty').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                selectedDifficulty = btn.dataset.difficulty;
-                OnyxUI.playFeedback('click');
+                if (btn.classList.contains('locked')) return;
+                document.querySelectorAll('.btn-diff').forEach(b => b.classList.remove('active', 'btn-primary'));
+                btn.classList.add('active', 'btn-primary');
+                selectedDiff = btn.dataset.difficulty;
             };
         });
 
         document.getElementById('btn-start').onclick = () => {
-            OnyxUI.playFeedback('click');
-            sessionStorage.setItem('onyx_subject', selectedSubject);
-            sessionStorage.setItem('onyx_difficulty', selectedDifficulty);
+            sessionStorage.setItem('onyx_subject', selectedSub);
+            sessionStorage.setItem('onyx_difficulty', selectedDiff);
             location.href = 'quiz.html';
         };
 
+        // Overlay Management
+        const UI_OVERLAY = {
+            container: document.getElementById('global-overlay'),
+            title: document.getElementById('overlay-title'),
+            content: document.getElementById('overlay-content'),
+            close: document.getElementById('btn-close-overlay')
+        };
+
+        function openOverlay(title, content) {
+            UI_OVERLAY.title.textContent = title;
+            UI_OVERLAY.content.innerHTML = content;
+            UI_OVERLAY.container.classList.add('active');
+        }
+
+        UI_OVERLAY.close.onclick = () => UI_OVERLAY.container.classList.remove('active');
+
+        async function renderRanking() {
+            const ranking = await OnyxCore.DB.getRanking();
+            const tableHTML = `
+                <table class="ranking-table">
+                    <thead>
+                        <tr><th>POS</th><th>OPERADOR</th><th>NÍVEL</th><th>EXP TOTAL</th></tr>
+                    </thead>
+                    <tbody>
+                        ${ranking.map((u, i) => `
+                            <tr class="${i === 0 ? 'rank-row-top' : ''}">
+                                <td>#${i + 1}</td>
+                                <td style="font-weight:800;">${u.id}</td>
+                                <td>LVL ${u.level}</td>
+                                <td class="u-font-mono">${u.level * 1000 + u.xp}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            openOverlay("CLASSIFICAÇÃO GLOBAL", tableHTML);
+        }
+
+        async function renderProfile() {
+            const history = await OnyxCore.DB.getHistory(userStats.id);
+            const profileHTML = `
+                <div class="u-grid-2">
+                    <div class="glass u-p-20">
+                        <p class="u-font-07 u-text-accent">ESTATÍSTICAS GERAIS</p>
+                        <h1 class="u-mt-10">LVL ${userStats.level}</h1>
+                        <p class="u-text-muted">${userStats.xp} XP ACUMULADO</p>
+                    </div>
+                    <div class="glass u-p-20">
+                        <p class="u-font-07 u-text-accent">MISSÕES CONCLUÍDAS</p>
+                        <h1 class="u-mt-10">${history.length}</h1>
+                        <p class="u-text-muted">OPERAÇÕES ATIVAS</p>
+                    </div>
+                </div>
+                <div class="u-mt-30">
+                    <h3 class="u-mb-15 u-font-header">HISTÓRICO RECENTE</h3>
+                    ${history.slice(0, 5).map(h => `
+                        <div class="glass" style="padding:15px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <span style="font-weight:800;">${h.subject.toUpperCase()}</span>
+                                <p class="u-font-07 u-text-muted">${new Date(h.timestamp).toLocaleString()}</p>
+                            </div>
+                            <div class="u-text-right">
+                                <span style="color:var(--success); font-weight:900;">${h.score}/10</span>
+                                <p style="font-size:0.6rem;">PONTOS</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            openOverlay("PERFIL DO OPERADOR", profileHTML);
+        }
+
+        document.getElementById('btn-show-ranking').onclick = () => renderRanking();
+        document.getElementById('btn-show-profile').onclick = () => renderProfile();
         document.getElementById('btn-logout').onclick = () => OnyxCore.Session.logout();
 
-        initDashboard();
+        boot();
     </script>
 </body>
 </html>

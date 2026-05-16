@@ -4,6 +4,9 @@
  */
 
 window.OnyxUI = {
+    init() {
+        console.log("[ONYX UI] Sistema Visual Ativo.");
+    },
     // Particle Burst Effect (Enhanced)
     createParticles(x, y, color) {
         const count = 16;
