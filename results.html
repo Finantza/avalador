@@ -112,6 +112,11 @@
                 titleEl.style.color = 'var(--error)';
                 document.getElementById('accuracy-bar').style.background = 'var(--error)';
                 document.getElementById('accuracy-bar').style.boxShadow = '0 0 10px var(--error)';
+                
+                const subtext = document.querySelector('.results-header .u-text-muted');
+                if (subtext) {
+                    subtext.innerHTML = '<span style="color: var(--error); font-weight: 900; animation: pulse-error 1.5s infinite;">[PENALIDADE CRÍTICA] VOCÊ PERDEU TODAS AS VIDAS E FOI REBAIXADO EM 1 NÍVEL!</span>';
+                }
             }
             
             // Rank Logic

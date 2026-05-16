@@ -274,16 +274,20 @@
                 if (!stats) stats = { id: userName, level: 1, xp: 0 };
                 
                 if (failed) {
-                    totalXPGained = Math.floor(totalXPGained * 0.2); // 80% penalty for failure
-                }
-                
-                stats.xp = (stats.xp || 0) + totalXPGained;
-                
-                let nextXP = (stats.level || 1) * 100;
-                while (stats.xp >= nextXP) {
-                    stats.level++;
-                    stats.xp -= nextXP;
-                    nextXP = stats.level * 100;
+                    totalXPGained = 0; // No XP gained on critical failure
+                    if (stats.level > 1) {
+                        stats.level--;
+                    }
+                    stats.xp = 0; // Reset current level XP to 0 as penalty
+                } else {
+                    stats.xp = (stats.xp || 0) + totalXPGained;
+                    
+                    let nextXP = (stats.level || 1) * 100;
+                    while (stats.xp >= nextXP) {
+                        stats.level++;
+                        stats.xp -= nextXP;
+                        nextXP = stats.level * 100;
+                    }
                 }
                 
                 // Update Bounties
