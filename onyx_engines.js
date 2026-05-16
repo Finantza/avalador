@@ -117,8 +117,13 @@ window.OnyxEngines = {
     QuestionEngine: {
         async generateQuestions(userId, subject, difficulty, count = 10) {
             const db = window.OnyxDatabase || {};
-            const subjectData = db[subject] || db['matematica'];
-            let pool = subjectData[difficulty] || subjectData['easy'] || [];
+            let pool = [];
+            if (db && typeof db.getFreshPool === 'function') {
+                pool = db.getFreshPool(subject, difficulty);
+            } else {
+                const subjectData = db[subject] || db['matematica'];
+                pool = subjectData[difficulty] || subjectData['easy'] || [];
+            }
             
             // Merge Dynamic Questions from CloudSync (IndexedDB)
             if (window.OnyxCore) {
