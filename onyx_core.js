@@ -290,3 +290,53 @@ window.OnyxCore = {
         }
     }
 };
+
+// =========================================================================
+// GLOBAL ANTI-CHEAT SYSTEM (ONYX PROTOCOL SECURITY)
+// =========================================================================
+(function() {
+    async function triggerGlobalCheatPenalty(reason) {
+        const user = localStorage.getItem('onyx_active_user');
+        if (!user) return;
+        
+        try {
+            await OnyxCore.DB.init();
+            let stats = await OnyxCore.DB.getUser(user);
+            if (stats) {
+                if (stats.level > 1) {
+                    stats.level--;
+                }
+                stats.xp = 0; // Reset current level XP to 0 as penalty
+                await OnyxCore.DB.saveUser(stats);
+                alert(`⚠️ [SEGURANÇA GLOBAL ONYX] Tentativa de ver o código detectada (${reason})! Você violou as diretrizes do protocolo. Penalidade aplicada: -1 Nível.`);
+            }
+        } catch (err) {
+            console.error("[ANTI-CHEAT GLOBAL] Erro ao aplicar penalidade:", err);
+        }
+        window.location.href = 'dashboard.html';
+    }
+
+    // 1. Context Menu Blocker (Right Click)
+    document.addEventListener('contextmenu', (e) => {
+        const user = localStorage.getItem('onyx_active_user');
+        if (!user) return;
+        
+        e.preventDefault();
+        triggerGlobalCheatPenalty('Clique Direito / Inspecionar');
+    });
+
+    // 2. Keyboard Shortcuts Blocker (F12, Inspect, View Source)
+    document.addEventListener('keydown', (e) => {
+        const user = localStorage.getItem('onyx_active_user');
+        if (!user) return;
+
+        const isF12 = e.key === 'F12' || e.keyCode === 123;
+        const isInspectCombos = e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c');
+        const isViewSource = e.ctrlKey && (e.key === 'U' || e.key === 'u');
+        
+        if (isF12 || isInspectCombos || isViewSource) {
+            e.preventDefault();
+            triggerGlobalCheatPenalty('Atalhos de Desenvolvedor');
+        }
+    });
+})();
