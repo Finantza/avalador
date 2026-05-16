@@ -40,7 +40,12 @@
                     <span id="timer-text">20s</span>
                 </div>
                 <div class="question-section">
-                    <p id="question-text" class="glitch-text">INICIALIZANDO PROTOCOLO...</p>
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 20px;">
+                        <p id="question-text" class="glitch-text" style="flex:1;">INICIALIZANDO PROTOCOLO...</p>
+                        <button id="btn-tutor" class="btn-onyx" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid #10b981; padding: 5px 10px; font-size: 0.7rem; margin-left: 15px; flex-shrink: 0;">
+                            ✨ TUTOR
+                        </button>
+                    </div>
                     <div id="options-container" class="options-container"></div>
                 </div>
             </div>
@@ -82,7 +87,11 @@
         function renderQuestion() {
             isAnswering = false;
             const q = questions[currentQuestionIndex];
-            document.getElementById('question-text').textContent = q.text;
+            
+            const textElement = document.getElementById('question-text');
+            textElement.textContent = q.text;
+            textElement.style.fontSize = ''; // reset font
+            
             document.getElementById('current-q').textContent = currentQuestionIndex + 1;
             
             // Progress
@@ -91,6 +100,25 @@
 
             // Reset Timer
             resetTimer();
+
+            // Tutor Logic
+            const btnTutor = document.getElementById('btn-tutor');
+            if (btnTutor) {
+                btnTutor.onclick = () => {
+                    if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
+                    textElement.innerHTML = OnyxCore.Tutor.simplifyText(q.text);
+                    textElement.style.fontSize = '1.3rem';
+                    textElement.style.lineHeight = '1.6';
+                    btnTutor.style.opacity = '0.5';
+                    btnTutor.innerText = 'SIMPLIFICADO ✓';
+                    
+                    // Aumenta o tempo em 15s para ler com calma
+                    timeLeft += 15;
+                    updateTimerUI();
+                };
+                btnTutor.style.opacity = '1';
+                btnTutor.innerText = '✨ TUTOR';
+            }
 
             const container = document.getElementById('options-container');
             container.innerHTML = '';
@@ -149,6 +177,9 @@
                     OnyxUI.playFeedback('success');
                     OnyxUI.showXPGain(earnedXP);
                 }
+                
+                // Normal timeout for correct answer
+                setTimeout(nextStep, 1000);
             } else {
                 streak = 0;
                 comboMultiplier = 1.0;
@@ -160,6 +191,22 @@
                 const btns = document.querySelectorAll('.option-btn');
                 if (btns[q.correct]) btns[q.correct].classList.add('correct-hint');
                 if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
+
+                // Tutor Feedback
+                const container = document.getElementById('options-container');
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.className = 'glass u-mt-20 u-p-15';
+                feedbackDiv.style.borderLeft = '4px solid var(--error)';
+                feedbackDiv.innerHTML = `
+                    <p class="u-font-08 u-text-error u-mb-5 u-weight-900">EXPLICAÇÃO DO TUTOR:</p>
+                    <p class="u-font-09">A resposta correta era <strong>"${q.options[q.correct]}"</strong>.</p>
+                    <p class="u-font-09 u-mt-10 u-opacity-08">${OnyxCore.Tutor.simplifyText("Aqui usamos " + q.options[q.correct] + " porque se aplica à " + q.text)}</p>
+                    <p class="u-font-07 u-mt-10 u-text-accent">(Carregando próxima em 5s...)</p>
+                `;
+                container.appendChild(feedbackDiv);
+
+                // Longer timeout for wrong answer so they can read
+                setTimeout(nextStep, 5000);
             }
 
             document.getElementById('streak-count').textContent = streak;
@@ -167,7 +214,7 @@
             if (streak >= 3) document.getElementById('streak-badge').classList.add('active');
             else document.getElementById('streak-badge').classList.remove('active');
 
-            setTimeout(() => {
+            function nextStep() {
                 currentQuestionIndex++;
                 if (lives <= 0) {
                     finishMission(true); // Failed

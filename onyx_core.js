@@ -256,5 +256,37 @@ window.OnyxCore = {
             insane: 4, 
             impossible: 5 
         }
+    },
+
+    Tutor: {
+        dictionary: {
+            "Array": "Array (uma lista organizada, como gavetas numeradas num armário)",
+            "Variável": "Variável (uma caixinha com um nome onde você guarda um dado, como um número ou texto)",
+            "Função": "Função (uma pequena máquina: você põe algo dentro, ela processa e devolve um resultado)",
+            "Loop": "Loop (um ciclo de repetição, como dar várias voltas num quarteirão até cansar)",
+            "While": "While (enquanto uma condição for verdade, repita a ação)",
+            "For": "For (um ciclo de repetição onde você sabe exatamente quantas vezes vai rodar)",
+            "If/Else": "If/Else (um cruzamento: SE chover, pegue o guarda-chuva, SENÃO, vá de óculos de sol)",
+            "SQL": "SQL (uma linguagem para fazer perguntas a um Banco de Dados, como pesquisar no Google)",
+            "Select": "Select (comando para 'buscar/selecionar' dados numa tabela)",
+            "Join": "Join (comando para grudar/unir duas tabelas diferentes usando algo em comum)",
+            "Machine Learning": "Machine Learning (quando o computador aprende a reconhecer padrões sozinho, sem você precisar programar todas as regras)",
+            "Algoritmo": "Algoritmo (uma receita de bolo passo a passo que o computador deve seguir)",
+            "String": "String (um texto, uma palavra ou frase, sempre entre aspas)",
+            "Integer": "Integer (um número inteiro, sem vírgula, como 1, 2 ou 10)",
+            "Float": "Float (um número quebrado, com vírgula, como 3.14)",
+            "Boolean": "Boolean (um valor lógico que só pode ser Verdadeiro ou Falso)",
+            "Sintaxe": "Sintaxe (a regra de como escrever o código, igual as regras de gramática do português)",
+            "Bug": "Bug (um defeito ou erro na lógica do código que faz ele não funcionar como deveria)"
+        },
+        simplifyText(text) {
+            let newText = text;
+            for (const [jargon, explanation] of Object.entries(this.dictionary)) {
+                // Use word boundaries to avoid replacing parts of other words
+                const regex = new RegExp(`\\b${jargon}\\b`, 'gi');
+                newText = newText.replace(regex, `<span class="tutor-highlight" style="color:var(--accent); font-weight:bold;" title="${explanation}">${explanation}</span>`);
+            }
+            return newText;
+        }
     }
 };

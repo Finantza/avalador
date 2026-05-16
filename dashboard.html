@@ -123,13 +123,21 @@
                         </button>
                     </div>
 
-                    <div class="glass u-p-20" id="backup-panel">
+                    <div class="glass u-p-20 u-mb-30" id="backup-panel">
                         <div class="u-flex-between u-mb-10">
                             <h4 class="u-font-header u-text-muted">ONYX VAULT</h4>
                         </div>
                         <p class="u-font-07 u-text-muted u-mb-15">O seu perfil está protegido pelo Cofre Interno Automático.</p>
                         <button id="btn-restore-internal" class="btn-onyx u-w-full" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);">
                             RESTAURAR DO COFRE INTERNO
+                        </button>
+                    </div>
+
+                    <div class="glass u-p-20" style="border: 1px solid var(--accent);">
+                        <h4 class="u-font-header u-text-accent u-mb-10">DATA SCIENCE BOOTCAMP</h4>
+                        <p class="u-font-07 u-text-muted u-mb-15">Motor de cálculos matemáticos e lógicos focado em dados reais.</p>
+                        <button id="btn-bootcamp-daily" class="btn-onyx u-w-full" style="background: rgba(45, 212, 191, 0.1); color: var(--accent);">
+                            GERAR DESAFIO DIÁRIO (MOTOR)
                         </button>
                     </div>
                 </aside>
@@ -178,12 +186,18 @@
 
     <script src="onyx_core.js"></script>
     <script src="onyx_database.js"></script>
+    <script>var module = { exports: {} };</script>
+    <script src="extremo.js"></script>
     <script src="onyx_engines.js"></script>
     <script>
         let selectedSub = 'matematica';
         let selectedDiff = 'easy';
         let userStats = null;
         let onlineOperators = 1240;
+        let OnyxDataMotor = null;
+        if (typeof module.exports.UltimateChallengeEngine !== 'undefined') {
+            OnyxDataMotor = new module.exports.UltimateChallengeEngine();
+        }
 
         const adversaryPool = [
             { name: 'X-Phantom', level: 12, avatar: '👤', region: 'SP, BR' },
@@ -688,19 +702,99 @@
             openOverlay("CLASSIFICAÇÃO GLOBAL", tableHTML);
         }
 
+        function generateRadarChart(data) {
+            const size = 300;
+            const center = size / 2;
+            const radius = 100;
+            const axes = Object.keys(data);
+            const numAxes = axes.length;
+            const angleStep = (Math.PI * 2) / numAxes;
+
+            let gridHTML = '';
+            for (let i = 1; i <= 4; i++) {
+                const r = radius * (i / 4);
+                const points = axes.map((_, idx) => {
+                    const angle = idx * angleStep - Math.PI / 2;
+                    return `${center + r * Math.cos(angle)},${center + r * Math.sin(angle)}`;
+                }).join(' ');
+                gridHTML += `<polygon points="${points}" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>`;
+            }
+
+            let axisHTML = '';
+            let labelHTML = '';
+            axes.forEach((axis, idx) => {
+                const angle = idx * angleStep - Math.PI / 2;
+                const x = center + radius * Math.cos(angle);
+                const y = center + radius * Math.sin(angle);
+                const lx = center + (radius + 20) * Math.cos(angle);
+                const ly = center + (radius + 20) * Math.sin(angle);
+                
+                axisHTML += `<line x1="${center}" y1="${center}" x2="${x}" y2="${y}" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>`;
+                
+                let anchor = 'middle';
+                if (Math.cos(angle) > 0.1) anchor = 'start';
+                else if (Math.cos(angle) < -0.1) anchor = 'end';
+                
+                labelHTML += `<text x="${lx}" y="${ly + 5}" fill="rgba(255,255,255,0.6)" font-size="10" font-family="'JetBrains Mono', monospace" text-anchor="${anchor}">${axis.toUpperCase()}</text>`;
+            });
+
+            const dataPoints = axes.map((axis, idx) => {
+                const angle = idx * angleStep - Math.PI / 2;
+                const val = data[axis] / 100;
+                return `${center + radius * val * Math.cos(angle)},${center + radius * val * Math.sin(angle)}`;
+            }).join(' ');
+
+            const dataPoly = `<polygon points="${dataPoints}" fill="rgba(45, 212, 191, 0.2)" stroke="var(--accent)" stroke-width="2">
+                <animate attributeName="points" from="${axes.map(()=>`${center},${center}`).join(' ')}" to="${dataPoints}" dur="0.8s" fill="freeze" calcMode="spline" keySplines="0.25 0.1 0.25 1" />
+            </polygon>`;
+
+            return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+                ${gridHTML}
+                ${axisHTML}
+                ${dataPoly}
+                ${axes.map((axis, idx) => {
+                    const angle = idx * angleStep - Math.PI / 2;
+                    const val = data[axis] / 100;
+                    return `<circle cx="${center + radius * val * Math.cos(angle)}" cy="${center + radius * val * Math.sin(angle)}" r="3" fill="var(--accent)"/>`;
+                }).join('')}
+                ${labelHTML}
+            </svg>`;
+        }
+
         async function renderProfile() {
             const history = await OnyxCore.DB.getHistory(userStats.id);
+            
+            // Calculate proficiency
+            const prof = { Python: 10, DataScience: 10, Matemática: 10, Humanas: 10, Natureza: 10 };
+            
+            history.forEach(h => {
+                const sub = h.subject;
+                let axis = 'Natureza';
+                if (['matematica', 'estatistica'].includes(sub)) axis = 'Matemática';
+                else if (['python', 'programacao', 'cybersecurity'].includes(sub)) axis = 'Python';
+                else if (['machine_learning', 'data_viz', 'big_data'].includes(sub)) axis = 'DataScience';
+                else if (['historia', 'geografia', 'sociologia', 'filosofia'].includes(sub)) axis = 'Humanas';
+                
+                prof[axis] = Math.min(100, prof[axis] + h.score * 2);
+            });
+
             const profileHTML = `
                 <div class="u-grid-2">
-                    <div class="glass u-p-20">
-                        <p class="u-font-07 u-text-accent">ESTATÍSTICAS GERAIS</p>
-                        <h1 class="u-mt-10">LVL ${userStats.level}</h1>
-                        <p class="u-text-muted">${userStats.xp} XP ACUMULADO</p>
+                    <div class="glass u-p-20 u-text-center">
+                        <p class="u-font-07 u-text-accent">PROFICIÊNCIA HEURÍSTICA</p>
+                        ${generateRadarChart(prof)}
                     </div>
-                    <div class="glass u-p-20">
-                        <p class="u-font-07 u-text-accent">MISSÕES CONCLUÍDAS</p>
-                        <h1 class="u-mt-10">${history.length}</h1>
-                        <p class="u-text-muted">OPERAÇÕES ATIVAS</p>
+                    <div>
+                        <div class="glass u-p-20 u-mb-20">
+                            <p class="u-font-07 u-text-accent">ESTATÍSTICAS GERAIS</p>
+                            <h1 class="u-mt-10">LVL ${userStats.level}</h1>
+                            <p class="u-text-muted">${userStats.xp} XP ACUMULADO</p>
+                        </div>
+                        <div class="glass u-p-20">
+                            <p class="u-font-07 u-text-accent">MISSÕES CONCLUÍDAS</p>
+                            <h1 class="u-mt-10">${history.length}</h1>
+                            <p class="u-text-muted">OPERAÇÕES REGISTRADAS</p>
+                        </div>
                     </div>
                 </div>
                 <div class="u-mt-30">
@@ -725,6 +819,96 @@
         document.getElementById('btn-show-ranking').onclick = () => renderRanking();
         document.getElementById('btn-show-profile').onclick = () => renderProfile();
         document.getElementById('btn-logout').onclick = () => OnyxCore.Session.logout();
+
+        // --- DATA SCIENCE BOOTCAMP (extremo.js) LOGIC ---
+        const btnBootcamp = document.getElementById('btn-bootcamp-daily');
+        if (btnBootcamp) {
+            btnBootcamp.onclick = async () => {
+                if (!OnyxDataMotor) {
+                    openOverlay("ERRO DO MOTOR", "<div class='u-p-20 u-text-center'>Motor Ultimate não está inicializado.</div>");
+                    return;
+                }
+                
+                // Register student if not exists
+                if (!OnyxDataMotor.students.has(userStats.id)) {
+                    OnyxDataMotor.registerStudent(userStats.id);
+                }
+                
+                if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
+                const dailyData = await OnyxDataMotor.generateDailyChallenge(userStats.id);
+                
+                // Fetch first pending challenge
+                const challenge = dailyData.challenges.find(c => !c.answered) || dailyData.challenges[0];
+                
+                const challengeHTML = `
+                    <div class="u-p-20">
+                        <div class="u-flex-between u-mb-15">
+                            <span class="report-badge" style="background:${challenge.difficultyInfo.color}; color:#fff;">${challenge.domainName.toUpperCase()}</span>
+                            <span class="u-font-08" style="color:${challenge.difficultyInfo.color};">NÍVEL: ${challenge.difficultyInfo.label.toUpperCase()}</span>
+                        </div>
+                        <h3 class="u-font-header u-mb-20" style="line-height:1.4;">${challenge.question}</h3>
+                        
+                        ${challenge.hint ? `
+                        <div class="u-mb-20" style="background:rgba(255,255,255,0.05); padding:15px; border-left:3px solid var(--primary);">
+                            <span class="u-font-07 u-text-muted">DICA TÁTICA:</span>
+                            <p class="u-font-09 u-mt-5">${challenge.hint}</p>
+                        </div>
+                        ` : ''}
+                        
+                        <div class="u-mb-20">
+                            <label class="u-font-08 u-text-muted u-mb-5" style="display:block;">SUA RESPOSTA:</label>
+                            <input type="text" id="motor-answer-input" class="u-w-full" style="background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2); color:#fff; padding:15px; font-size:1rem; font-family:'JetBrains Mono', monospace;" placeholder="Digite o valor ou código..." autocomplete="off">
+                        </div>
+                        
+                        <button id="btn-submit-motor" class="btn-onyx btn-primary u-w-full" style="background:${challenge.difficultyInfo.color};">PROCESSAR RESPOSTA (ULTIMATE)</button>
+                    </div>
+                `;
+                
+                openOverlay("BOOTCAMP: " + dailyData.title, challengeHTML);
+                
+                setTimeout(() => document.getElementById('motor-answer-input').focus(), 100);
+                
+                document.getElementById('btn-submit-motor').onclick = async () => {
+                    const answer = document.getElementById('motor-answer-input').value;
+                    if (!answer) return;
+                    
+                    if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
+                    
+                    const result = OnyxDataMotor.submitChallenge(userStats.id, challenge, answer, { timeSpent: 30 });
+                    
+                    if (result.correct) {
+                        // Transfer Ultimate points to Onyx Global System
+                        const earnedXP = result.xpEarned || (challenge.points * 2);
+                        userStats.xp += earnedXP;
+                        
+                        if (typeof OnyxUI !== 'undefined') {
+                            OnyxUI.playFeedback('success');
+                            OnyxUI.showXPGain(earnedXP);
+                        }
+                        
+                        openOverlay("COMPUTAÇÃO EXATA", `
+                            <div class="u-p-20 u-text-center">
+                                <h1 class="u-font-header u-text-success">ACERTO CRÍTICO</h1>
+                                <p class="u-mt-10">O Ultimate Engine aprovou a sintaxe.</p>
+                                <p class="u-text-accent u-font-12 u-mt-10">+${earnedXP} XP GLOBAL</p>
+                            </div>
+                        `);
+                        
+                        await OnyxCore.DB.saveUser(userStats);
+                        renderLeveling();
+                        updateLocks();
+                    } else {
+                        if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
+                        openOverlay("FALHA DE COMPUTAÇÃO", `
+                            <div class="u-p-20 u-text-center">
+                                <h1 class="u-font-header" style="color:var(--error);">SINTAXE INVÁLIDA</h1>
+                                <p class="u-mt-10">O motor Ultimate rejeitou a resposta.</p>
+                            </div>
+                        `);
+                    }
+                };
+            };
+        }
 
         // --- RANDOM CHALLENGE LOGIC ---
         let challengeTimer = null;
