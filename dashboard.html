@@ -600,51 +600,85 @@
                 const unlockedDiffs = diffs.filter(d => userStats.level >= (OnyxCore.ProgressionConfig.difficulties[d] || 1));
                 const diff = unlockedDiffs[Math.floor(Math.random() * unlockedDiffs.length)];
                 
-                const questions = OnyxEngines.QuestionEngine.generateQuestions(sub, diff, 1);
-                const q = questions[0];
+                // Fetch unlocked subjects
+                const allSubjects = Object.keys(OnyxCore.ProgressionConfig.subjects);
+                const unlockedSubjects = allSubjects.filter(s => userStats.level >= OnyxCore.ProgressionConfig.subjects[s]);
                 
-                const questionHTML = `
-                    <div style="padding:20px;">
-                        <h3 class="u-mb-25">${q.text}</h3>
-                        <div class="nav-menu">
-                            ${q.options.map((opt, i) => `
-                                <button class="btn-onyx u-mb-10 u-w-full btn-challenge-opt" data-idx="${i}">${opt}</button>
+                // Select 4 random unlocked subjects to show as options
+                const challengeOptions = unlockedSubjects.sort(() => 0.5 - Math.random()).slice(0, 4);
+
+                const selectionHTML = `
+                    <div style="padding:20px; text-align: center;">
+                        <h3 class="u-mb-15 u-font-header">SELECIONE O DOMÍNIO DA AMEAÇA</h3>
+                        <p class="u-text-muted u-mb-25">Dificuldade Detectada: <span class="u-text-accent" style="font-weight:900;">${diff.toUpperCase()}</span></p>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            ${challengeOptions.map(sub => `
+                                <button class="btn-onyx u-w-full btn-challenge-sub" data-sub="${sub}" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff;">
+                                    ${sub.toUpperCase().replace('_', ' ')}
+                                </button>
                             `).join('')}
                         </div>
                     </div>
                 `;
                 
-                openOverlay("DESAFIO RELÂMPAGO", questionHTML);
-                
-                document.querySelectorAll('.btn-challenge-opt').forEach(btn => {
+                openOverlay("DESAFIO RELÂMPAGO", selectionHTML);
+
+                // Add event listeners to the new subject buttons
+                document.querySelectorAll('.btn-challenge-sub').forEach(btn => {
                     btn.onclick = async () => {
-                        const idx = parseInt(btn.dataset.idx);
-                        const isCorrect = idx === q.correct;
+                        const chosenSub = btn.dataset.sub;
+                        if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
                         
-                        if (isCorrect) {
-                            userStats.xp += 50;
-                            if (typeof OnyxUI !== 'undefined') {
-                                OnyxUI.playFeedback('success');
-                                OnyxUI.showXPGain(50);
-                            }
-                            openOverlay("SUCESSO!", `<div class="u-p-20 u-text-primary">CERTO! Você ganhou 50 XP.</div>`);
-                        } else {
-                            userStats.xp = Math.max(0, userStats.xp - 25);
-                            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
-                            openOverlay("FALHA!", `<div class="u-p-20" style="color:var(--error);">ERRADO! Você perdeu 25 XP.</div>`);
-                        }
+                        const questions = OnyxEngines.QuestionEngine.generateQuestions(chosenSub, diff, 1);
+                        const q = questions[0];
                         
-                        // Level up check
-                        const nextXP = userStats.level * 100;
-                        if (userStats.xp >= nextXP) {
-                            userStats.level++;
-                            userStats.xp = 0;
-                            if (typeof OnyxUI !== 'undefined') OnyxUI.showLevelUpAnimation(userStats.level);
-                        }
+                        const questionHTML = `
+                            <div style="padding:20px;">
+                                <div class="u-text-accent u-font-07 u-mb-10 u-weight-900">${chosenSub.toUpperCase()} • ${diff.toUpperCase()}</div>
+                                <h3 class="u-mb-25 u-line-16">${q.text}</h3>
+                                <div class="nav-menu">
+                                    ${q.options.map((opt, i) => `
+                                        <button class="btn-onyx u-mb-10 u-w-full btn-challenge-opt" data-idx="${i}" style="text-align: left; background: rgba(255,255,255,0.05);">${opt}</button>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
                         
-                        await OnyxCore.DB.saveUser(userStats);
-                        renderLeveling();
-                        updateLocks();
+                        openOverlay("OPERAÇÃO ATIVA", questionHTML);
+                        
+                        // Add event listeners to answer buttons
+                        document.querySelectorAll('.btn-challenge-opt').forEach(optBtn => {
+                            optBtn.onclick = async () => {
+                                const idx = parseInt(optBtn.dataset.idx);
+                                const isCorrect = idx === q.correct;
+                                
+                                if (isCorrect) {
+                                    userStats.xp += 50;
+                                    if (typeof OnyxUI !== 'undefined') {
+                                        OnyxUI.playFeedback('success');
+                                        OnyxUI.showXPGain(50);
+                                    }
+                                    openOverlay("SUCESSO!", `<div class="u-p-20 u-text-primary u-text-center"><h1 class="u-font-header">VITÓRIA</h1><p class="u-mt-10">Você ganhou 50 XP.</p></div>`);
+                                } else {
+                                    userStats.xp = Math.max(0, userStats.xp - 25);
+                                    if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
+                                    openOverlay("FALHA!", `<div class="u-p-20 u-text-center" style="color:var(--error);"><h1 class="u-font-header">DERROTA</h1><p class="u-mt-10">Você perdeu 25 XP.</p></div>`);
+                                }
+                                
+                                // Level up check
+                                const nextXP = userStats.level * 100;
+                                if (userStats.xp >= nextXP) {
+                                    userStats.level++;
+                                    userStats.xp = 0;
+                                    if (typeof OnyxUI !== 'undefined') OnyxUI.showLevelUpAnimation(userStats.level);
+                                }
+                                
+                                await OnyxCore.DB.saveUser(userStats);
+                                renderLeveling();
+                                updateLocks();
+                            };
+                        });
                     };
                 });
             };
