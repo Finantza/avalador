@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONYX - Painel do Operador</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-dark">
+    <div class="bg-elements"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
+    <div class="cyber-overlay"><div class="scanline"></div></div>
+
+    <main id="app">
+        <section id="screen-welcome" class="screen active">
+            <div class="card glass console-card">
+                <header class="console-header">
+                    <div class="user-main-info">
+                        <div class="avatar-box">👤</div>
+                        <div class="user-text">
+                            <span class="u-greeting">BEM-VINDO, OPERADOR</span>
+                            <h2 id="logged-user-name">...</h2>
+                        </div>
+                    </div>
+                    <div class="console-actions">
+                        <button class="btn-icon" id="btn-show-ranking">🏆</button>
+                        <button class="btn-icon" id="btn-logout">🚪</button>
+                    </div>
+                </header>
+
+                <div id="welcome-controls">
+                    <div id="global-stats-container"></div>
+
+                    <div class="console-body">
+                        <div class="selection-column main-selection">
+                            <div class="section-title">
+                                <span class="title-index">01</span>
+                                <h3>ESCOLHA O DOMÍNIO</h3>
+                            </div>
+                            <div class="subject-grid-modern" id="subject-options">
+                                <button class="btn-subject active" data-subject="python">🐍<span class="sub-name">PYTHON PRO</span></button>
+                                <button class="btn-subject" data-subject="sql">🗄️<span class="sub-name">DATABASE SQL</span></button>
+                                <button class="btn-subject" data-subject="machine_learning">🤖<span class="sub-name">AI & ML</span></button>
+                                <button class="btn-subject" data-subject="cybersecurity">🛡️<span class="sub-name">CYBERSECURITY</span></button>
+                                <button class="btn-subject" data-subject="frontend">🎨<span class="sub-name">FRONTEND ENG</span></button>
+                                <button class="btn-subject" data-subject="backend">⚙️<span class="sub-name">BACKEND ARCH</span></button>
+                                <button class="btn-subject" data-subject="logic">🧠<span class="sub-name">LOGIC & ALGO</span></button>
+                                <button class="btn-subject" data-subject="cloud">☁️<span class="sub-name">CLOUD DEVOPS</span></button>
+                                <button class="btn-subject" data-subject="data_science">📊<span class="sub-name">DATA SCIENCE</span></button>
+                                <button class="btn-subject" data-subject="testing">🧪<span class="sub-name">SW TESTING</span></button>
+                                <button class="btn-subject" data-subject="mobile">📱<span class="sub-name">MOBILE DEV</span></button>
+                                <button class="btn-subject" data-subject="design">🖌️<span class="sub-name">UI/UX DESIGN</span></button>
+                                <button class="btn-subject" data-subject="cryptography">🔑<span class="sub-name">CRYPTOGRAPHY</span></button>
+                                <button class="btn-subject" data-subject="project">📋<span class="sub-name">PROJECT MGMT</span></button>
+                                <button class="btn-subject" data-subject="agile">🔄<span class="sub-name">AGILE SCRUM</span></button>
+                                <button class="btn-subject" data-subject="linux">🐧<span class="sub-name">LINUX ADMIN</span></button>
+                                <button class="btn-subject" data-subject="network">🌐<span class="sub-name">NETWORK ENG</span></button>
+                                <button class="btn-subject" data-subject="blockchain">⛓️<span class="sub-name">BLOCKCHAIN</span></button>
+                                <button class="btn-subject" data-subject="random">🎲<span class="sub-name">MIXED</span></button>
+                            </div>
+                        </div>
+
+                        <div class="selection-column side-selection">
+                            <div class="section-title">
+                                <span class="title-index">02</span>
+                                <h3>COMPLEXIDADE</h3>
+                            </div>
+                            <div class="difficulty-stack" id="difficulty-options">
+                                <button class="btn-difficulty active" data-difficulty="easy">FÁCIL</button>
+                                <button class="btn-difficulty" data-difficulty="medium">MÉDIO</button>
+                                <button class="btn-difficulty" data-difficulty="hard">DIFÍCIL</button>
+                                <button class="btn-difficulty locked" data-difficulty="insane">INSANO</button>
+                                <button class="btn-difficulty locked" data-difficulty="impossible">IMPOSSÍVEL</button>
+                            </div>
+                            <div class="start-action-box">
+                                <p id="next-unlocks-hint" class="unlock-hint"></p>
+                                <button id="btn-start" class="btn-primary btn-massive btn-glitch">INICIAR MISSÃO</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="onyx_ui.js"></script>
+    <script src="onyx_core.js"></script>
+    <script>
+        OnyxCore.Session.checkAuth();
+        const userName = OnyxCore.Session.getCurrentUser();
+        document.getElementById('logged-user-name').textContent = userName;
+
+        let selectedSubject = 'python';
+        let selectedDifficulty = 'easy';
+        let userStats = { level: 1, xp: 0 };
+
+        async function initDashboard() {
+            await OnyxCore.DB.init();
+            userStats = await OnyxCore.DB.getUser(userName);
+            
+            updateProgressionUI();
+            updateLocks();
+            loadHistory();
+        }
+
+        async function loadHistory() {
+            const historyContainer = document.getElementById('recent-history');
+            if (!OnyxCore.DB.db) await OnyxCore.DB.init();
+            
+            const tx = OnyxCore.DB.db.transaction('history', 'readonly');
+            const store = tx.objectStore('history');
+            const request = store.getAll();
+            
+            request.onsuccess = () => {
+                const history = request.result
+                    .filter(h => h.user === userName)
+                    .sort((a, b) => b.timestamp - a.timestamp)
+                    .slice(0, 3);
+
+                if (history.length > 0) {
+                    historyContainer.innerHTML = history.map(h => `
+                        <div class="history-item">
+                            <div class="h-meta">
+                                <span class="h-subject">${h.subject.toUpperCase()}</span>
+                                <span class="h-date">${new Date(h.timestamp).toLocaleDateString()}</span>
+                            </div>
+                            <div class="h-score">${h.score}/10 ACERTOS</div>
+                        </div>
+                    `).join('');
+                }
+            };
+        }
+
+        function updateProgressionUI() {
+            const container = document.getElementById('global-stats-container');
+            const nextXP = userStats.level * 100;
+            const progress = (userStats.xp / nextXP) * 100;
+
+            container.innerHTML = `
+                <div class="global-stats-header">
+                    <div class="level-badge">
+                        <div class="lvl-box">${userStats.level}</div>
+                        <div class="lvl-label">NÍVEL ATUAL</div>
+                    </div>
+                    <div class="xp-mini-bar-container">
+                        <div class="xp-mini-info">
+                            <span>${userStats.xp} XP</span>
+                            <span>${nextXP} XP</span>
+                        </div>
+                        <div class="xp-mini-bar-outer">
+                            <div class="xp-mini-bar-inner" style="width: ${progress}%"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateLocks() {
+            // Simplified lock logic for the demo
+            document.querySelectorAll('.btn-difficulty').forEach(btn => {
+                const diff = btn.dataset.difficulty;
+                if (diff === 'insane' && userStats.level < 3) btn.classList.add('locked');
+                else if (diff === 'impossible' && userStats.level < 5) btn.classList.add('locked');
+                else btn.classList.remove('locked');
+            });
+
+            const hint = document.getElementById('next-unlocks-hint');
+            if (userStats.level < 3) hint.textContent = "🔒 Nível 3 necessário para Modo INSANO";
+            else if (userStats.level < 5) hint.textContent = "🔒 Nível 5 necessário para Modo IMPOSSÍVEL";
+            else hint.textContent = "✅ Todos os protocolos desbloqueados";
+        }
+
+        document.querySelectorAll('.btn-subject').forEach(btn => {
+            btn.onclick = () => {
+                if (btn.classList.contains('locked')) {
+                    OnyxUI.playFeedback('error');
+                    return;
+                }
+                document.querySelectorAll('.btn-subject').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedSubject = btn.dataset.subject;
+                OnyxUI.playFeedback('click');
+            };
+        });
+
+        document.querySelectorAll('.btn-difficulty').forEach(btn => {
+            btn.onclick = () => {
+                if (btn.classList.contains('locked')) {
+                    OnyxUI.playFeedback('error');
+                    return;
+                }
+                document.querySelectorAll('.btn-difficulty').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedDifficulty = btn.dataset.difficulty;
+                OnyxUI.playFeedback('click');
+            };
+        });
+
+        document.getElementById('btn-start').onclick = () => {
+            OnyxUI.playFeedback('click');
+            sessionStorage.setItem('onyx_subject', selectedSubject);
+            sessionStorage.setItem('onyx_difficulty', selectedDifficulty);
+            location.href = 'quiz.html';
+        };
+
+        document.getElementById('btn-logout').onclick = () => OnyxCore.Session.logout();
+
+        initDashboard();
+    </script>
+</body>
+</html>

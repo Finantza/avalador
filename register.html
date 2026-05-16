@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONYX - Novo Cadastro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-dark">
+    <div class="bg-elements">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="cyber-overlay">
+        <div class="scanline"></div>
+        <div class="noise"></div>
+    </div>
+
+    <main id="app">
+        <section id="screen-register" class="screen active">
+            <div class="card glass">
+                <header>
+                    <div class="logo">AVALIAÇÃO DE<span> TECNOLOGIA</span></div>
+                    <h1>Novo Cadastro</h1>
+                    <p>Preencha os dados para criar sua credencial</p>
+                </header>
+
+                <div class="auth-form-standalone">
+                    <div class="input-group">
+                        <label for="reg-name">NOME COMPLETO</label>
+                        <input type="text" id="reg-name" placeholder="Seu nome completo" autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <label for="reg-pass">DEFINA UMA SENHA</label>
+                        <input type="password" id="reg-pass" placeholder="Sua senha segura" autocomplete="off">
+                        <p class="input-hint">Mínimo de 4 caracteres</p>
+                    </div>
+                    <div class="auth-form-actions">
+                        <button id="btn-do-register" class="btn-primary">CRIAR CREDENCIAL</button>
+                        <button onclick="location.href='index.html'" class="btn-text">Já possui conta? Faça Login</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="system-status">
+        <div class="status-item"><span class="status-dot"></span>ONYX_CORE: <span id="status-mode">READY</span></div>
+        <div class="status-item">DATABASE: LOCAL_INDEXED_DB</div>
+    </footer>
+
+    <script src="onyx_ui.js"></script>
+    <script src="onyx_core.js"></script>
+    <script>
+        document.getElementById('btn-do-register').onclick = async () => {
+            const name = document.getElementById('reg-name').value.trim();
+            const pass = document.getElementById('reg-pass').value.trim();
+            
+            if (!name || !pass || name.split(/\s+/).length < 2) {
+                OnyxUI.playFeedback('error');
+                alert("Nome completo e senha são obrigatórios.");
+                return;
+            }
+
+            const existing = await OnyxCore.DB.getUser(name);
+            if (existing.password) {
+                alert("Usuário já cadastrado.");
+                return;
+            }
+
+            existing.password = pass;
+            existing.xp = 0;
+            existing.level = 1;
+            await OnyxCore.DB.saveUser(existing);
+            
+            OnyxUI.playFeedback('success');
+            alert("Cadastro realizado com sucesso!");
+            location.href = 'index.html';
+        };
+    </script>
+</body>
+</html>

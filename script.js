@@ -50,10 +50,19 @@ const QuestionDB = {
         try {
             const response = await fetch('onyx_knowledge_expanded.json');
             this.staticPool = await response.json();
-            console.log("[ONYX] Base de conhecimento expandida carregada.");
         } catch (e) {
-            console.warn("[ONYX] Erro ao carregar base expandida. Usando fallback.");
-            this.staticPool = { logic: { easy: [], medium: [], hard: [] } };
+            console.warn("[ONYX] Usando pool estático de emergência.");
+            this.staticPool = { 
+                python: { 
+                    easy: [
+                        { question: "Qual a função utilizada para exibir mensagens no console em Python?", options: ["print()", "echo()", "log()", "display()"], answer: 0, explanation: "A função print() é o comando padrão para saída de dados." },
+                        { question: "Como se define uma lista em Python?", options: ["(1, 2)", "{1, 2}", "[1, 2]", "<1, 2>"], answer: 2, explanation: "Listas utilizam colchetes []." },
+                        { question: "Qual o operador de resto da divisão?", options: ["/", "//", "%", "&"], answer: 2, explanation: "O operador % (módulo) retorna o resto da divisão." },
+                        { question: "Qual a palavra-chave para definir uma função?", options: ["func", "define", "def", "function"], answer: 2, explanation: "Utiliza-se 'def' seguido do nome da função." },
+                        { question: "Como comentar uma linha em Python?", options: ["//", "/*", "#", "--"], answer: 2, explanation: "O símbolo # é usado para comentários de linha única." }
+                    ] 
+                } 
+            };
         }
     },
 
@@ -192,18 +201,18 @@ const QuestionDB = {
         };
     },
 
-    async getGlobalStats() {
+    async getGlobalStats(name = 'main') {
         return new Promise((resolve) => {
-            if (!this.db) return resolve({ id: 'main', xp: 0, level: 1 });
-            const request = this.db.transaction(['global_stats'], 'readonly').objectStore('global_stats').get('main');
-            request.onsuccess = () => resolve(request.result || { id: 'main', xp: 0, level: 1 });
+            if (!this.db) return resolve({ id: name, xp: 0, level: 1 });
+            const request = this.db.transaction(['global_stats'], 'readonly').objectStore('global_stats').get(name);
+            request.onsuccess = () => resolve(request.result || { id: name, xp: 0, level: 1 });
         });
     },
 
     async saveGlobalStats(stats) {
         if (!this.db) return;
         const transaction = this.db.transaction(['global_stats'], 'readwrite');
-        transaction.objectStore('global_stats').put({ ...stats, id: 'main' });
+        transaction.objectStore('global_stats').put(stats);
     }
 };
 
@@ -249,11 +258,14 @@ class StudentProfile {
         let base = 50;
         if (question.difficulty === 'medium') base = 100;
         if (question.difficulty === 'hard') base = 200;
+        if (question.difficulty === 'insane') base = 400;
+        if (question.difficulty === 'impossible') base = 1000;
         
-        const bonus = this.streak * 10;
-        const total = base + bonus;
+        const streakBonus = this.streak * 10;
+        const timeBonus = Math.floor(currentState.timeLeft * 2);
+        const total = base + streakBonus + timeBonus;
+        
         this.xpGained += total;
-        
         OnyxUI.showXPGain(total);
     }
 
@@ -308,7 +320,7 @@ class StudentProfile {
 // --- APP STATE ---
 let currentState = {
     studentName: "",
-    subject: "logic",
+    subject: "python",
     difficulty: "easy",
     currentQuestionIndex: 0,
     score: 0,
@@ -317,17 +329,23 @@ let currentState = {
     timer: null,
     timeLeft: 20,
     streak: 0,
-    profile: null
+    profile: null,
+    globalLevel: 1
 };
 
 // --- DOM ELEMENTS ---
 const screens = {
+    login: document.getElementById('screen-login'),
+    register: document.getElementById('screen-register'),
     welcome: document.getElementById('screen-welcome'),
     quiz: document.getElementById('screen-quiz'),
     results: document.getElementById('screen-results')
 };
 
-const inputName = document.getElementById('student-name');
+const loginName = document.getElementById('login-name');
+const loginPass = document.getElementById('login-pass');
+const regName = document.getElementById('reg-name');
+const regPass = document.getElementById('reg-pass');
 const btnStart = document.getElementById('btn-start');
 const btnRestart = document.getElementById('btn-restart');
 const btnDownload = document.getElementById('btn-download');
@@ -358,8 +376,8 @@ const challengeTask = document.getElementById('challenge-task');
 const challengeInput = document.getElementById('challenge-input');
 const btnSubmitChallenge = document.getElementById('btn-submit-challenge');
 
-const subjectBtns = document.querySelectorAll('.btn-subject');
-const difficultyBtns = document.querySelectorAll('.btn-difficulty');
+let subjectBtns = document.querySelectorAll('.btn-subject');
+let difficultyBtns = document.querySelectorAll('.btn-difficulty');
 
 // --- INITIALIZATION ---
 async function init() {
@@ -375,7 +393,12 @@ async function init() {
             splash.style.opacity = '0';
             setTimeout(() => {
                 splash.style.display = 'none';
-                showScreen('welcome');
+                const lastUser = localStorage.getItem('onyx_last_user');
+                if (lastUser) {
+                    showScreen('welcome');
+                } else {
+                    showScreen('login');
+                }
             }, 600);
         }
     }, 1500);
@@ -384,9 +407,18 @@ async function init() {
         console.log("[ONYX] Inicializando Banco de Dados...");
         await QuestionDB.init();
         console.log("[ONYX] DB pronto. Atualizando interface...");
+        await createTestUser(); // Initialize test user
         updateDBStats();
-        updateDifficultyLocks();
-        OnyxUI.updateStatus('ready');
+        
+        // Auto-login last user
+        const lastUser = localStorage.getItem('onyx_last_user');
+        if (lastUser) {
+            loginName.value = lastUser;
+            loginUser('auto'); 
+        } else {
+            // Ensure everything is hidden/locked for non-registered users
+            OnyxUI.updateStatus('ready');
+        }
     } catch (err) {
         console.error("[ONYX] Erro crítico na inicialização:", err);
         OnyxUI.updateStatus('error');
@@ -396,7 +428,33 @@ async function init() {
     setupEventListeners();
 }
 
+async function createTestUser() {
+    const testUserName = "OPERADOR TESTE";
+    const existing = await QuestionDB.getGlobalStats(testUserName);
+    
+    // Check if test user already has a password (exists)
+    if (!existing.password) {
+        console.log("[ONYX] Criando usuário de teste padrão...");
+        existing.password = "1234";
+        existing.xp = 500;
+        existing.level = 2; // Start at level 2 to show unlocked content
+        await QuestionDB.saveGlobalStats(existing);
+        OnyxUI.addReasoningLog("Usuário de TESTE criado: OPERADOR TESTE / 1234");
+    }
+}
+
 function setupEventListeners() {
+    document.getElementById('btn-do-login').addEventListener('click', () => loginUser('login'));
+    document.getElementById('btn-do-register').addEventListener('click', () => loginUser('register'));
+    document.getElementById('btn-goto-register').addEventListener('click', () => showScreen('register'));
+    document.getElementById('btn-goto-login').addEventListener('click', () => showScreen('login'));
+
+    document.getElementById('btn-logout').addEventListener('click', logoutUser);
+    document.getElementById('btn-logout-header').addEventListener('click', logoutUser);
+    document.getElementById('btn-dashboard').addEventListener('click', showDashboard);
+    document.getElementById('btn-close-dashboard').addEventListener('click', () => {
+        document.getElementById('dashboard-overlay').classList.remove('active');
+    });
     btnStart.addEventListener('click', startQuiz);
     btnRestart.addEventListener('click', restartQuiz);
     btnDownload.addEventListener('click', downloadReport);
@@ -404,7 +462,16 @@ function setupEventListeners() {
     btnShowRanking.addEventListener('click', showRanking);
     btnHideRanking.addEventListener('click', hideRanking);
     btnSubmitChallenge.addEventListener('click', checkChallenge);
-    
+    document.getElementById('btn-init-protocol').addEventListener('click', finalizeStart);
+
+    loginPass.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') loginUser('login');
+    });
+
+    regPass.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') loginUser('register');
+    });
+
     challengeInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') checkChallenge();
     });
@@ -414,7 +481,7 @@ function setupEventListeners() {
             subjectBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentState.subject = btn.dataset.subject;
-            await updateDifficultyLocks();
+            await updateDifficultyLocks(currentState.globalLevel);
             OnyxUI.applyTheme(btn.dataset.subject);
             OnyxUI.playFeedback('click');
         });
@@ -444,13 +511,118 @@ function setupEventListeners() {
     });
 }
 
-// --- CORE LOGIC ---
-async function startQuiz() {
-    const name = inputName.value.trim();
-    if (name.split(/\s+/).length < 2) {
-        alert("ERRO: Insira seu NOME COMPLETO.");
+// --- AUTH LOGIC ---
+let currentAuthMode = 'login';
+
+
+async function loginUser(mode) {
+    let name = "";
+    let pass = "";
+    const isAutoLogin = (mode === 'auto');
+
+    if (mode === 'login' || isAutoLogin) {
+        name = loginName.value.trim();
+        pass = loginPass.value.trim();
+    } else if (mode === 'register') {
+        name = regName.value.trim();
+        pass = regPass.value.trim();
+    }
+    
+    if (!isAutoLogin && (!name || !pass)) {
+        OnyxUI.playFeedback('error');
+        alert("ERRO: Identificação e Senha são necessárias.");
         return;
     }
+
+    if (mode === 'register' && name.split(/\s+/).length < 2) {
+        OnyxUI.playFeedback('error');
+        alert("ERRO DE PROTOCOLO: O cadastro exige NOME COMPLETO para identificação única.");
+        return;
+    }
+
+    // Check if user exists
+    const existingUser = await QuestionDB.getGlobalStats(name);
+    const userExists = existingUser && existingUser.password;
+
+    if (mode === 'register') {
+        if (userExists) {
+            OnyxUI.playFeedback('error');
+            alert("ERRO: Este usuário já está cadastrado. Utilize a tela de LOGIN.");
+            return;
+        }
+        // Save new user with password
+        existingUser.password = pass;
+        await QuestionDB.saveGlobalStats(existingUser);
+    } else {
+        // Login mode (including auto)
+        if (!userExists) {
+            if (isAutoLogin) return; // Silent fail on auto-login
+            OnyxUI.playFeedback('error');
+            alert("ERRO: Usuário não encontrado. Verifique os dados ou realize o CADASTRO.");
+            return;
+        }
+        if (existingUser.password !== pass && !isAutoLogin) {
+            OnyxUI.playFeedback('error');
+            alert("ERRO: Senha incorreta para o operador " + name.toUpperCase());
+            return;
+        }
+    }
+
+    OnyxUI.playFeedback('success');
+    currentState.studentName = name;
+    localStorage.setItem('onyx_last_user', name);
+    
+    showScreen('welcome');
+    document.getElementById('logged-user-name').textContent = name;
+    
+    const stats = await QuestionDB.getGlobalStats(name);
+    currentState.globalLevel = stats.level;
+    updateProgressionUI(stats);
+    OnyxUI.addReasoningLog(`Sessão iniciada para: ${name.toUpperCase()}`);
+}
+
+function logoutUser() {
+    localStorage.removeItem('onyx_last_user');
+    location.reload();
+}
+
+async function showDashboard() {
+    const stats = await QuestionDB.getGlobalStats(currentState.studentName);
+    const container = document.getElementById('dashboard-content');
+    
+    const unlockedSubjects = Object.keys(ProgressionConfig.subjects).filter(s => stats.level >= ProgressionConfig.subjects[s]);
+    const unlockedDiffs = Object.keys(ProgressionConfig.difficulties).filter(d => stats.level >= ProgressionConfig.difficulties[d]);
+    
+    container.innerHTML = `
+        <div class="briefing-item">
+            <span class="b-label">XP TOTAL:</span>
+            <span class="b-value">${stats.xp} XP</span>
+        </div>
+        <div class="briefing-item">
+            <span class="b-label">NÍVEL ATUAL:</span>
+            <span class="b-value">${stats.level}</span>
+        </div>
+        <div class="briefing-item" style="margin-top: 20px;">
+            <span class="b-label">MATÉRIAS LIBERADAS:</span>
+        </div>
+        <div class="new-unlocks" style="justify-content: flex-start;">
+            ${unlockedSubjects.map(s => `<span class="unlock-item" style="font-size: 0.7rem;">${getSubjectLabel(s)}</span>`).join('')}
+        </div>
+        <div class="briefing-item" style="margin-top: 20px;">
+            <span class="b-label">DIFICULDADES:</span>
+        </div>
+        <div class="new-unlocks" style="justify-content: flex-start;">
+            ${unlockedDiffs.map(d => `<span class="unlock-item" style="font-size: 0.7rem;">${getDifficultyLabel(d)}</span>`).join('')}
+        </div>
+    `;
+    
+    document.getElementById('dashboard-overlay').classList.add('active');
+}
+
+// --- CORE LOGIC ---
+async function startQuiz() {
+    const name = currentState.studentName;
+    if (!name) return;
 
     OnyxUI.updateStatus('loading questions');
     btnStart.disabled = true;
@@ -462,6 +634,50 @@ async function startQuiz() {
     currentState.score = 0;
     currentState.streak = 0;
 
+    const subject = currentState.subject;
+    const difficulty = currentState.difficulty;
+    
+    showBriefing(subject, difficulty);
+}
+
+function showBriefing(subject, difficulty) {
+    OnyxUI.playFeedback('click');
+    document.getElementById('briefing-subject').textContent = getSubjectLabel(subject);
+    document.getElementById('briefing-diff').textContent = getDifficultyLabel(difficulty).toUpperCase();
+    document.getElementById('briefing-risk').textContent = difficulty === 'easy' ? 'BAIXO' : (difficulty === 'medium' ? 'MÉDIO' : 'ALTO');
+    
+    const briefingText = document.getElementById('briefing-text');
+    OnyxUI.scrambleText(briefingText, "Sincronizando com o núcleo da rede... Prepare-se para a extração de conhecimento.", 1500);
+    
+    document.getElementById('mission-briefing').classList.add('active');
+    
+    // Auto-initiate after 3.5 seconds
+    const startBtn = document.getElementById('btn-init-protocol');
+    let countdown = 3;
+    startBtn.textContent = `INICIANDO EM ${countdown}...`;
+    
+    const interval = setInterval(() => {
+        countdown--;
+        if (countdown > 0) {
+            startBtn.textContent = `INICIANDO EM ${countdown}...`;
+        } else {
+            clearInterval(interval);
+            finalizeStart();
+        }
+    }, 1000);
+
+    // Allow manual skip
+    startBtn.onclick = () => {
+        clearInterval(interval);
+        finalizeStart();
+    };
+}
+
+async function finalizeStart() {
+    document.getElementById('mission-briefing').classList.remove('active');
+    document.getElementById('btn-init-protocol').textContent = "INICIAR PROTOCOLO";
+    OnyxUI.playFeedback('success');
+    
     const subject = currentState.subject;
     const difficulty = currentState.difficulty;
     
@@ -692,6 +908,7 @@ function finishQuiz() {
     const report = currentState.profile ? currentState.profile.getReport() : null;
     if (report) {
         OnyxUI.showDetailedReport(report);
+        setTimeout(() => drawSkillRadar(report), 500);
     }
 
     QuestionDB.saveRanking({
@@ -701,33 +918,154 @@ function finishQuiz() {
         difficulty: currentState.difficulty
     });
 
-    if (currentState.score / currentState.activeQuestions.length >= 0.6) {
-        const progression = ['easy', 'medium', 'hard', 'insane', 'impossible'];
-        const next = progression[progression.indexOf(currentState.difficulty) + 1];
-        if (next) QuestionDB.unlockLevel(currentState.subject, next);
-    }
-
     showScreen('results');
     OnyxUI.updateStatus('completed');
     handleGlobalProgress(currentState.profile.xpGained);
 }
 
+function drawSkillRadar(report) {
+    const canvas = document.getElementById('skill-radar');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const labels = Object.keys(report.themeHistory);
+    if (labels.length < 3) return; // Need at least 3 points for a radar
+    
+    const size = 400;
+    canvas.width = size;
+    canvas.height = size;
+    const center = size / 2;
+    const radius = size * 0.4;
+    
+    // Clear
+    ctx.clearRect(0, 0, size, size);
+    
+    // Draw Axis
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.lineWidth = 1;
+    labels.forEach((l, i) => {
+        const angle = (Math.PI * 2 * i) / labels.length - Math.PI / 2;
+        ctx.beginPath();
+        ctx.moveTo(center, center);
+        ctx.lineTo(center + Math.cos(angle) * radius, center + Math.sin(angle) * radius);
+        ctx.stroke();
+    });
+    
+    // Draw Data
+    ctx.beginPath();
+    ctx.fillStyle = 'hsla(190, 90%, 50%, 0.3)';
+    ctx.strokeStyle = 'hsl(190, 90%, 50%)';
+    ctx.lineWidth = 3;
+    
+    labels.forEach((l, i) => {
+        const angle = (Math.PI * 2 * i) / labels.length - Math.PI / 2;
+        const score = report.themeHistory[l].correct / report.themeHistory[l].total;
+        const r = radius * score;
+        const x = center + Math.cos(angle) * r;
+        const y = center + Math.sin(angle) * r;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    
+    // Draw Labels
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 12px JetBrains Mono';
+    ctx.textAlign = 'center';
+    labels.forEach((l, i) => {
+        const angle = (Math.PI * 2 * i) / labels.length - Math.PI / 2;
+        const x = center + Math.cos(angle) * (radius + 25);
+        const y = center + Math.sin(angle) * (radius + 25);
+        ctx.fillText(l.toUpperCase(), x, y);
+    });
+}
+
 async function handleGlobalProgress(xpToAdd) {
-    const stats = await QuestionDB.getGlobalStats();
+    let stats = await QuestionDB.getGlobalStats(currentState.studentName);
     stats.xp += xpToAdd;
     
-    // Simple level logic: every 1000 XP is a level
     const newLevel = Math.floor(stats.xp / 1000) + 1;
     const levelUp = newLevel > stats.level;
     stats.level = newLevel;
+    currentState.globalLevel = newLevel;
     
     await QuestionDB.saveGlobalStats(stats);
+    OnyxUI.showSaveNotification();
     
-    OnyxUI.renderXPProgress(stats, xpToAdd);
+    const nextLevel = findNextUnlockLevel(stats.level);
+    const nextUnlocks = nextLevel ? getUnlocksForLevel(nextLevel) : [];
+    
+    OnyxUI.renderXPProgress(stats, xpToAdd, nextUnlocks[0] || null);
+    updateProgressionUI(stats);
+    
     if (levelUp) {
         OnyxUI.playFeedback('success');
         OnyxUI.addReasoningLog(`PROMOÇÃO: Nível global elevado para ${stats.level}`);
+        
+        const unlocks = getUnlocksForLevel(stats.level);
+        OnyxUI.showLevelUpAnimation(stats.level, unlocks);
+        
+        // Update UI immediately
+        updateSubjectLocks(stats.level);
+        updateDifficultyLocks(stats.level);
     }
+}
+
+// --- PROGRESSION CONFIGURATION ---
+const ProgressionConfig = {
+    subjects: {
+        python: 1,
+        logic: 2, informatics: 2,
+        sql: 3, algoritmos: 3, english: 3,
+        frontend: 4, backend: 4, numpy: 4,
+        pandas: 5, testes: 5, poo: 5,
+        software_eng: 6, data_science: 6, cybersecurity: 6,
+        machine_learning: 7, cloud_devops: 7,
+        cryptography: 8, philosophy: 8,
+        random: 10
+    },
+    difficulties: {
+        easy: 1,
+        medium: 3,
+        hard: 5,
+        insane: 7,
+        impossible: 10
+    }
+};
+
+function getUnlocksForLevel(level) {
+    const unlocks = [];
+    for (const [sub, req] of Object.entries(ProgressionConfig.subjects)) {
+        if (req === level) unlocks.push(getSubjectLabel(sub));
+    }
+    for (const [diff, req] of Object.entries(ProgressionConfig.difficulties)) {
+        if (req === level) unlocks.push(`Dificuldade ${getDifficultyLabel(diff)}`);
+    }
+    return unlocks;
+}
+
+function updateProgressionUI(stats) {
+    OnyxUI.renderGlobalStatsHeader(stats);
+    updateSubjectLocks(stats.level);
+    updateDifficultyLocks(stats.level);
+    
+    const nextLevel = findNextUnlockLevel(stats.level);
+    if (nextLevel) {
+        const nextUnlocks = getUnlocksForLevel(nextLevel);
+        OnyxUI.renderNextUnlocksHint(nextLevel, nextUnlocks);
+    } else {
+        OnyxUI.renderNextUnlocksHint(null, []);
+    }
+}
+
+function findNextUnlockLevel(currentLevel) {
+    const allReqs = [
+        ...Object.values(ProgressionConfig.subjects),
+        ...Object.values(ProgressionConfig.difficulties)
+    ];
+    const uniqueReqs = [...new Set(allReqs)].filter(l => l > currentLevel).sort((a, b) => a - b);
+    return uniqueReqs[0] || null;
 }
 
 // --- HELPERS ---
@@ -803,15 +1141,58 @@ async function updateDBStats() {
     const count = await QuestionDB.getStats();
     dbStatsDisplay.textContent = `ONYX DB | ${count > 0 ? count : 420} ANALYTICS`;
 }
-
-async function updateDifficultyLocks() {
-    const progress = await QuestionDB.getProgress(currentState.subject);
+async function updateDifficultyLocks(globalLevel = 1) {
     difficultyBtns.forEach(btn => {
         const level = btn.dataset.difficulty;
-        const isUnlocked = progress.unlocked.includes(level);
+        const requiredLevel = ProgressionConfig.difficulties[level] || 1;
+        const isUnlocked = globalLevel >= requiredLevel;
+        
         btn.classList.toggle('locked', !isUnlocked);
         btn.style.opacity = isUnlocked ? "1" : "0.4";
         btn.style.pointerEvents = isUnlocked ? "auto" : "none";
+        
+        if (!isUnlocked) {
+            btn.setAttribute('title', `Bloqueado: Requer Nível Global ${requiredLevel}`);
+            
+            if (!btn.querySelector('.lock-overlay-mini')) {
+                const lock = document.createElement('div');
+                lock.className = 'lock-overlay-mini';
+                lock.innerHTML = `<span>LVL ${requiredLevel}</span>`;
+                btn.appendChild(lock);
+            }
+        } else {
+            btn.removeAttribute('title');
+            const lock = btn.querySelector('.lock-overlay-mini');
+            if (lock) lock.remove();
+        }
+    });
+}
+
+function updateSubjectLocks(globalLevel = 1) {
+    subjectBtns.forEach(btn => {
+        const sub = btn.dataset.subject;
+        const required = ProgressionConfig.subjects[sub] || 1;
+        const isUnlocked = globalLevel >= required;
+
+        btn.classList.toggle('subject-locked', !isUnlocked);
+        if (!isUnlocked) {
+            btn.style.opacity = "0.3";
+            btn.style.pointerEvents = "none";
+            btn.setAttribute('title', `Bloqueado: Desbloqueia no Nível ${required}`);
+            
+            if (!btn.querySelector('.lock-overlay')) {
+                const lock = document.createElement('div');
+                lock.className = 'lock-overlay';
+                lock.innerHTML = `<span>REQUER LVL ${required}</span>`;
+                btn.appendChild(lock);
+            }
+        } else {
+            btn.style.opacity = "1";
+            btn.style.pointerEvents = "auto";
+            btn.removeAttribute('title');
+            const lock = btn.querySelector('.lock-overlay');
+            if (lock) lock.remove();
+        }
     });
 }
 
@@ -847,8 +1228,6 @@ function downloadReport() {
 }
 
 async function showRanking() {
-    welcomeControls.style.display = 'none';
-    rankingSection.style.display = 'block';
     rankingList.innerHTML = 'Acessando ranking...';
     const ranking = await QuestionDB.getRanking();
     rankingList.innerHTML = ranking.map((r, i) => `
@@ -858,11 +1237,11 @@ async function showRanking() {
             <div class="rank-score">${r.score} pts</div>
         </div>
     `).join('') || 'Nenhum registro.';
+    rankingSection.classList.add('active');
 }
 
 function hideRanking() {
-    rankingSection.style.display = 'none';
-    welcomeControls.style.display = 'block';
+    rankingSection.classList.remove('active');
 }
 
 function restartQuiz() {

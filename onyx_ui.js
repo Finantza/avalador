@@ -266,12 +266,15 @@ window.OnyxUI = {
     },
 
     // XP Bar Rendering
-    renderXPProgress(stats, gainedInSession) {
+    renderXPProgress(stats, gainedInSession, nextUnlock = null) {
         const container = document.getElementById('feedback-text');
         if (!container) return;
         
+        // Clear previous session feedback if any
+        container.innerHTML = '';
         const currentXP = stats.xp % 1000;
         const progressPercent = (currentXP / 1000) * 100;
+        const remaining = 1000 - currentXP;
         
         const xpSection = `
             <div class="xp-progress-wrapper">
@@ -283,6 +286,7 @@ window.OnyxUI = {
                     <div class="xp-bar-inner" id="xp-bar-inner"></div>
                 </div>
                 <div class="xp-gain-msg">+${gainedInSession} XP recebido nesta sessão</div>
+                ${nextUnlock ? `<div class="next-reward-hint">Faltam ${remaining} XP para desbloquear: <strong>${nextUnlock}</strong></div>` : ''}
             </div>
         `;
         
@@ -292,5 +296,76 @@ window.OnyxUI = {
             const bar = document.getElementById('xp-bar-inner');
             if (bar) bar.style.width = `${progressPercent}%`;
         }, 100);
+    },
+
+    // Global Stats Header
+    renderGlobalStatsHeader(stats) {
+        const levelEl = document.getElementById('global-level');
+        const xpCurrentEl = document.getElementById('xp-mini-current');
+        const xpNextEl = document.getElementById('xp-mini-next');
+        const barInner = document.getElementById('xp-mini-bar-inner');
+        
+        if (!levelEl || !xpCurrentEl) return;
+        
+        const currentXP = stats.xp % 1000;
+        const progressPercent = (currentXP / 1000) * 100;
+        
+        levelEl.textContent = stats.level;
+        xpCurrentEl.textContent = `${currentXP} XP`;
+        xpNextEl.textContent = `1000 XP`;
+        
+        setTimeout(() => {
+            if (barInner) barInner.style.width = `${progressPercent}%`;
+        }, 100);
+    },
+
+    // Level Up Animation
+    showLevelUpAnimation(newLevel, unlocks = []) {
+        const overlay = document.getElementById('level-up-overlay');
+        const container = document.getElementById('new-unlocks-container');
+        if (!overlay || !container) return;
+        
+        container.innerHTML = unlocks.map(u => `<div class="unlock-item">🔓 ${u}</div>`).join('');
+        
+        overlay.classList.add('active');
+        this.playFeedback('alert');
+        
+        const closeBtn = document.getElementById('btn-close-level-up');
+        closeBtn.onclick = () => {
+            overlay.classList.remove('active');
+        };
+    },
+
+    // Next Unlocks Hint
+    renderNextUnlocksHint(nextLevel, unlocks) {
+        const container = document.getElementById('next-unlocks-hint');
+        if (!container) return;
+        
+        if (unlocks.length === 0) {
+            container.style.display = 'none';
+            return;
+        }
+        
+        container.style.display = 'flex';
+        container.innerHTML = `
+            <strong>Nível ${nextLevel}:</strong>
+            <div class="unlock-tags">
+                ${unlocks.map(u => `<span class="u-tag">🔓 ${u}</span>`).join('')}
+            </div>
+        `;
+    },
+
+    // Save Notification
+    showSaveNotification() {
+        const el = document.createElement('div');
+        el.className = 'save-toast';
+        el.innerHTML = '<span class="icon">💾</span> SYNCING_PROGRESS...';
+        document.body.appendChild(el);
+        
+        setTimeout(() => el.classList.add('active'), 100);
+        setTimeout(() => {
+            el.classList.remove('active');
+            setTimeout(() => el.remove(), 500);
+        }, 2000);
     }
 };

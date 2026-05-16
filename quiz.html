@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONYX - Missão Ativa</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-dark">
+    <main id="app">
+        <section id="screen-quiz" class="screen active">
+            <div class="quiz-header">
+                <div class="student-info">
+                    <span id="display-name">...</span>
+                    <div class="streak-badge" id="streak-badge">🔥 <span id="streak-count">0</span></div>
+                </div>
+                <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
+                <div class="quiz-stats">Questão <span id="current-q">1</span>/10</div>
+            </div>
+
+            <div class="quiz-card glass">
+                <div id="timer-container" class="timer-container">
+                    <span id="timer-text">20s</span>
+                </div>
+                <div class="question-section">
+                    <p id="question-text">Inicializando análise...</p>
+                    <div id="options-container" class="options-container"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="onyx_engines.js"></script>
+    <script src="onyx_ui.js"></script>
+    <script src="onyx_core.js"></script>
+    <script>
+        OnyxCore.Session.checkAuth();
+        const user = OnyxCore.Session.getCurrentUser();
+        const subject = sessionStorage.getItem('onyx_subject');
+        const difficulty = sessionStorage.getItem('onyx_difficulty');
+        
+        document.getElementById('display-name').textContent = user;
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+
+        async function start() {
+            questions = OnyxEngines.QuestionEngine.generateQuestions(subject, difficulty, 10);
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = questions[currentQuestionIndex];
+            document.getElementById('question-text').textContent = q.text;
+            document.getElementById('current-q').textContent = currentQuestionIndex + 1;
+            
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                btn.onclick = () => handleAnswer(i);
+                container.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(idx) {
+            if (idx === questions[currentQuestionIndex].correct) {
+                score++;
+                OnyxUI.playFeedback('success');
+            } else {
+                OnyxUI.playFeedback('error');
+            }
+            
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                renderQuestion();
+            } else {
+                finish();
+            }
+        }
+
+        async function finish() {
+            sessionStorage.setItem('onyx_final_score', score);
+            // Update DB
+            const stats = await OnyxCore.DB.getUser(user);
+            stats.xp += score * 10;
+            if (stats.xp >= stats.level * 100) stats.level++;
+            await OnyxCore.DB.saveUser(stats);
+            await OnyxCore.DB.saveHistory({ user, subject, difficulty, score });
+            
+            location.href = 'results.html';
+        }
+
+        start();
+    </script>
+</body>
+</html>

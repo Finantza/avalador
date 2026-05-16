@@ -3,280 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AVALIAÇÃO DE TECNOLOGIA | Plataforma Premium</title>
-    <meta name="description" content="Sistema avançado de avaliação técnica e acadêmica com inteligência artificial.">
+    <title>ONYX - Acesso ao Sistema</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div id="splash-screen">
-        <div class="code-rain" id="code-rain"></div>
-        <div class="splash-content">
-            <div class="logo-onyx-splash">ONYX<span>OS</span></div>
-            <div class="loader-line"></div>
-            <div class="terminal-logs" id="terminal-logs"></div>
-        </div>
-    </div>
-
-    <div class="background-blobs">
+<body class="theme-dark">
+    <div class="bg-elements">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
         <div class="blob blob-3"></div>
     </div>
 
+    <div class="cyber-overlay">
+        <div class="scanline"></div>
+        <div class="noise"></div>
+    </div>
+
     <main id="app">
-        <!-- Screen 1: Welcome -->
-        <section id="screen-welcome" class="screen active">
+        <section id="screen-login" class="screen active">
             <div class="card glass">
-                <div class="card-glare"></div>
                 <header>
                     <div class="logo">AVALIAÇÃO DE<span> TECNOLOGIA</span></div>
-                    <h1>Bem-vindo à Avaliação</h1>
-                    <p>TREINAMENTO EM TECNOLOGIA</p>
-                    <div class="db-stats" id="db-stats">Sincronizando Banco de Dados...</div>
-                    <button id="btn-fullscreen" class="btn-icon-glass" title="Tela Cheia">
-                        <span class="icon">⛶</span>
-                    </button>
+                    <h1>Acesso ao Sistema</h1>
+                    <p>Entre com seu usuário e senha de operador</p>
                 </header>
 
-                <div class="input-group">
-                    <label for="student-name">NOME DO ALUNO (NOME COMPLETO)</label>
-                    <input type="text" id="student-name" placeholder="Ex: João Silva Santos" autocomplete="off">
-                </div>
-
-                <div id="welcome-controls">
-                    <div class="selection-group">
-                        <h2>Selecione a Matéria</h2>
-                        <div class="subject-options">
-                            <button class="btn-subject" data-subject="python">
-                                <span class="icon">🐍</span>
-                                <span class="label">Python</span>
-                            </button>
-                            <button class="btn-subject" data-subject="numpy">
-                                <span class="icon">🔢</span>
-                                <span class="label">NumPy</span>
-                            </button>
-                            <button class="btn-subject" data-subject="pandas">
-                                <span class="icon">🐼</span>
-                                <span class="label">Pandas</span>
-                            </button>
-                            <button class="btn-subject" data-subject="sql">
-                                <span class="icon">🗄️</span>
-                                <span class="label">SQL</span>
-                            </button>
-                            <button class="btn-subject" data-subject="machine_learning">
-                                <span class="icon">🤖</span>
-                                <span class="label">ML IA</span>
-                            </button>
-                            <button class="btn-subject" data-subject="testes">
-                                <span class="icon">🧪</span>
-                                <span class="label">Testes</span>
-                            </button>
-                            <button class="btn-subject" data-subject="poo">
-                                <span class="icon">📦</span>
-                                <span class="label">POO</span>
-                            </button>
-                            <button class="btn-subject" data-subject="algoritmos">
-                                <span class="icon">🔄</span>
-                                <span class="label">Algoritmos</span>
-                            </button>
-                            <button class="btn-subject active" data-subject="logic">
-                                <span class="icon">💻</span>
-                                <span class="label">Lógica</span>
-                            </button>
-                            <button class="btn-subject" data-subject="informatics">
-                                <span class="icon">🖥️</span>
-                                <span class="label">Informática</span>
-                            </button>
-                            <button class="btn-subject" data-subject="english">
-                                <span class="icon">🇬🇧</span>
-                                <span class="label">Inglês</span>
-                            </button>
-                            <button class="btn-subject" data-subject="data_science">
-                                <span class="icon">📊</span>
-                                <span class="label">C. de Dados</span>
-                            </button>
-                            <button class="btn-subject" data-subject="frontend">
-                                <span class="icon">🎨</span>
-                                <span class="label">Frontend</span>
-                            </button>
-                            <button class="btn-subject" data-subject="backend">
-                                <span class="icon">⚙️</span>
-                                <span class="label">Backend</span>
-                            </button>
-                            <button class="btn-subject" data-subject="software_eng">
-                                <span class="icon">🏗️</span>
-                                <span class="label">Eng. Software</span>
-                            </button>
-                            <button class="btn-subject" data-subject="cybersecurity">
-                                <span class="icon">🛡️</span>
-                                <span class="label">Segurança</span>
-                            </button>
-                            <button class="btn-subject" data-subject="cloud_devops">
-                                <span class="icon">☁️</span>
-                                <span class="label">DevOps</span>
-                            </button>
-                            <button class="btn-subject" data-subject="cryptography">
-                                <span class="icon">🔑</span>
-                                <span class="label">Cripto</span>
-                            </button>
-                            <button class="btn-subject" data-subject="philosophy">
-                                <span class="icon">🧠</span>
-                                <span class="label">Filosofia</span>
-                            </button>
-                            <button class="btn-subject" data-subject="random">
-                                <span class="icon">🎲</span>
-                                <span class="label">Aleatórios</span>
-                            </button>
-                        </div>
+                <div class="auth-form-standalone">
+                    <div class="input-group">
+                        <label for="login-name">USUÁRIO / NOME</label>
+                        <input type="text" id="login-name" placeholder="Insira seu nome" autocomplete="off">
                     </div>
-
-                    <div class="selection-group">
-                        <h2>Nível de Desafio</h2>
-                        <div class="difficulty-options">
-                            <button class="btn-difficulty active" data-difficulty="easy">
-                                <span class="label">Fácil</span>
-                            </button>
-                            <button class="btn-difficulty" data-difficulty="medium">
-                                <span class="label">Médio</span>
-                            </button>
-                            <button class="btn-difficulty" data-difficulty="hard">
-                                <span class="label">Difícil</span>
-                            </button>
-                            <button class="btn-difficulty" data-difficulty="insane">
-                                <span class="label">Insano</span>
-                            </button>
-                            <button class="btn-difficulty btn-impossible" data-difficulty="impossible">
-                                <span class="label">Impossível</span>
-                            </button>
-                        </div>
+                    <div class="input-group">
+                        <label for="login-pass">SENHA DE ACESSO</label>
+                        <input type="password" id="login-pass" placeholder="••••••••" autocomplete="off">
                     </div>
-
-                    <button id="btn-start" class="btn-primary">Começar Avaliação</button>
-                    <button id="btn-show-ranking" class="btn-secondary">VISUALIZAR RANKING</button>
-                </div>
-
-                <div id="ranking-section">
-                    <div class="selection-group">
-                        <h2>TOP 10 PERFORMANCES</h2>
-                        <div id="ranking-list" class="ranking-list">
-                            <!-- Injected by JS -->
-                        </div>
-                        <button id="btn-hide-ranking" class="btn-secondary">VOLTAR</button>
+                    <div class="auth-form-actions">
+                        <button id="btn-do-login" class="btn-primary">ENTRAR NO SISTEMA</button>
+                        <button onclick="location.href='register.html'" class="btn-text">Não possui conta? Cadastre-se</button>
                     </div>
                 </div>
             </div>
         </section>
-
-        <!-- Screen 2: Quiz -->
-        <section id="screen-quiz" class="screen">
-            <div class="quiz-header">
-                <div class="student-info">
-                    <span id="display-name">Aluno</span>
-                    <div class="streak-badge" id="streak-badge">
-                        <span class="fire-icon">🔥</span>
-                        <span id="streak-count">0</span>
-                    </div>
-                </div>
-                <div class="progress-container">
-                    <div class="progress-bar" id="progress-bar"></div>
-                </div>
-                <div class="timer-container" id="timer-container">
-                    <span class="timer-icon">⏳</span>
-                    <span id="timer-text">20s</span>
-                </div>
-                <div class="question-counter">
-                    <span class="reasoning-indicator" id="reasoning-indicator"></span>
-                    Questão <span id="current-q">1</span>/15
-                </div>
-            </div>
-
-            <div class="card glass quiz-card">
-                <div class="card-glare"></div>
-                <div id="question-container">
-                    <h2 id="question-text">Carregando questão...</h2>
-                    <div id="options-container" class="options-grid">
-                        <!-- Options injected by JS -->
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Screen 3: Results -->
-        <section id="screen-results" class="screen">
-            <div class="card glass results-card">
-                <div class="card-glare"></div>
-                <div class="result-icon" id="result-icon">🏆</div>
-                <h1>Parabéns, <span id="final-name">Aluno</span>!</h1>
-                <p>Você concluiu o simulado no nível <span id="final-level">Fácil</span>.</p>
-                
-                <div class="score-display">
-                    <div class="score-value" id="final-score">0</div>
-                    <div class="score-label">Questões Corretas</div>
-                </div>
-
-                <div class="feedback-text" id="feedback-text">
-                    Ótimo trabalho! Continue praticando.
-                </div>
-
-                <div class="results-actions">
-                    <button id="btn-download" class="btn-primary">Baixar Relatório</button>
-                    <button id="btn-restart" class="btn-secondary">Reiniciar Teste</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Random Challenge Modal -->
-        <div id="challenge-warning" class="challenge-warning-overlay">
-            <div class="warning-text">DESAFIO ALEATÓRIO</div>
-        </div>
-
-        <div id="random-challenge" class="challenge-overlay">
-            <div class="challenge-card glass">
-                <div class="challenge-header">
-                    <span class="challenge-icon">⚡</span>
-                    <h2>DESAFIO RELÂMPAGO!</h2>
-                </div>
-                <div id="challenge-content">
-                    <p id="challenge-task"></p>
-                    <input type="text" id="challenge-input" placeholder="Sua resposta...">
-                    <button id="btn-submit-challenge" class="btn-primary">VERIFICAR</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Reasoning Insight -->
-        <div id="reasoning-insight" class="reasoning-insight glass">
-            <div class="insight-header">
-                <span class="insight-icon">🧠</span>
-                <h3>ONYX ANALYSIS</h3>
-            </div>
-            <div id="insight-logs" class="insight-logs">
-                <!-- Logs injected by JS -->
-            </div>
-        </div>
     </main>
 
     <footer id="system-status">
-        <div class="status-item">
-            <span class="status-dot"></span>
-            SYSTEM: <span id="status-mode">READY</span>
-        </div>
-        <div class="status-item">
-            LATENCY: <span id="status-latency">0.00ms</span>
-        </div>
-        <div class="status-item">
-            DATABASE: <span id="status-db">LOCAL_INDEXED_DB</span>
-        </div>
-        <div class="status-item time" id="current-time">
-            00:00:00
-        </div>
+        <div class="status-item"><span class="status-dot"></span>ONYX_CORE: <span id="status-mode">READY</span></div>
+        <div class="status-item">DATABASE: LOCAL_INDEXED_DB</div>
     </footer>
 
-    <script src="onyx_engines.js"></script>
     <script src="onyx_ui.js"></script>
-    <script src="script.js"></script>
+    <script src="onyx_core.js"></script>
+    <script>
+        document.getElementById('btn-do-login').onclick = async () => {
+            const name = document.getElementById('login-name').value.trim();
+            const pass = document.getElementById('login-pass').value.trim();
+            
+            if (!name || !pass) {
+                OnyxUI.playFeedback('error');
+                alert("Identificação necessária.");
+                return;
+            }
+
+            const user = await OnyxCore.DB.getUser(name);
+            if (user && user.password === pass) {
+                OnyxUI.playFeedback('success');
+                OnyxCore.Session.setCurrentUser(name);
+                location.href = 'dashboard.html';
+            } else {
+                OnyxUI.playFeedback('error');
+                alert("Usuário ou senha inválidos.");
+            }
+        };
+
+        // Auto-login check
+        window.onload = async () => {
+            await OnyxCore.DB.init();
+            await OnyxCore.DB.createTestUser();
+            if (OnyxCore.Session.getCurrentUser()) {
+                location.href = 'dashboard.html';
+            }
+        };
+    </script>
 </body>
 </html>

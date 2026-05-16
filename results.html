@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONYX - Relatório Final</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-dark">
+    <main id="app">
+        <section id="screen-results" class="screen active">
+            <div class="card glass">
+                <header>
+                    <div class="logo">ONYX <span>REPORT</span></div>
+                    <h1>Missão Concluída</h1>
+                </header>
+
+                <div class="results-summary">
+                    <div class="res-item">
+                        <span class="res-label">OPERADOR</span>
+                        <span class="res-value" id="res-name">...</span>
+                    </div>
+                    <div class="res-item">
+                        <span class="res-label">ACERTOS</span>
+                        <span class="res-value" id="res-score">0</span>
+                    </div>
+                </div>
+
+                <div class="auth-form-actions">
+                    <button onclick="location.href='dashboard.html'" class="btn-primary">NOVA MISSÃO</button>
+                    <button onclick="OnyxCore.Session.logout()" class="btn-text">SAIR</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="onyx_core.js"></script>
+    <script>
+        OnyxCore.Session.checkAuth();
+        document.getElementById('res-name').textContent = OnyxCore.Session.getCurrentUser();
+        document.getElementById('res-score').textContent = sessionStorage.getItem('onyx_final_score');
+    </script>
+</body>
+</html>
