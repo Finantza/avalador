@@ -92,6 +92,17 @@ window.OnyxCore = {
             });
         },
 
+        async getAllUsers() {
+            const db = await this.init();
+            if (!db) return [];
+            return new Promise((resolve) => {
+                const tx = db.transaction(['global_stats'], 'readonly');
+                const request = tx.objectStore('global_stats').getAll();
+                request.onsuccess = () => resolve(request.result || []);
+                request.onerror = () => resolve([]);
+            });
+        },
+
         async saveHistory(entry) {
             const db = await this.init();
             if (!db) return;

@@ -16,7 +16,9 @@ Onyx is a high-performance, immersive assessment platform designed for professio
 - **Level-Gating**: Advanced subjects and difficulties are locked behind level requirements, ensuring a structured learning path.
 - **Global Ranking**: Compete for the top position in the operator rankings.
 
-### 3. Emergency Random Challenges
+### 3. Emergency Random Challenges & Onyx Network
+- **Onyx Network Tracker**: Live simulated active operator count with periodic network updates in the sidebar.
+- **Dynamic Arena Matchmaking**: Search for opponents in the "Arena de Combate". Simulates network ping scans and dynamically displays available opponents globally.
 - **High-Stakes Alerts**: Periodic "Desafio Prioritário" alerts with sound feedback.
 - **Risk/Reward**: High XP gains for success, but significant XP penalties for failure.
 

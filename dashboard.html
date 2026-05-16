@@ -22,6 +22,16 @@
                 <a href="#" class="nav-item" id="btn-show-profile">👤 <span>Perfil</span></a>
                 <a href="#" class="nav-item" id="btn-logout">🚪 <span>Desconectar</span></a>
             </nav>
+            <div class="glass u-p-20 u-mt-20" id="online-users-panel">
+                <div class="u-flex-between">
+                    <p class="u-text-accent">REDE ONYX</p>
+                    <span class="status-dot pulse"></span>
+                </div>
+                <div id="online-count-display" class="u-font-15 u-weight-900 u-mt-10">
+                    1,245
+                </div>
+                <p class="u-text-muted u-font-07">OPERADORES ATIVOS</p>
+            </div>
             <div class="glass u-p-20 u-mt-20" id="insight-panel">
                 <p class="u-text-accent">ANÁLISE HEURÍSTICA</p>
                 <div id="insight-content" class="u-text-muted u-mt-10">
@@ -145,6 +155,18 @@
         let selectedSub = 'matematica';
         let selectedDiff = 'easy';
         let userStats = null;
+        let onlineOperators = 1240;
+
+        const adversaryPool = [
+            { name: 'X-Phantom', level: 12, avatar: '👤', region: 'SP, BR' },
+            { name: 'Cyber_Wolf', level: 8, avatar: '🐺', region: 'RJ, BR' },
+            { name: 'Nova_Prime', level: 15, avatar: '✨', region: 'PR, BR' },
+            { name: 'Code_Reaper', level: 22, avatar: '💀', region: 'MG, BR' },
+            { name: 'Null_Pointer', level: 5, avatar: '👾', region: 'SC, BR' },
+            { name: 'Onyx_Master', level: 30, avatar: '💎', region: 'DF, BR' },
+            { name: 'Byte_Knight', level: 18, avatar: '🛡️', region: 'RS, BR' },
+            { name: 'Data_Slayer', level: 25, avatar: '⚔️', region: 'PE, BR' }
+        ];
 
         const screens = {
             home: document.getElementById('screen-home'),
@@ -171,37 +193,98 @@
         });
 
         // --- ARENA LOGIC ---
-        function initArenaLobby() {
+        async function initArenaLobby() {
             const lobby = document.getElementById('arena-lobby');
-            lobby.innerHTML = '';
+            lobby.innerHTML = `
+                <div class="searching-overlay">
+                    <div class="search-loader"></div>
+                    <p class="u-font-08 u-text-accent">SINCRONIZANDO COM A REDE GLOBAL...</p>
+                    <div id="search-logs" class="u-mt-15"></div>
+                </div>
+            `;
             
-            const adversaries = [
-                { name: 'X-Phantom', level: 12, avatar: '👤' },
-                { name: 'Cyber_Wolf', level: 8, avatar: '🐺' },
-                { name: 'Nova_Prime', level: 15, avatar: '✨' },
-                { name: 'Code_Reaper', level: 22, avatar: '💀' }
+            const searchLogs = document.getElementById('search-logs');
+            const logSteps = [
+                "Iniciando varredura de pings...",
+                "Acessando base de registros locais...",
+                "Filtrando operadores por latência...",
+                "Sincronização de túneis concluída."
             ];
 
-            adversaries.forEach(adv => {
+            for (const step of logSteps) {
+                const l = document.createElement('div');
+                l.className = 'search-log-line';
+                l.textContent = `> ${step}`;
+                searchLogs.appendChild(l);
+                await new Promise(r => setTimeout(r, 500));
+            }
+
+            // Fetch real users from DB
+            let realUsers = [];
+            try {
+                realUsers = await OnyxCore.DB.getAllUsers();
+            } catch (e) {
+                console.error("Erro ao buscar usuários reais:", e);
+            }
+
+            // Exclude current logged in user and format
+            const formattedRealUsers = realUsers
+                .filter(u => u.id !== userStats.id)
+                .map(u => ({
+                    name: u.id,
+                    level: u.level || 1,
+                    avatar: '👤',
+                    region: 'SESSÃO LOCAL',
+                    isReal: true
+                }));
+
+            // Combine with simulated ones, prioritizing real ones
+            let combinedPool = [...formattedRealUsers];
+            
+            if (combinedPool.length < 4) {
+                const needed = 4 - combinedPool.length;
+                const realNames = new Set(combinedPool.map(u => u.name));
+                const availableSimulated = adversaryPool.filter(a => !realNames.has(a.name));
+                const extra = availableSimulated.sort(() => 0.5 - Math.random()).slice(0, needed);
+                combinedPool = [...combinedPool, ...extra];
+            } else {
+                combinedPool = combinedPool.sort(() => 0.5 - Math.random()).slice(0, 6); // Show more if we have them
+            }
+
+            await new Promise(r => setTimeout(r, 400));
+            lobby.innerHTML = '';
+            
+            for (const adv of combinedPool) {
                 const card = document.createElement('div');
                 card.className = 'match-card glass';
+                if (adv.isReal) {
+                    card.style.borderColor = 'var(--success)';
+                    card.style.background = 'rgba(16, 185, 129, 0.05)';
+                }
+
                 card.innerHTML = `
-                    <p class="u-font-06 u-text-accent">SESSÃO DISPONÍVEL</p>
+                    <p class="u-font-06 u-text-accent" style="color: ${adv.isReal ? 'var(--success)' : ''}">
+                        ${adv.isReal ? '🟢 OPERADOR REAL' : 'SESSÃO DISPONÍVEL • ' + adv.region}
+                    </p>
                     <div class="vs-container">
                         <div class="vs-operator">
                             <div class="vs-avatar">👤</div>
                             <span class="u-font-07">${userStats.id}</span>
                         </div>
-                        <div class="vs-circle">VS</div>
+                        <div class="vs-circle" style="${adv.isReal ? 'border-color:var(--success); color:var(--success); box-shadow:0 0 15px rgba(16,185,129,0.4);' : ''}">VS</div>
                         <div class="vs-operator">
                             <div class="vs-avatar">${adv.avatar}</div>
                             <span class="u-font-07">${adv.name}</span>
                         </div>
                     </div>
-                    <button class="btn-onyx btn-primary u-w-full u-font-07 btn-start-battle" data-adv="${adv.name}">DESAFIAR (LVL ${adv.level})</button>
+                    <button class="btn-onyx btn-primary u-w-full u-font-07 btn-start-battle" data-adv="${adv.name}" style="${adv.isReal ? 'background:var(--success);' : ''}">
+                        DESAFIAR (LVL ${adv.level})
+                    </button>
                 `;
                 lobby.appendChild(card);
-            });
+                if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
+                await new Promise(r => setTimeout(r, 300));
+            }
 
             document.querySelectorAll('.btn-start-battle').forEach(btn => {
                 btn.onclick = () => startBattle(btn.dataset.adv);
@@ -295,6 +378,28 @@
             renderInsights();
             updateLocks();
             startClock();
+            
+            // Start Online Simulation
+            updateOnlineCounter();
+            setInterval(updateOnlineCounter, 5000);
+        }
+
+        function updateOnlineCounter() {
+            const el = document.getElementById('online-count-display');
+            if (!el) return;
+            
+            const delta = Math.floor(Math.random() * 7) - 3;
+            onlineOperators = Math.max(1200, onlineOperators + delta);
+            el.textContent = onlineOperators.toLocaleString();
+            
+            // Occasional Activity Log in Insight Panel
+            if (Math.random() > 0.8 && typeof OnyxUI !== 'undefined') {
+                const names = adversaryPool.map(a => a.name);
+                const randomName = names[Math.floor(Math.random() * names.length)];
+                const activities = ["subiu de nível", "concluiu uma missão", "entrou na arena", "extraiu dados"];
+                const act = activities[Math.floor(Math.random() * activities.length)];
+                OnyxUI.addReasoningLog(`REDE: Operador ${randomName} ${act}.`);
+            }
         }
 
         async function renderInsights() {
