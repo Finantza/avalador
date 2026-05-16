@@ -52,6 +52,16 @@
         </section>
     </main>
 
+    <!-- Floating Tutor Panel -->
+    <div id="tutor-floating-panel" class="tutor-floating-panel hidden">
+        <div class="tutor-header">
+            <span class="tutor-icon">🤖</span>
+            <span>ONYX TUTOR</span>
+            <button onclick="document.getElementById('tutor-floating-panel').classList.remove('active')" style="margin-left:auto; background:none; border:none; color:var(--accent); cursor:pointer;">✕</button>
+        </div>
+        <div id="tutor-floating-content" style="font-size: 12px; line-height: 1.5; color: #fff;"></div>
+    </div>
+
     <script src="onyx_ui.js"></script>
     <script src="onyx_database.js"></script>
     <script src="onyx_engines.js"></script>
@@ -74,6 +84,24 @@
         let timerInterval;
         let timeLeft = 20;
         let isAnswering = false;
+        let tutorRequested = false;
+
+        window.showTutorHint = function(explanationText) {
+            const panel = document.getElementById('tutor-floating-panel');
+            const content = document.getElementById('tutor-floating-content');
+            if (panel && content) {
+                content.innerHTML = explanationText;
+                panel.classList.add('active');
+                
+                // Play sound if UI available
+                if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
+                
+                // Auto hide after 8 seconds
+                setTimeout(() => {
+                    panel.classList.remove('active');
+                }, 8000);
+            }
+        };
 
         async function startMission() {
             if (typeof OnyxUI !== 'undefined') OnyxUI.init();
@@ -86,6 +114,7 @@
 
         function renderQuestion() {
             isAnswering = false;
+            tutorRequested = false;
             const q = questions[currentQuestionIndex];
             
             const textElement = document.getElementById('question-text');
@@ -105,6 +134,7 @@
             const btnTutor = document.getElementById('btn-tutor');
             if (btnTutor) {
                 btnTutor.onclick = () => {
+                    tutorRequested = true;
                     if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
                     textElement.innerHTML = OnyxCore.Tutor.simplifyText(q.text);
                     textElement.style.fontSize = '1.3rem';
@@ -192,21 +222,23 @@
                 if (btns[q.correct]) btns[q.correct].classList.add('correct-hint');
                 if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
 
-                // Tutor Feedback
-                const container = document.getElementById('options-container');
-                const feedbackDiv = document.createElement('div');
-                feedbackDiv.className = 'glass u-mt-20 u-p-15';
-                feedbackDiv.style.borderLeft = '4px solid var(--error)';
-                feedbackDiv.innerHTML = `
-                    <p class="u-font-08 u-text-error u-mb-5 u-weight-900">EXPLICAÇÃO DO TUTOR:</p>
-                    <p class="u-font-09">A resposta correta era <strong>"${q.options[q.correct]}"</strong>.</p>
-                    <p class="u-font-09 u-mt-10 u-opacity-08">${OnyxCore.Tutor.simplifyText("Aqui usamos " + q.options[q.correct] + " porque se aplica à " + q.text)}</p>
-                    <p class="u-font-07 u-mt-10 u-text-accent">(Carregando próxima em 5s...)</p>
-                `;
-                container.appendChild(feedbackDiv);
-
-                // Longer timeout for wrong answer so they can read
-                setTimeout(nextStep, 5000);
+                if (tutorRequested) {
+                    // Tutor Feedback
+                    const container = document.getElementById('options-container');
+                    const feedbackDiv = document.createElement('div');
+                    feedbackDiv.className = 'glass u-mt-20 u-p-15';
+                    feedbackDiv.style.borderLeft = '4px solid var(--error)';
+                    feedbackDiv.innerHTML = `
+                        <p class="u-font-08 u-text-error u-mb-5 u-weight-900">EXPLICAÇÃO DO TUTOR:</p>
+                        <p class="u-font-09">A resposta correta era <strong>"${q.options[q.correct]}"</strong>.</p>
+                        <p class="u-font-09 u-mt-10 u-opacity-08">${OnyxCore.Tutor.simplifyText("Aqui usamos " + q.options[q.correct] + " porque se aplica à " + q.text)}</p>
+                        <p class="u-font-07 u-mt-10 u-text-accent">(Carregando próxima em 5s...)</p>
+                    `;
+                    container.appendChild(feedbackDiv);
+                    setTimeout(nextStep, 5000);
+                } else {
+                    setTimeout(nextStep, 2500); // Standard wait for wrong answer
+                }
             }
 
             document.getElementById('streak-count').textContent = streak;
@@ -223,7 +255,7 @@
                 } else {
                     finishMission(false);
                 }
-            }, 1500);
+            }
         }
 
         function updateLivesUI() {

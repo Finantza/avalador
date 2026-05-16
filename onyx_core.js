@@ -284,7 +284,7 @@ window.OnyxCore = {
             for (const [jargon, explanation] of Object.entries(this.dictionary)) {
                 // Use word boundaries to avoid replacing parts of other words
                 const regex = new RegExp(`\\b${jargon}\\b`, 'gi');
-                newText = newText.replace(regex, `<span class="tutor-highlight" style="color:var(--accent); font-weight:bold;" title="${explanation}">${explanation}</span>`);
+                newText = newText.replace(regex, `<span class="tutor-highlight" style="color:var(--accent); font-weight:bold; cursor:pointer; text-decoration:underline dashed;" onclick="if(window.showTutorHint) window.showTutorHint('${explanation}')">$&</span>`);
             }
             return newText;
         }
