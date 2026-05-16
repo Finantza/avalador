@@ -95,6 +95,20 @@
                         <button id="btn-start" class="btn-onyx btn-primary u-w-full">INICIAR OPERAÇÃO</button>
                     </div>
                 </aside>
+
+                <!-- Screen: Arena -->
+                <section id="screen-arena" class="screen">
+                    <header class="u-mb-30">
+                        <h2 class="u-font-header u-text-primary">ARENA DE COMBATE</h2>
+                        <p class="u-text-muted">Enfrente outros operadores em tempo real para ganhos massivos de XP.</p>
+                    </header>
+                    <div class="arena-grid" id="arena-lobby">
+                        <!-- Matches will appear here -->
+                        <div class="glass u-p-20 u-text-center">
+                            <p class="u-opacity-06">BUSCANDO OPERADORES ATIVOS...</p>
+                        </div>
+                    </div>
+                </section>
             </div>
             
             <footer class="u-mt-30 u-opacity-06 u-font-07 u-footer-layout">
@@ -131,6 +145,141 @@
         let selectedSub = 'matematica';
         let selectedDiff = 'easy';
         let userStats = null;
+
+        const screens = {
+            home: document.getElementById('screen-home'),
+            arena: document.getElementById('screen-arena')
+        };
+
+        function switchScreen(id) {
+            Object.values(screens).forEach(s => s.classList.remove('active'));
+            screens[id].classList.add('active');
+            
+            // Toggle sidebar aside if needed
+            const homeAside = document.getElementById('screen-home-aside');
+            if(homeAside) homeAside.style.display = (id === 'home') ? 'block' : 'none';
+
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.screen === id);
+            });
+
+            if (id === 'arena') initArenaLobby();
+        }
+
+        document.querySelectorAll('.nav-item[data-screen]').forEach(item => {
+            item.onclick = () => switchScreen(item.dataset.screen);
+        });
+
+        // --- ARENA LOGIC ---
+        function initArenaLobby() {
+            const lobby = document.getElementById('arena-lobby');
+            lobby.innerHTML = '';
+            
+            const adversaries = [
+                { name: 'X-Phantom', level: 12, avatar: '👤' },
+                { name: 'Cyber_Wolf', level: 8, avatar: '🐺' },
+                { name: 'Nova_Prime', level: 15, avatar: '✨' },
+                { name: 'Code_Reaper', level: 22, avatar: '💀' }
+            ];
+
+            adversaries.forEach(adv => {
+                const card = document.createElement('div');
+                card.className = 'match-card glass';
+                card.innerHTML = `
+                    <p class="u-font-06 u-text-accent">SESSÃO DISPONÍVEL</p>
+                    <div class="vs-container">
+                        <div class="vs-operator">
+                            <div class="vs-avatar">👤</div>
+                            <span class="u-font-07">${userStats.id}</span>
+                        </div>
+                        <div class="vs-circle">VS</div>
+                        <div class="vs-operator">
+                            <div class="vs-avatar">${adv.avatar}</div>
+                            <span class="u-font-07">${adv.name}</span>
+                        </div>
+                    </div>
+                    <button class="btn-onyx btn-primary u-w-full u-font-07 btn-start-battle" data-adv="${adv.name}">DESAFIAR (LVL ${adv.level})</button>
+                `;
+                lobby.appendChild(card);
+            });
+
+            document.querySelectorAll('.btn-start-battle').forEach(btn => {
+                btn.onclick = () => startBattle(btn.dataset.adv);
+            });
+        }
+
+        async function startBattle(advName) {
+            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('alert');
+            
+            const questions = OnyxEngines.QuestionEngine.generateQuestions('cybersecurity', 'medium', 3);
+            let battleScore = 0;
+            let currentB = 0;
+            
+            const battleHTML = `
+                <div class="u-p-20">
+                    <h3 class="u-text-center u-mb-20">BATALHA VS ${advName}</h3>
+                    <div id="battle-q-text" class="u-mb-25 u-font-header">PREPARANDO...</div>
+                    <div id="battle-opts" class="nav-menu"></div>
+                    <div class="battle-timer"><div id="battle-timer-bar" class="battle-timer-inner"></div></div>
+                </div>
+            `;
+            
+            openOverlay("ARENA ATIVA", battleHTML);
+            
+            function nextBattleQ() {
+                if (currentB >= questions.length) {
+                    finishBattle();
+                    return;
+                }
+                
+                const q = questions[currentB];
+                document.getElementById('battle-q-text').textContent = q.text;
+                const opts = document.getElementById('battle-opts');
+                opts.innerHTML = '';
+                
+                q.options.forEach((opt, i) => {
+                    const b = document.createElement('button');
+                    b.className = 'btn-onyx u-mb-10 u-w-full';
+                    b.textContent = opt;
+                    b.onclick = () => {
+                        if (i === q.correct) battleScore++;
+                        currentB++;
+                        nextBattleQ();
+                    };
+                    opts.appendChild(b);
+                });
+
+                // Reset timer bar
+                const bar = document.getElementById('battle-timer-bar');
+                bar.style.transition = 'none';
+                bar.style.width = '100%';
+                setTimeout(() => {
+                    bar.style.transition = 'width 10s linear';
+                    bar.style.width = '0%';
+                }, 10);
+            }
+
+            async function finishBattle() {
+                const win = battleScore >= 2;
+                const xp = win ? 200 : 50;
+                
+                userStats.xp += xp;
+                await OnyxCore.DB.saveUser(userStats);
+                renderLeveling();
+
+                const resultHTML = `
+                    <div class="u-p-20 u-text-center">
+                        <h1 class="${win ? 'u-text-primary' : 'u-text-error'}">${win ? 'VITÓRIA' : 'DERROTA'}</h1>
+                        <p class="u-mb-20">Você marcou ${battleScore}/3 pontos.</p>
+                        <p class="u-font-12">+${xp} XP OBTIDO</p>
+                        <button onclick="closeOverlay()" class="btn-onyx btn-primary u-mt-20">CONFIRMAR RESULTADO</button>
+                    </div>
+                `;
+                openOverlay("FIM DE COMBATE", resultHTML);
+            }
+
+            nextBattleQ();
+        }
 
         async function boot() {
             const user = await OnyxCore.Session.checkAuth();

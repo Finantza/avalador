@@ -23,7 +23,11 @@
     --transition-premium: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+* { 
+    margin: 0; padding: 0; box-sizing: border-box; outline: none; 
+    transition: border-color 0.3s var(--transition-premium), box-shadow 0.3s var(--transition-premium); 
+}
+*:focus { outline: none; box-shadow: 0 0 0 2px var(--primary-glow); }
 
 body {
     background: var(--bg-deep);
@@ -31,6 +35,12 @@ body {
     font-family: 'Inter', sans-serif;
     overflow-x: hidden;
     min-height: 100vh;
+    animation: fadeInPage 0.8s var(--transition-premium);
+}
+
+@keyframes fadeInPage {
+    from { opacity: 0; transform: translateY(8px); filter: blur(5px); }
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
 }
 
 /* --- AMBIENT ELEMENTS --- */
@@ -366,6 +376,39 @@ body {
     font-size: 0.85rem;
     letter-spacing: 1px;
 }
+
+/* --- ARENA STYLES --- */
+.arena-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+.match-card {
+    background: rgba(239, 68, 68, 0.05);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 20px;
+    padding: 25px;
+    position: relative;
+    overflow: hidden;
+}
+
+.match-card::before {
+    content: 'LIVE';
+    position: absolute;
+    top: 10px; right: 10px;
+    background: var(--error);
+    font-size: 0.6rem;
+    font-weight: 900;
+    padding: 2px 8px;
+    border-radius: 4px;
+    animation: blink 1s infinite;
+}
+
+.vs-container { display: flex; align-items: center; justify-content: space-between; margin: 20px 0; }
+.vs-operator { text-align: center; }
+.vs-avatar { width: 50px; height: 50px; background: rgba(255,255,255,0.05); border-radius: 50%; border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin: 0 auto 10px; }
+.vs-circle { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--error); display: flex; align-items: center; justify-content: center; font-style: italic; font-weight: 900; color: var(--error); font-size: 0.8rem; box-shadow: 0 0 15px rgba(239, 68, 68, 0.3); }
+
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+.battle-timer { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; margin-top: 15px; }
+.battle-timer-inner { height: 100%; width: 100%; background: var(--error); transition: width linear; }
 
 /* --- AUTH STANDALONE --- */
 .auth-standalone-wrapper {
