@@ -439,6 +439,16 @@ body {
 .u-mb-5 { margin-bottom: 5px; }
 .u-mb-15 { margin-bottom: 15px; }
 .u-mt-15 { margin-top: 15px; }
+.u-opacity-06 { opacity: 0.6; }
+.u-color-white { color: #fff; }
+.u-pos-fixed { position: fixed; }
+.u-border-none { border: none; }
+.u-bg-none { background: none; }
+.u-flex-gap-30 { display: flex; align-items: center; gap: 30px; }
+.u-bottom-20 { bottom: 20px; }
+.u-left-40 { left: 40px; }
+.u-font-06 { font-size: 0.6rem; }
+.u-border-glass { border: 1px solid rgba(255,255,255,0.1); }
 @media (max-width: 1024px) {
     .sidebar { width: 80px; padding: 20px 10px; }
     .nav-item span { display: none; }
