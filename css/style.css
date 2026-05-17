@@ -1001,3 +1001,49 @@ body {
     line-height: 1.5 !important;
     color: #fff !important;
 }
+
+/* --- ESTILOS DO LEITOR DE VOZ E CONFIGURAÇÕES DE ACESSIBILIDADE --- */
+.btn-speak-primary {
+    background: rgba(14, 165, 233, 0.1) !important;
+    color: #0ea5e9 !important;
+    border: 1px solid #0ea5e9 !important;
+    padding: 5px 10px !important;
+    font-size: 0.7rem !important;
+    margin-left: 10px !important;
+    flex-shrink: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+}
+
+.tutor-select-futuristic {
+    background: rgba(15, 23, 42, 0.6) !important;
+    color: #fff !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 8px !important;
+    padding: 6px 12px !important;
+    font-family: var(--font-mono) !important;
+    font-size: 0.75rem !important;
+    cursor: pointer !important;
+    outline: none !important;
+    transition: border-color 0.2s;
+}
+.tutor-select-futuristic:focus {
+    border-color: var(--accent) !important;
+}
+
+.tutor-toggle-label {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    cursor: pointer !important;
+    font-size: 0.75rem !important;
+    color: #fff !important;
+}
+
+.tutor-toggle-checkbox {
+    width: 16px !important;
+    height: 16px !important;
+    accent-color: var(--accent) !important;
+    cursor: pointer !important;
+}

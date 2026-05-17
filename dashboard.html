@@ -834,6 +834,52 @@
                 `;
             }
 
+            // Recarrega as configurações de acessibilidade do Tutor salvas ou cria padrão
+            const tutorConfigStr = localStorage.getItem(`onyx_tutor_config_${userStats.id}`);
+            let tutorConfig = {
+                ritmo: 'normal',
+                estilo: 'visual',
+                autoSimplificar: false
+            };
+            if (tutorConfigStr) {
+                try {
+                    tutorConfig = JSON.parse(tutorConfigStr);
+                } catch(e) {}
+            }
+
+            const tutorSettingsHTML = `
+                <div class="glass u-p-20 u-mt-20" style="border: 1px solid rgba(14, 165, 233, 0.2); background: rgba(14, 165, 233, 0.02);">
+                    <p class="u-font-08 u-text-primary u-weight-900 u-mb-15">⚙️ AJUSTES DE ACESSIBILIDADE COGNITIVA DO TUTOR</p>
+                    <div class="u-grid-2" style="gap: 20px;">
+                        <div>
+                            <label class="u-font-07 u-text-muted u-mb-5" style="display: block;">VELOCIDADE DE DISCURSO (VOZ)</label>
+                            <select id="tutor-pref-ritmo" class="tutor-select-futuristic u-w-full">
+                                <option value="lento" ${tutorConfig.ritmo === 'lento' ? 'selected' : ''}>LENTO (0.8x)</option>
+                                <option value="normal" ${tutorConfig.ritmo === 'normal' ? 'selected' : ''}>NORMAL (1.0x)</option>
+                                <option value="rapido" ${tutorConfig.ritmo === 'rapido' ? 'selected' : ''}>RÁPIDO (1.2x)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="u-font-07 u-text-muted u-mb-5" style="display: block;">ESTILO COGNITIVO</label>
+                            <select id="tutor-pref-estilo" class="tutor-select-futuristic u-w-full">
+                                <option value="visual" ${tutorConfig.estilo === 'visual' ? 'selected' : ''}>VISUAL (MAPAS & CÓDIGO)</option>
+                                <option value="auditivo" ${tutorConfig.estilo === 'auditivo' ? 'selected' : ''}>AUDITIVO (SÍNTESE DE VOZ)</option>
+                                <option value="leitura" ${tutorConfig.estilo === 'leitura' ? 'selected' : ''}>TEXTUAL (LEITURA CRÍTICA)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="u-mt-15 u-flex-between" style="align-items: center; gap: 20px; flex-wrap: wrap;">
+                        <label class="tutor-toggle-label">
+                            <input type="checkbox" id="tutor-pref-auto" class="tutor-toggle-checkbox" ${tutorConfig.autoSimplificar ? 'checked' : ''}>
+                            <span>SIMPLIFICAÇÃO AUTOMÁTICA DE ENUNCIADOS DE MISSÕES</span>
+                        </label>
+                        <button onclick="saveTutorPreferences()" class="btn-onyx" style="padding: 8px 16px; font-size: 0.75rem; background: var(--primary); color: #fff; box-shadow: 0 4px 12px var(--primary-glow);">
+                            SALVAR AJUSTES
+                        </button>
+                    </div>
+                </div>
+            `;
+
             const profileHTML = `
                 <div class="u-grid-2">
                     <div class="glass u-p-20 u-text-center">
@@ -855,6 +901,7 @@
                 </div>
                 
                 ${tutorReportHTML}
+                ${tutorSettingsHTML}
                 
                 <div class="u-mt-30">
                     <h3 class="u-mb-15 u-font-header">HISTÓRICO RECENTE</h3>
@@ -873,6 +920,26 @@
                 </div>
             `;
             openOverlay("PERFIL DO OPERADOR", profileHTML);
+        }
+
+        window.saveTutorPreferences = () => {
+            const ritmo = document.getElementById('tutor-pref-ritmo').value;
+            const estilo = document.getElementById('tutor-pref-estilo').value;
+            const autoSimplificar = document.getElementById('tutor-pref-auto').checked;
+            
+            const config = { ritmo, estilo, autoSimplificar };
+            localStorage.setItem(`onyx_tutor_config_${userStats.id}`, JSON.stringify(config));
+            
+            if (typeof OnyxUI !== 'undefined') {
+                OnyxUI.playFeedback('success');
+            }
+            
+            openOverlay("AJUSTES DO TUTOR", `
+                <div class="u-p-20 u-text-center">
+                    <h1 class="u-font-header u-text-success">AJUSTES GRAVADOS</h1>
+                    <p class="u-mt-10">O motor cognitivo do Tutor AI foi reconfigurado com sucesso.</p>
+                </div>
+            `);
         }
 
         document.getElementById('btn-show-ranking').onclick = () => renderRanking();

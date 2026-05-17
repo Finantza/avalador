@@ -45,6 +45,9 @@
                         <button id="btn-tutor" class="btn-onyx btn-tutor-primary">
                             ✨ TUTOR
                         </button>
+                        <button id="btn-speak" class="btn-onyx btn-speak-primary">
+                            🔊 OUVIR
+                        </button>
                     </div>
                     <div id="options-container" class="options-container"></div>
                 </div>
@@ -127,11 +130,26 @@
             console.log(`[QUIZ] Gerando novo banco de questões: ${subject} (${difficulty})`);
             questions = await OnyxEngines.QuestionEngine.generateQuestions(userName, subject, difficulty, 10);
             
+            // Recupera configurações de acessibilidade do Tutor salvas ou cria padrão
+            const tutorConfigStr = localStorage.getItem(`onyx_tutor_config_${userName}`);
+            let tutorConfig = {
+                ritmo: 'normal',
+                estilo: 'visual',
+                autoSimplificar: false
+            };
+            if (tutorConfigStr) {
+                try {
+                    tutorConfig = JSON.parse(tutorConfigStr);
+                } catch(e) {}
+            }
+
             // Inicializa o Tutor Inteligente
             window.tutorAI = new TutorInteligente({
                 nome: 'OnyxTutor',
                 estudanteNome: userName || 'Operador',
-                simplificacaoTexto: true
+                ritmoAprendizagem: tutorConfig.ritmo,
+                estiloAprendizagem: tutorConfig.estilo,
+                simplificacaoTexto: tutorConfig.autoSimplificar
             });
             
             // Registra a matéria do quiz
@@ -161,11 +179,28 @@
         function renderQuestion() {
             isAnswering = false;
             tutorRequested = false;
+            
+            // Cancela síntese de voz ativa ao mudar de questão
+            if (window.speechSynthesis) window.speechSynthesis.cancel();
+            
             const q = questions[currentQuestionIndex];
             
             const textElement = document.getElementById('question-text');
-            textElement.textContent = q.text;
-            textElement.style.fontSize = ''; // reset font
+            textElement.style.fontSize = ''; // Reset font size
+            textElement.style.lineHeight = ''; // Reset line-height
+            
+            // Aplica simplificação automática se configurado
+            const autoSimplify = window.tutorAI && window.tutorAI.estudante.acessibilidade.simplificacaoTexto;
+            if (autoSimplify) {
+                tutorRequested = true;
+                let simplified = tutorAI.simplificarTexto(q.text, 'moderado');
+                let highlighted = OnyxCore.Tutor.simplifyText(simplified);
+                textElement.innerHTML = highlighted;
+                textElement.style.fontSize = '1.3rem';
+                textElement.style.lineHeight = '1.6';
+            } else {
+                textElement.textContent = q.text;
+            }
             
             document.getElementById('current-q').textContent = currentQuestionIndex + 1;
             
@@ -197,8 +232,52 @@
                     timeLeft += 15;
                     updateTimerUI();
                 };
-                btnTutor.style.opacity = '1';
-                btnTutor.innerText = '✨ TUTOR';
+                
+                if (autoSimplify) {
+                    btnTutor.style.opacity = '0.5';
+                    btnTutor.innerText = 'SIMPLIFICADO ✓';
+                } else {
+                    btnTutor.style.opacity = '1';
+                    btnTutor.innerText = '✨ TUTOR';
+                }
+            }
+
+            // Voice Speech (Leitura em Voz Alta) Logic
+            const btnSpeak = document.getElementById('btn-speak');
+            if (btnSpeak) {
+                btnSpeak.onclick = () => {
+                    if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
+                    
+                    // Cancela síntese anterior
+                    window.speechSynthesis.cancel();
+                    
+                    const textToSpeak = textElement.innerText || q.text;
+                    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                    utterance.lang = 'pt-BR';
+                    
+                    let speed = 1.0;
+                    if (tutorAI.ritmoAprendizagem === 'lento') speed = 0.8;
+                    else if (tutorAI.ritmoAprendizagem === 'rapido') speed = 1.2;
+                    utterance.rate = speed;
+                    
+                    utterance.onstart = () => {
+                        btnSpeak.innerHTML = '🔊 FALANDO...';
+                        btnSpeak.style.opacity = '0.7';
+                    };
+                    utterance.onend = () => {
+                        btnSpeak.innerHTML = '🔊 OUVIR';
+                        btnSpeak.style.opacity = '1';
+                    };
+                    utterance.onerror = () => {
+                        btnSpeak.innerHTML = '🔊 OUVIR';
+                        btnSpeak.style.opacity = '1';
+                    };
+                    
+                    window.speechSynthesis.speak(utterance);
+                };
+                
+                btnSpeak.innerHTML = '🔊 OUVIR';
+                btnSpeak.style.opacity = '1';
             }
 
             const container = document.getElementById('options-container');
@@ -235,6 +314,9 @@
             if (isAnswering) return;
             isAnswering = true;
             clearInterval(timerInterval);
+
+            // Cancela síntese de voz ativa quando o usuário responde
+            if (window.speechSynthesis) window.speechSynthesis.cancel();
 
             const q = questions[currentQuestionIndex];
             const isCorrect = idx === q.correct;
@@ -298,10 +380,70 @@
                         <p class="u-font-09">A resposta correta era <strong>"${q.options[q.correct]}"</strong>.</p>
                         <p class="u-font-09 u-mt-10 u-opacity-08">${highlightedExplanation}</p>
                         ${tutorDicaStr ? `<p class="u-font-08 u-mt-10" style="color:var(--accent); font-weight: bold;">💡 Dica de Aprendizagem: ${tutorDicaStr}</p>` : ''}
-                        <p class="u-font-07 u-mt-10 u-text-accent">(Carregando próxima em 5s...)</p>
+                        <div class="u-mt-15 u-flex-between" style="align-items: center; gap: 10px; flex-wrap: wrap;">
+                            <button id="btn-speak-feedback" class="btn-speak-primary" style="margin-left: 0;">
+                                🔊 OUVIR EXPLICAÇÃO
+                            </button>
+                            <span id="feedback-timer-label" class="u-font-07 u-text-accent">(Carregando próxima em 5s...)</span>
+                        </div>
                     `;
                     container.appendChild(feedbackDiv);
-                    setTimeout(nextStep, 5000);
+                    
+                    let nextTimeout = setTimeout(nextStep, 5000);
+                    
+                    const speakFeedbackBtn = feedbackDiv.querySelector('#btn-speak-feedback');
+                    if (speakFeedbackBtn) {
+                        speakFeedbackBtn.onclick = () => {
+                            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
+                            
+                            // Cancela o timeout de avanço automático
+                            clearTimeout(nextTimeout);
+                            
+                            // Substitui o timer de avanço automático por um botão de Avançar manual
+                            const label = feedbackDiv.querySelector('#feedback-timer-label');
+                            if (label) {
+                                label.outerHTML = `
+                                    <button id="btn-manual-next" class="btn-onyx" style="padding: 6px 12px; font-size: 0.7rem; background: var(--primary); color: #fff; box-shadow: 0 4px 12px var(--primary-glow);">
+                                        AVANÇAR
+                                    </button>
+                                `;
+                                const manualNext = feedbackDiv.querySelector('#btn-manual-next');
+                                if (manualNext) {
+                                    manualNext.onclick = () => {
+                                        if (window.speechSynthesis) window.speechSynthesis.cancel();
+                                        nextStep();
+                                    };
+                                }
+                            }
+                            
+                            window.speechSynthesis.cancel();
+                            
+                            // Compila o áudio
+                            const textToSpeak = `Feedback do Tutor: ${tutorFeedbackObj.texto}. A resposta correta era ${q.options[q.correct]}. Explicação: ${simplifiedExplanation}. Dica de Aprendizagem: ${tutorDicaStr || ''}`;
+                            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                            utterance.lang = 'pt-BR';
+                            
+                            let speed = 1.0;
+                            if (tutorAI.ritmoAprendizagem === 'lento') speed = 0.8;
+                            else if (tutorAI.ritmoAprendizagem === 'rapido') speed = 1.2;
+                            utterance.rate = speed;
+                            
+                            utterance.onstart = () => {
+                                speakFeedbackBtn.innerHTML = '🔊 LENDO EXPLICAÇÃO...';
+                                speakFeedbackBtn.style.opacity = '0.7';
+                            };
+                            utterance.onend = () => {
+                                speakFeedbackBtn.innerHTML = '🔊 OUVIR EXPLICAÇÃO';
+                                speakFeedbackBtn.style.opacity = '1';
+                            };
+                            utterance.onerror = () => {
+                                speakFeedbackBtn.innerHTML = '🔊 OUVIR EXPLICAÇÃO';
+                                speakFeedbackBtn.style.opacity = '1';
+                            };
+                            
+                            window.speechSynthesis.speak(utterance);
+                        };
+                    }
                 } else {
                     setTimeout(nextStep, 2500); // Standard wait for wrong answer
                 }
@@ -313,6 +455,9 @@
             else document.getElementById('streak-badge').classList.remove('active');
 
             function nextStep() {
+                // Cancela qualquer áudio ativo quando muda de questão
+                if (window.speechSynthesis) window.speechSynthesis.cancel();
+                
                 currentQuestionIndex++;
                 if (lives <= 0) {
                     finishMission(true); // Failed
