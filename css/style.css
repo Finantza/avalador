@@ -905,6 +905,7 @@ body {
     opacity: 0;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     pointer-events: none;
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
 }
 .tutor-floating-panel.active {
@@ -936,4 +937,67 @@ body {
 @keyframes pulse-error {
     0%, 100% { opacity: 1; transform: scale(1); }
     50% { opacity: 0.5; transform: scale(0.98); }
+}
+
+/* --- CLASSES PARA ELIMINAR ESTILOS INLINE --- */
+.btn-glass-bordered {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.glass-accent-border {
+    border: 1px solid var(--accent) !important;
+}
+
+.btn-bootcamp {
+    background: rgba(45, 212, 191, 0.1) !important;
+    color: var(--accent) !important;
+}
+
+.streak-badge-combo {
+    border-color: #10b981 !important;
+    background: rgba(16, 185, 129, 0.1) !important;
+    color: #10b981 !important;
+}
+
+.streak-badge-lives {
+    border-color: #ef4444 !important;
+    background: rgba(239, 68, 68, 0.1) !important;
+    color: #ef4444 !important;
+    gap: 4px !important;
+}
+
+.question-header-layout {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    margin-bottom: 20px !important;
+}
+
+.question-text-grow {
+    flex: 1 !important;
+}
+
+.btn-tutor-primary {
+    background: rgba(16, 185, 129, 0.1) !important;
+    color: #10b981 !important;
+    border: 1px solid #10b981 !important;
+    padding: 5px 10px !important;
+    font-size: 0.7rem !important;
+    margin-left: 15px !important;
+    flex-shrink: 0 !important;
+}
+
+.btn-tutor-close {
+    margin-left: auto !important;
+    background: none !important;
+    border: none !important;
+    color: var(--accent) !important;
+    cursor: pointer !important;
+}
+
+.tutor-floating-body {
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+    color: #fff !important;
 }

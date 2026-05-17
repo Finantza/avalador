@@ -118,7 +118,7 @@
                     <div class="glass u-p-20 u-mb-30">
                         <h4 class="u-font-header u-text-muted u-mb-10">REDE ONYX</h4>
                         <p class="u-font-07 u-text-muted u-mb-15">Atualize seu banco de dados local com missões globais (Cloud).</p>
-                        <button id="btn-cloud-sync" class="btn-onyx u-w-full" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);">
+                        <button id="btn-cloud-sync" class="btn-onyx u-w-full btn-glass-bordered">
                             SINCRONIZAR BANCO
                         </button>
                     </div>
@@ -128,15 +128,15 @@
                             <h4 class="u-font-header u-text-muted">ONYX VAULT</h4>
                         </div>
                         <p class="u-font-07 u-text-muted u-mb-15">O seu perfil está protegido pelo Cofre Interno Automático.</p>
-                        <button id="btn-restore-internal" class="btn-onyx u-w-full" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);">
+                        <button id="btn-restore-internal" class="btn-onyx u-w-full btn-glass-bordered">
                             RESTAURAR DO COFRE INTERNO
                         </button>
                     </div>
 
-                    <div class="glass u-p-20" style="border: 1px solid var(--accent);">
+                    <div class="glass u-p-20 glass-accent-border">
                         <h4 class="u-font-header u-text-accent u-mb-10">DATA SCIENCE BOOTCAMP</h4>
                         <p class="u-font-07 u-text-muted u-mb-15">Motor de cálculos matemáticos e lógicos focado em dados reais.</p>
-                        <button id="btn-bootcamp-daily" class="btn-onyx u-w-full" style="background: rgba(45, 212, 191, 0.1); color: var(--accent);">
+                        <button id="btn-bootcamp-daily" class="btn-onyx u-w-full btn-bootcamp">
                             GERAR DESAFIO DIÁRIO (MOTOR)
                         </button>
                     </div>
@@ -184,6 +184,7 @@
         <button id="btn-accept-challenge" class="emergency-btn">ACEITAR DESAFIO</button>
     </div>
 
+    <script src="legacy/tutor.js"></script>
     <script src="js/onyx_core.js"></script>
     <script src="js/onyx_database.js"></script>
     <script>var module = { exports: {} };</script>
@@ -778,6 +779,61 @@
                 prof[axis] = Math.min(100, prof[axis] + h.score * 2);
             });
 
+            // Recarrega o relatório do Tutor do LocalStorage
+            const tutorReportStr = localStorage.getItem(`onyx_tutor_report_${userStats.id}`);
+            let tutorReportHTML = '';
+            
+            if (tutorReportStr) {
+                try {
+                    const report = JSON.parse(tutorReportStr);
+                    tutorReportHTML = `
+                        <div class="glass u-p-20 u-mt-20" style="border-left: 4px solid var(--accent); background: rgba(45, 212, 191, 0.03);">
+                            <div class="u-flex-between u-mb-15">
+                                <p class="u-font-08 u-text-accent u-weight-900">🤖 PARECER COGNITIVO DO TUTOR AI</p>
+                                <span class="status-dot pulse" style="background: var(--accent);"></span>
+                            </div>
+                            <div class="u-flex-between u-mb-10">
+                                <div>
+                                    <h4 class="u-weight-800" style="color: #fff;">Plano de Ensino: ${report.nivelAtual.toUpperCase()}</h4>
+                                    <p class="u-font-07 u-text-muted u-mt-5">Pontuação Acadêmica: ${report.pontuacao} | Sessões Completadas: ${report.sessoesCompletadas}</p>
+                                </div>
+                                <div class="u-text-right">
+                                    <span class="u-font-07 u-text-muted">RITMO ESTIMADO</span>
+                                    <p class="u-font-08 u-weight-800 u-text-accent">ESTÁVEL / ADAPTATIVO</p>
+                                </div>
+                            </div>
+                            
+                            <div class="u-grid-2 u-mt-15" style="gap: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
+                                <div>
+                                    <span class="u-font-07 u-text-success" style="font-weight: 800;">🔥 DOMÍNIOS SÓLIDOS:</span>
+                                    <ul style="font-size:0.75rem; padding-left:15px; margin-top:5px; color:#fff; line-height: 1.5;">
+                                        ${report.pontosFortes.length > 0 
+                                            ? report.pontosFortes.map(f => `<li>${f.toUpperCase()}</li>`).join('') 
+                                            : '<li>Aguardando mais missões...</li>'}
+                                    </ul>
+                                </div>
+                                <div>
+                                    <span class="u-font-07 u-text-error" style="font-weight: 800;">🚨 RECOMENDAÇÕES DE REFORÇO:</span>
+                                    <ul style="font-size:0.75rem; padding-left:15px; margin-top:5px; color:#fff; line-height: 1.5;">
+                                        ${report.pontosFracos.length > 0 
+                                            ? report.pontosFracos.map(w => `<li>${w.toUpperCase()}</li>`).join('') 
+                                            : '<li>Nenhuma fraqueza detectada. Excelente!</li>'}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } catch (e) {
+                    console.error("[DASHBOARD] Erro ao processar relatório do tutor:", e);
+                }
+            } else {
+                tutorReportHTML = `
+                    <div class="glass u-p-20 u-mt-20 u-text-center" style="border: 1px dashed rgba(255,255,255,0.15);">
+                        <p class="u-font-08 u-text-muted">🤖 Nenhum parecer cognitivo do Tutor AI gerado ainda. Conclua uma missão no quiz para inicializar a análise cognitiva.</p>
+                    </div>
+                `;
+            }
+
             const profileHTML = `
                 <div class="u-grid-2">
                     <div class="glass u-p-20 u-text-center">
@@ -797,6 +853,9 @@
                         </div>
                     </div>
                 </div>
+                
+                ${tutorReportHTML}
+                
                 <div class="u-mt-30">
                     <h3 class="u-mb-15 u-font-header">HISTÓRICO RECENTE</h3>
                     ${history.slice(0, 5).map(h => `

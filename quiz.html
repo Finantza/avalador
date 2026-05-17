@@ -19,11 +19,11 @@
                         <span class="fire-icon">🔥</span>
                         <span id="streak-count">0</span>
                     </div>
-                    <div class="streak-badge active" style="border-color: #10b981; background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                    <div class="streak-badge active streak-badge-combo">
                         <span>COMBO</span>
                         <span id="combo-multiplier" class="u-weight-900">1.0x</span>
                     </div>
-                    <div class="streak-badge active" style="border-color: #ef4444; background: rgba(239, 68, 68, 0.1); color: #ef4444; gap: 4px;" id="lives-container">
+                    <div class="streak-badge active streak-badge-lives" id="lives-container">
                         <span class="life-icon">❤️</span><span class="life-icon">❤️</span><span class="life-icon">❤️</span>
                     </div>
                 </div>
@@ -40,9 +40,9 @@
                     <span id="timer-text">20s</span>
                 </div>
                 <div class="question-section">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 20px;">
-                        <p id="question-text" class="glitch-text" style="flex:1;">INICIALIZANDO PROTOCOLO...</p>
-                        <button id="btn-tutor" class="btn-onyx" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid #10b981; padding: 5px 10px; font-size: 0.7rem; margin-left: 15px; flex-shrink: 0;">
+                    <div class="question-header-layout">
+                        <p id="question-text" class="glitch-text question-text-grow">INICIALIZANDO PROTOCOLO...</p>
+                        <button id="btn-tutor" class="btn-onyx btn-tutor-primary">
                             ✨ TUTOR
                         </button>
                     </div>
@@ -57,11 +57,12 @@
         <div class="tutor-header">
             <span class="tutor-icon">🤖</span>
             <span>ONYX TUTOR</span>
-            <button onclick="document.getElementById('tutor-floating-panel').classList.remove('active')" style="margin-left:auto; background:none; border:none; color:var(--accent); cursor:pointer;">✕</button>
+            <button onclick="document.getElementById('tutor-floating-panel').classList.remove('active')" class="btn-tutor-close">✕</button>
         </div>
-        <div id="tutor-floating-content" style="font-size: 12px; line-height: 1.5; color: #fff;"></div>
+        <div id="tutor-floating-content" class="tutor-floating-body"></div>
     </div>
 
+    <script src="legacy/tutor.js"></script>
     <script src="js/onyx_ui.js"></script>
     <script src="js/onyx_database.js"></script>
     <script src="js/onyx_engines.js"></script>
@@ -126,6 +127,34 @@
             console.log(`[QUIZ] Gerando novo banco de questões: ${subject} (${difficulty})`);
             questions = await OnyxEngines.QuestionEngine.generateQuestions(userName, subject, difficulty, 10);
             
+            // Inicializa o Tutor Inteligente
+            window.tutorAI = new TutorInteligente({
+                nome: 'OnyxTutor',
+                estudanteNome: userName || 'Operador',
+                simplificacaoTexto: true
+            });
+            
+            // Registra a matéria do quiz
+            tutorAI.registrarMateria({
+                id: subject,
+                nome: subject.toUpperCase(),
+                conceitos: []
+            });
+
+            // Adiciona as questões e inicia a sessão no Tutor Inteligente
+            const tutorQuestions = questions.map((q, idx) => ({
+                id: `q_${idx}`,
+                materiaId: subject,
+                enunciado: q.text,
+                alternativas: q.options,
+                respostaCorreta: q.options[q.correct],
+                dificuldade: difficulty === 'easy' ? 'facil' : (difficulty === 'medium' ? 'medio' : 'dificil'),
+                explicacao: q.explanation || `Aplicação prática de ${subject}`,
+                dicas: [q.hint || 'Pense bem nas alternativas!']
+            }));
+            tutorAI.adicionarQuestoes(tutorQuestions);
+            tutorAI.iniciarSessao(subject, { quantidade: questions.length });
+
             renderQuestion();
         }
 
@@ -153,7 +182,12 @@
                 btnTutor.onclick = () => {
                     tutorRequested = true;
                     if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
-                    textElement.innerHTML = OnyxCore.Tutor.simplifyText(q.text);
+                    
+                    // Simplificação gramatical e cognitiva + Destaque visual de jargões técnicos
+                    let simplified = tutorAI.simplificarTexto(q.text, 'moderado');
+                    let highlighted = OnyxCore.Tutor.simplifyText(simplified);
+                    
+                    textElement.innerHTML = highlighted;
                     textElement.style.fontSize = '1.3rem';
                     textElement.style.lineHeight = '1.6';
                     btnTutor.style.opacity = '0.5';
@@ -205,6 +239,10 @@
             const q = questions[currentQuestionIndex];
             const isCorrect = idx === q.correct;
             
+            // Registra a resposta no Tutor Inteligente
+            const userAnswerText = idx === -1 ? 'TEMPO ESGOTADO' : q.options[idx];
+            tutorAI.responderQuestao(`q_${currentQuestionIndex}`, userAnswerText);
+            
             const difficultyMultiplier = { easy: 10, medium: 20, hard: 40, insane: 80, impossible: 150 };
             const baseXP = difficultyMultiplier[difficulty] || 10;
 
@@ -239,6 +277,16 @@
                 if (btns[q.correct]) btns[q.correct].classList.add('correct-hint');
                 if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
 
+                // Recupera a análise do Tutor Inteligente
+                const tutorQ = tutorAI.conhecimento.questoes.find(quest => quest.id === `q_${currentQuestionIndex}`);
+                const tutorFeedbackObj = tutorAI.gerarFeedback(tutorQ);
+                const tutorDicaStr = tutorAI.gerarDica(tutorQ);
+                
+                // Explicação cognitivamente simplificada e jargões destacados
+                const rawExplanation = q.explanation || `Aqui usamos ${q.options[q.correct]} porque é o conceito adequado para resolver a questão.`;
+                const simplifiedExplanation = tutorAI.simplificarTexto(rawExplanation, 'moderado');
+                const highlightedExplanation = OnyxCore.Tutor.simplifyText(simplifiedExplanation);
+
                 if (tutorRequested) {
                     // Tutor Feedback
                     const container = document.getElementById('options-container');
@@ -246,9 +294,10 @@
                     feedbackDiv.className = 'glass u-mt-20 u-p-15';
                     feedbackDiv.style.borderLeft = '4px solid var(--error)';
                     feedbackDiv.innerHTML = `
-                        <p class="u-font-08 u-text-error u-mb-5 u-weight-900">EXPLICAÇÃO DO TUTOR:</p>
+                        <p class="u-font-08 u-text-error u-mb-5 u-weight-900">🤖 ${tutorFeedbackObj.texto}</p>
                         <p class="u-font-09">A resposta correta era <strong>"${q.options[q.correct]}"</strong>.</p>
-                        <p class="u-font-09 u-mt-10 u-opacity-08">${OnyxCore.Tutor.simplifyText("Aqui usamos " + q.options[q.correct] + " porque se aplica à " + q.text)}</p>
+                        <p class="u-font-09 u-mt-10 u-opacity-08">${highlightedExplanation}</p>
+                        ${tutorDicaStr ? `<p class="u-font-08 u-mt-10" style="color:var(--accent); font-weight: bold;">💡 Dica de Aprendizagem: ${tutorDicaStr}</p>` : ''}
                         <p class="u-font-07 u-mt-10 u-text-accent">(Carregando próxima em 5s...)</p>
                     `;
                     container.appendChild(feedbackDiv);
@@ -322,6 +371,14 @@
                 await OnyxCore.DB.saveUser(stats);
                 await OnyxCore.DB.saveHistory({ user: userName, subject, difficulty, score, xpGained: totalXPGained, failed });
                 console.log(`[QUIZ] Missão concluída: +${totalXPGained} XP`);
+
+                // Salva o relatório de estudo cognitivo do Tutor
+                try {
+                    const report = tutorAI.relatorioEstudante();
+                    localStorage.setItem(`onyx_tutor_report_${userName}`, JSON.stringify(report));
+                } catch (e) {
+                    console.error("[QUIZ] Erro ao salvar relatório cognitivo do tutor:", e);
+                }
             } catch (err) {
                 console.error("[QUIZ] Erro ao salvar progresso:", err);
             }
