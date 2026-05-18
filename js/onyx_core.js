@@ -315,12 +315,35 @@ window.OnyxCore = {
         },
         simplifyText(text) {
             let newText = text;
+            let activeDict = {};
+            let deleted = [];
+            let custom = {};
+            
+            try {
+                deleted = JSON.parse(localStorage.getItem('onyx_deleted_glossary') || '[]');
+            } catch(e) {}
+            try {
+                custom = JSON.parse(localStorage.getItem('onyx_custom_glossary') || '{}');
+            } catch(e) {}
+
+            // Load default dictionary excluding deleted ones
             for (const [jargon, explanation] of Object.entries(this.dictionary)) {
+                if (!deleted.includes(jargon)) {
+                    activeDict[jargon] = explanation;
+                }
+            }
+
+            // Load custom and AI crawled ones
+            for (const [jargon, explanation] of Object.entries(custom)) {
+                activeDict[jargon] = explanation;
+            }
+
+            for (const [jargon, explanation] of Object.entries(activeDict)) {
                 // Escape special regex characters in jargon just in case
                 const escapedJargon = jargon.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
                 // Use a Unicode-aware word boundary check for Portuguese accented characters
                 const regex = new RegExp(`(^|[^A-Za-z0-9_À-ÖØ-öø-ÿ])(${escapedJargon})([^A-Za-z0-9_À-ÖØ-öø-ÿ]|$)`, 'gi');
-                newText = newText.replace(regex, `$1<span class="tutor-highlight" style="color:var(--accent); font-weight:bold; cursor:pointer; text-decoration:underline dashed;" onclick="if(window.showTutorHint) window.showTutorHint('${explanation}')">$2</span>$3`);
+                newText = newText.replace(regex, `$1<span class="tutor-highlight" style="color:var(--accent); font-weight:bold; cursor:pointer; text-decoration:underline dashed;" onclick="if(window.showTutorHint) window.showTutorHint('${explanation.replace(/'/g, "\\'")}')">$2</span>$3`);
             }
             return newText;
         }
