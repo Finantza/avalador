@@ -1814,9 +1814,7 @@
 
         document.getElementById('btn-show-glossary').onclick = (e) => {
             e.preventDefault();
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            document.getElementById('btn-show-glossary').classList.add('active');
-            renderGlossary();
+            location.href = 'glossary.html';
         };
 
         window.showTutorHint = (hintText) => {
