@@ -469,3 +469,37 @@ body {
         padding: 20px 15px;
     }
 }
+
+/* =========================================================================
+   ADAPTIVE VIDEO ENGINE AND COMPACT DISPLAYS TUNING
+   ========================================================================= */
+:root {
+    --display-scale-factor: 1.0;
+}
+
+body.onyx-compact-mode {
+    font-size: calc(14px * var(--display-scale-factor)) !important;
+}
+
+body.onyx-compact-mode .metric-glass-card {
+    padding: 12px 15px !important;
+}
+
+body.onyx-compact-mode .academic-sidebar {
+    padding: 10px !important;
+}
+
+/* HiDPI Sub-pixel rendering enhancements */
+body.onyx-hidpi {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body.onyx-hidpi .metric-glass-card, body.onyx-hidpi .academic-workspace-card {
+    border-width: 0.5px !important;
+}
+
+.onyx-scrollable-active {
+    scroll-behavior: smooth;
+    will-change: scroll-position;
+}

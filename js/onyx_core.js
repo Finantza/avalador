@@ -354,3 +354,83 @@ window.OnyxCore = {
         }
     });
 })();
+
+// =========================================================================
+// INTELLIGENT ADAPTIVE DISPLAY ENGINE (ONYX VIDEO & SCROLL CONFIGURATOR)
+// =========================================================================
+(function() {
+    function applyAdaptiveDisplay() {
+        const root = document.documentElement;
+        
+        // 1. Fetch current display configurations
+        const screenWidth = window.screen.width;
+        const screenHeight = window.screen.height;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        const pixelRatio = window.devicePixelRatio || 1;
+        const isHighDPI = pixelRatio >= 1.5;
+        const isLandscape = window.matchMedia("(orientation: landscape)").matches;
+        const aspectRatio = viewportWidth / viewportHeight;
+        
+        // Dynamic logging in console for transparency
+        console.log(`[ONYX ADAPTER] Resolução Tela: ${screenWidth}x${screenHeight} | Viewport: ${viewportWidth}x${viewportHeight} | PixelRatio: ${pixelRatio} (HiDPI: ${isHighDPI}) | AspectRatio: ${aspectRatio.toFixed(2)}`);
+
+        // 2. Adjust root styling tokens based on high DPI/scaling factor
+        if (isHighDPI) {
+            // Retina and high resolution Windows scaling factor tuning
+            root.style.setProperty('--glass-border', 'rgba(255, 255, 255, 0.05)');
+            root.style.setProperty('--glass-highlight', 'rgba(255, 255, 255, 0.02)');
+            document.body.classList.add('onyx-hidpi');
+        } else {
+            document.body.classList.remove('onyx-hidpi');
+        }
+
+        // 3. Aspect Ratio Adjuster for UltraWide monitors
+        if (aspectRatio > 2.0) {
+            // UltraWide layout optimization (limit stretch)
+            const mainApp = document.getElementById('app');
+            if (mainApp) {
+                mainApp.style.maxWidth = '1800px';
+                mainApp.style.margin = '0 auto';
+                mainApp.style.boxShadow = '0 0 50px rgba(0,0,0,0.8)';
+            }
+        }
+
+        // 4. Height scaling: if screen height is very low (prevent elements overflow)
+        if (viewportHeight < 650) {
+            root.style.setProperty('--display-scale-factor', '0.85');
+            document.body.classList.add('onyx-compact-mode');
+        } else if (viewportHeight < 800) {
+            root.style.setProperty('--display-scale-factor', '0.95');
+            document.body.classList.remove('onyx-compact-mode');
+        } else {
+            root.style.setProperty('--display-scale-factor', '1.0');
+            document.body.classList.remove('onyx-compact-mode');
+        }
+
+        // 5. Check and dynamically guarantee vertical scrollbar behavior on containers
+        const scrollableContainers = [
+            document.querySelector('.main-viewport'),
+            document.querySelector('.academic-viewport'),
+            document.querySelector('.ai-viewport'),
+            document.getElementById('ai-chat-window'),
+            document.querySelector('.workspace-card')
+        ];
+
+        scrollableContainers.forEach(container => {
+            if (!container) return;
+            // If contents exceed the physical container height, enforce scrollability and premium classes
+            if (container.scrollHeight > container.clientHeight) {
+                container.style.overflowY = 'auto';
+                container.classList.add('onyx-scrollable-active');
+            } else {
+                container.classList.remove('onyx-scrollable-active');
+            }
+        });
+    }
+
+    // Initialize and bind window resize events
+    window.addEventListener('load', applyAdaptiveDisplay);
+    window.addEventListener('resize', applyAdaptiveDisplay);
+    applyAdaptiveDisplay(); // Immediate execution
+})();
