@@ -272,6 +272,7 @@
                             <div>
                                 <label class="u-font-07 u-text-muted u-mb-5" style="display:block; font-weight:800;">MATRIZ HISTÓRICA / EDIÇÃO</label>
                                 <select id="ai-test-edition" class="tutor-select-futuristic u-w-full">
+                                    <option value="trends" style="color:var(--accent); font-weight:bold;">🔥 MODO IA: TENDÊNCIAS EM ALTA 2026 (ATUALIDADES)</option>
                                     <option value="mix">📚 TODAS AS EDIÇÕES ANTERIORES</option>
                                     <option value="2024">🎓 ENEM 2024 (SAÚDE MENTAL & MINORIAS)</option>
                                     <option value="2023">🎓 ENEM 2023 (TRABALHO INVISÍVEL FEMININO)</option>
@@ -308,8 +309,12 @@
                     const edition = document.getElementById('ai-test-edition').value;
                     const count = parseInt(document.getElementById('ai-test-count').value);
                     const resultDiv = document.getElementById('ai-test-result');
-
-                    resultDiv.innerHTML = `<div class="u-text-center u-p-20"><div class="ai-logo-sphere" style="margin: 0 auto; width: 30px; height: 30px; font-size:0.8rem;">⌛</div><p class="u-font-07 u-text-muted u-mt-10">EXTRAINDO QUESTÕES DA MATRIX HISTÓRICA DO ENEM...</p></div>`;
+                    window.currentSimulateEdition = edition;
+                    const loadingText = edition === 'trends' 
+                        ? '🔥 ACIONANDO SENSORES IA: BUSCANDO TENDÊNCIAS EM ALTA E MONTANDO SIMULADO CONTEMPORÂNEO...' 
+                        : 'EXTRAINDO QUESTÕES DA MATRIX HISTÓRICA DO ENEM...';
+                    
+                    resultDiv.innerHTML = `<div class="u-text-center u-p-20"><div class="ai-logo-sphere pulse" style="margin: 0 auto; width: 30px; height: 30px; font-size:0.8rem;">🤖</div><p class="u-font-07 u-text-muted u-mt-10">${loadingText}</p></div>`;
 
                     // Generate questions procedural
                     const qPool = await OnyxEngines.QuestionEngine.generateQuestions(userStats.id, sub, diff, count);
@@ -321,12 +326,16 @@
 
                     let questionsHTML = qPool.map((q, idx) => {
                         const questionId = `q-mock-${idx}`;
-                        let editionLabel = 'ENEM ' + (edition === 'mix' ? [2024, 2023, 2022, 2021, 2020, 2019][idx % 6] : edition);
+                        const isTrends = edition === 'trends';
+                        let editionLabel = isTrends ? '🔥 MODO IA (TENDÊNCIAS 2026)' : 'ENEM ' + (edition === 'mix' ? [2024, 2023, 2022, 2021, 2020, 2019][idx % 6] : edition);
+                        let subLabel = isTrends 
+                            ? `<span class="u-font-06 u-text-accent" style="background:rgba(14,165,233,0.15); border:1px solid var(--primary); padding:2px 8px; border-radius:4px; font-weight:bold;">🔥 IA TREND-SENSING 2026</span>` 
+                            : `<span class="u-font-06 u-text-muted" style="background:rgba(255,255,255,0.05); padding:2px 8px; border-radius:4px;">MATRIZ DE REFERÊNCIA HISTÓRICA</span>`;
                         return `
                             <div class="mock-exam-question-card" id="${questionId}-card">
                                 <div class="u-flex-between u-mb-10">
                                     <span class="u-text-accent u-font-07 u-weight-900" style="font-family:var(--font-mono);">${editionLabel} - QUESTÃO ${idx + 1} (${q.concept || 'BNCC-CORE'})</span>
-                                    <span class="u-font-06 u-text-muted" style="background:rgba(255,255,255,0.05); padding:2px 8px; border-radius:4px;">MATRIZ DE REFERÊNCIA HISTÓRICA</span>
+                                    ${subLabel}
                                 </div>
                                 <p style="font-size:0.82rem; color:#fff; line-height:1.5; margin:0 0 15px 0;">${q.text.replace(/\[ONYX PROTOCOL\].*\n/, '')}</p>
                                 <div style="display:flex; flex-direction:column; gap:10px;" id="${questionId}-options">
