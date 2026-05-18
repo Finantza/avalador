@@ -17,30 +17,30 @@
     <div class="ai-deck-wrapper">
         <!-- Sidebar Navigator -->
         <aside class="ai-sidebar">
-            <div class="sidebar-branding" onclick="location.href='dashboard.html'" style="cursor: pointer;" title="Voltar à Home (Dashboard)">
+            <div class="sidebar-branding" onclick="location.href='dashboard.html'" title="Voltar à Home (Dashboard)">
                 <div class="ai-logo-sphere">🤖</div>
                 <div>
-                    <h3 style="margin:0; font-family:var(--font-header); font-size:1.1rem; letter-spacing:-0.5px; color:#fff;">ONYX AI</h3>
-                    <span class="u-text-accent u-font-07" style="font-family:var(--font-mono); font-weight:800;">COPILOTO COGNITIVO</span>
+                    <h3>ONYX AI</h3>
+                    <span class="u-text-accent u-font-07">COPILOTO COGNITIVO</span>
                 </div>
             </div>
 
             <!-- Tab Buttons -->
-            <nav class="ai-menu-list" style="margin-top:20px;">
+            <nav class="ai-menu-list">
                 <button class="ai-menu-item active" data-tab="tab-planos">
-                    <span style="font-size:1.1rem;">📝</span>
+                    <span class="nav-icon-lg">📝</span>
                     Planos de Aula AI
                 </button>
                 <button class="ai-menu-item" data-tab="tab-simulados">
-                    <span style="font-size:1.1rem;">✍️</span>
+                    <span class="nav-icon-lg">✍️</span>
                     Simulados ENEM
                 </button>
                 <button class="ai-menu-item" data-tab="tab-redacao">
-                    <span style="font-size:1.1rem;">🖋️</span>
+                    <span class="nav-icon-lg">🖋️</span>
                     Redação Nota 1000
                 </button>
                 <button class="ai-menu-item" data-tab="tab-study-buddy">
-                    <span style="font-size:1.1rem;">💬</span>
+                    <span class="nav-icon-lg">💬</span>
                     Study Buddy Chat
                 </button>
             </nav>
@@ -58,13 +58,13 @@
             <!-- Header Block -->
             <header class="ai-header-deck">
                 <div>
-                    <h1 style="margin:0; font-family:var(--font-header); font-size:1.6rem; color:#fff;">PORTAL DE INTELIGÊNCIA ARTIFICIAL</h1>
-                    <p style="margin:5px 0 0 0;" class="u-text-muted u-font-08">Ecossistema adaptativo de suporte a docentes e operadores do Ensino Médio.</p>
+                    <h1>PORTAL DE INTELIGÊNCIA ARTIFICIAL</h1>
+                    <p class="u-text-muted u-font-08">Ecossistema adaptativo de suporte a docentes e operadores do Ensino Médio.</p>
                 </div>
-                <div style="display:flex; align-items:center; gap:20px;">
-                    <div style="text-align:right;">
-                        <div class="u-font-07 u-text-muted" style="font-family:var(--font-mono);">OPERADOR LOGADO</div>
-                        <span id="logged-user-name" style="font-family:var(--font-header); font-weight:800; color:var(--primary); font-size:0.95rem;">...</span>
+                <div class="portal-header-actions">
+                    <div class="portal-header-meta">
+                        <div class="u-font-07 u-text-muted meta-label">OPERADOR LOGADO</div>
+                        <span id="logged-user-name" class="meta-user">...</span>
                     </div>
                     <div class="ai-system-badge">
                         ONYX-GPT v5.2
@@ -82,10 +82,10 @@
     <!-- Active Glossary Glass Modal Popup -->
     <div id="glossary-modal" class="modal-glass-hint">
         <div class="modal-hint-box">
-            <div style="font-size:2rem; margin-bottom:10px;">💡</div>
-            <h3 class="u-text-success u-mb-15" style="font-family:var(--font-header); margin-top:0;">CONCEITO DA BNCC EXPLICADO</h3>
-            <p id="glossary-text" style="font-size:0.9rem; line-height:1.6; color:#fff; margin-bottom:20px;"></p>
-            <button onclick="document.getElementById('glossary-modal').classList.remove('active')" class="btn-onyx-premium" style="margin:0 auto; padding:8px 20px; font-size:0.75rem;">ENTENDI</button>
+            <div class="modal-icon-lg">💡</div>
+            <h3 class="u-text-success u-mb-15">CONCEITO DA BNCC EXPLICADO</h3>
+            <p id="glossary-text" class="glossary-text"></p>
+            <button onclick="document.getElementById('glossary-modal').classList.remove('active')" class="btn-onyx-premium modal-glossary-btn">ENTENDI</button>
         </div>
     </div>
 
@@ -259,6 +259,7 @@
                                     <option value="portugues">PORTUGUÊS & SINTAXE</option>
                                     <option value="biologia">BIOLOGIA & SISTEMAS</option>
                                     <option value="historia">HISTÓRIA & SOCIEDADE</option>
+                                    <option value="ingles">🇬🇧 INGLÊS & INTERPRETAÇÃO DE TEXTO</option>
                                 </select>
                             </div>
                             <div>
@@ -324,6 +325,15 @@
                         return;
                     }
 
+                    const subjectNames = {
+                        algebra: "📐 MATEMÁTICA",
+                        portugues: "📖 LINGUAGENS (PORTUGUÊS)",
+                        biologia: "🧬 CIÊNCIAS DA NATUREZA",
+                        historia: "🏛️ CIÊNCIAS HUMANAS",
+                        ingles: "🇬🇧 INGLÊS"
+                    };
+                    const humanSubject = subjectNames[sub] || "📚 ENEM";
+
                     let questionsHTML = qPool.map((q, idx) => {
                         const questionId = `q-mock-${idx}`;
                         const isTrends = edition === 'trends';
@@ -334,7 +344,7 @@
                         return `
                             <div class="mock-exam-question-card" id="${questionId}-card">
                                 <div class="u-flex-between u-mb-10">
-                                    <span class="u-text-accent u-font-07 u-weight-900" style="font-family:var(--font-mono);">${editionLabel} - QUESTÃO ${idx + 1} (${q.concept || 'BNCC-CORE'})</span>
+                                    <span class="u-text-accent u-font-07 u-weight-900" style="font-family:var(--font-mono);">${editionLabel} - ${humanSubject} - QUESTÃO ${idx + 1} (${q.concept || 'BNCC-CORE'})</span>
                                     ${subLabel}
                                 </div>
                                 <p style="font-size:0.82rem; color:#fff; line-height:1.5; margin:0 0 15px 0;">${q.text.replace(/\[ONYX PROTOCOL\].*\n/, '')}</p>

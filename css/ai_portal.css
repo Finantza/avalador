@@ -98,6 +98,21 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
+    cursor: pointer;
+}
+.sidebar-branding h3 {
+    margin: 0;
+    font-family: var(--font-header);
+    font-size: 1.1rem;
+    letter-spacing: -0.5px;
+    color: #fff;
+}
+.sidebar-branding span {
+    font-family: var(--font-mono);
+    font-weight: 800;
+}
+.nav-icon-lg {
+    font-size: 1.1rem;
 }
 .ai-logo-sphere {
     width: 38px;
@@ -121,6 +136,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    margin-top: 20px;
 }
 .ai-menu-item {
     background: rgba(255, 255, 255, 0.02);
@@ -207,6 +223,38 @@ body {
     font-family: var(--font-mono);
     font-size: 0.7rem;
     letter-spacing: 1px;
+}
+.portal-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.portal-header-meta {
+    text-align: right;
+}
+.portal-header-meta .meta-label {
+    font-family: var(--font-mono);
+}
+.portal-header-meta .meta-user {
+    font-family: var(--font-header);
+    font-weight: 800;
+    color: var(--primary);
+    font-size: 0.95rem;
+}
+.modal-icon-lg {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+.modal-glossary-btn {
+    margin: 0 auto;
+    padding: 8px 20px;
+    font-size: 0.75rem;
+}
+.glossary-text {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #fff;
+    margin-bottom: 20px;
 }
 
 /* Workspace Panels */

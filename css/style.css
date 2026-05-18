@@ -129,6 +129,7 @@ body {
     padding-bottom: 40px;
     border-bottom: 1px solid var(--glass-border);
     margin-bottom: 30px;
+    cursor: pointer;
 }
 
 .logo-text {
@@ -1105,4 +1106,88 @@ body.onyx-hidpi .glass {
 .onyx-scrollable-active {
     scroll-behavior: smooth;
     will-change: scroll-position;
+}
+
+/* Abandon / Back Home quiz button */
+.btn-abandon {
+    padding: 4px 10px !important;
+    font-size: 0.7rem !important;
+    border-color: rgba(239, 68, 68, 0.4) !important;
+    color: #ef4444 !important;
+    background: rgba(239, 68, 68, 0.05) !important;
+    font-family: var(--font-header) !important;
+    font-weight: 800 !important;
+    cursor: pointer !important;
+    border-radius: 4px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    margin-left: 12px !important;
+    transition: all 0.2s !important;
+}
+.btn-abandon:hover {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.2) !important;
+}
+
+/* Futuristic select inputs */
+.onyx-select {
+    width: 100% !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    padding: 12px !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+    border-radius: 6px !important;
+    font-size: 0.8rem !important;
+    outline: none !important;
+    cursor: pointer !important;
+    transition: border-color 0.2s !important;
+}
+.onyx-select:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 10px var(--primary-glow) !important;
+}
+
+/* Transparent bordered button */
+.btn-transparent-border {
+    background: transparent !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: var(--text-muted) !important;
+    transition: all 0.2s !important;
+}
+.btn-transparent-border:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: var(--text-muted) !important;
+    color: #fff !important;
+}
+
+/* Results page stat utilities */
+.stat-col {
+    flex-direction: column !important;
+    gap: 10px !important;
+}
+.s-value-lg {
+    font-size: 1rem !important;
+}
+.s-value-xl {
+    font-size: 1.5rem !important;
+}
+.s-label-block {
+    display: block;
+    margin-bottom: 5px;
+}
+.accuracy-bar-track {
+    height: 6px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 3px;
+    overflow: hidden;
+    width: 100%;
+}
+.accuracy-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--primary);
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 10px var(--primary);
 }

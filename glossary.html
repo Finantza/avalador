@@ -17,11 +17,11 @@
     <div class="glossary-frame">
         <!-- Sidebar Navigator -->
         <aside class="glossary-sidebar">
-            <div class="sidebar-branding" onclick="navigateBack()" style="cursor: pointer;" title="Voltar à Home (Dashboard)">
+            <div class="sidebar-branding" onclick="navigateBack()" title="Voltar à Home (Dashboard)">
                 <div class="glossary-logo-icon">📖</div>
                 <div>
-                    <h3 style="margin: 0; font-family: var(--font-header); font-size: 1.1rem; font-weight: 900; letter-spacing: 0.5px;">GLOSSÁRIO</h3>
-                    <span style="font-size: 0.6rem; font-family: var(--font-mono); color: var(--primary); letter-spacing: 1px; font-weight: 800;">TUTOR INTELIGENTE</span>
+                    <h3>GLOSSÁRIO</h3>
+                    <span>TUTOR INTELIGENTE</span>
                 </div>
             </div>
 
@@ -33,7 +33,7 @@
 
             <!-- Categories Selector -->
             <div>
-                <h4 style="margin: 0 0 15px 0; font-family: var(--font-header); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase;">DOMÍNIOS COGNITIVOS</h4>
+                <h4 class="section-heading">DOMÍNIOS COGNITIVOS</h4>
                 <nav class="filter-menu-list">
                     <button class="filter-menu-item active" data-category="all">
                         <span>🌐 Todos os Conceitos</span>
@@ -41,44 +41,44 @@
                     </button>
                     <button class="filter-menu-item" data-category="pedagogical">
                         <span>🏫 Pedagógico</span>
-                        <span class="filter-badge" id="badge-pedagogical" style="background: rgba(16, 185, 129, 0.15); color: var(--accent);">0</span>
+                        <span class="filter-badge badge-pedagogical" id="badge-pedagogical">0</span>
                     </button>
                     <button class="filter-menu-item" data-category="mathematics">
                         <span>📐 Matemática</span>
-                        <span class="filter-badge" id="badge-mathematics" style="background: rgba(14, 165, 233, 0.15); color: var(--primary);">0</span>
+                        <span class="filter-badge badge-mathematics" id="badge-mathematics">0</span>
                     </button>
                     <button class="filter-menu-item" data-category="sciences">
                         <span>🧬 Ciências & Sociedade</span>
-                        <span class="filter-badge" id="badge-sciences" style="background: rgba(192, 132, 252, 0.15); color: var(--sciences);">0</span>
+                        <span class="filter-badge badge-sciences" id="badge-sciences">0</span>
                     </button>
                     <button class="filter-menu-item" data-category="tech">
                         <span>💻 Computação & Tech</span>
-                        <span class="filter-badge" id="badge-tech" style="background: rgba(245, 158, 11, 0.15); color: var(--warning);">0</span>
+                        <span class="filter-badge badge-tech" id="badge-tech">0</span>
                     </button>
                 </nav>
             </div>
 
             <!-- Management Actions -->
             <div>
-                <h4 style="margin: 0 0 15px 0; font-family: var(--font-header); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase;">AUTOGESTÃO COGNITIVA</h4>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <button onclick="openCreateModal()" class="filter-menu-item" style="border-color: rgba(16, 185, 129, 0.35); color: var(--accent); background: rgba(16, 185, 129, 0.04); text-align: center; justify-content: center; font-weight: 800; font-family: var(--font-header); font-size: 0.75rem;">
+                <h4 class="section-heading">AUTOGESTÃO COGNITIVA</h4>
+                <div class="mgmt-actions-list">
+                    <button onclick="openCreateModal()" class="filter-menu-item btn-create">
                         ➕ CADASTRAR CONCEITO
                     </button>
-                    <button onclick="openCrawlModal()" class="filter-menu-item" style="border-color: rgba(14, 165, 233, 0.35); color: #fff; background: linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(14, 165, 233, 0.02) 100%); text-align: center; justify-content: center; font-weight: 800; font-family: var(--font-header); font-size: 0.75rem; box-shadow: 0 4px 10px rgba(14, 165, 233, 0.08);">
+                    <button onclick="openCrawlModal()" class="filter-menu-item btn-crawl">
                         🤖 RASTREAR IA (WIKI)
                     </button>
                 </div>
             </div>
 
             <!-- Vault System Status -->
-            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 15px; border-radius: 12px; font-size: 0.7rem; color: var(--text-muted); line-height: 1.5; margin-top: auto;">
-                <span style="color: var(--primary); font-weight: 800; font-family: var(--font-mono); display: block; margin-bottom: 5px;">🤖 COG-INTELLIGENCE</span>
+            <div class="vault-status-panel">
+                <span class="vault-status-title">🤖 COG-INTELLIGENCE</span>
                 O dicionário dinâmico agora sincroniza conceitos reais via Wikipédia pt-BR API, otimizando o vocabulário da BNCC.
             </div>
 
             <!-- Back to Core -->
-            <div class="back-btn-container" style="margin-top: 15px;">
+            <div class="back-btn-container u-mt-15">
                 <button onclick="navigateBack()" class="btn-back-core">
                     🏠 VOLTAR À HOME
                 </button>
@@ -90,8 +90,8 @@
             <!-- Header Deck -->
             <header class="glossary-header-deck">
                 <div>
-                    <h1 style="margin: 0 0 5px 0; font-family: var(--font-header); font-size: 1.8rem; font-weight: 900; letter-spacing: -0.5px; color: #fff;">DICIONÁRIO COGNITIVO</h1>
-                    <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">
+                    <h1 class="header-title">DICIONÁRIO COGNITIVO</h1>
+                    <p class="header-subtitle">
                         Termos técnicos simplificados e contextualizados pela inteligência artificial do sistema.
                     </p>
                 </div>
@@ -108,13 +108,13 @@
     </div>
 
     <!-- Glossary Overlay System (CRUD Form modals & Crawl term terminal) -->
-    <div id="glossary-overlay" class="overlay-container" style="display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.85); -webkit-backdrop-filter: blur(15px); backdrop-filter: blur(15px); align-items: center; justify-content: center; padding: 20px;">
-        <div class="glass" style="max-width: 500px; width: 100%; border: 1px solid var(--glass-border); border-radius: 20px; background: rgba(10, 20, 35, 0.95); box-shadow: 0 20px 50px rgba(0,0,0,0.8); overflow: hidden; animation: contentReveal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
-            <header style="padding: 20px 25px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
-                <h2 id="overlay-title" style="margin: 0; font-family: var(--font-header); font-size: 1.2rem; font-weight: 900; color: #fff; letter-spacing: 0.5px;">TÍTULO</h2>
-                <button onclick="closeOverlay()" style="background: transparent; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; opacity: 0.5; transition: opacity 0.2s; padding: 5px; line-height: 1;">&times;</button>
+    <div id="glossary-overlay" class="overlay-container u-hidden">
+        <div class="overlay-glass-box glass">
+            <header class="overlay-header">
+                <h2 id="overlay-title" class="overlay-title">TÍTULO</h2>
+                <button onclick="closeOverlay()" class="overlay-close-btn">&times;</button>
             </header>
-            <div id="overlay-content" style="padding: 25px; max-height: 75vh; overflow-y: auto;">
+            <div id="overlay-content" class="overlay-content-scroll">
                 <!-- Dynamic Modal Content -->
             </div>
         </div>
@@ -442,11 +442,13 @@
         function openOverlay(title, content) {
             overlayTitle.textContent = title;
             overlayContent.innerHTML = content;
-            overlay.style.display = 'flex';
+            overlay.classList.remove('u-hidden');
+            overlay.classList.add('active');
         }
 
         function closeOverlay() {
-            overlay.style.display = 'none';
+            overlay.classList.remove('active');
+            overlay.classList.add('u-hidden');
         }
 
         // 1. CREATE TERM

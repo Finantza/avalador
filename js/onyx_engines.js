@@ -167,9 +167,8 @@ window.OnyxEngines = {
             }
         }
     },
-
     TrendSensingDatabase: {
-        matematica: [
+        algebra: [
             {
                 q: "Um estudo de 2026 estimou que o treinamento de modelos avançados de IA generativa consome energia equivalente a 40 residências brasileiras por ano. A pegada de carbono de um grande Data Center cresce linearmente conforme a quantidade de consultas recebidas. Se o centro emite 0,5 gramas de CO2 por requisição padrão de IA, e a média de requisições por segundo é de 80.000 requisições globais. Em 1 hora de operação contínua, a quantidade total de emissão de carbono de CO2 em toneladas será igual a:",
                 a: "144,0 toneladas",
@@ -195,7 +194,7 @@ window.OnyxEngines = {
                 concept: "Progressão Linear e E-Waste"
             }
         ],
-        ciencias: [
+        biologia: [
             {
                 q: "A elevação de 1,5°C nas temperaturas médias brasileiras nas últimas décadas acelerou o metabolismo e o ciclo reprodutivo do vetor Aedes aegypti. Biólogos explicam que temperaturas elevadas reduzem o período de incubação extrínseco do vírus da Dengue no mosquito de 14 para 7 dias, estendendo a transmissão geográfica para regiões anteriormente frias no Sul do país. Essa expansão vetorial epidêmica decorre diretamente de qual fenômeno fisiológico ou ecológico ligado às mudanças climáticas?",
                 a: "Redução do ciclo de desenvolvimento larval impulsionado por reações químicas metabólicas catalisadas pelo calor",
@@ -221,7 +220,7 @@ window.OnyxEngines = {
                 concept: "Leis de Indução Eletromagnética"
             }
         ],
-        humanas: [
+        historia: [
             {
                 q: "Relatórios sociológicos recentes em alta denunciam as precárias condições de trabalho de milhares de jovens do Sul Global contratados para atuar na 'anotação manual de dados' (rotulando imagens de violência e filtrando discurso de ódio) para treinar grandes modelos de inteligência artificial de corporações do Norte Global. Esse cenário socioeconômico contemporâneo ilustra o conceito de:",
                 a: "Neocolonialismo digital, perpetuando a divisão internacional do trabalho no capitalismo cognitivo de plataformas",
@@ -231,7 +230,7 @@ window.OnyxEngines = {
                 concept: "Divisão do Trabalho e Big Techs"
             },
             {
-                q: "A escolha de Belém do Pará para sediar a COP30 reacendeu o debate sobre o papel estratégico das florestas tropicais na geopolítica ambiental internacional. Economistas climáticos discutem a implementação de mecanismos de Crédito de Carbono para financiar a proteção da biodiversidade amazônica. Sob a perspectiva da sociologia ambiental e das Relações Internacionais, a governança da Amazônia e os créditos de carbono frequentemente enfrentam críticas relativas a:",
+                q: "A escolha de Belém do Pará para sediar a COP30 reacendeu o debate sobre o papel estratégico das florestas tropicais na geopolítica ambiental internacional. Economistas climáticos discutem a implementação de mechanisms de Crédito de Carbono para financiar a proteção da biodiversidade amazônica. Sob a perspectiva da sociologia ambiental e das Relações Internacionais, a governança da Amazônia e os créditos de carbono frequentemente enfrentam críticas relativas a:",
                 a: "Mercantilização da natureza e risco de 'greenwashing' corporativo sem mudanças estruturais de emissões industriais",
                 d: ["Centralização absoluta dos fundos ambientais em bancos exclusivamente municipais da Amazônia", "Redução drástica na demanda global de energias solares em países emergentes", "Aumento na imigração desregulada de operários têxteis europeus para o interior florestal", "Eliminação de impostos sobre minérios não-metálicos importados"],
                 explanation: "Geopolítica Ambiental: A monetização das florestas via créditos de carbono é frequentemente criticada por transformar ecossistemas em mercadorias financeiras, facilitando que indústrias poluidoras comprem compensações sem reduzir suas pegadas originais de combustíveis fósseis.",
@@ -247,7 +246,7 @@ window.OnyxEngines = {
                 concept: "Vulnerabilidade de Migrantes Climáticos"
             }
         ],
-        linguagens: [
+        portugues: [
             {
                 q: "Artigos jornalísticos contemporâneos expõem como a proliferação de clones de voz por IA generativa de alta fidelidade e 'deepfakes' em redes sociais corrói a barreira clássica entre o real e o simulado na arena pública. Esse ecossistema de comunicação caracterizado pela facilidade em forjar provas multimídia e espalhar boatos emocionais hiper-realistas define as práticas discursivas da chamada era da:",
                 a: "Pós-verdade, em que crenças pessoais e simulacros tecnológicos suplantam fatos objetivos na opinião pública",
@@ -271,6 +270,47 @@ window.OnyxEngines = {
                 explanation: "Linguagem e Letramento Digital: Microvídeos treinam o cérebro para estímulos hiper-curtos de dopamina rápida, gerando fadiga e atrofia no processamento de leituras densas e profundas que exigem atenção sustentada.",
                 hint: "A dopamina de curtíssimo prazo reduz o foco necessário para decodificar textos longos.",
                 concept: "Letramento na Era de Microtelas"
+            }
+        ],
+        ingles: [
+            {
+                q: "The rise of generative AI has sparked intense global debate. While some argue that artificial systems can replicate human creativity, others maintain that art requires an authentic conscious experience. Technology might mimic style, but it cannot feel the weight of existence.\n\nO fragmento de texto em inglês reflete sobre a ascensão da Inteligência Artificial Generativa. De acordo com o autor, o fator limitante que impede a tecnologia de replicar integralmente a arte humana é:",
+                a: "A ausência de uma experiência consciente e sentimental genuína ligada à existência humana.",
+                d: [
+                    "A incapacidade de emular estilos estéticos clássicos do século XIX.",
+                    "O alto custo de processamento energético dos data centers mundiais.",
+                    "A ausência de algoritmos preditivos baseados na web semântica.",
+                    "A restrição legal de direitos autorais imposta pelo Sul Global."
+                ],
+                explanation: "O texto afirma explicitamente que a tecnologia pode imitar estilos ('mimic style'), mas não consegue sentir o peso da existência ('cannot feel the weight of existence'), o que remete à experiência consciente e emocional humana.",
+                hint: "Associe a incapacidade descrita ('cannot feel the weight of existence') com sentimentos e consciência humana.",
+                concept: "Leitura Instrumental de IA"
+            },
+            {
+                q: "Climate change is no longer a distant threat; it is our current reality. Young activists worldwide are raising their voices, demanding that world leaders move beyond empty promises and invest in green infrastructure. Our future is not negotiable.\n\nNo texto opinativo apresentado, a expressão em inglês 'move beyond empty promises' é utilizada para indicar que os jovens ativistas exigem dos líderes mundiais:",
+                a: "Ações concretas e investimentos reais, superando discursos e promessas vazias.",
+                d: [
+                    "O adiamento das metas de emissão de carbono pactuadas na COP30.",
+                    "A facilitação de rotas de asilo para refugiados políticos do Sahel.",
+                    "A privatização de florestas tropicais para venda de ativos comerciais.",
+                    "O fim das manifestações estudantis em defesa do clima."
+                ],
+                explanation: "O termo 'empty promises' significa promessas vazias. Exigir que líderes 'move beyond' (vão além de) tais promessas significa cobrar medidas práticas e investimentos reais.",
+                hint: "Pense na cobrança dos jovens por atitude real ao invés de discursos teóricos.",
+                concept: "Identificação de Expressão"
+            },
+            {
+                q: "We live in an age of hyper-connection, yet we have never been more isolated. The endless vertical scroll of social media feeds design-engineered to capture our attention has transformed conversation into short interactions. We look at screens instead of eyes.\n\nA reflexão apresentada em inglês discute as contradições do uso de redes sociais. O paradoxo central apontado pelo autor reside no fato de que:",
+                a: "O excesso de conexão digital reduziu a profundidade dos diálogos e ampliou o isolamento presencial.",
+                d: [
+                    "A alta velocidade da internet impede a tradução automática das mensagens eletrônicas.",
+                    "Os microvídeos acelerados geram um ganho no processamento intelectual de crianças.",
+                    "A facilidade de uso de telas aumentou o letramento clássico e a leitura literária.",
+                    "As mídias analógicas impressas substituíram por completo as plataformas digitais."
+                ],
+                explanation: "O autor destaca a contradição ('paradox') de estarmos em uma era de hiperconexão ('hyper-connection'), mas ao mesmo tempo nos sentirmos mais isolados ('isolated'), onde interações cara a cara são trocadas por toques rápidos em telas.",
+                hint: "Observe a contradição ('yet we have never been more isolated') de estar conectado eletronicamente e isolado pessoalmente.",
+                concept: "Identificação de Paradoxo"
             }
         ]
     },
@@ -495,6 +535,49 @@ window.OnyxEngines = {
                     }
                 ];
                 templates[Math.floor(Math.random() * templates.length)]();
+            } else if (sub === 'ingles') {
+                const templates = [
+                    () => {
+                        q = "Generative AI systems are developing at an unprecedented speed, reshaping the future of labor. Many routine tasks are being automated, raising worries about job displacement. However, technology also creates opportunities, demanding new cognitive skills and technological adaptation.\n\nO parágrafo em inglês analisa o impacto das IAs generativas no mercado de trabalho. De acordo com o texto, a ascensão tecnológica acarreta simultaneamente:";
+                        a = "Preocupações com a perda de empregos rotineiros e o surgimento de novas oportunidades que exigem letramento digital";
+                        d = [
+                            "O fim absoluto das carreiras industriais periféricas e a estagnação salarial do Norte Global",
+                            "A proibição legal das redes preditivas e o retorno exclusivo ao comércio têxtil artesanal",
+                            "O aumento na imigração ilegal europeia devido à atrofia de computadores corporativos",
+                            "Uma estagnação completa na produção de softwares proprietários sem código aberto"
+                        ];
+                        concept = "Interpretative Synthesis";
+                        explanation = "O autor explica que enquanto tarefas rotineiras são automatizadas gerando temores de perda de empregos ('job displacement'), oportunidades são geradas exigindo adaptação e habilidades ('opportunities demanding new skills').";
+                        hint = "Conecte os conceitos de ameaça ('worries about job displacement') e oportunidade ('creates opportunities') expressos no fragmento.";
+                    },
+                    () => {
+                        q = "E-waste represents one of the fastest-growing environmental challenges of our time. Every year, millions of electronic devices are discarded, releasing toxic heavy metals into the soil. Promoting a circular economy is key to reclaiming valuable resources and protecting local communities.\n\nO excerto em inglês aborda o descarte contínuo de lixo eletrônico. A solução apontada pelo autor para mitigar a liberação de metais tóxicos reside em:";
+                        a = "Promover a economia circular para recuperar recursos valiosos e proteger as comunidades locais";
+                        d = [
+                            "Aumentar as tarifas alfandegárias de aparelhos celulares importados pela ONU",
+                            "Enterrar o lixo tecnológico exclusivamente nas regiões frias do hemisfério Sul",
+                            "Suspender a fabricação de componentes de cobre e silício industriais",
+                            "Eliminar os impostos incidentes sobre combustíveis fósseis"
+                        ];
+                        concept = "Vocabulary & Text Solutions";
+                        explanation = "O texto afirma diretamente que promover uma economia circular ('circular economy') é a chave ('is key') para recuperar recursos valiosos e proteger as populações locais.";
+                        hint = "Busque o trecho final que apresenta a solução recomendada pelo autor ('Promoting a circular economy is key...').";
+                    },
+                    () => {
+                        q = "Youth climate activists are no longer waiting for governmental action. By organizing massive global strikes and leveraging digital media, they have forced environmental policies to the forefront of international debate. Action, they argue, is a moral imperative.\n\nConsiderando a atuação política dos ativistas climáticos juvenis expressa no fragmento em inglês, o principal recurso prático utilizado por eles para pautar o debate internacional foi:";
+                        a = "Organizar greves globais em massa e utilizar estrategicamente as mídias digitais de comunicação";
+                        d = [
+                            "Financiar a abertura de empresas privadas de exploração mineral na Amazônia",
+                            "Votar em tratados de livre comércio restritos à exportação de algodão",
+                            "Recusar o uso de aparelhos de telefonia móvel e conexões virtuais",
+                            "Boicotar a entrada de novos estudantes em cursos de graduação clássicos"
+                        ];
+                        concept = "Political & Social Reading";
+                        explanation = "O autor lista explicitamente que eles atuaram através de 'global strikes' (greves globais) e 'leveraging digital media' (alavancando/usando as mídias digitais).";
+                        hint = "Associe as expressões 'global strikes' e 'leveraging digital media' com greves coletivas e redes de comunicação social.";
+                    }
+                ];
+                templates[Math.floor(Math.random() * templates.length)]();
             }
             
             return {
@@ -515,7 +598,10 @@ window.OnyxEngines = {
             const db = window.OnyxDatabase || {};
             let pool = [];
             
-            if (window.currentSimulateEdition === 'trends') {
+            if (subject === 'ingles') {
+                const trendDB = window.OnyxEngines.TrendSensingDatabase || {};
+                pool = trendDB['ingles'] || [];
+            } else if (window.currentSimulateEdition === 'trends') {
                 const trendDB = window.OnyxEngines.TrendSensingDatabase || {};
                 pool = trendDB[subject] || trendDB['matematica'] || [];
             } else if (db && typeof db.getFreshPool === 'function') {

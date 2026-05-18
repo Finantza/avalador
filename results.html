@@ -29,29 +29,29 @@
                     </div>
 
                     <div class="stats-breakdown">
-                        <div class="stat-row" style="flex-direction: column; gap: 10px;">
+                        <div class="stat-row stat-col">
                             <div class="u-flex-between">
                                 <span class="s-label">OPERADOR IDENTIFICADO</span>
-                                <span class="s-value" id="res-name" style="font-size: 1rem;">CARREGANDO...</span>
+                                <span class="s-value s-value-lg" id="res-name">CARREGANDO...</span>
                             </div>
                         </div>
-                        <div class="stat-row" style="flex-direction: column; gap: 10px;">
+                        <div class="stat-row stat-col">
                             <div class="u-flex-between">
                                 <span class="s-label">PRECISÃO DA MISSÃO</span>
                                 <span class="s-value" id="res-accuracy">0%</span>
                             </div>
-                            <div style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; width: 100%;">
-                                <div id="accuracy-bar" style="height: 100%; width: 0%; background: var(--primary); transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--primary);"></div>
+                            <div class="accuracy-bar-track">
+                                <div id="accuracy-bar" class="accuracy-bar-fill"></div>
                             </div>
                         </div>
                         <div class="u-grid-2">
                             <div class="glass u-p-20 u-text-center">
-                                <span class="s-label" style="display:block; margin-bottom:5px;">XP RECOMPENSA</span>
-                                <span class="s-value u-text-primary" id="res-xp" style="font-size:1.5rem;">+0 XP</span>
+                                <span class="s-label s-label-block">XP RECOMPENSA</span>
+                                <span class="s-value u-text-primary s-value-xl" id="res-xp">+0 XP</span>
                             </div>
                             <div class="glass u-p-20 u-text-center">
-                                <span class="s-label" style="display:block; margin-bottom:5px;">NÍVEL ATUAL</span>
-                                <span class="s-value" id="res-level" style="font-size:1.5rem;">LVL -</span>
+                                <span class="s-label s-label-block">NÍVEL ATUAL</span>
+                                <span class="s-value s-value-xl" id="res-level">LVL -</span>
                             </div>
                         </div>
                     </div>

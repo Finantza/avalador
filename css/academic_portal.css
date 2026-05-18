@@ -98,6 +98,21 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
+    cursor: pointer;
+}
+.sidebar-branding h3 {
+    margin: 0;
+    font-family: var(--font-header);
+    font-size: 1.1rem;
+    letter-spacing: -0.5px;
+    color: #fff;
+}
+.sidebar-branding span {
+    font-family: var(--font-mono);
+    font-weight: 800;
+}
+.nav-icon-lg {
+    font-size: 1.1rem;
 }
 .academic-logo-icon {
     width: 38px;
@@ -115,6 +130,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin-top: 20px;
 }
 .role-menu-item {
     background: rgba(255, 255, 255, 0.01);
@@ -191,6 +207,23 @@ body {
     padding: 20px 30px;
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
+}
+.portal-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.portal-header-meta {
+    text-align: right;
+}
+.portal-header-meta .meta-label {
+    font-family: var(--font-mono);
+}
+.portal-header-meta .meta-user {
+    font-family: var(--font-header);
+    font-weight: 800;
+    color: var(--accent);
+    font-size: 0.95rem;
 }
 .academic-badge {
     background: rgba(16, 185, 129, 0.1);
