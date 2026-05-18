@@ -244,10 +244,14 @@ window.OnyxCore = {
 
     ProgressionConfig: {
         subjects: {
-            matematica: 1, portugues: 1, historia: 2, geografia: 2, biologia: 3, fisica: 3, quimica: 3,
-            filosofia: 4, sociologia: 4, ingles: 5, artes: 5, literatura: 5,
-            python: 6, estatistica: 6, probabilidade: 6, data_manipulation: 7, data_viz: 7,
-            big_data: 8, machine_learning: 9, deep_learning: 10, nlp: 10, cybersecurity: 11
+            portugues: 1, algebra: 1, historia: 1, biologia: 1, inclusao_acessibilidade: 1,
+            literatura: 2, geometria: 2, geografia: 2, fisica: 2, tecnologia: 2,
+            ingles: 3, estatistica: 3, filosofia: 3, quimica: 3, empreendedorismo: 3, projeto_vida: 3,
+            artes: 4, matematica_financeira: 4, sociologia: 4, robotica: 4, biblioteca_digital: 4,
+            educacao_fisica: 5, programacao: 5, marketing_digital: 5, laboratorio_virtual: 5,
+            design_digital: 6, ciencia_de_dados: 6, educacao_financeira: 6,
+            producao_audiovisual: 7, inteligencia_artificial: 7, seguranca_informacao: 7,
+            desenvolvimento_jogos: 8
         },
         difficulties: { 
             easy: 1, 
@@ -260,31 +264,35 @@ window.OnyxCore = {
 
     Tutor: {
         dictionary: {
-            "Array": "Array (uma lista organizada, como gavetas numeradas num armário)",
-            "Variável": "Variável (uma caixinha com um nome onde você guarda um dado, como um número ou texto)",
-            "Função": "Função (uma pequena máquina: você põe algo dentro, ela processa e devolve um resultado)",
-            "Loop": "Loop (um ciclo de repetição, como dar várias voltas num quarteirão até cansar)",
-            "While": "While (enquanto uma condição for verdade, repita a ação)",
-            "For": "For (um ciclo de repetição onde você sabe exatamente quantas vezes vai rodar)",
-            "If/Else": "If/Else (um cruzamento: SE chover, pegue o guarda-chuva, SENÃO, vá de óculos de sol)",
-            "SQL": "SQL (uma linguagem para fazer perguntas a um Banco de Dados, como pesquisar no Google)",
-            "Select": "Select (comando para 'buscar/selecionar' dados numa tabela)",
-            "Join": "Join (comando para grudar/unir duas tabelas diferentes usando algo em comum)",
-            "Machine Learning": "Machine Learning (quando o computador aprende a reconhecer padrões sozinho, sem você precisar programar todas as regras)",
-            "Algoritmo": "Algoritmo (uma receita de bolo passo a passo que o computador deve seguir)",
-            "String": "String (um texto, uma palavra ou frase, sempre entre aspas)",
-            "Integer": "Integer (um número inteiro, sem vírgula, como 1, 2 ou 10)",
-            "Float": "Float (um número quebrado, com vírgula, como 3.14)",
-            "Boolean": "Boolean (um valor lógico que só pode ser Verdadeiro ou Falso)",
-            "Sintaxe": "Sintaxe (a regra de como escrever o código, igual as regras de gramática do português)",
-            "Bug": "Bug (um defeito ou erro na lógica do código que faz ele não funcionar como deveria)"
+            "BNCC": "BNCC (Base Nacional Comum Curricular: as diretrizes oficiais que definem as competências essenciais que você deve desenvolver na escola)",
+            "Itinerário Formativo": "Itinerário Formativo (a parte flexível do Novo Ensino Médio que permite você se aprofundar na área que mais gosta)",
+            "ENEM": "ENEM (Exame Nacional do Ensino Médio: a prova unificada que avalia seu desempenho e abre as portas das universidades)",
+            "Álgebra": "Álgebra (o ramo matemático que usa letras para representar valores desconhecidos e desvendar incógnitas)",
+            "Geometria": "Geometria (a ciência de medir e desenhar formas, áreas, perímetros e volumes no plano e no espaço)",
+            "Estatística": "Estatística (a análise inteligente de dados e gráficos para prever probabilidades e tirar conclusões do mundo real)",
+            "Termodinâmica": "Termodinâmica (a física térmica que explica as trocas de calor, a energia em movimento e o funcionamento de motores)",
+            "Fotossíntese": "Fotossíntese (o incrível processo celular no qual plantas convertem luz, água e CO2 em açúcar e oxigênio para a vida)",
+            "Mitocôndria": "Mitocôndria (a usina de energia da célula, responsável por realizar a respiração celular e produzir ATP)",
+            "DNA": "DNA (o ácido desoxirribonucleico: a molécula em dupla hélice que carrega a receita genética de toda a sua vida)",
+            "Globalização": "Globalização (a conexão global de mercados, culturas, tecnologias e sociedades que encurtou as distâncias mundiais)",
+            "Cibersegurança": "Cibersegurança (o conjunto de estratégias e ferramentas para blindar sistemas, redes e dados contra invasões cibernéticas)",
+            "Empreendedorismo": "Empreendedorismo (a atitude de detectar problemas, planejar soluções inovadoras e gerar impacto social e econômico)",
+            "Acessibilidade": "Acessibilidade (a garantia de recursos inclusivos para que todas as pessoas, incluindo neurodivergentes, usem a tecnologia)",
+            "Algoritmo": "Algoritmo (a sequência lógica finita e estruturada de passos para o computador resolver um determinado problema)",
+            "Array": "Array (uma estrutura organizada como um arquivo de pastas numeradas para guardar vários elementos de dados)",
+            "Variável": "Variável (um pequeno espaço nomeado na memória onde o computador armazena temporariamente qualquer dado)",
+            "Função": "Função (um bloco de código reutilizável que processa parâmetros de entrada e retorna uma saída específica)",
+            "Loop": "Loop (uma estrutura de repetição automática que continua rodando instruções até que a condição seja atendida)",
+            "SQL": "SQL (a linguagem oficial de consulta para estruturar, buscar e gerenciar dados organizados em tabelas de bancos de dados)"
         },
         simplifyText(text) {
             let newText = text;
             for (const [jargon, explanation] of Object.entries(this.dictionary)) {
-                // Use word boundaries to avoid replacing parts of other words
-                const regex = new RegExp(`\\b${jargon}\\b`, 'gi');
-                newText = newText.replace(regex, `<span class="tutor-highlight" style="color:var(--accent); font-weight:bold; cursor:pointer; text-decoration:underline dashed;" onclick="if(window.showTutorHint) window.showTutorHint('${explanation}')">$&</span>`);
+                // Escape special regex characters in jargon just in case
+                const escapedJargon = jargon.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                // Use a Unicode-aware word boundary check for Portuguese accented characters
+                const regex = new RegExp(`(^|[^A-Za-z0-9_À-ÖØ-öø-ÿ])(${escapedJargon})([^A-Za-z0-9_À-ÖØ-öø-ÿ]|$)`, 'gi');
+                newText = newText.replace(regex, `$1<span class="tutor-highlight" style="color:var(--accent); font-weight:bold; cursor:pointer; text-decoration:underline dashed;" onclick="if(window.showTutorHint) window.showTutorHint('${explanation}')">$2</span>$3`);
             }
             return newText;
         }

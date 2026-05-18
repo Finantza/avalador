@@ -17,35 +17,85 @@ window.OnyxEngines = {
     // Profiling Engine: Analyzes historical data to find weaknesses and trends
     async generateProfileInsight(userId) {
         const history = await window.OnyxCore.DB.getHistory(userId);
-        if (history.length < 3) return { status: 'INSUFFICIENT_DATA', recommendation: 'Realize mais missões para calibrar o motor heurístico.', accuracyAvg: 0, weakness: 'N/A', trend: 'N/A' };
+        
+        // Subject to BNCC Area mapping
+        const subjectToCat = {
+            portugues: 'linguagens', literatura: 'linguagens', ingles: 'linguagens', artes: 'linguagens', educacao_fisica: 'linguagens',
+            algebra: 'matematica', geometria: 'matematica', estatistica: 'matematica', matematica_financeira: 'matematica',
+            fisica: 'natureza', quimica: 'natureza', biologia: 'natureza',
+            historia: 'humanas', geografia: 'humanas', filosofia: 'humanas', sociologia: 'humanas',
+            tecnologia: 'itinerarios', programacao: 'itinerarios', robotica: 'itinerarios', empreendedorismo: 'itinerarios',
+            ciencia_de_dados: 'itinerarios', inteligencia_artificial: 'itinerarios', educacao_financeira: 'itinerarios', marketing_digital: 'itinerarios',
+            desenvolvimento_jogos: 'itinerarios', seguranca_informacao: 'itinerarios', design_digital: 'itinerarios', producao_audiovisual: 'itinerarios',
+            biblioteca_digital: 'extras', laboratorio_virtual: 'extras', projeto_vida: 'extras', inclusao_acessibilidade: 'extras'
+        };
+
+        if (history.length < 1) {
+            return {
+                status: 'INSUFFICIENT_DATA',
+                recommendation: 'Realize sua primeira missão de treinamento para calibrar os sensores cognitivos da BNCC.',
+                accuracyAvg: 0,
+                weakness: 'N/A',
+                trend: 'ESTÁVEL',
+                trendColor: 'var(--primary)',
+                dropoutRisk: 'BAIXO',
+                dropoutRiskColor: 'var(--success)',
+                engagementLevel: 20,
+                competenciesMap: { linguagens: 0, matematica: 0, natureza: 0, humanas: 0, itinerarios: 0, extras: 0 }
+            };
+        }
 
         const statsMap = {};
+        const catMap = { linguagens: { tot: 0, corr: 0 }, matematica: { tot: 0, corr: 0 }, natureza: { tot: 0, corr: 0 }, humanas: { tot: 0, corr: 0 }, itinerarios: { tot: 0, corr: 0 }, extras: { tot: 0, corr: 0 } };
+
         history.forEach(h => {
-            if (!statsMap[h.subject]) statsMap[h.subject] = { total: 0, correct: 0, recent: [] };
-            statsMap[h.subject].total += 10;
-            statsMap[h.subject].correct += h.score;
-            statsMap[h.subject].recent.push(h.score);
+            const sub = h.subject || 'portugues';
+            const cat = subjectToCat[sub] || 'linguagens';
+            
+            if (!statsMap[sub]) statsMap[sub] = { total: 0, correct: 0 };
+            statsMap[sub].total += 10;
+            statsMap[sub].correct += h.score;
+
+            catMap[cat].tot += 10;
+            catMap[cat].corr += h.score;
         });
 
         const profiles = Object.entries(statsMap).map(([subject, data]) => {
             const overallAccuracy = (data.correct / data.total) * 100;
-            return {
-                subject,
-                accuracy: overallAccuracy
-            };
+            return { subject, accuracy: overallAccuracy };
         });
 
         const weakness = profiles.sort((a, b) => a.accuracy - b.accuracy)[0];
-        const accuracyAvg = (profiles.reduce((acc, p) => acc + p.accuracy, 0) / profiles.length).toFixed(1);
+        const accuracyAvg = parseFloat((profiles.reduce((acc, p) => acc + p.accuracy, 0) / profiles.length).toFixed(1));
         
-        // Trend Analysis (Last 5 missions globally vs Overall)
-        const globalRecent = history.slice(0, 5);
+        // Calculate Category Averages
+        const competenciesMap = {};
+        Object.entries(catMap).forEach(([cat, data]) => {
+            competenciesMap[cat] = data.tot > 0 ? Math.round((data.corr / data.tot) * 100) : 0;
+        });
+
+        // Trend Analysis
+        const globalRecent = history.slice(-5);
         const globalRecentAvg = (globalRecent.reduce((acc, h) => acc + h.score, 0) / (globalRecent.length * 10)) * 100;
         
         let trend = 'ESTÁVEL';
         let trendColor = 'var(--primary)';
-        if (globalRecentAvg > accuracyAvg + 5) { trend = 'EM ASCENSÃO'; trendColor = 'var(--success)'; }
-        else if (globalRecentAvg < accuracyAvg - 5) { trend = 'EM DECLÍNIO'; trendColor = 'var(--error)'; }
+        if (globalRecentAvg > accuracyAvg + 3) { trend = 'EM ASCENSÃO'; trendColor = 'var(--success)'; }
+        else if (globalRecentAvg < accuracyAvg - 3) { trend = 'EM DECLÍNIO'; trendColor = 'var(--error)'; }
+
+        // AI Predictive Analytics: Dropout Risk
+        let dropoutRisk = 'BAIXO';
+        let dropoutRiskColor = 'var(--success)';
+        if (accuracyAvg < 55) {
+            dropoutRisk = 'ALTO';
+            dropoutRiskColor = 'var(--error)';
+        } else if (accuracyAvg < 70) {
+            dropoutRisk = 'MÉDIO';
+            dropoutRiskColor = 'var(--accent)';
+        }
+
+        // Engagement Index (0 - 100)
+        const engagementLevel = Math.min(100, Math.round((history.length * 15) + (accuracyAvg * 0.3)));
 
         return {
             status: 'OPERATIONAL',
@@ -53,7 +103,11 @@ window.OnyxEngines = {
             weakness: weakness.subject.toUpperCase(),
             trend,
             trendColor,
-            recommendation: `Foque em ${weakness.subject.toUpperCase()}. Sua tendência atual é ${trend}.`
+            dropoutRisk,
+            dropoutRiskColor,
+            engagementLevel,
+            competenciesMap,
+            recommendation: `Sensores indicam atenção especial ao domínio de ${weakness.subject.toUpperCase()}. Sua curva cognitiva está ${trend}.`
         };
     },
 
@@ -179,7 +233,10 @@ window.OnyxEngines = {
                     id: pick.q,
                     text: `[ONYX PROTOCOL] ${subject.toUpperCase()} (${difficulty.toUpperCase()}):\n${pick.q}`,
                     options: options,
-                    correct: options.indexOf(pick.a)
+                    correct: options.indexOf(pick.a),
+                    explanation: pick.explanation || `Explicando a competência: ${pick.q}`,
+                    hint: pick.hint || 'Revise a analogia sugerida pelo OnyxTutor para responder com clareza.',
+                    concept: pick.concept || 'BNCC-CORE'
                 });
             });
 

@@ -17,7 +17,9 @@
                 <div class="logo-text">ONYX<span>AI</span></div>
             </div>
             <nav class="nav-menu">
-                <a href="#" class="nav-item active">🏠 <span>Dashboard</span></a>
+                <a href="#" class="nav-item active" id="btn-show-dashboard">🏠 <span>Dashboard</span></a>
+                <a href="#" class="nav-item" id="btn-show-academic">🏫 <span>Gestão Acadêmica</span></a>
+                <a href="#" class="nav-item" id="btn-show-ai-hub">🤖 <span>Portal de IA</span></a>
                 <a href="#" class="nav-item" id="btn-show-ranking">🏆 <span>Classificação</span></a>
                 <a href="#" class="nav-item" id="btn-show-profile">👤 <span>Perfil</span></a>
                 <a href="#" class="nav-item" id="btn-logout">🚪 <span>Desconectar</span></a>
@@ -508,22 +510,106 @@
         }
 
 
+        let activeCategoryFilter = 'all';
+
+        function renderCategoryFilters() {
+            let filterContainer = document.getElementById('subject-category-filters');
+            if (!filterContainer) {
+                const grid = document.getElementById('subject-options');
+                if (grid) {
+                    filterContainer = document.createElement('div');
+                    filterContainer.id = 'subject-category-filters';
+                    filterContainer.className = 'nav-menu u-mb-20';
+                    filterContainer.style.display = 'flex';
+                    filterContainer.style.flexWrap = 'wrap';
+                    filterContainer.style.gap = '10px';
+                    grid.parentNode.insertBefore(filterContainer, grid);
+                }
+            }
+            
+            if (!filterContainer) return;
+            
+            const categories = [
+                { id: 'all', n: '⚡ TODOS' },
+                { id: 'linguagens', n: '📚 LINGUAGENS' },
+                { id: 'matematica', n: '📐 MATEMÁTICA' },
+                { id: 'natureza', n: '🧬 NATUREZA' },
+                { id: 'humanas', n: '🌍 HUMANAS' },
+                { id: 'itinerarios', n: '🚀 ITINERÁRIOS' },
+                { id: 'extras', n: '✨ EXTRAS' }
+            ];
+            
+            filterContainer.innerHTML = categories.map(cat => `
+                <button class="btn-onyx btn-cat ${activeCategoryFilter === cat.id ? 'active btn-primary' : ''}" data-cat="${cat.id}" style="padding: 8px 12px; font-size: 0.7rem; border-radius: 6px;">
+                    ${cat.n}
+                </button>
+            `).join('');
+            
+            document.querySelectorAll('.btn-cat').forEach(btn => {
+                btn.onclick = () => {
+                    activeCategoryFilter = btn.dataset.cat;
+                    if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
+                    renderCategoryFilters();
+                    renderSubjectGrid();
+                };
+            });
+        }
+
         function renderSubjectGrid() {
-            const subjects = [
-                { id: 'matematica', n: 'MATEMÁTICA', i: '📐', d: 'Cálculos e lógica.' },
-                { id: 'portugues', n: 'PORTUGUÊS', i: '📚', d: 'Gramática e texto.' },
-                { id: 'historia', n: 'HISTÓRIA', i: '⏳', d: 'Cronologia global.' },
-                { id: 'biologia', n: 'BIOLOGIA', i: '🧬', d: 'Sistemas vitais.' },
-                { id: 'fisica', n: 'FÍSICA', i: '⚛️', d: 'Leis naturais.' },
-                { id: 'quimica', n: 'QUÍMICA', i: '🧪', d: 'Matéria e reações.' },
-                { id: 'python', n: 'PYTHON PRO', i: '🐍', d: 'Automação de elite.' },
-                { id: 'estatistica', n: 'ESTATÍSTICA', i: '📊', d: 'Análise de dados.' },
-                { id: 'machine_learning', n: 'ML / IA', i: '🤖', d: 'Modelos preditivos.' },
-                { id: 'cybersecurity', n: 'CYBER', i: '🛡️', d: 'Defesa digital.' }
+            const allSubjects = [
+                // Linguagens
+                { id: 'portugues', n: 'PORTUGUÊS', i: '📚', d: 'Gramática, sintaxe e interpretação.', cat: 'linguagens' },
+                { id: 'literatura', n: 'LITERATURA', i: '📖', d: 'Movimentos literários clássicos e modernos.', cat: 'linguagens' },
+                { id: 'ingles', n: 'INGLÊS', i: '🇬🇧', d: 'Inglês instrumental focado no ENEM.', cat: 'linguagens' },
+                { id: 'artes', n: 'ARTES', i: '🎨', d: 'História da arte, movimentos e plástica.', cat: 'linguagens' },
+                { id: 'educacao_fisica', n: 'ED. FÍSICA', i: '⚽', d: 'Saúde corporal, nutrição e esportes.', cat: 'linguagens' },
+
+                // Matemática
+                { id: 'algebra', n: 'ÁLGEBRA', i: '➗', d: 'Equações, funções e relações numéricas.', cat: 'matematica' },
+                { id: 'geometria', n: 'GEOMETRIA', i: '📐', d: 'Áreas, volumes, polígonos e trigonometria.', cat: 'matematica' },
+                { id: 'estatistica', n: 'ESTATÍSTICA', i: '📊', d: 'Média, mediana, moda e probabilidade.', cat: 'matematica' },
+                { id: 'matematica_financeira', n: 'MAT. FINANCEIRA', i: '💰', d: 'Juros simples, compostos e amortizações.', cat: 'matematica' },
+
+                // Natureza
+                { id: 'fisica', n: 'FÍSICA', i: '⚛️', d: 'Leis da mecânica, óptica e termologia.', cat: 'natureza' },
+                { id: 'quimica', n: 'QUÍMICA', i: '🧪', d: 'Tabela periódica, ligações e estequiometria.', cat: 'natureza' },
+                { id: 'biologia', n: 'BIOLOGIA', i: '🧬', d: 'Células, genética, evolução e ecologia.', cat: 'natureza' },
+
+                // Humanas
+                { id: 'historia', n: 'HISTÓRIA', i: '⏳', d: 'História do Brasil e das civilizações.', cat: 'humanas' },
+                { id: 'geografia', n: 'GEOGRAFIA', i: '🌍', d: 'Geopolítica, climas e mapas temáticos.', cat: 'humanas' },
+                { id: 'filosofia', n: 'FILOSOFIA', i: '🧠', d: 'Pensamento clássico, ética e lógica.', cat: 'humanas' },
+                { id: 'sociologia', n: 'SOCIOLOGIA', i: '👥', d: 'Estruturas sociais, cultura e direitos.', cat: 'humanas' },
+
+                // Itinerários
+                { id: 'tecnologia', n: 'TECNOLOGIA', i: '💻', d: 'Era digital, computação e hardware.', cat: 'itinerarios' },
+                { id: 'programacao', n: 'PROGRAMAÇÃO', i: '🐍', d: 'Algoritmos, lógica e scripts em Python.', cat: 'itinerarios' },
+                { id: 'robotica', n: 'ROBÓTICA', i: '🤖', d: 'Arduino, automação e sensores físicos.', cat: 'itinerarios' },
+                { id: 'empreendedorismo', n: 'EMPREENDEDORISMO', i: '🚀', d: 'Ideação, MVP e modelagem Canvas.', cat: 'itinerarios' },
+                { id: 'ciencia_de_dados', n: 'CIÊNCIA DE DADOS', i: '📉', d: 'Análise de tabelas e pandas.', cat: 'itinerarios' },
+                { id: 'inteligencia_artificial', n: 'INTEL. ARTIFICIAL', i: '🧠', d: 'Redes neurais e IA generativa.', cat: 'itinerarios' },
+                { id: 'educacao_financeira', n: 'POUPANÇA ATIVA', i: '💳', d: 'Controle de orçamento e investimentos.', cat: 'itinerarios' },
+                { id: 'marketing_digital', n: 'MARKETING DIG.', i: '📢', d: 'SEO, redes e conversão de funis.', cat: 'itinerarios' },
+                { id: 'desenvolvimento_jogos', n: 'GAME DESIGN', i: '🎮', d: 'Game loops, colisões e cenários.', cat: 'itinerarios' },
+                { id: 'seguranca_informacao', n: 'SEG. INFORMAÇÃO', i: '🛡️', d: 'Criptografia, malwares e senhas.', cat: 'itinerarios' },
+                { id: 'design_digital', n: 'DESIGN DIGITAL', i: '✨', d: 'UI/UX, paletas e prototipagem Figma.', cat: 'itinerarios' },
+                { id: 'producao_audiovisual', n: 'AUDIOVISUAL', i: '🎬', d: 'Roteiros, enquadramentos e edição.', cat: 'itinerarios' },
+
+                // Extras
+                { id: 'biblioteca_digital', n: 'BIBLIOTECA DIG.', i: '🏛️', d: 'Pesquisa acadêmica e normas ABNT.', cat: 'extras' },
+                { id: 'laboratorio_virtual', n: 'LAB. VIRTUAL', i: '🧪', d: 'Simulação e experimentos virtuais.', cat: 'extras' },
+                { id: 'projeto_vida', n: 'PROJETO DE VIDA', i: '🌟', d: 'Metas SMART, SWOT e autoconhecimento.', cat: 'extras' },
+                { id: 'inclusao_acessibilidade', n: 'INCLUSÃO & ACES.', i: '♿', d: 'WCAG, braille, libras e alt text.', cat: 'extras' }
             ];
 
+            const filteredSubjects = activeCategoryFilter === 'all' 
+                ? allSubjects 
+                : allSubjects.filter(s => s.cat === activeCategoryFilter);
+
             const grid = document.getElementById('subject-options');
-            grid.innerHTML = subjects.map(s => {
+            if (!grid) return;
+            
+            grid.innerHTML = filteredSubjects.map(s => {
                 const config = OnyxCore.ProgressionConfig.subjects[s.id] || 1;
                 const isLocked = userStats.level < config;
                 return `
@@ -546,6 +632,9 @@
                     document.getElementById('briefing-desc').textContent = card.dataset.desc;
                 };
             });
+            
+            // Garantir que os filtros de categoria estejam desenhados
+            renderCategoryFilters();
         }
 
         function renderLeveling() {
@@ -942,9 +1031,673 @@
             `);
         }
 
-        document.getElementById('btn-show-ranking').onclick = () => renderRanking();
-        document.getElementById('btn-show-profile').onclick = () => renderProfile();
+        async function renderAcademicManagement() {
+            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
+            
+            // Get student analysis from engines
+            const insight = await OnyxEngines.generateProfileInsight(userStats.id);
+            const history = await OnyxCore.DB.getHistory(userStats.id);
+            
+            // Safe fallback values
+            const dropoutRisk = insight.dropoutRisk || 'BAIXO';
+            const dropoutRiskColor = insight.dropoutRiskColor || 'var(--success)';
+            const engagement = insight.engagementLevel || 20;
+            const comp = insight.competenciesMap || { linguagens: 0, matematica: 0, natureza: 0, humanas: 0, itinerarios: 0, extras: 0 };
+
+            // Mock Data for CRUD & Diário
+            let academicDb = JSON.parse(localStorage.getItem('onyx_academic_db'));
+            if (!academicDb) {
+                academicDb = {
+                    students: [
+                        { name: 'Ana Souza', class: '3º Ano A', attendance: 90, gradeAvg: 8.5 },
+                        { name: 'Carlos Ramos', class: '3º Ano A', attendance: 70, gradeAvg: 5.2 },
+                        { name: 'Juliana Costa', class: '3º Ano B', attendance: 95, gradeAvg: 9.2 },
+                        { name: 'Marcos Vinícius', class: '3º Ano B', attendance: 62, gradeAvg: 4.8 }
+                    ],
+                    teachers: [
+                        { name: 'Prof. Ricardo Silva', subject: 'Matemática', class: '3º Ano A/B' },
+                        { name: 'Profa. Sandra Gomes', subject: 'Português', class: '3º Ano A/B' }
+                    ]
+                };
+                localStorage.setItem('onyx_academic_db', JSON.stringify(academicDb));
+            }
+
+            const html = `
+                <div class="academic-hub-tabs flex u-mb-20" style="gap:10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; flex-wrap: wrap;">
+                    <button class="btn-onyx btn-tab-academic active" data-tab="tab-direcao" style="padding: 6px 12px; font-size:0.75rem;">📊 DIREÇÃO ESCOLAR (AI)</button>
+                    <button class="btn-onyx btn-tab-academic" data-tab="tab-professor" style="padding: 6px 12px; font-size:0.75rem;">👩‍🏫 CORPO DOCENTE</button>
+                    <button class="btn-onyx btn-tab-academic" data-tab="tab-secretaria" style="padding: 6px 12px; font-size:0.75rem;">🎒 SECRETARIA & DIÁRIO</button>
+                    <button class="btn-onyx btn-tab-academic" data-tab="tab-responsaveis" style="padding: 6px 12px; font-size:0.75rem;">👪 PORTAL DE PAIS</button>
+                </div>
+
+                <div id="academic-tabs-content">
+                    <!-- Tab contents will render dynamically -->
+                </div>
+            `;
+
+            openOverlay("🏫 PORTAL ESCOLAR - GESTÃO & IA", html);
+
+            // Tab navigation controller inside overlay
+            const switchTab = (tabId) => {
+                document.querySelectorAll('.btn-tab-academic').forEach(btn => btn.classList.remove('active', 'btn-primary'));
+                const activeBtn = document.querySelector(`.btn-tab-academic[data-tab="${tabId}"]`);
+                if (activeBtn) activeBtn.classList.add('active', 'btn-primary');
+
+                const contentDiv = document.getElementById('academic-tabs-content');
+                if (!contentDiv) return;
+
+                if (tabId === 'tab-direcao') {
+                    // DIREÇÃO COHORT ANALYSIS & AI DROPOUT RISK PREDICTION
+                    const alertMsg = dropoutRisk === 'ALTO' 
+                        ? '🚨 ATENÇÃO CRÍTICA: Risco acentuado detectado. Recomenda-se acionar mentoria pedagógica imediata e adequar trilhas adaptativas.'
+                        : (dropoutRisk === 'MÉDIO' ? '⚠️ ALERTA MODERADO: Aluno com flutuações de proficiência. Agende uma conversa de acompanhamento.' : '✅ COGNITIVO ESTÁVEL: Excelente progresso e retenção. Continue estimulando com níveis superiores.');
+                    
+                    contentDiv.innerHTML = `
+                        <div class="u-grid-2" style="gap:20px;">
+                            <div class="glass u-p-20" style="border-left: 4px solid ${dropoutRiskColor};">
+                                <h4 class="u-text-accent u-mb-10">🔮 IA PREDITIVA DE EVASÃO</h4>
+                                <div class="u-flex-between u-mb-15" style="align-items:center;">
+                                    <span>Risco de Abandono Escolar:</span>
+                                    <span class="report-badge" style="background:${dropoutRiskColor}; color:#fff; font-weight:900; padding:5px 12px; border-radius:12px;">${dropoutRisk} RISCO</span>
+                                </div>
+                                <p class="u-font-08 u-text-muted" style="line-height:1.4;">${alertMsg}</p>
+                            </div>
+                            
+                            <div class="glass u-p-20">
+                                <h4 class="u-text-accent u-mb-15">🔥 ÍNDICE DE ENGAJAMENTO GERAL</h4>
+                                <div class="u-flex-between u-font-08 u-mb-5">
+                                    <span>Interação com Plataforma</span>
+                                    <span class="u-text-primary u-weight-900">${engagement}%</span>
+                                </div>
+                                <div class="xp-mini-bar-outer" style="height:12px;"><div class="xp-mini-bar-inner" style="width:${engagement}%; background:var(--primary); height:100%;"></div></div>
+                                <p class="u-font-06 u-text-muted u-mt-10">Mapeado com base em XP acumulado, sessões de quiz finalizadas e interações de feedback.</p>
+                            </div>
+                        </div>
+
+                        <div class="glass u-p-20 u-mt-20">
+                            <h4 class="u-text-accent u-mb-15">📊 DESEMPENHO MÉDIO POR ÁREA DO CONHECIMENTO (BNCC)</h4>
+                            <div class="u-grid-2" style="gap:15px;">
+                                <div>
+                                    <div class="u-flex-between u-font-08 u-mb-5"><span>📚 Linguagens e suas Tecnologias</span><span class="u-text-primary">${comp.linguagens}%</span></div>
+                                    <div class="xp-mini-bar-outer" style="background:rgba(255,255,255,0.05);"><div class="xp-mini-bar-inner" style="width:${comp.linguagens}%; background:var(--primary);"></div></div>
+                                </div>
+                                <div>
+                                    <div class="u-flex-between u-font-08 u-mb-5"><span>📐 Matemática e suas Tecnologias</span><span class="u-text-primary">${comp.matematica}%</span></div>
+                                    <div class="xp-mini-bar-outer" style="background:rgba(255,255,255,0.05);"><div class="xp-mini-bar-inner" style="width:${comp.matematica}%; background:var(--accent);"></div></div>
+                                </div>
+                                <div>
+                                    <div class="u-flex-between u-font-08 u-mb-5"><span>🧬 Ciências da Natureza</span><span class="u-text-primary">${comp.natureza}%</span></div>
+                                    <div class="xp-mini-bar-outer" style="background:rgba(255,255,255,0.05);"><div class="xp-mini-bar-inner" style="width:${comp.natureza}%; background:var(--success);"></div></div>
+                                </div>
+                                <div>
+                                    <div class="u-flex-between u-font-08 u-mb-5"><span>🌍 Ciências Humanas e Sociais</span><span class="u-text-primary">${comp.humanas}%</span></div>
+                                    <div class="xp-mini-bar-outer" style="background:rgba(255,255,255,0.05);"><div class="xp-mini-bar-inner" style="width:${comp.humanas}%; background:var(--warning);"></div></div>
+                                </div>
+                                <div>
+                                    <div class="u-flex-between u-font-08 u-mb-5"><span>🚀 Itinerários Formativos Técnicos</span><span class="u-text-primary">${comp.itinerarios}%</span></div>
+                                    <div class="xp-mini-bar-outer" style="background:rgba(255,255,255,0.05);"><div class="xp-mini-bar-inner" style="width:${comp.itinerarios}%; background:violet;"></div></div>
+                                </div>
+                                <div>
+                                    <div class="u-flex-between u-font-08 u-mb-5"><span>✨ Projetos Extras & Apoio</span><span class="u-text-primary">${comp.extras}%</span></div>
+                                    <div class="xp-mini-bar-outer" style="background:rgba(255,255,255,0.05);"><div class="xp-mini-bar-inner" style="width:${comp.extras}%; background:cyan;"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                else if (tabId === 'tab-professor') {
+                    // PROFESSOR INTERFACE: GRADEBOOK, BLOCKS & PROGRESS LOGS
+                    contentDiv.innerHTML = `
+                        <div class="glass u-p-20">
+                            <h4 class="u-text-accent u-mb-15">🚨 MAPEAMENTO DE BLOQUEIOS COGNITIVOS POR MATÉRIA</h4>
+                            <p class="u-font-08 u-text-muted u-mb-15">Detectado de forma heurística com base nas fraquezas de sessões resolvidas de todos os alunos:</p>
+                            <div class="u-grid-3" style="gap:15px;">
+                                <div style="background:rgba(239, 68, 68, 0.05); border:1px solid rgba(239,68,68,0.2); padding:10px; border-radius:8px;">
+                                    <span class="u-font-header" style="color:var(--error); font-size:0.75rem;">📐 GEOMETRIA</span>
+                                    <p class="u-font-07 u-text-muted u-mt-5">3 alunos travados em volumes cilíndricos.</p>
+                                </div>
+                                <div style="background:rgba(245, 158, 11, 0.05); border:1px solid rgba(245,158,11,0.2); padding:10px; border-radius:8px;">
+                                    <span class="u-font-header" style="color:var(--accent); font-size:0.75rem;">🧪 QUÍMICA</span>
+                                    <p class="u-font-07 u-text-muted u-mt-5">2 alunos travados em estequiometria básica.</p>
+                                </div>
+                                <div style="background:rgba(16, 185, 129, 0.05); border:1px solid rgba(16,185,129,0.2); padding:10px; border-radius:8px;">
+                                    <span class="u-font-header" style="color:var(--success); font-size:0.75rem;">🐍 PROGRAMAÇÃO</span>
+                                    <p class="u-font-07 u-text-muted u-mt-5">Nenhum bloqueio crítico de sintaxe ativo.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glass u-p-20 u-mt-20">
+                            <h4 class="u-text-accent u-mb-15">📝 PAINEL SIMULADO DE DIÁRIO DE NOTAS (DIRETAS DO PROFESSOR)</h4>
+                            <div style="overflow-x:auto;">
+                                <table class="ranking-table" style="font-size:0.75rem;">
+                                    <thead>
+                                        <tr><th>ESTUDANTE</th><th>TURMA</th><th>MÉDIA DO DIÁRIO</th><th>XP ADICIONADO</th><th>AÇÃO</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        ${academicDb.students.map((student, i) => `
+                                            <tr>
+                                                <td style="font-weight:800; color:#fff;">${student.name}</td>
+                                                <td>${student.class}</td>
+                                                <td style="color:${student.gradeAvg < 6 ? 'var(--error)' : 'var(--success)'}; font-weight:bold;">${student.gradeAvg}</td>
+                                                <td>+${Math.round(student.gradeAvg * 100)} XP</td>
+                                                <td>
+                                                    <button class="btn-onyx btn-grade-quick" data-idx="${i}" style="padding: 2px 8px; font-size: 0.6rem; background: var(--primary);">
+                                                        +0.5 DE AJUSTE
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+
+                    // Quick grading action
+                    document.querySelectorAll('.btn-grade-quick').forEach(btn => {
+                        btn.onclick = () => {
+                            const idx = parseInt(btn.dataset.idx);
+                            academicDb.students[idx].gradeAvg = Math.min(10, parseFloat((academicDb.students[idx].gradeAvg + 0.5).toFixed(1)));
+                            localStorage.setItem('onyx_academic_db', JSON.stringify(academicDb));
+                            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
+                            switchTab('tab-professor');
+                        };
+                    });
+                }
+
+                else if (tabId === 'tab-secretaria') {
+                    // SECRETARIA: MOCK CRUD & ATTENDANCE TOGGLE (DIÁRIO ELETRÔNICO)
+                    contentDiv.innerHTML = `
+                        <div class="u-grid-2" style="gap:20px;">
+                            <div class="glass u-p-15">
+                                <h4 class="u-text-accent u-mb-10">➕ MATRICULAR ALUNO</h4>
+                                <form id="form-add-student" class="nav-menu" style="display:flex; flex-direction:column; gap:10px;">
+                                    <input type="text" id="crud-stud-name" placeholder="Nome Completo" required style="background:rgba(0,0,0,0.5); padding:10px; border:1px solid rgba(255,255,255,0.1); color:#fff; border-radius:6px; font-size:0.75rem;">
+                                    <select id="crud-stud-class" style="background:rgba(0,0,0,0.5); padding:10px; border:1px solid rgba(255,255,255,0.1); color:#fff; border-radius:6px; font-size:0.75rem;">
+                                        <option value="3º Ano A">3º ANO A</option>
+                                        <option value="3º Ano B">3º ANO B</option>
+                                    </select>
+                                    <button type="submit" class="btn-onyx btn-primary" style="padding:10px; font-size:0.75rem;">REGISTRAR MATRÍCULA</button>
+                                </form>
+                            </div>
+
+                            <div class="glass u-p-15">
+                                <h4 class="u-text-accent u-mb-10">🗓️ DIÁRIO ELETRÔNICO (CHAMADA ATIVA)</h4>
+                                <p class="u-font-06 u-text-muted u-mb-10">Presença obrigatória mínima para aprovação na BNCC: 75%.</p>
+                                <div style="display:flex; flex-direction:column; gap:8px;">
+                                    ${academicDb.students.map((student, i) => {
+                                        const lowAttendance = student.attendance < 75;
+                                        return `
+                                            <div class="glass" style="padding: 10px; display:flex; justify-content:space-between; align-items:center; background:${lowAttendance ? 'rgba(239,68,68,0.03)' : 'rgba(255,255,255,0.01)'}; border-left: 3px solid ${lowAttendance ? 'var(--error)' : 'rgba(255,255,255,0.1)'};">
+                                                <div>
+                                                    <span class="u-font-08" style="font-weight:bold; color:#fff;">${student.name}</span>
+                                                    <p class="u-font-06 u-text-muted" style="margin-top:2px;">Frequência: <strong style="color:${lowAttendance ? 'var(--error)' : 'var(--success)'};">${student.attendance}%</strong></p>
+                                                </div>
+                                                <button class="btn-onyx btn-toggle-attendance" data-idx="${i}" style="padding:4px 8px; font-size:0.6rem; background:${student.attendance >= 100 ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.05)'};">
+                                                    👍 DAR PRESENÇA (+2%)
+                                                </button>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    // Handle add student form submission
+                    const form = document.getElementById('form-add-student');
+                    if (form) {
+                        form.onsubmit = (e) => {
+                            e.preventDefault();
+                            const name = document.getElementById('crud-stud-name').value;
+                            const cls = document.getElementById('crud-stud-class').value;
+                            if (!name) return;
+
+                            academicDb.students.push({ name, class: cls, attendance: 100, gradeAvg: 7.0 });
+                            localStorage.setItem('onyx_academic_db', JSON.stringify(academicDb));
+                            
+                            if (typeof OnyxUI !== 'undefined') {
+                                OnyxUI.playFeedback('success');
+                                OnyxUI.addReasoningLog(`SECRETARIA: Aluno ${name} matriculado com sucesso.`);
+                            }
+                            switchTab('tab-secretaria');
+                        };
+                    }
+
+                    // Handle attendance toggle
+                    document.querySelectorAll('.btn-toggle-attendance').forEach(btn => {
+                        btn.onclick = () => {
+                            const idx = parseInt(btn.dataset.idx);
+                            academicDb.students[idx].attendance = Math.min(100, academicDb.students[idx].attendance + 2);
+                            localStorage.setItem('onyx_academic_db', JSON.stringify(academicDb));
+                            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
+                            switchTab('tab-secretaria');
+                        };
+                    });
+                }
+
+                else if (tabId === 'tab-responsaveis') {
+                    // RESPONSÁVEIS: AUTO-BULLETIN & MESSAGING
+                    contentDiv.innerHTML = `
+                        <div class="glass u-p-20">
+                            <h4 class="u-text-accent u-mb-15">👪 ACESSO DO RESPONSÁVEL LEGAL (RESPONSÁVEIS)</h4>
+                            <p class="u-font-08 u-text-muted u-mb-15">Digite o nome do estudante para emitir o Boletim Automatizado e conferir alertas escolares:</p>
+                            <div class="flex u-mb-20" style="gap:10px;">
+                                <input type="text" id="parent-search-input" placeholder="Ex: Ana Souza" class="u-w-full" style="background:rgba(0,0,0,0.5); padding:10px; border:1px solid rgba(255,255,255,0.1); color:#fff; border-radius:6px; font-size:0.8rem;">
+                                <button id="btn-parent-search" class="btn-onyx btn-primary" style="padding:10px 20px; font-size:0.75rem;">BUSCAR BOLETIM</button>
+                            </div>
+                            
+                            <div id="parent-result-container"></div>
+                        </div>
+                    `;
+
+                    document.getElementById('btn-parent-search').onclick = () => {
+                        const q = document.getElementById('parent-search-input').value.toLowerCase().trim();
+                        const sMatch = academicDb.students.find(s => s.name.toLowerCase().includes(q));
+                        const resultDiv = document.getElementById('parent-result-container');
+                        if (!resultDiv) return;
+
+                        if (sMatch) {
+                            const lowAtt = sMatch.attendance < 75;
+                            const isFailing = sMatch.gradeAvg < 6;
+                            
+                            // Generate warning logs
+                            let warningLog = '';
+                            if (lowAtt) {
+                                warningLog = `<div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); padding:10px; border-radius:6px; color:var(--error); font-size:0.7rem; margin-top:15px; font-weight:800;">⚠️ ALERTA AUTOMÁTICO DE EVASÃO: A frequência escolar de ${sMatch.name} está abaixo de 75%. Contate a secretaria.</div>`;
+                            } else if (isFailing) {
+                                warningLog = `<div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); padding:10px; border-radius:6px; color:var(--accent); font-size:0.7rem; margin-top:15px; font-weight:800;">⚠️ NOTIFICAÇÃO PEDAGÓGICA: Nota média abaixo do esperado. O Tutor Cognitivo AI da Onyx recomenda 2 sessões adicionais de Álgebra por semana.</div>`;
+                            } else {
+                                warningLog = `<div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); padding:10px; border-radius:6px; color:var(--success); font-size:0.7rem; margin-top:15px; font-weight:800;">✅ DESEMPENHO EXEMPLAR: Frequência e notas totalmente dentro da meta de excelência nacional.</div>`;
+                            }
+
+                            resultDiv.innerHTML = `
+                                <div class="glass u-p-20 u-mt-10" style="border:1px solid rgba(255,255,255,0.15);">
+                                    <div class="u-flex-between u-mb-15" style="border-bottom:1px dashed rgba(255,255,255,0.1); padding-bottom:10px;">
+                                        <h3 style="color:#fff; font-family:'Outfit', sans-serif;">BOLETIM DE NOTAS: ${sMatch.name.toUpperCase()}</h3>
+                                        <span style="font-size:0.7rem;" class="u-text-muted">ANO LETIVO COORTE 2026</span>
+                                    </div>
+                                    <div class="u-grid-2" style="gap:15px; font-size:0.8rem;">
+                                        <div><strong>Frequência Acumulada:</strong> <span style="color:${lowAtt ? 'var(--error)' : 'var(--success)'}; font-weight:bold;">${sMatch.attendance}%</span></div>
+                                        <div><strong>Média Geral Trimestral:</strong> <span style="color:${isFailing ? 'var(--error)' : 'var(--success)'}; font-weight:bold;">${sMatch.gradeAvg} / 10.0</span></div>
+                                    </div>
+                                    ${warningLog}
+                                    
+                                    <div class="u-mt-20">
+                                        <h4 class="u-text-accent u-mb-10">💬 CANAL DIRETO COM A COORDENAÇÃO PEDAGÓGICA</h4>
+                                        <div class="flex" style="gap:10px;">
+                                            <input type="text" id="parent-msg-input" placeholder="Envie uma mensagem direta..." class="u-w-full" style="background:rgba(0,0,0,0.5); padding:8px; border:1px solid rgba(255,255,255,0.1); color:#fff; border-radius:6px; font-size:0.75rem;">
+                                            <button id="btn-parent-msg" class="btn-onyx" style="padding:8px 15px; font-size:0.7rem; background:var(--primary); color:#fff;">ENVIAR</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+
+                            document.getElementById('btn-parent-msg').onclick = () => {
+                                const msg = document.getElementById('parent-msg-input').value;
+                                if (!msg) return;
+                                document.getElementById('parent-msg-input').value = '';
+                                if (typeof OnyxUI !== 'undefined') {
+                                    OnyxUI.playFeedback('success');
+                                    OnyxUI.addReasoningLog(`CHAT: Mensagem de responsável enviada à coordenação.`);
+                                }
+                                alert("📩 [MENSAGEM ENVIADA] A equipe pedagógica responderá em até 24 horas no seu e-mail cadastrado.");
+                            };
+                        } else {
+                            resultDiv.innerHTML = `<p class="u-text-error u-font-08 u-mt-10">❌ Aluno não encontrado na base de dados escolar da Onyx.</p>`;
+                        }
+                    };
+                }
+            };
+
+            // Switch to Direction tab initially
+            switchTab('tab-direcao');
+
+            // Add tabs event listeners
+            document.querySelectorAll('.btn-tab-academic').forEach(btn => {
+                btn.onclick = () => switchTab(btn.dataset.tab);
+            });
+        }
+
+        async function renderAIHub() {
+            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
+
+            const html = `
+                <div class="ai-hub-tabs flex u-mb-20" style="gap:10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; flex-wrap: wrap;">
+                    <button class="btn-onyx btn-tab-ai active" data-tab="tab-planos" style="padding: 6px 12px; font-size:0.75rem;">📝 PLANOS DE AULA AI</button>
+                    <button class="btn-onyx btn-tab-ai" data-tab="tab-simulados" style="padding: 6px 12px; font-size:0.75rem;">✍️ SIMULADOS ENEM</button>
+                    <button class="btn-onyx btn-tab-ai" data-tab="tab-study-buddy" style="padding: 6px 12px; font-size:0.75rem;">💬 STUDY BUDDY CHAT</button>
+                </div>
+
+                <div id="ai-tabs-content">
+                    <!-- Tab contents will render dynamically -->
+                </div>
+            `;
+
+            openOverlay("🤖 PEDAGOGICAL AI HUB - COPILOTO COGNITIVO", html);
+
+            const switchTab = (tabId) => {
+                document.querySelectorAll('.btn-tab-ai').forEach(btn => btn.classList.remove('active', 'btn-primary'));
+                const activeBtn = document.querySelector(`.btn-tab-ai[data-tab="${tabId}"]`);
+                if (activeBtn) activeBtn.classList.add('active', 'btn-primary');
+
+                const contentDiv = document.getElementById('ai-tabs-content');
+                if (!contentDiv) return;
+
+                if (tabId === 'tab-planos') {
+                    // LESSON PLAN GENERATOR (Planos de Aula)
+                    contentDiv.innerHTML = `
+                        <div class="glass u-p-20">
+                            <h4 class="u-text-accent u-mb-15">📝 CO-CREATOR DE PLANOS DE AULA (ALINHADO À BNCC)</h4>
+                            <p class="u-font-08 u-text-muted u-mb-20">A IA gerará um roteiro de aula completo contendo objetivos, materiais, cronograma didático e método de avaliação.</p>
+                            
+                            <div class="u-grid-3 u-mb-20" style="gap:15px;">
+                                <div>
+                                    <label class="u-font-07 u-text-muted u-mb-5" style="display:block;">COMPETÊNCIA BNCC</label>
+                                    <select id="ai-plan-bncc" class="tutor-select-futuristic u-w-full">
+                                        <option value="EM13MAT301">EM13MAT301 (Geometria Espacial)</option>
+                                        <option value="EM13LGG101">EM13LGG101 (Morfologia e Plural)</option>
+                                        <option value="EM13CNT301">EM13CNT301 (Usina Celular)</option>
+                                        <option value="EM13CHS101">EM13CHS101 (Geopolítica Nacional)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="u-font-07 u-text-muted u-mb-5" style="display:block;">SÉRIE ENSINO MÉDIO</label>
+                                    <select id="ai-plan-grade" class="tutor-select-futuristic u-w-full">
+                                        <option value="1º Ano do Ensino Médio">1º ANO DO ENSINO MÉDIO</option>
+                                        <option value="2º Ano do Ensino Médio">2º ANO DO ENSINO MÉDIO</option>
+                                        <option value="3º Ano do Ensino Médio">3º ANO DO ENSINO MÉDIO</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="u-font-07 u-text-muted u-mb-5" style="display:block;">METODOLOGIA PRINCIPAL</label>
+                                    <select id="ai-plan-method" class="tutor-select-futuristic u-w-full">
+                                        <option value="Sala de Aula Invertida">SALA DE AULA INVERTIDA</option>
+                                        <option value="Aprendizagem Baseada em Projetos (PBL)">APRENDIZAGEM POR PROJETOS (PBL)</option>
+                                        <option value="Gamificação e Desafios Práticos">GAMIFICAÇÃO</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <button id="btn-generate-plan" class="btn-onyx btn-primary u-w-full" style="padding:12px;">GERAR SILLABUS COGNITIVO COM IA</button>
+                            
+                            <div id="ai-plan-result" class="u-mt-20"></div>
+                        </div>
+                    `;
+
+                    document.getElementById('btn-generate-plan').onclick = () => {
+                        if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('alert');
+                        const bncc = document.getElementById('ai-plan-bncc').value;
+                        const grade = document.getElementById('ai-plan-grade').value;
+                        const method = document.getElementById('ai-plan-method').value;
+                        const resultDiv = document.getElementById('ai-plan-result');
+
+                        resultDiv.innerHTML = `
+                            <div class="glass u-p-20" style="border: 1px solid rgba(16,185,129,0.3); background: rgba(16,185,129,0.02);">
+                                <h3 class="u-text-success u-mb-15" style="font-family:'Outfit', sans-serif;">🎯 PLANO DE AULA GERADO COM SUCESSO!</h3>
+                                <div style="font-size:0.75rem; color:#fff; line-height:1.6; display:flex; flex-direction:column; gap:12px;">
+                                    <p><strong>Competência Foco:</strong> ${bncc}</p>
+                                    <p><strong>Turma Alvo:</strong> ${grade}</p>
+                                    <p><strong>Abordagem Metodológica:</strong> ${method}</p>
+                                    <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:10px;">
+                                        <h4 class="u-text-accent u-mb-5">📖 CRONOGRAMA DE EXECUÇÃO (50 MINUTOS)</h4>
+                                        <ul>
+                                            <li><strong>00-10m: Desafio Análogo:</strong> Apresentar um problemático cotidiano relacionando a teoria (ex: o enigma do volume da garrafa de refrigerante para Geometria).</li>
+                                            <li><strong>10-30m: Mão na Massa (Active Lab):</strong> Os alunos usam o Laboratório Virtual Onyx para alterar variáveis do problema em equipes de 3.</li>
+                                            <li><strong>30-40m: Debate e Argumentação:</strong> Discussão guiada ligando as ações do simulador à fórmula teórica da BNCC.</li>
+                                            <li><strong>40-50m: Avaliação Rápida (Heurística):</strong> Realização de 2 missões adaptativas no Onyx Portal com registro imediato de XP no perfil.</li>
+                                        </ul>
+                                    </div>
+                                    <p style="background:rgba(255,255,255,0.05); padding:10px; border-radius:6px; font-size:0.7rem; color:var(--text-muted);">💡 <em>Dica do Tutor AI: Estimule os alunos que concluírem primeiro a atuar como monitores, auxiliando operadores com bloqueios de aprendizado detectados na aba de professores.</em></p>
+                                </div>
+                            </div>
+                        `;
+                    };
+                }
+
+                else if (tabId === 'tab-simulados') {
+                    // MOCK ENEM GENERATOR (Exercícios)
+                    contentDiv.innerHTML = `
+                        <div class="glass u-p-20">
+                            <h4 class="u-text-accent u-mb-15">✍️ GERADOR AUTOMATIZADO DE SIMULADOS ENEM DO NOVO ENSINO MÉDIO</h4>
+                            <p class="u-font-08 u-text-muted u-mb-20">Gere imediatamente listas de exercícios com perguntas, dicas cognitivas, justificativas da BNCC e o gabarito oficial.</p>
+                            
+                            <div class="u-grid-2 u-mb-20" style="gap:15px;">
+                                <div>
+                                    <label class="u-font-07 u-text-muted u-mb-5" style="display:block;">DISCIPLINA FILTRO</label>
+                                    <select id="ai-test-sub" class="tutor-select-futuristic u-w-full">
+                                        <option value="algebra">ÁLGEBRA & FUNÇÕES</option>
+                                        <option value="portugues">PORTUGUÊS & SINTAXE</option>
+                                        <option value="biologia">BIOLOGIA & SISTEMAS</option>
+                                        <option value="historia">HISTÓRIA & SOCIEDADE</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="u-font-07 u-text-muted u-mb-5" style="display:block;">DIFICULDADE DO PROVA</label>
+                                    <select id="ai-test-diff" class="tutor-select-futuristic u-w-full">
+                                        <option value="easy">ENEM REGULAR (FÁCIL)</option>
+                                        <option value="medium">ENEM TRADICIONAL (MÉDIO)</option>
+                                        <option value="hard">ENEM AVALIAÇÃO DE ELITE (DIFÍCIL)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <button id="btn-generate-test" class="btn-onyx btn-primary u-w-full" style="padding:12px;">INICIALIZAR COMPILAÇÃO DO SIMULADO</button>
+                            
+                            <div id="ai-test-result" class="u-mt-20"></div>
+                        </div>
+                    `;
+
+                    document.getElementById('btn-generate-test').onclick = async () => {
+                        if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('alert');
+                        const sub = document.getElementById('ai-test-sub').value;
+                        const diff = document.getElementById('ai-test-diff').value;
+                        const resultDiv = document.getElementById('ai-test-result');
+
+                        resultDiv.innerHTML = `<div class="u-text-center"><span class="loader"></span></div>`;
+
+                        // Fetch procedural questions from OnyxDatabase
+                        const qPool = await OnyxEngines.QuestionEngine.generateQuestions(userStats.id, sub, diff, 3);
+                        
+                        let questionsHTML = qPool.map((q, idx) => `
+                            <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.07); padding:15px; border-radius:8px; margin-bottom:15px;">
+                                <div class="u-text-accent u-font-07 u-weight-900 u-mb-5">QUESTÃO ${idx + 1} (${q.concept || 'BNCC'})</div>
+                                <p style="font-size:0.8rem; color:#fff; line-height:1.4;" class="u-mb-15">${q.text.replace(/\[ONYX PROTOCOL\].*\n/, '')}</p>
+                                <div style="display:flex; flex-direction:column; gap:8px;">
+                                    ${q.options.map((opt, oIdx) => `
+                                        <div style="font-size:0.75rem; background:rgba(0,0,0,0.3); padding:8px 12px; border-radius:6px; border:1px solid ${oIdx === q.correct ? 'rgba(16,185,129,0.3)' : 'rgba(255,255,255,0.05)'};">
+                                            <strong>${String.fromCharCode(65 + oIdx)})</strong> ${opt} ${oIdx === q.correct ? '<span style="color:var(--success); font-weight:bold; margin-left:10px;">[GABARITO]</span>' : ''}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <div class="u-mt-10 u-font-07 u-text-muted" style="border-top:1px dashed rgba(255,255,255,0.05); padding-top:8px;">
+                                    <strong>💡 EXPLICAÇÃO DA IA:</strong> ${q.explanation}
+                                </div>
+                            </div>
+                        `).join('');
+
+                        resultDiv.innerHTML = `
+                            <div class="glass u-p-20" style="border: 1px solid rgba(14,165,233,0.3);">
+                                <div class="u-flex-between u-mb-20">
+                                    <h3 style="color:#fff; font-family:'Outfit', sans-serif;">📄 SIMULADO ENEM GERADO</h3>
+                                    <button onclick="alert('📤 [IMPRESSÃO AUTOMÁTICA] Roteiro de folha de respostas e caderno de questões compilados com sucesso. PDF enviado para download.')" class="btn-onyx" style="padding:5px 10px; font-size:0.65rem; background:var(--accent); color:#000; font-weight:800;">EXPORTAR PARA PDF</button>
+                                </div>
+                                ${questionsHTML}
+                            </div>
+                        `;
+                    };
+                }
+
+                else if (tabId === 'tab-study-buddy') {
+                    // STUDY BUDDY CHATBOT (Analogies, Highlight, Audio Narration)
+                    contentDiv.innerHTML = `
+                        <div class="glass u-p-20">
+                            <h4 class="u-text-accent u-mb-15">💬 CHAT ESTUDANTE-IA (TUTOR COGNITIVO ADAPTATIVO)</h4>
+                            <p class="u-font-08 u-text-muted u-mb-15">Tire dúvidas com a IA! Os termos técnicos serão destacados em azul-neon. Clique neles para ver analogias lúdicas instantâneas ou ouça a resposta falada.</p>
+                            
+                            <div id="ai-chat-window" class="glass u-mb-15" style="height: 250px; overflow-y: auto; padding: 15px; background:rgba(0,0,0,0.4); display:flex; flex-direction:column; gap:10px;">
+                                <div style="align-self: flex-start; background: rgba(255,255,255,0.05); padding:10px; border-radius:10px; font-size:0.8rem; color:#fff; max-width:80%;">
+                                    Olá, ${userStats.id}! Sou seu copiloto de estudos OnyxTutor. Pergunte-me qualquer dúvida sobre a BNCC ou matérias!
+                                </div>
+                            </div>
+                            
+                            <div class="flex" style="gap:10px;">
+                                <input type="text" id="ai-chat-input" placeholder="Digite uma dúvida (ex: O que é mitocôndria?)" class="u-w-full" style="background:rgba(0,0,0,0.5); padding:12px; border:1px solid rgba(255,255,255,0.1); color:#fff; border-radius:6px; font-size:0.8rem;" autocomplete="off">
+                                <button id="btn-ai-chat-send" class="btn-onyx btn-primary" style="padding:12px 20px; font-size:0.8rem;">PERGUNTAR</button>
+                            </div>
+                        </div>
+                    `;
+
+                    const chatInput = document.getElementById('ai-chat-input');
+                    const chatWindow = document.getElementById('ai-chat-window');
+
+                    const sendMessage = () => {
+                        const text = chatInput.value.trim();
+                        if (!text) return;
+                        chatInput.value = '';
+
+                        if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
+
+                        // Append User Message
+                        chatWindow.innerHTML += `
+                            <div style="align-self: flex-end; background: var(--primary); color: #fff; padding:10px; border-radius:10px; font-size:0.8rem; max-width:80%;">
+                                ${text}
+                            </div>
+                        `;
+                        chatWindow.scrollTop = chatWindow.scrollHeight;
+
+                        // Simulated AI Cognitive Tutor Response
+                        setTimeout(() => {
+                            let rawAnswer = '';
+                            const query = text.toLowerCase();
+                            
+                            if (query.includes('mitocondria') || query.includes('mitocôndria')) {
+                                rawAnswer = "A mitocôndria é a usina de energia da célula, responsável por realizar a respiração celular e produzir ATP. Sem essa pequena organela, nossas células não teriam energia para bater o coração ou contrair músculos!";
+                            } else if (query.includes('bncc') || query.includes('base nacional')) {
+                                rawAnswer = "A BNCC define o currículo de referência nacional garantindo direitos de aprendizagem para o Ensino Médio de forma justa em todo o país.";
+                            } else if (query.includes('globalizacao') || query.includes('globalização')) {
+                                rawAnswer = "A Globalização é a integração mundial que nos conecta digitalmente. É como uma grande teia de aranha mundial que liga todas as economias.";
+                            } else if (query.includes('algoritmo') || query.includes('codigo')) {
+                                rawAnswer = "Um Algoritmo é uma sequência lógica finita e estruturada de passos como uma receita de bolo para o computador resolver um problema.";
+                            } else {
+                                rawAnswer = `Excelente pergunta! O tema abordado está correlacionado à matriz de habilidades da BNCC. Para compreender, faça uma analogia simples: pense em como este conceito funciona em pequena escala no seu cotidiano e utilize as ferramentas do Laboratório Virtual para testar na prática!`;
+                            }
+
+                            // Process response using Tutor.simplifyText to highlight jargon!
+                            let processedAnswer = rawAnswer;
+                            if (window.OnyxCore && window.OnyxCore.Tutor) {
+                                processedAnswer = window.OnyxCore.Tutor.simplifyText(rawAnswer);
+                            }
+
+                            const aiMsgId = 'ai-msg-' + Date.now();
+                            chatWindow.innerHTML += `
+                                <div style="align-self: flex-start; background: rgba(255,255,255,0.05); padding:12px; border-radius:10px; font-size:0.8rem; color:#fff; max-width:80%; border-left:3px solid var(--accent);">
+                                    <div id="${aiMsgId}">${processedAnswer}</div>
+                                    <div class="u-mt-10" style="display:flex; gap:10px;">
+                                        <button onclick="window.narrateText('${aiMsgId}')" class="btn-onyx" style="padding:2px 8px; font-size:0.55rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--accent);">🔊 OUVIR EXPLICAÇÃO</button>
+                                    </div>
+                                </div>
+                            `;
+                            chatWindow.scrollTop = chatWindow.scrollHeight;
+
+
+
+                        }, 800);
+                    };
+
+                    document.getElementById('btn-ai-chat-send').onclick = sendMessage;
+                    chatInput.onkeydown = (e) => { if (e.key === 'Enter') sendMessage(); };
+                }
+            };
+
+            switchTab('tab-planos');
+
+            document.querySelectorAll('.btn-tab-ai').forEach(btn => {
+                btn.onclick = () => switchTab(btn.dataset.tab);
+            });
+        }
+
+        // Global Speech Synthesis Helper
+        window.narrateText = (elementId) => {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            
+            const textToSpeak = el.innerText || el.textContent;
+            
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                utterance.lang = 'pt-BR';
+                
+                const tutorConfigStr = localStorage.getItem(`onyx_tutor_config_${userStats.id}`);
+                if (tutorConfigStr) {
+                    try {
+                        const cfg = JSON.parse(tutorConfigStr);
+                        if (cfg.ritmo === 'lento') utterance.rate = 0.8;
+                        else if (cfg.ritmo === 'rapido') utterance.rate = 1.2;
+                    } catch(e){}
+                }
+                
+                window.speechSynthesis.speak(utterance);
+                if (typeof OnyxUI !== 'undefined') OnyxUI.addReasoningLog("TUTOR AI: Iniciando narração de voz adaptativa.");
+            } else {
+                alert("🔴 Seu navegador não possui suporte nativo para síntese de voz (SpeechSynthesis).");
+            }
+        };
+
+        // Navigation Bindings
+        document.getElementById('btn-show-dashboard').onclick = (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            document.getElementById('btn-show-dashboard').classList.add('active');
+            UI_OVERLAY.container.classList.remove('active');
+        };
+        
+        document.getElementById('btn-show-academic').onclick = (e) => {
+            e.preventDefault();
+            location.href = 'academic_portal.html';
+        };
+
+        document.getElementById('btn-show-ai-hub').onclick = (e) => {
+            e.preventDefault();
+            location.href = 'ai_portal.html';
+        };
+
+        document.getElementById('btn-show-ranking').onclick = (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            document.getElementById('btn-show-ranking').classList.add('active');
+            renderRanking();
+        };
+
+        document.getElementById('btn-show-profile').onclick = (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            document.getElementById('btn-show-profile').classList.add('active');
+            renderProfile();
+        };
+
+        window.showTutorHint = (hintText) => {
+            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
+            openOverlay("💡 APRENDIZAGEM POR COMPETÊNCIAS - BNCC", `
+                <div class="u-p-20 u-text-center">
+                    <h3 class="u-text-accent u-mb-15">CONCEITO COGNITIVO EXPLICADO</h3>
+                    <p style="font-size:0.95rem; line-height:1.6; color:#fff;">${hintText}</p>
+                </div>
+            `);
+        };
+
         document.getElementById('btn-logout').onclick = () => OnyxCore.Session.logout();
+
+        // Overlay close rebind
+        UI_OVERLAY.close.onclick = () => {
+            UI_OVERLAY.container.classList.remove('active');
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            document.getElementById('btn-show-dashboard').classList.add('active');
+        };
 
         // --- DATA SCIENCE BOOTCAMP (extremo.js) LOGIC ---
         const btnBootcamp = document.getElementById('btn-bootcamp-daily');

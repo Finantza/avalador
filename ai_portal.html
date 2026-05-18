@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONYX - Copiloto Cognitivo AI</title>
+    <link rel="stylesheet" href="css/ai_portal.css">
+</head>
+<body>
+    <!-- Ambient Blur Backgrounds -->
+    <div class="ambient-blurs">
+        <div class="blur-orb orb-1"></div>
+        <div class="blur-orb orb-2"></div>
+        <div class="blur-orb orb-3"></div>
+    </div>
+
+    <div class="ai-deck-wrapper">
+        <!-- Sidebar Navigator -->
+        <aside class="ai-sidebar">
+            <div class="sidebar-branding">
+                <div class="ai-logo-sphere">🤖</div>
+                <div>
+                    <h3 style="margin:0; font-family:var(--font-header); font-size:1.1rem; letter-spacing:-0.5px; color:#fff;">ONYX AI</h3>
+                    <span class="u-text-accent u-font-07" style="font-family:var(--font-mono); font-weight:800;">COPILOTO COGNITIVO</span>
+                </div>
+            </div>
+
+            <!-- Tab Buttons -->
+            <nav class="ai-menu-list" style="margin-top:20px;">
+                <button class="ai-menu-item active" data-tab="tab-planos">
+                    <span style="font-size:1.1rem;">📝</span>
+                    Planos de Aula AI
+                </button>
+                <button class="ai-menu-item" data-tab="tab-simulados">
+                    <span style="font-size:1.1rem;">✍️</span>
+                    Simulados ENEM
+                </button>
+                <button class="ai-menu-item" data-tab="tab-study-buddy">
+                    <span style="font-size:1.1rem;">💬</span>
+                    Study Buddy Chat
+                </button>
+            </nav>
+
+            <!-- Navigation Back -->
+            <div class="back-btn-container">
+                <button onclick="location.href='dashboard.html'" class="btn-back-core">
+                    <span>⬅</span> RETORNAR AO NÚCLEO
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Operational Deck -->
+        <main class="ai-viewport">
+            <!-- Header Block -->
+            <header class="ai-header-deck">
+                <div>
+                    <h1 style="margin:0; font-family:var(--font-header); font-size:1.6rem; color:#fff;">PORTAL DE INTELIGÊNCIA ARTIFICIAL</h1>
+                    <p style="margin:5px 0 0 0;" class="u-text-muted u-font-08">Ecossistema adaptativo de suporte a docentes e operadores do Ensino Médio.</p>
+                </div>
+                <div style="display:flex; align-items:center; gap:20px;">
+                    <div style="text-align:right;">
+                        <div class="u-font-07 u-text-muted" style="font-family:var(--font-mono);">OPERADOR LOGADO</div>
+                        <span id="logged-user-name" style="font-family:var(--font-header); font-weight:800; color:var(--primary); font-size:0.95rem;">...</span>
+                    </div>
+                    <div class="ai-system-badge">
+                        ONYX-GPT v5.2
+                    </div>
+                </div>
+            </header>
+
+            <!-- Workspace Card -->
+            <section id="workspace-card" class="ai-workspace-card">
+                <!-- Content injected dynamically via JavaScript -->
+            </section>
+        </main>
+    </div>
+
+    <!-- Active Glossary Glass Modal Popup -->
+    <div id="glossary-modal" class="modal-glass-hint">
+        <div class="modal-hint-box">
+            <div style="font-size:2rem; margin-bottom:10px;">💡</div>
+            <h3 class="u-text-success u-mb-15" style="font-family:var(--font-header); margin-top:0;">CONCEITO DA BNCC EXPLICADO</h3>
+            <p id="glossary-text" style="font-size:0.9rem; line-height:1.6; color:#fff; margin-bottom:20px;"></p>
+            <button onclick="document.getElementById('glossary-modal').classList.remove('active')" class="btn-onyx-premium" style="margin:0 auto; padding:8px 20px; font-size:0.75rem;">ENTENDI</button>
+        </div>
+    </div>
+
+    <!-- Script imports -->
+    <script src="js/onyx_core.js"></script>
+    <script src="js/onyx_database.js"></script>
+    <script src="js/onyx_engines.js"></script>
+    <script src="js/onyx_ui.js"></script>
+    <script src="js/extremo.js"></script>
+
+    <script>
+        let userStats = null;
+        let activeTab = 'tab-planos';
+
+        // Check authentication and initialize
+        async function init() {
+            OnyxCore.Session.checkAuth();
+            const userName = OnyxCore.Session.getCurrentUser();
+            
+            await OnyxCore.DB.init();
+            userStats = await OnyxCore.DB.getUser(userName);
+            if (!userStats) userStats = { id: userName, level: 1, xp: 0 };
+
+            document.getElementById('logged-user-name').textContent = userStats.id.toUpperCase();
+
+            // Set up sidebar tabs
+            document.querySelectorAll('.ai-menu-item').forEach(btn => {
+                btn.onclick = () => {
+                    document.querySelectorAll('.ai-menu-item').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
+                    activeTab = btn.dataset.tab;
+                    renderWorkspace();
+                };
+            });
+
+            renderWorkspace();
+        }
+
+        function renderWorkspace() {
+            const container = document.getElementById('workspace-card');
+            
+            if (activeTab === 'tab-planos') {
+                container.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:20px;">
+                        <div>
+                            <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">📝 GERADOR DE ROTEIROS DE AULA E METODOLOGIAS BNCC</h2>
+                            <p style="margin:0;" class="u-text-muted u-font-08">Crie instantaneamente planos de aula de 50 minutos alinhados às diretrizes do Novo Ensino Médio.</p>
+                        </div>
+
+                        <div class="u-grid-3" style="gap:15px; border-top:1px solid var(--glass-border); padding-top:20px;">
+                            <div>
+                                <label class="u-font-07 u-text-muted u-mb-5" style="display:block; font-weight:800;">HABILIDADE / COMPETÊNCIA BNCC</label>
+                                <select id="ai-plan-bncc" class="tutor-select-futuristic u-w-full">
+                                    <option value="EM13MAT301">EM13MAT301 (Geometria Espacial)</option>
+                                    <option value="EM13LGG101">EM13LGG101 (Morfologia e Plural)</option>
+                                    <option value="EM13CNT301">EM13CNT301 (Usina Celular / Mitocôndria)</option>
+                                    <option value="EM13CHS101">EM13CHS101 (Geopolítica da Globalização)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="u-font-07 u-text-muted u-mb-5" style="display:block; font-weight:800;">ANO DO ENSINO MÉDIO</label>
+                                <select id="ai-plan-grade" class="tutor-select-futuristic u-w-full">
+                                    <option value="1º Ano do Ensino Médio">1º ANO DO ENSINO MÉDIO</option>
+                                    <option value="2º Ano do Ensino Médio">2º ANO DO ENSINO MÉDIO</option>
+                                    <option value="3º Ano do Ensino Médio">3º ANO DO ENSINO MÉDIO</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="u-font-07 u-text-muted u-mb-5" style="display:block; font-weight:800;">METODOLOGIA PRINCIPAL</label>
+                                <select id="ai-plan-method" class="tutor-select-futuristic u-w-full">
+                                    <option value="Sala de Aula Invertida">SALA DE AULA INVERTIDA</option>
+                                    <option value="Aprendizagem Baseada em Projetos (PBL)">APRENDIZAGEM POR PROJETOS (PBL)</option>
+                                    <option value="Gamificação e Desafios Práticos">GAMIFICAÇÃO & QUESTÕES ADAPTATIVAS</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="u-grid-2" style="gap:20px; margin-top:5px;">
+                            <div>
+                                <label class="u-font-07 u-text-muted u-mb-5" style="display:block; font-weight:800;">DURAÇÃO DA AULA (MINUTOS)</label>
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <input type="range" id="ai-plan-time" min="30" max="100" value="50" style="flex:1; accent-color:var(--primary);" oninput="document.getElementById('ai-plan-time-val').textContent = this.value + 'm'">
+                                    <span id="ai-plan-time-val" style="font-family:var(--font-mono); font-size:0.85rem; width:40px;">50m</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="u-font-07 u-text-muted u-mb-5" style="display:block; font-weight:800;">FOCO DO TEMA (OPCIONAL)</label>
+                                <input type="text" id="ai-plan-theme" placeholder="Ex: Relação dos jovens com a tecnologia" style="width:100%; background:rgba(7,11,19,0.8); border:1px solid var(--glass-border); padding:10px; border-radius:10px; color:#fff; font-size:0.8rem; box-sizing:border-box; outline:none;" autocomplete="off">
+                            </div>
+                        </div>
+
+                        <button id="btn-generate-plan" class="btn-onyx-premium u-w-full" style="margin-top:10px;">
+                            ⚡ GERAR SILLABUS COGNITIVO COM IA
+                        </button>
+
+                        <div id="ai-plan-result" class="u-mt-10"></div>
+                    </div>
+                `;
+
+                document.getElementById('btn-generate-plan').onclick = () => {
+                    if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
+                    const bncc = document.getElementById('ai-plan-bncc').value;
+                    const grade = document.getElementById('ai-plan-grade').value;
+                    const method = document.getElementById('ai-plan-method').value;
+                    const time = document.getElementById('ai-plan-time').value;
+                    const theme = document.getElementById('ai-plan-theme').value.trim() || 'Conceitos gerais da matriz curricular';
+                    const resultDiv = document.getElementById('ai-plan-result');
+
+                    resultDiv.innerHTML = `
+                        <div class="u-mt-10" style="border: 1px solid rgba(16,185,129,0.3); background: rgba(16,185,129,0.03); border-radius:14px; padding:20px; animation: contentReveal 0.3s forwards;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed rgba(16,185,129,0.3); padding-bottom:15px; margin-bottom:15px;">
+                                <h3 class="u-text-success" style="font-family:var(--font-header); margin:0;">🎯 ROTEIRO COMPILADO E PRONTO PARA USO</h3>
+                                <button onclick="alert('📤 Plano de aula sincronizado e enviado para impressão no diário de classe.')" class="btn-speech-trigger" style="font-size:0.65rem; border-color:var(--accent); color:var(--accent); background:rgba(16,185,129,0.1);">💾 VINCULAR AO DIÁRIO</button>
+                            </div>
+                            <div style="font-size:0.8rem; color:#f1f5f9; line-height:1.6; display:flex; flex-direction:column; gap:12px;">
+                                <p><strong>Matriz Competencial:</strong> <span style="font-family:var(--font-mono); color:var(--primary);">${bncc}</span> - ${grade}</p>
+                                <p><strong>Tema de Foco:</strong> ${theme}</p>
+                                <p><strong>Abordagem de Ensino:</strong> ${method} (${time} Minutos)</p>
+                                <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:12px;">
+                                    <h4 class="u-text-accent" style="margin:0 0 10px 0;">📖 CRONOGRAMA MINUTO-A-MINUTO DA AULA</h4>
+                                    <ul style="margin:0; padding-left:20px; display:flex; flex-direction:column; gap:8px;">
+                                        <li><strong>00 - 10m [Desafio Análogo]:</strong> Capturar atenção dos alunos com um questionamento real sobre <em>${theme}</em> (Ex: Como mitocôndrias atuam como baterias biológicas recarregáveis).</li>
+                                        <li><strong>10 - 25m [Exploração Cognitiva]:</strong> Debate aberto em grupos de 4 alunos para formular hipóteses sobre o tema.</li>
+                                        <li><strong>25 - 40m [Mão na Massa - Simulador Virtual]:</strong> Uso prático da plataforma adaptativa Onyx para responder e simular variáveis.</li>
+                                        <li><strong>40 - 50m [Consolidação e Autoavaliação]:</strong> Quiz formativo rápido registrando a proficiência no banco IndexedDB para a coordenação.</li>
+                                    </ul>
+                                </div>
+                                <p style="background:rgba(255,255,255,0.03); padding:10px 15px; border-radius:8px; font-size:0.75rem; color:var(--text-muted); border-left:3px solid var(--accent); margin:0;">💡 <em>Dica do Copiloto: Estimule os estudantes com maior pontuação a atuarem como monitores no active lab de hoje.</em></p>
+                            </div>
+                        </div>
+                    `;
+                };
+            } 
+            
+            else if (activeTab === 'tab-simulados') {
+                container.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:20px;">
+                        <div>
+                            <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">✍️ COMPILADOR PROCEDURAL DE SIMULADOS ENEM</h2>
+                            <p style="margin:0;" class="u-text-muted u-font-08">Gere exames diagnósticos com correção em tempo real baseados nas matrizes do ENEM.</p>
+                        </div>
+
+                        <div class="u-grid-3" style="gap:15px; border-top:1px solid var(--glass-border); padding-top:20px;">
+                            <div>
+                                <label class="u-font-07 u-text-muted u-mb-5" style="display:block; font-weight:800;">DISCIPLINA / TEMA</label>
+                                <select id="ai-test-sub" class="tutor-select-futuristic u-w-full">
+                                    <option value="algebra">ÁLGEBRA & FUNÇÕES</option>
+                                    <option value="portugues">PORTUGUÊS & SINTAXE</option>
+                                    <option value="biologia">BIOLOGIA & SISTEMAS</option>
+                                    <option value="historia">HISTÓRIA & SOCIEDADE</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="u-font-07 u-text-muted u-mb-5" style="display:block; font-weight:800;">DIFICULDADE DA PROVA</label>
+                                <select id="ai-test-diff" class="tutor-select-futuristic u-w-full">
+                                    <option value="easy">ENEM REGULAR (FÁCIL)</option>
+                                    <option value="medium">ENEM TRADICIONAL (MÉDIO)</option>
+                                    <option value="hard">ENEM AVALIAÇÃO DE ELITE (DIFÍCIL)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="u-font-07 u-text-muted u-mb-5" style="display:block; font-weight:800;">NÚMERO DE QUESTÕES</label>
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <input type="range" id="ai-test-count" min="2" max="5" value="3" style="flex:1; accent-color:var(--primary);" oninput="document.getElementById('ai-test-count-val').textContent = this.value">
+                                    <span id="ai-test-count-val" style="font-family:var(--font-mono); font-size:0.85rem; width:20px;">3</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button id="btn-generate-test" class="btn-onyx-premium u-w-full" style="margin-top:10px;">
+                            🚀 COMPILAR E INICIALIZAR SIMULADO ENEM
+                        </button>
+
+                        <div id="ai-test-result" class="u-mt-10"></div>
+                    </div>
+                `;
+
+                document.getElementById('btn-generate-test').onclick = async () => {
+                    if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('alert');
+                    const sub = document.getElementById('ai-test-sub').value;
+                    const diff = document.getElementById('ai-test-diff').value;
+                    const count = parseInt(document.getElementById('ai-test-count').value);
+                    const resultDiv = document.getElementById('ai-test-result');
+
+                    resultDiv.innerHTML = `<div class="u-text-center u-p-20"><div class="ai-logo-sphere" style="margin: 0 auto; width: 30px; height: 30px; font-size:0.8rem;">⌛</div><p class="u-font-07 u-text-muted u-mt-10">EXTRAINDO QUESTÕES DA MATRIX ONYX...</p></div>`;
+
+                    // Generate questions procedural
+                    const qPool = await OnyxEngines.QuestionEngine.generateQuestions(userStats.id, sub, diff, count);
+                    
+                    if (qPool.length === 0) {
+                        resultDiv.innerHTML = `<p class="u-text-muted u-font-08 u-text-center">Matéria selecionada indisponível na calibração atual.</p>`;
+                        return;
+                    }
+
+                    let questionsHTML = qPool.map((q, idx) => {
+                        const questionId = `q-mock-${idx}`;
+                        return `
+                            <div class="mock-exam-question-card" id="${questionId}-card">
+                                <div class="u-flex-between u-mb-10">
+                                    <span class="u-text-accent u-font-07 u-weight-900" style="font-family:var(--font-mono);">QUESTÃO ${idx + 1} (${q.concept || 'BNCC-CORE'})</span>
+                                    <span class="u-font-06 u-text-muted" style="background:rgba(255,255,255,0.05); padding:2px 8px; border-radius:4px;">MATRIZ DE REFERÊNCIA</span>
+                                </div>
+                                <p style="font-size:0.82rem; color:#fff; line-height:1.5; margin:0 0 15px 0;">${q.text.replace(/\[ONYX PROTOCOL\].*\n/, '')}</p>
+                                <div style="display:flex; flex-direction:column; gap:10px;" id="${questionId}-options">
+                                    ${q.options.map((opt, oIdx) => `
+                                        <div class="option-select-pill" onclick="validateMockChoice('${questionId}', ${oIdx}, ${q.correct}, '${questionId}-exp', '${idx}')" id="${questionId}-opt-${oIdx}">
+                                            <strong>${String.fromCharCode(65 + oIdx)})</strong> ${opt}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <div id="${questionId}-exp" class="u-mt-10 u-font-08" style="display:none; padding:12px; border-radius:8px; border-top:1px dashed rgba(255,255,255,0.1); line-height:1.4;">
+                                    <strong>💡 EXPLICAÇÃO DA IA:</strong> ${q.explanation}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    resultDiv.innerHTML = `
+                        <div style="border:1px solid var(--glass-border); background:rgba(255,255,255,0.02); border-radius:16px; padding:25px; margin-top:10px; animation: contentReveal 0.3s forwards;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--glass-border); padding-bottom:15px; margin-bottom:20px;">
+                                <h3 style="color:#fff; font-family:var(--font-header); margin:0;">📄 SIMULADO ENEM ATIVO</h3>
+                                <button onclick="alert('📤 Compilação finalizada! Gabarito oficial sincronizado e PDF gerado para download.')" class="btn-speech-trigger" style="border-color:var(--primary); color:var(--primary);">EXPORTAR PDF DO SIMULADO</button>
+                            </div>
+                            ${questionsHTML}
+                        </div>
+                    `;
+                };
+            } 
+            
+            else if (activeTab === 'tab-study-buddy') {
+                container.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:20px;">
+                        <div>
+                            <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">💬 STUDY BUDDY CHAT - COPILOTO ADAPTATIVO DA BNCC</h2>
+                            <p style="margin:0;" class="u-text-muted u-font-08">Tire dúvidas pedagógicas com o tutor AI! Termos técnicos grifados podem ser clicados para revelar analogias simplificadas.</p>
+                        </div>
+
+                        <div class="chat-deck-container">
+                            <div id="ai-chat-window" class="chat-messages-area">
+                                <div class="chat-bubble ai-tutor">
+                                    Olá, ${userStats.id}! Sou seu copiloto de estudos adaptativo. Pergunte-me qualquer dúvida sobre a BNCC, biologia, álgebra ou outros temas escolares!
+                                </div>
+                            </div>
+                            
+                            <div class="chat-input-bar">
+                                <input type="text" id="ai-chat-input" placeholder="Pergunte: 'O que é mitocôndria?' ou 'Qual o papel da Álgebra?'" class="chat-text-input" autocomplete="off">
+                                <button id="btn-ai-chat-send" class="btn-onyx-premium" style="padding:12px 24px; font-size:0.8rem; border-radius:10px; box-shadow:none;">PERGUNTAR</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const chatInput = document.getElementById('ai-chat-input');
+                const chatWindow = document.getElementById('ai-chat-window');
+
+                const sendMessage = () => {
+                    const text = chatInput.value.trim();
+                    if (!text) return;
+                    chatInput.value = '';
+
+                    if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
+
+                    // Append Student Message
+                    chatWindow.innerHTML += `
+                        <div class="chat-bubble student">
+                            ${text}
+                        </div>
+                    `;
+                    chatWindow.scrollTop = chatWindow.scrollHeight;
+
+                    // Trigger Simulated Tutor
+                    setTimeout(() => {
+                        let rawAnswer = '';
+                        const query = text.toLowerCase();
+                        
+                        if (query.includes('mitocondria') || query.includes('mitocôndria')) {
+                            rawAnswer = "A Mitocôndria atua como a bateria recarregável da célula, fabricando energia essencial na forma de ATP para bater seu coração. Sem esse minúsculo motor biológico, as células ficariam sem energia.";
+                        } else if (query.includes('bncc') || query.includes('base nacional')) {
+                            rawAnswer = "A BNCC é o mapa de voo da educação nacional, definindo as habilidades essenciais que todo estudante deve dominar de forma equitativa no país.";
+                        } else if (query.includes('globalizacao') || query.includes('globalização')) {
+                            rawAnswer = "A Globalização funciona como uma gigante teia de aranha invisível que conecta economias, produtos e informações digitalmente, de forma que o celular no seu bolso conecta você a fábricas na Ásia instantaneamente.";
+                        } else if (query.includes('algebra') || query.includes('álgebra')) {
+                            rawAnswer = "A Álgebra é a arte de desvendar mistérios, usando letras como detetives para encontrar valores e incógnitas desconhecidas no mundo dos números.";
+                        } else if (query.includes('algoritmo') || query.includes('código')) {
+                            rawAnswer = "Um Algoritmo é simplesmente uma receita de bolo passo-a-passo. É a ordem lógica de comandos que o computador segue cegamente para cozinhar um resultado final.";
+                        } else {
+                            rawAnswer = "Essa é uma excelente pergunta conectada diretamente com as competências globais da BNCC. Pense neste conceito em escala do seu cotidiano escolar, imagine como ele atua no dia-a-dia e use nossos laboratórios digitais para colocar a mão na massa!";
+                        }
+
+                        // Apply simplifyText to inject neon highlight tags
+                        let processedAnswer = rawAnswer;
+                        if (window.OnyxCore && window.OnyxCore.Tutor) {
+                            processedAnswer = window.OnyxCore.Tutor.simplifyText(rawAnswer);
+                        }
+
+                        const aiMsgId = 'ai-msg-' + Date.now();
+                        chatWindow.innerHTML += `
+                            <div class="chat-bubble ai-tutor">
+                                <div id="${aiMsgId}">${processedAnswer}</div>
+                                <div class="audio-narration-deck">
+                                    <button onclick="narrateSpeech('${aiMsgId}', 'waveform-${aiMsgId}')" class="btn-speech-trigger">🔊 OUVIR EXPLICAÇÃO</button>
+                                    <div class="waveform-anim" id="waveform-${aiMsgId}">
+                                        <div class="wave-bar"></div>
+                                        <div class="wave-bar"></div>
+                                        <div class="wave-bar"></div>
+                                        <div class="wave-bar"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        chatWindow.scrollTop = chatWindow.scrollHeight;
+                    }, 700);
+                };
+
+                document.getElementById('btn-ai-chat-send').onclick = sendMessage;
+                chatInput.onkeydown = (e) => { if (e.key === 'Enter') sendMessage(); };
+            }
+        }
+
+        // Global Glossary Modal Hint Shower
+        window.showTutorHint = function(explanation) {
+            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('alert');
+            const modal = document.getElementById('glossary-modal');
+            const text = document.getElementById('glossary-text');
+            if (modal && text) {
+                text.textContent = explanation;
+                modal.classList.add('active');
+            }
+        };
+
+        // Standalone Custom Mock Exam Solved Evaluator
+        window.validateMockChoice = function(questionId, selectedIdx, correctIdx, explanationId, idx) {
+            const options = document.getElementById(`${questionId}-options`);
+            const expDiv = document.getElementById(explanationId);
+            
+            // Lock other clicks
+            Array.from(options.children).forEach((child, oIdx) => {
+                child.style.pointerEvents = 'none';
+                if (oIdx === correctIdx) {
+                    child.classList.add('correct-gabarito');
+                    child.style.border = '2px solid var(--accent)';
+                    child.style.background = 'rgba(16, 185, 129, 0.15)';
+                    child.style.color = 'var(--accent)';
+                } else if (oIdx === selectedIdx) {
+                    child.style.border = '2px solid var(--error)';
+                    child.style.background = 'rgba(239, 68, 68, 0.15)';
+                    child.style.color = 'var(--error)';
+                }
+            });
+
+            // Reveal explanation
+            expDiv.style.display = 'block';
+            expDiv.style.background = selectedIdx === correctIdx ? 'rgba(16, 185, 129, 0.05)' : 'rgba(239, 68, 68, 0.03)';
+            expDiv.style.border = selectedIdx === correctIdx ? '1px solid rgba(16, 185, 129, 0.2)' : '1px solid rgba(239, 68, 68, 0.2)';
+            
+            if (typeof OnyxUI !== 'undefined') {
+                OnyxUI.playFeedback(selectedIdx === correctIdx ? 'success' : 'error');
+                OnyxUI.addReasoningLog(`SIMULADOR: Operador respondeu a questão ${parseInt(idx)+1}. Resultado: ${selectedIdx === correctIdx ? 'CORRETO (+10 XP)' : 'INCORRETO'}`);
+            }
+
+            // If correct, reward small XP persistency
+            if (selectedIdx === correctIdx && userStats) {
+                userStats.xp += 10;
+                OnyxCore.DB.saveUser(userStats);
+            }
+        };
+
+        // Narration Handler with active Waveform animation
+        window.narrateSpeech = function(msgElementId, waveId) {
+            const el = document.getElementById(msgElementId);
+            const wave = document.getElementById(waveId);
+            if (!el) return;
+
+            const textToSpeak = el.innerText || el.textContent;
+
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+
+                const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                utterance.lang = 'pt-BR';
+
+                // Read speed from active student profile config if exists
+                if (userStats) {
+                    const tutorConfigStr = localStorage.getItem(`onyx_tutor_config_${userStats.id}`);
+                    if (tutorConfigStr) {
+                        try {
+                            const cfg = JSON.parse(tutorConfigStr);
+                            if (cfg.ritmo === 'lento') utterance.rate = 0.8;
+                            else if (cfg.ritmo === 'rapido') utterance.rate = 1.2;
+                        } catch(e){}
+                    }
+                }
+
+                // Activate Waveform animation
+                if (wave) wave.classList.add('active');
+
+                utterance.onend = () => {
+                    if (wave) wave.classList.remove('active');
+                };
+                utterance.onerror = () => {
+                    if (wave) wave.classList.remove('active');
+                };
+
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("Navegador sem suporte nativo a SpeechSynthesis.");
+            }
+        };
+
+        window.onload = init;
+    </script>
+</body>
+</html>

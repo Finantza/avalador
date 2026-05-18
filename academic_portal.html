@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONYX - Central de Gestão Acadêmica</title>
+    <link rel="stylesheet" href="css/academic_portal.css">
+</head>
+<body>
+    <!-- Ambient Blur Backgrounds -->
+    <div class="ambient-blurs">
+        <div class="blur-orb orb-1"></div>
+        <div class="blur-orb orb-2"></div>
+        <div class="blur-orb orb-3"></div>
+    </div>
+
+    <div class="academic-frame">
+        <!-- Sidebar Role Selector -->
+        <aside class="academic-sidebar">
+            <div class="sidebar-branding">
+                <div class="academic-logo-icon">🏫</div>
+                <div>
+                    <h3 style="margin:0; font-family:var(--font-header); font-size:1.1rem; letter-spacing:-0.5px; color:#fff;">ONYX ECO</h3>
+                    <span class="u-text-accent u-font-07" style="font-family:var(--font-mono); font-weight:800;">GESTÃO PEDAGÓGICA</span>
+                </div>
+            </div>
+
+            <!-- Tab Buttons -->
+            <nav class="role-menu-list" style="margin-top:20px;">
+                <button class="role-menu-item active" data-tab="tab-direcao">
+                    <span style="font-size:1.1rem;">📊</span>
+                    Direção (AI Preditiva)
+                </button>
+                <button class="role-menu-item" data-tab="tab-corpo-docente">
+                    <span style="font-size:1.1rem;">👩‍🏫</span>
+                    Corpo Docente
+                </button>
+                <button class="role-menu-item" data-tab="tab-secretaria">
+                    <span style="font-size:1.1rem;">🎒</span>
+                    Secretaria & Diário
+                </button>
+                <button class="role-menu-item" data-tab="tab-responsaveis">
+                    <span style="font-size:1.1rem;">👪</span>
+                    Portal de Pais
+                </button>
+            </nav>
+
+            <!-- Navigation Back -->
+            <div class="back-btn-container">
+                <button onclick="location.href='dashboard.html'" class="btn-back-core">
+                    <span>⬅</span> RETORNAR AO NÚCLEO
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Operational Deck -->
+        <main class="academic-viewport">
+            <!-- Header Block -->
+            <header class="academic-header-deck">
+                <div>
+                    <h1 style="margin:0; font-family:var(--font-header); font-size:1.6rem; color:#fff;">CENTRAL DE GESTÃO ACADÊMICA</h1>
+                    <p style="margin:5px 0 0 0;" class="u-text-muted u-font-08">Administração e análise estratégica integradas do Novo Ensino Médio.</p>
+                </div>
+                <div style="display:flex; align-items:center; gap:20px;">
+                    <div style="text-align:right;">
+                        <div class="u-font-07 u-text-muted" style="font-family:var(--font-mono);">PERFIL DO OPERADOR</div>
+                        <span id="logged-user-name" style="font-family:var(--font-header); font-weight:800; color:var(--accent); font-size:0.95rem;">...</span>
+                    </div>
+                    <div class="academic-badge">
+                        ONYX-ACADEMIC-CORE v4.8
+                    </div>
+                </div>
+            </header>
+
+            <!-- Workspace Card -->
+            <section id="workspace-card" class="academic-workspace-card">
+                <!-- Content injected dynamically via JavaScript -->
+            </section>
+        </main>
+    </div>
+
+    <!-- Script imports -->
+    <script src="js/onyx_core.js"></script>
+    <script src="js/onyx_database.js"></script>
+    <script src="js/onyx_engines.js"></script>
+    <script src="js/onyx_ui.js"></script>
+    <script src="js/extremo.js"></script>
+
+    <script>
+        let userStats = null;
+        let activeTab = 'tab-direcao';
+
+        // Check authentication and initialize
+        async function init() {
+            OnyxCore.Session.checkAuth();
+            const userName = OnyxCore.Session.getCurrentUser();
+            
+            await OnyxCore.DB.init();
+            userStats = await OnyxCore.DB.getUser(userName);
+            if (!userStats) userStats = { id: userName, level: 1, xp: 0 };
+
+            document.getElementById('logged-user-name').textContent = userStats.id.toUpperCase();
+
+            // Set up sidebar tabs
+            document.querySelectorAll('.role-menu-item').forEach(btn => {
+                btn.onclick = () => {
+                    document.querySelectorAll('.role-menu-item').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
+                    activeTab = btn.dataset.tab;
+                    renderWorkspace();
+                };
+            });
+
+            // Default student list in localStorage if not exists
+            if (!localStorage.getItem('onyx_school_students')) {
+                const defaultStudents = [
+                    { id: 1, name: "Ana Souza", grade: 8.5, freq: 88, status: "Aprovada" },
+                    { id: 2, name: "Rodrigo Silva", grade: 6.2, freq: 72, status: "Atenção" },
+                    { id: 3, name: "Guilherme Santos", grade: 9.1, freq: 95, status: "Destaque" }
+                ];
+                localStorage.setItem('onyx_school_students', JSON.stringify(defaultStudents));
+            }
+
+            renderWorkspace();
+        }
+
+        async function renderWorkspace() {
+            const container = document.getElementById('workspace-card');
+            
+            if (activeTab === 'tab-direcao') {
+                container.innerHTML = `<div class="u-text-center u-p-20"><p class="u-text-muted u-font-08">ANALISANDO DADOS PEDAGÓGICOS DA DIRETORIA...</p></div>`;
+                
+                // Get AI Heuristic Insights
+                const insight = await OnyxEngines.generateProfileInsight(userStats.id);
+
+                container.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:25px;">
+                        <div>
+                            <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">📊 MÓDULO DE DIREÇÃO ESCOLAR (PREVISÕES PEDAGÓGICAS COM IA)</h2>
+                            <p style="margin:0;" class="u-text-muted u-font-08">Análise heurística de desempenho, evasão e engajamento escolar em tempo real.</p>
+                        </div>
+
+                        <!-- Heuristic Predictive metrics -->
+                        <div class="metrics-card-grid" style="border-top:1px solid var(--glass-border); padding-top:20px;">
+                            <div class="metric-glass-card">
+                                <span class="u-font-07 u-text-muted" style="display:block; font-weight:800; font-family:var(--font-mono);">IA PREDITIVA: RISCO DE EVASÃO</span>
+                                <span class="u-font-15 u-weight-900 u-mt-10" style="display:block; font-size:1.8rem; color:${insight.dropoutRiskColor};">
+                                    ${insight.dropoutRisk}
+                                </span>
+                                <p class="u-font-07 u-text-muted u-mt-5" style="margin:0;">Risco de evasão escolar calculado a partir da curva de proficiência do estudante.</p>
+                            </div>
+                            <div class="metric-glass-card">
+                                <span class="u-font-07 u-text-muted" style="display:block; font-weight:800; font-family:var(--font-mono);">ÍNDICE DE ENGAJAMENTO GERAL</span>
+                                <div class="u-flex-between u-mt-10 u-mb-5">
+                                    <span class="u-font-15 u-weight-900" style="font-size:1.5rem; color:var(--primary);">${insight.engagementLevel}%</span>
+                                    <span class="u-font-07 u-text-muted">MÉTRICA ATIVA</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-inner" style="width:${insight.engagementLevel}%; background:var(--primary);"></div>
+                                </div>
+                            </div>
+                            <div class="metric-glass-card">
+                                <span class="u-font-07 u-text-muted" style="display:block; font-weight:800; font-family:var(--font-mono);">TENDÊNCIA PEDAGÓGICA</span>
+                                <span class="u-font-15 u-weight-900 u-mt-10" style="display:block; font-size:1.6rem; color:${insight.trendColor};">
+                                    ${insight.trend}
+                                </span>
+                                <p class="u-font-07 u-text-muted u-mt-5" style="margin:0;">Variação nas últimas 5 missões de treinamento calibradas no ecossistema.</p>
+                            </div>
+                        </div>
+
+                        <!-- BNCC Competencies averages -->
+                        <div class="metric-glass-card" style="margin-top:10px;">
+                            <h3 style="margin:0 0 15px 0; font-family:var(--font-header); color:#fff; font-size:1rem;">🎯 MAPA DE PROFICIÊNCIA POR ÁREAS DE COMPETÊNCIA BNCC</h3>
+                            <div class="u-grid-2" style="gap:20px;">
+                                <div>
+                                    <div style="display:flex; flex-direction:column; gap:12px;">
+                                        <div>
+                                            <div class="u-flex-between u-mb-5 u-font-07">
+                                                <span>📚 LINGUAGENS E SUAS TECNOLOGIAS</span>
+                                                <span class="u-text-accent u-weight-800">${insight.competenciesMap.linguagens}%</span>
+                                            </div>
+                                            <div class="progress-bar-container"><div class="progress-bar-inner" style="width:${insight.competenciesMap.linguagens}%; background:var(--accent);"></div></div>
+                                        </div>
+                                        <div>
+                                            <div class="u-flex-between u-mb-5 u-font-07">
+                                                <span>📐 MATEMÁTICA E SUAS TECNOLOGIAS</span>
+                                                <span class="u-text-primary u-weight-800">${insight.competenciesMap.matematica}%</span>
+                                            </div>
+                                            <div class="progress-bar-container"><div class="progress-bar-inner" style="width:${insight.competenciesMap.matematica}%; background:var(--primary);"></div></div>
+                                        </div>
+                                        <div>
+                                            <div class="u-flex-between u-mb-5 u-font-07">
+                                                <span>🧬 CIÊNCIAS DA NATUREZA</span>
+                                                <span class="u-text-warning u-weight-800">${insight.competenciesMap.natureza}%</span>
+                                            </div>
+                                            <div class="progress-bar-container"><div class="progress-bar-inner" style="width:${insight.competenciesMap.natureza}%; background:var(--warning);"></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div style="display:flex; flex-direction:column; gap:12px;">
+                                        <div>
+                                            <div class="u-flex-between u-mb-5 u-font-07">
+                                                <span>🌍 HUMANAS E SOCIAIS APLICADAS</span>
+                                                <span style="color:#a855f7; font-weight:800;">${insight.competenciesMap.humanas}%</span>
+                                            </div>
+                                            <div class="progress-bar-container"><div class="progress-bar-inner" style="width:${insight.competenciesMap.humanas}%; background:#a855f7;"></div></div>
+                                        </div>
+                                        <div>
+                                            <div class="u-flex-between u-mb-5 u-font-07">
+                                                <span>🚀 ITINERÁRIOS PROFISSIONAIS</span>
+                                                <span class="u-text-accent u-weight-800">${insight.competenciesMap.itinerarios}%</span>
+                                            </div>
+                                            <div class="progress-bar-container"><div class="progress-bar-inner" style="width:${insight.competenciesMap.itinerarios}%; background:var(--accent);"></div></div>
+                                        </div>
+                                        <div>
+                                            <div class="u-flex-between u-mb-5 u-font-07">
+                                                <span>✨ EXTENSÕES E LABORATÓRIOS</span>
+                                                <span class="u-text-primary u-weight-800">${insight.competenciesMap.extras}%</span>
+                                            </div>
+                                            <div class="progress-bar-container"><div class="progress-bar-inner" style="width:${insight.competenciesMap.extras}%; background:var(--primary);"></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recommendations alert -->
+                        <div style="background:rgba(245, 158, 11, 0.05); border:1px solid rgba(245,158,11,0.2); border-radius:12px; padding:15px; font-size:0.8rem; line-height:1.5;">
+                            <strong>📢 RECOMENDAÇÃO HEURÍSTICA DA DIREÇÃO:</strong> ${insight.recommendation}
+                        </div>
+                    </div>
+                `;
+            } 
+            
+            else if (activeTab === 'tab-corpo-docente') {
+                container.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:20px;">
+                        <div>
+                            <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">👩‍🏫 PORTAL DO PROFESSOR (REGISTRO E BLOQUEIOS)</h2>
+                            <p style="margin:0;" class="u-text-muted u-font-08">Identifique conteúdos críticos de reprovação e ajuste proficiência escolar de alunos.</p>
+                        </div>
+
+                        <div class="u-grid-2" style="gap:20px; border-top:1px solid var(--glass-border); padding-top:20px;">
+                            <!-- Active difficulty blocks -->
+                            <div class="metric-glass-card">
+                                <h3 style="margin:0 0 10px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">🚫 MAPA COGNITIVO DE MATÉRIAS TRAVADAS</h3>
+                                <p class="u-font-07 u-text-muted u-mb-15">Tópicos com índice de reprovação do aluno acumulado acima de 40% nas tentativas:</p>
+                                <div style="display:flex; flex-direction:column; gap:8px;">
+                                    <div class="u-flex-between u-p-10" style="background:rgba(239,68,68,0.05); border:1px solid rgba(239,68,68,0.15); border-radius:8px; font-size:0.75rem;">
+                                        <span class="u-weight-800" style="color:var(--error);">📐 Geometria Espacial (Matemática)</span>
+                                        <span class="u-text-muted">Aprov: 38%</span>
+                                    </div>
+                                    <div class="u-flex-between u-p-10" style="background:rgba(239,68,68,0.05); border:1px solid rgba(239,68,68,0.15); border-radius:8px; font-size:0.75rem;">
+                                        <span class="u-weight-800" style="color:var(--error);">🧪 Estequiometria Celular (Química)</span>
+                                        <span class="u-text-muted">Aprov: 45%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Classroom Grading list -->
+                            <div class="metric-glass-card">
+                                <h3 style="margin:0 0 10px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">📝 LANÇAMENTO DE NOTAS / AJUSTE PEDAGÓGICO</h3>
+                                <p class="u-font-07 u-text-muted u-mb-15">Simule ajustes de nota pedagógicos com bonificação automática de XP no perfil do aluno:</p>
+                                <div id="prof-students-grading-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                renderTeacherStudentList();
+            } 
+            
+            else if (activeTab === 'tab-secretaria') {
+                container.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:20px;">
+                        <div>
+                            <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">🎒 SECRETARIA & DIÁRIO ELETRÔNICO (CRUD & CHAMADA)</h2>
+                            <p style="margin:0;" class="u-text-muted u-font-08">Cadastre novos alunos (CRUD) e registre presenças dinâmicas no diário eletrônico.</p>
+                        </div>
+
+                        <div class="u-grid-2" style="gap:20px; border-top:1px solid var(--glass-border); padding-top:20px;">
+                            <!-- Matriculate CRUD Form -->
+                            <div class="metric-glass-card">
+                                <h3 style="margin:0 0 10px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">📝 MATRICULAR NOVO ESTUDANTE (CRUD)</h3>
+                                <div style="display:flex; flex-direction:column; gap:12px; margin-top:15px;">
+                                    <div style="display:flex; flex-direction:column; gap:5px;">
+                                        <label class="u-font-07 u-text-muted" style="font-weight:800;">NOME COMPLETO DO ALUNO</label>
+                                        <input type="text" id="sec-add-name" placeholder="Ex: Felipe Ferreira" class="academic-input" autocomplete="off">
+                                    </div>
+                                    <div style="display:flex; flex-direction:column; gap:5px;">
+                                        <label class="u-font-07 u-text-muted" style="font-weight:800;">MÉDIA INICIAL</label>
+                                        <input type="number" id="sec-add-grade" placeholder="7.5" step="0.1" min="0" max="10" class="academic-input">
+                                    </div>
+                                    <button onclick="matriculateStudent()" class="btn-academic-primary" style="justify-content:center; margin-top:10px;">
+                                        ➕ REGISTRAR MATRÍCULA NO SISTEMA
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Attendance sheet -->
+                            <div class="metric-glass-card">
+                                <h3 style="margin:0 0 10px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">📋 DIÁRIO DE CLASSE / CHAMADA ATIVA</h3>
+                                <div id="sec-attendance-list" style="margin-top:15px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                renderSecretariaLists();
+            } 
+            
+            else if (activeTab === 'tab-responsaveis') {
+                container.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:20px;">
+                        <div>
+                            <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">👪 PORTAL DE PAIS E RESPONSÁVEIS (BOLETIM & CONTATO)</h2>
+                            <p style="margin:0;" class="u-text-muted u-font-08">Consulte o boletim de competências e acione o canal direto com a coordenação pedagógica.</p>
+                        </div>
+
+                        <div class="u-grid-2" style="gap:20px; border-top:1px solid var(--glass-border); padding-top:20px;">
+                            <!-- Bulletin finder -->
+                            <div class="metric-glass-card">
+                                <h3 style="margin:0 0 10px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">🔎 BUSCAR BOLETIM DE ALUNO</h3>
+                                <div style="display:flex; gap:10px; margin-top:15px;">
+                                    <input type="text" id="resp-search-name" placeholder="Digite ex: Ana Souza" class="academic-input u-w-full" autocomplete="off">
+                                    <button onclick="searchBulletin()" class="btn-academic-primary" style="padding:10px 15px;">BUSCAR</button>
+                                </div>
+                                <div id="resp-bulletin-result" class="u-mt-10" style="display:none; padding:15px; border:1px solid var(--glass-border); border-radius:10px; background:rgba(0,0,0,0.2);"></div>
+                            </div>
+
+                            <!-- Parents Direct messages -->
+                            <div class="metric-glass-card">
+                                <h3 style="margin:0 0 10px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">✉️ CANAL DIRETO COM A DIREÇÃO PEDAGÓGICA</h3>
+                                <p class="u-font-07 u-text-muted u-mb-10">Envie mensagens de orientação ou solicite reuniões estratégicas de acompanhamento:</p>
+                                <div class="academic-chat-board u-mb-10" id="parent-chat-board">
+                                    <div class="chat-msg-row received">
+                                        <strong>Coordenação:</strong> Prezado responsável, detectamos que o aluno precisa reforçar o tópico de Geometria. Recomendamos o treino adaptativo de matemática de hoje.
+                                    </div>
+                                </div>
+                                <div style="display:flex; gap:10px;">
+                                    <input type="text" id="parent-chat-input" placeholder="Digite uma mensagem para a escola..." class="academic-input u-w-full" style="font-size:0.75rem;" autocomplete="off">
+                                    <button onclick="sendParentMsg()" class="btn-academic-primary" style="padding:10px 15px; font-size:0.75rem;">ENVIAR</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // =========================================================================
+        // Tab-specific helper logicians
+        // =========================================================================
+
+        function getStudents() {
+            return JSON.parse(localStorage.getItem('onyx_school_students') || '[]');
+        }
+
+        function saveStudents(arr) {
+            localStorage.setItem('onyx_school_students', JSON.stringify(arr));
+        }
+
+        // --- Teacher Tab Grading ---
+        function renderTeacherStudentList() {
+            const list = document.getElementById('prof-students-grading-list');
+            if (!list) return;
+
+            const students = getStudents();
+            list.innerHTML = students.map(st => `
+                <div class="u-flex-between u-p-10" style="background:rgba(255,255,255,0.02); border:1px solid var(--glass-border); border-radius:10px; font-size:0.8rem;">
+                    <div>
+                        <strong style="color:#fff;">${st.name}</strong>
+                        <div class="u-font-06 u-text-muted">MÉDIA ATUAL: <span class="u-text-accent" id="prof-grade-${st.id}">${st.grade.toFixed(1)}</span> / 10</div>
+                    </div>
+                    <div style="display:flex; gap:6px;">
+                        <button onclick="adjustGrade(${st.id}, 0.5)" class="btn-academic-outline" style="color:var(--accent); font-weight:800;">+0.5</button>
+                        <button onclick="adjustGrade(${st.id}, -0.5)" class="btn-academic-outline" style="color:var(--error); font-weight:800;">-0.5</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.adjustGrade = function(id, delta) {
+            const students = getStudents();
+            const student = students.find(s => s.id === id);
+            if (student) {
+                student.grade = Math.max(0, Math.min(10, student.grade + delta));
+                saveStudents(students);
+                
+                // Show updated grade on screen
+                const gradeSpan = document.getElementById(`prof-grade-${id}`);
+                if (gradeSpan) gradeSpan.textContent = student.grade.toFixed(1);
+
+                if (typeof OnyxUI !== 'undefined') {
+                    OnyxUI.playFeedback('success');
+                    OnyxUI.addReasoningLog(`GRADES: Professor ajustou nota de ${student.name} em ${delta > 0 ? '+' : ''}${delta}. Nova nota: ${student.grade.toFixed(1)}`);
+                }
+
+                // Grant operator XP rewards for keeping records updated!
+                if (userStats) {
+                    userStats.xp += 15;
+                    OnyxCore.DB.saveUser(userStats);
+                }
+            }
+        };
+
+        // --- Secretaria Tab CRUD & Attendance ---
+        function renderSecretariaLists() {
+            const list = document.getElementById('sec-attendance-list');
+            if (!list) return;
+
+            const students = getStudents();
+            list.innerHTML = students.map(st => `
+                <div class="u-flex-between u-mb-10 u-p-10" style="background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); border-radius:8px; font-size:0.75rem;">
+                    <div>
+                        <strong style="color:#fff;">${st.name}</strong>
+                        <div class="u-font-06 u-text-muted">FREQUÊNCIA: <span id="sec-freq-${st.id}" style="color:${st.freq < 75 ? 'var(--error)' : 'var(--accent)'}; font-weight:800;">${st.freq}%</span></div>
+                    </div>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <button onclick="giveAttendance(${st.id})" class="btn-academic-outline" style="background:rgba(16,185,129,0.1); border-color:var(--accent); color:var(--accent); font-weight:800; font-size:0.6rem;">👍 PRESENÇA (+2%)</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.giveAttendance = function(id) {
+            const students = getStudents();
+            const student = students.find(s => s.id === id);
+            if (student) {
+                student.freq = Math.min(100, student.freq + 2);
+                saveStudents(students);
+                
+                const freqSpan = document.getElementById(`sec-freq-${id}`);
+                if (freqSpan) {
+                    freqSpan.textContent = `${student.freq}%`;
+                    freqSpan.style.color = student.freq < 75 ? 'var(--error)' : 'var(--accent)';
+                }
+
+                if (typeof OnyxUI !== 'undefined') {
+                    OnyxUI.playFeedback('success');
+                    OnyxUI.addReasoningLog(`PRESENÇA: Chamada ativa preenchida para ${student.name}. Frequência atual: ${student.freq}%`);
+                }
+            }
+        };
+
+        window.matriculateStudent = function() {
+            const nameInput = document.getElementById('sec-add-name');
+            const gradeInput = document.getElementById('sec-add-grade');
+            
+            const name = nameInput.value.trim();
+            const grade = parseFloat(gradeInput.value) || 7.0;
+
+            if (!name) {
+                alert("🔴 O nome do estudante é obrigatório.");
+                return;
+            }
+
+            const students = getStudents();
+            const newId = students.length > 0 ? Math.max(...students.map(s => s.id)) + 1 : 1;
+            
+            const newStudent = { id: newId, name: name, grade: grade, freq: 100, status: "Matriculado" };
+            students.push(newStudent);
+            saveStudents(students);
+
+            nameInput.value = '';
+            gradeInput.value = '';
+
+            renderSecretariaLists();
+
+            if (typeof OnyxUI !== 'undefined') {
+                OnyxUI.playFeedback('success');
+                OnyxUI.addReasoningLog(`SECRETARIA: CRUD matrícula efetuada para ${name} (ID: ${newId}).`);
+            }
+            alert(`✅ Estudante ${name} matriculado com sucesso no diário!`);
+        };
+
+        // --- Responsáveis Tab Bulletin Checker ---
+        window.searchBulletin = function() {
+            const searchName = document.getElementById('resp-search-name').value.trim();
+            const resultDiv = document.getElementById('resp-bulletin-result');
+
+            if (!searchName) {
+                alert("Digite o nome de um aluno para buscar.");
+                return;
+            }
+
+            const students = getStudents();
+            const student = students.find(s => s.name.toLowerCase().includes(searchName.toLowerCase()));
+
+            if (student) {
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = `
+                    <h4 style="margin:0 0 10px 0; color:#fff; font-family:var(--font-header);">📋 BOLETIM ESCOLAR OFICIAL</h4>
+                    <div style="font-size:0.75rem; display:flex; flex-direction:column; gap:8px;">
+                        <p style="margin:0;"><strong>Aluno:</strong> ${student.name}</p>
+                        <p style="margin:0;"><strong>Média Acadêmica:</strong> <span class="u-text-accent">${student.grade.toFixed(1)} / 10</span></p>
+                        <p style="margin:0;"><strong>Frequência Escolar:</strong> <span style="color:${student.freq < 75 ? 'var(--error)' : 'var(--accent)'}; font-weight:800;">${student.freq}%</span></p>
+                        <div style="border-top:1px dashed var(--glass-border); padding-top:8px; margin-top:5px;">
+                            <strong>ALERTA DE FREQUÊNCIA:</strong>
+                            ${student.freq < 75 
+                                ? '<span class="u-text-error">⚠️ RISCO DE REPROVAÇÃO POR FALTA! Frequência abaixo do mínimo exigido pelo MEC (75%).</span>' 
+                                : '<span class="u-text-success">✅ Regularizado. Aluno com presença adequada às diretrizes curriculares.</span>'
+                            }
+                        </div>
+                    </div>
+                `;
+            } else {
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = `<p class="u-text-error u-font-07 style="margin:0;">Estudante não localizado na secretaria escolar.</p>`;
+            }
+        };
+
+        // --- Parents direct chat message sender ---
+        window.sendParentMsg = function() {
+            const input = document.getElementById('parent-chat-input');
+            const board = document.getElementById('parent-chat-board');
+            const msg = input.value.trim();
+
+            if (!msg) return;
+            input.value = '';
+
+            board.innerHTML += `
+                <div class="chat-msg-row sent">
+                    <strong>Responsável:</strong> ${msg}
+                </div>
+            `;
+            board.scrollTop = board.scrollHeight;
+
+            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
+
+            // Simulating coordinated answering
+            setTimeout(() => {
+                board.innerHTML += `
+                    <div class="chat-msg-row received">
+                        <strong>Pedagógico:</strong> Recebemos sua mensagem. O tutor AI já registrou seu contato e as ações de monitoramento serão agendadas com a direção.
+                    </div>
+                `;
+                board.scrollTop = board.scrollHeight;
+            }, 1000);
+        };
+
+        window.onload = init;
+    </script>
+</body>
+</html>
