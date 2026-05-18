@@ -693,10 +693,7 @@
                 if (grid) {
                     filterContainer = document.createElement('div');
                     filterContainer.id = 'subject-category-filters';
-                    filterContainer.className = 'nav-menu u-mb-20';
-                    filterContainer.style.display = 'flex';
-                    filterContainer.style.flexWrap = 'wrap';
-                    filterContainer.style.gap = '10px';
+                    filterContainer.className = 'subject-filters-container u-mb-20';
                     grid.parentNode.insertBefore(filterContainer, grid);
                 }
             }
@@ -714,7 +711,7 @@
             ];
             
             filterContainer.innerHTML = categories.map(cat => `
-                <button class="btn-onyx btn-cat ${activeCategoryFilter === cat.id ? 'active btn-primary' : ''}" data-cat="${cat.id}" style="padding: 8px 12px; font-size: 0.7rem; border-radius: 6px;">
+                <button class="btn-cat btn-cat-${cat.id} ${activeCategoryFilter === cat.id ? 'active' : ''}" data-cat="${cat.id}">
                     ${cat.n}
                 </button>
             `).join('');

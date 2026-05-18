@@ -778,41 +778,14 @@
 
         // Custom High-Tech Toast Notification Component
         function showNotification(title, message, type = 'primary') {
-            const colors = {
-                primary: 'var(--primary)',
-                accent: 'var(--accent)',
-                warning: 'var(--warning)',
-                error: '#ef4444'
-            };
-            
             const toast = document.createElement('div');
-            toast.className = 'glass';
-            toast.style.position = 'fixed';
-            toast.style.bottom = '30px';
-            toast.style.right = '30px';
-            toast.style.zIndex = '9999';
-            toast.style.border = `1px solid var(--glass-border)`;
-            toast.style.borderLeft = `4px solid ${colors[type] || colors.primary}`;
-            toast.style.borderRadius = '12px';
-            toast.style.padding = '16px 20px';
-            toast.style.maxWidth = '350px';
-            toast.style.background = 'rgba(10, 20, 35, 0.92)';
-            toast.style.boxShadow = '0 10px 30px rgba(0,0,0,0.5)';
-            toast.style.color = '#fff';
-            toast.style.display = 'flex';
-            toast.style.flexDirection = 'column';
-            toast.style.gap = '5px';
-            toast.style.transform = 'translateY(100px)';
-            toast.style.opacity = '0';
-            toast.style.transition = 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-            toast.style.backdropFilter = 'blur(15px)';
-            toast.style.webkitBackdropFilter = 'blur(15px)';
+            toast.className = `toast-notification toast-${type}`;
             
             toast.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-family: var(--font-header); font-size: 0.85rem; color: ${colors[type]}">
+                <div class="toast-header toast-${type}">
                     🤖 ${title}
                 </div>
-                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.85); line-height: 1.4;">
+                <div class="toast-body">
                     ${message}
                 </div>
             `;
@@ -821,14 +794,12 @@
             
             // Slide Up & Fade In
             setTimeout(() => {
-                toast.style.transform = 'translateY(0)';
-                toast.style.opacity = '1';
+                toast.classList.add('active');
             }, 100);
             
             // Remove with Slide Down after 6 seconds
             setTimeout(() => {
-                toast.style.transform = 'translateY(100px)';
-                toast.style.opacity = '0';
+                toast.classList.remove('active');
                 setTimeout(() => {
                     toast.remove();
                 }, 500);

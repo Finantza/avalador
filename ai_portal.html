@@ -694,13 +694,15 @@
                         
                         // Show a beautiful toast notification
                         const toast = document.createElement('div');
-                        toast.style.cssText = "position:fixed; bottom:30px; right:30px; padding:15px 25px; background:rgba(16,185,129,0.95); backdrop-filter:blur(10px); border:1px solid var(--accent); color:#000; border-radius:10px; font-weight:900; font-family:var(--font-mono); font-size:0.75rem; box-shadow:0 10px 30px rgba(0,0,0,0.5); z-index:10000; transform:translateY(100px); opacity:0; transition:all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);";
+                        toast.className = 'toast-notification toast-accent';
                         toast.innerHTML = `🖋️ PARABÉNS! Redação avaliada em ${totalScore}/1000! Ganhou +${xpGained} XP na sua carreira!`;
                         document.body.appendChild(toast);
                         
-                        setTimeout(() => { toast.style.transform = 'translateY(0)'; toast.style.opacity = '1'; }, 100);
                         setTimeout(() => {
-                            toast.style.transform = 'translateY(100px)'; toast.style.opacity = '0';
+                            toast.classList.add('active');
+                        }, 100);
+                        setTimeout(() => {
+                            toast.classList.remove('active');
                             setTimeout(() => toast.remove(), 300);
                         }, 5000);
                     }

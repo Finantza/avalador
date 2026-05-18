@@ -98,19 +98,12 @@
 
         function showMsg(msg, isError) {
             UI.status.textContent = msg;
-            UI.status.style.display = 'block';
-            UI.status.style.background = isError ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)';
-            UI.status.style.color = isError ? '#ef4444' : '#10b981';
-            UI.status.style.border = `1px solid ${isError ? '#ef4444' : '#10b981'}`;
+            UI.status.className = 'u-status-msg ' + (isError ? 'status-error' : 'status-success');
         }
 
         // Overlay container for Cyber Boot
         const bootOverlay = document.createElement('div');
-        bootOverlay.style.cssText = `
-            position: fixed; inset: 0; background: #000; z-index: 99999; 
-            display: none; flex-direction: column; justify-content: center; align-items: center;
-            color: var(--primary); font-family: var(--font-mono); font-size: 1.2rem;
-        `;
+        bootOverlay.className = 'boot-overlay';
         document.body.appendChild(bootOverlay);
 
         document.getElementById('btn-do-login').onclick = async () => {
@@ -127,7 +120,7 @@
                 showMsg("ACESSO AUTORIZADO.", false);
                 
                 // Start Boot Sequence
-                bootOverlay.style.display = 'flex';
+                bootOverlay.classList.add('active');
                 const bootSteps = [
                     "INICIALIZANDO NÚCLEO ONYX...",
                     "CARREGANDO PERFIL DE OPERADOR...",

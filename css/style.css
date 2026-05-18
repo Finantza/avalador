@@ -1269,4 +1269,129 @@ body.onyx-hidpi .glass {
     width: 100%;
 }
 
+/* --- CATEGORY SELECTOR BUTTONS --- */
+.btn-cat {
+    padding: 8px 16px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.3s var(--transition-premium);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-cat:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-cat.active {
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+/* Category-Specific Active states with glows */
+.btn-cat-all.active {
+    background: rgba(14, 165, 233, 0.15);
+    border-color: var(--primary);
+    box-shadow: 0 0 15px rgba(14, 165, 233, 0.4);
+}
+.btn-cat-linguagens.active {
+    background: rgba(99, 102, 241, 0.15);
+    border-color: var(--secondary);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+}
+.btn-cat-matematica.active {
+    background: rgba(245, 158, 11, 0.15);
+    border-color: var(--accent);
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+}
+.btn-cat-natureza.active {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: var(--success);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+}
+.btn-cat-humanas.active {
+    background: rgba(168, 85, 247, 0.15);
+    border-color: #a855f7;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+}
+.btn-cat-itinerarios.active {
+    background: rgba(6, 182, 212, 0.15);
+    border-color: #06b6d4;
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+}
+.btn-cat-extras.active {
+    background: rgba(234, 179, 8, 0.15);
+    border-color: #eab308;
+    box-shadow: 0 0 15px rgba(234, 179, 8, 0.4);
+}
+
+.subject-filters-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* --- BOOT OVERLAY SEQUENCE --- */
+.boot-overlay {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 99999;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: var(--primary);
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    gap: 15px;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 10px var(--primary-glow);
+}
+
+.boot-overlay.active {
+    display: flex;
+}
+
+/* --- STATUS MESSAGES --- */
+.u-status-msg {
+    display: none;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.u-status-msg.status-error {
+    display: block;
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid #ef4444;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+}
+
+.u-status-msg.status-success {
+    display: block;
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid #10b981;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+}
+
+
 

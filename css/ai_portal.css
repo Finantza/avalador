@@ -661,3 +661,36 @@ body.onyx-hidpi .metric-glass-card, body.onyx-hidpi .ai-workspace-card {
     scroll-behavior: smooth;
     will-change: scroll-position;
 }
+
+/* --- TOAST NOTIFICATIONS --- */
+.toast-notification {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 10000;
+    padding: 16px 24px;
+    background: rgba(10, 16, 27, 0.95);
+    border: 1px solid var(--glass-border);
+    color: #fff;
+    border-radius: 12px;
+    font-weight: 800;
+    font-family: var(--font-header);
+    font-size: 0.75rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+.toast-notification.active {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.toast-notification.toast-primary { border-left: 4px solid var(--primary); }
+.toast-notification.toast-accent { border-left: 4px solid var(--accent); }
+.toast-notification.toast-warning { border-left: 4px solid var(--warning); }
+.toast-notification.toast-error { border-left: 4px solid var(--error); }
+
