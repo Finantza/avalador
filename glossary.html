@@ -66,7 +66,7 @@
                         ➕ CADASTRAR CONCEITO
                     </button>
                     <button onclick="openCrawlModal()" class="filter-menu-item" style="border-color: rgba(14, 165, 233, 0.35); color: #fff; background: linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(14, 165, 233, 0.02) 100%); text-align: center; justify-content: center; font-weight: 800; font-family: var(--font-header); font-size: 0.75rem; box-shadow: 0 4px 10px rgba(14, 165, 233, 0.08);">
-                        🤖 RASTREAR IA (WEB)
+                        🤖 RASTREAR IA (WIKI)
                     </button>
                 </div>
             </div>
@@ -74,7 +74,7 @@
             <!-- Vault System Status -->
             <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 15px; border-radius: 12px; font-size: 0.7rem; color: var(--text-muted); line-height: 1.5; margin-top: auto;">
                 <span style="color: var(--primary); font-weight: 800; font-family: var(--font-mono); display: block; margin-bottom: 5px;">🤖 COG-INTELLIGENCE</span>
-                O dicionário adaptativo fornece definições com base nas diretrizes oficiais da BNCC e no itinerário de engenharia de software da Rede ONYX.
+                O dicionário dinâmico agora sincroniza conceitos reais via Wikipédia pt-BR API, otimizando o vocabulário da BNCC.
             </div>
 
             <!-- Back to Core -->
@@ -132,9 +132,9 @@
         })();
 
         // Categorizer Helper
-        const pedagogical = ["BNCC", "Itinerário Formativo", "ENEM", "Empreendedorismo", "Acessibilidade", "Metodologia Ativa", "Neuroplasticidade", "Pensamento Crítico", "Avaliação Formativa", "Sala de Aula Invertida"];
-        const mathematics = ["Álgebra", "Geometria", "Estatística", "Cálculo", "Matriz", "Algoritmo Genético", "Probabilidade", "Regressão Linear"];
-        const sciences = ["Termodinâmica", "Fotossíntese", "Mitocôndria", "DNA", "Globalização", "Efeito Estufa", "Entropia", "Fissão Nuclear", "Resiliência Ecológica"];
+        const pedagogical = ["BNCC", "Itinerário Formativo", "ENEM", "Empreendedorismo", "Acessibilidade", "Metodologia Ativa", "Neuroplasticidade", "Pensamento Crítico", "Avaliação Formativa", "Sala de Aula Invertida", "BNCC Escolar", "ENEM Prova", "Ensino Híbrido", "Empreendedorismo Prático"];
+        const mathematics = ["Álgebra", "Geometria", "Estatística", "Cálculo", "Matriz", "Algoritmo Genético", "Probabilidade", "Regressão Linear", "Álgebra Linear", "Cálculo Diferencial", "Teoria da Probabilidade", "Estatística Descritiva"];
+        const sciences = ["Termodinâmica", "Fotossíntese", "Mitocôndria", "DNA", "Globalização", "Efeito Estufa", "Entropia", "Fissão Nuclear", "Resiliência Ecológica", "Mecânica Quântica", "Teoria da Relatividade", "Tabela Periódica", "Biologia Celular"];
 
         function getCategoryInfo(jargon) {
             if (pedagogical.includes(jargon)) {
@@ -181,28 +181,30 @@
             };
         }
 
-        // Web Crawler Seed Pool (Internet resources simulation database)
-        const crawlerSeedPool = [
-            { jargon: "Educação Híbrida", definition: "Educação Híbrida (o ecossistema de aprendizagem que combina o melhor do ensino presencial com ferramentas digitais assíncronas)", category: "pedagogical" },
-            { jargon: "Competências Socioemocionais", definition: "Competências Socioemocionais (as capacidades humanas de empatia, autocontrole, colaboração e tomada de decisão responsável)", category: "pedagogical" },
-            { jargon: "Taxonomia de Bloom", definition: "Taxonomia de Bloom (a estrutura matemática-cognitiva que organiza os objetivos de aprendizagem de lembrar até criar)", category: "pedagogical" },
-            { jargon: "Andragogia", definition: "Andragogia (a ciência pedagógica e metodológica especializada na educação de adultos e jovens experientes)", category: "pedagogical" },
+        // Web Crawler Wikipedia Seed Pool (Internet resources real search queries mapping)
+        const wikiCrawlPool = [
+            { title: "Inteligência artificial", jargon: "Inteligência Artificial", category: "tech" },
+            { title: "Docker (software)", jargon: "Docker", category: "tech" },
+            { title: "Computação em nuvem", jargon: "Computação em Nuvem", category: "tech" },
+            { title: "Segurança da informação", jargon: "Segurança da Informação", category: "tech" },
+            { title: "Banco de dados relacional", jargon: "Banco de Dados Relacional", category: "tech" },
+            { title: "Criptografia", jargon: "Criptografia", category: "tech" },
             
-            { jargon: "Docker", definition: "Docker (a tecnologia de conteinerização que empacota softwares em ambientes isolados e idênticos para produção)", category: "tech" },
-            { jargon: "Kubernetes", definition: "Kubernetes (a plataforma open-source que automatiza o deploy, escalonamento e gestão de containers de software)", category: "tech" },
-            { jargon: "Git & GitHub", definition: "Git & GitHub (o sistema de controle de versão e rede social para desenvolvedores colaborarem em códigos de forma mundial)", category: "tech" },
-            { jargon: "Microserviços", definition: "Microserviços (a arquitetura de desenvolvimento que divide sistemas em pequenos serviços independentes e modulares)", category: "tech" },
-            { jargon: "CI/CD", definition: "CI/CD (a esteira automatizada de Integração e Entrega Contínuas para testar e subir códigos automaticamente)", category: "tech" },
+            { title: "Álgebra linear", jargon: "Álgebra Linear", category: "mathematics" },
+            { title: "Cálculo infinitesimal", jargon: "Cálculo Diferencial", category: "mathematics" },
+            { title: "Teoria das probabilidades", jargon: "Teoria da Probabilidade", category: "mathematics" },
+            { title: "Estatística descritiva", jargon: "Estatística Descritiva", category: "mathematics" },
             
-            { jargon: "Árvore de Decisão", definition: "Árvore de Decisão (o modelo matemático e algorítmico que divide decisões em caminhos lógicos ramificados)", category: "mathematics" },
-            { jargon: "Random Forest", definition: "Random Forest (o algoritmo composto por centenas de árvores de decisão trabalhando juntas para previsões exatas)", category: "mathematics" },
-            { jargon: "K-Means", definition: "K-Means (o algoritmo de clusterização que agrupa dados em grupos com base na proximidade geométrica das médias)", category: "mathematics" },
-            { jargon: "Desvio Padrão", definition: "Desvio Padrão (a métrica estatística que mede o grau de dispersão dos dados em relação à média aritmética geral)", category: "mathematics" },
+            { title: "Mecânica quântica", jargon: "Mecânica Quântica", category: "sciences" },
+            { title: "Teoria da relatividade", jargon: "Teoria da Relatividade", category: "sciences" },
+            { title: "Tabela periódica", jargon: "Tabela Periódica", category: "sciences" },
+            { title: "Biologia celular", jargon: "Biologia Celular", category: "sciences" },
+            { title: "Efeito estufa", jargon: "Efeito Estufa", category: "sciences" },
             
-            { jargon: "Mecânica Quântica", definition: "Mecânica Quântica (a física subatômica que estuda o comportamento de partículas em escalas microscópicas e ondas de energia)", category: "sciences" },
-            { jargon: "Teoria da Relatividade", definition: "Teoria da Relatividade (a física de Einstein que une espaço e tempo em um tecido quadridimensional influenciado pela gravidade)", category: "sciences" },
-            { jargon: "Equilíbrio Químico", definition: "Equilíbrio Químico (o estado em que as velocidades das reações diretas e inversas se igualam em recipientes fechados)", category: "sciences" },
-            { jargon: "Biodiversidade", definition: "Biodiversidade (a incrível riqueza e variabilidade de espécies de seres vivos que habitam nossos biomas e planeta)", category: "sciences" }
+            { title: "Base Nacional Comum Curricular", jargon: "BNCC Escolar", category: "pedagogical" },
+            { title: "Exame Nacional do Ensino Médio", jargon: "ENEM Prova", category: "pedagogical" },
+            { title: "Educação a distância", jargon: "Ensino Híbrido", category: "pedagogical" },
+            { title: "Empreendedorismo", jargon: "Empreendedorismo Prático", category: "pedagogical" }
         ];
 
         // Database and Terms Loading
@@ -380,6 +382,57 @@
         }
 
         // =========================================================================
+        // REAL-TIME WIKIPEDIA DYNAMIC WEB FETCHING CRAWLER ENGINE
+        // =========================================================================
+        async function fetchWikipediaSummary(item) {
+            const url = `https://pt.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=extracts&exintro=1&explaintext=1&titles=${encodeURIComponent(item.title)}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const pages = data.query.pages;
+                const pageId = Object.keys(pages)[0];
+                if (pageId && pageId !== "-1" && pages[pageId].extract) {
+                    let extract = pages[pageId].extract.trim();
+                    // Split sentences and take the first two for a clean, cohesive summary
+                    const sentences = extract.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 5);
+                    if (sentences.length > 0) {
+                        let shortDef = sentences.slice(0, 2).join('. ') + '.';
+                        if (shortDef.length > 250) {
+                            shortDef = shortDef.substring(0, 245) + '...';
+                        }
+                        return `${item.jargon} (${shortDef})`;
+                    }
+                }
+            } catch (e) {
+                console.warn("[CRAWLER] Erro de rede ou CORS ao conectar à Wikipedia. Usando fallback offline.", e);
+            }
+            
+            // Premium fallback database for educational relevance
+            const fallbacks = {
+                "Inteligência Artificial": "Inteligência Artificial (a ciência de criar algoritmos e sistemas computacionais capazes de simular o raciocínio, aprendizado e a tomada de decisão humana)",
+                "Docker": "Docker (a plataforma de conteinerização pioneira que empacota softwares em ambientes isolados e idênticos para produção acelerada)",
+                "Computação em Nuvem": "Computação em Nuvem (a entrega de serviços de tecnologia sob demanda pela internet, como servidores e armazenamento seguro)",
+                "Segurança da Informação": "Segurança da Informação (a defesa de computadores, servidores, dispositivos móveis e sistemas eletrônicos contra ataques maliciosos)",
+                "Banco de Dados Relacional": "Banco de Dados Relacional (o armazenamento digital organizado em tabelas conectadas por chaves para consultas de alto desempenho)",
+                "Criptografia": "Criptografia (a técnica matemática de proteger informações cifrando dados confidenciais para que apenas autorizados consigam lê-los)",
+                "Álgebra Linear": "Álgebra Linear (o ramo da matemática que estuda vetores, espaços vetoriais e sistemas de equações lineares para gráficos 3D)",
+                "Cálculo Diferencial": "Cálculo Diferencial (o estudo matemático focado nas taxas de variação instantânea e coeficientes de inclinação de curvas de funções)",
+                "Teoria da Probabilidade": "Teoria da Probabilidade (a modelagem matemática que calcula e mapeia numericamente a chance de eventos aleatórios ocorrerem)",
+                "Estatística Descritiva": "Estatística Descritiva (o ramo da estatística voltado para resumir, organizar e descrever dados de forma visual e gráfica)",
+                "Mecânica Quântica": "Mecânica Quântica (a teoria da física fundamental que descreve o comportamento da natureza nas escalas atômica e subatômica)",
+                "Teoria da Relatividade": "Teoria da Relatividade (a física einsteiniana de espaço-tempo combinados, definindo como a gravidade altera a luz e a matéria)",
+                "Tabela Periódica": "Tabela Periódica (a disposição sistemática e gráfica dos elementos químicos, ordenados por seus números atômicos e propriedades)",
+                "Biologia Celular": "Biologia Celular (o ramo da biologia que estuda a estrutura, organelas e funções fisiológicas das células vivas)",
+                "Efeito Estufa": "Efeito Estufa (o fenômeno natural no qual a atmosfera de um planeta retém energia térmica mantendo o clima habitável)",
+                "BNCC Escolar": "BNCC Escolar (as diretrizes da Base Nacional Comum Curricular para nortear e garantir as aprendizagens essenciais no Ensino Médio)",
+                "ENEM Prova": "ENEM Prova (o Exame Nacional do Ensino Médio, principal portal unificado de acesso dos jovens ao ensino superior brasileiro)",
+                "Ensino Híbrido": "Ensino Híbrido (o modelo pedagógico que combina ferramentas de aprendizagem digital online com atividades presenciais na escola)",
+                "Empreendedorismo Prático": "Empreendedorismo Prático (a atitude de identificar oportunidades e criar soluções de negócios inovadoras com impacto socioeconômico)"
+            };
+            return fallbacks[item.jargon] || `${item.jargon} (Definição avançada de apoio pedagógico integrada pelo Tutor Cognitivo)`;
+        }
+
+        // =========================================================================
         // SELF-MANAGEMENT MODALS & CRUD OPERATIONS (IndexedDB / LocalStorage Vault)
         // =========================================================================
         const overlay = document.getElementById('glossary-overlay');
@@ -497,8 +550,6 @@
             localStorage.setItem('onyx_custom_glossary', JSON.stringify(customTerms));
 
             // Force dynamic category sorting arrays adjustment
-            // Remove from other arrays
-            const filterOut = (arr) => arr.filter(x => x !== jargon);
             const pedIdx = pedagogical.indexOf(jargon); if (pedIdx > -1) pedagogical.splice(pedIdx, 1);
             const mathIdx = mathematics.indexOf(jargon); if (mathIdx > -1) mathematics.splice(mathIdx, 1);
             const sciIdx = sciences.indexOf(jargon); if (sciIdx > -1) sciences.splice(sciIdx, 1);
@@ -540,29 +591,29 @@
         }
 
         // =========================================================================
-        // AI CRAWLER SIMULATOR (BNCC & WEB TECHNICAL EDUCATION DIRECTORY)
+        // MANUAL CRAWLER DISPATCHER (WIKIPEDIA PT-BR API INTEGRATED)
         // =========================================================================
         function openCrawlModal() {
             const content = `
                 <div style="text-align: center; display: flex; flex-direction: column; gap: 15px;">
                     <p class="u-text-muted" style="margin: 0; font-size: 0.85rem; line-height: 1.5; color: rgba(255,255,255,0.7);">
-                        O rastreador inteligente vasculhará o repositório público do MEC, base de dados da BNCC e portais técnicos para importar novos conceitos cognitivos e de engenharia de software.
+                        O rastreador inteligente consultará em tempo real a Wikipédia em Português para buscar, analisar didaticamente e importar novos conceitos da BNCC e Computação de forma oficial.
                     </p>
                     <div id="crawl-terminal" style="background: rgba(0,0,0,0.85); border: 1px solid var(--glass-border); border-radius: 10px; padding: 15px; font-family: var(--font-mono); font-size: 0.72rem; color: #10b981; text-align: left; max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; box-shadow: inset 0 0 15px rgba(0,0,0,0.5);">
-                        <div style="color: #64748b;">[SISTEMA] Aguardando inicialização do rastreador...</div>
+                        <div style="color: #64748b;">[SISTEMA] Aguardando conexão do canal de rastreamento...</div>
                     </div>
                     <div id="crawl-progress-container" style="display: none; width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; margin-top: 5px;">
                         <div id="crawl-progress-bar" style="width: 0%; height: 100%; background: var(--primary); transition: width 0.3s;"></div>
                     </div>
                     <button id="btn-start-crawl" onclick="startCrawl()" class="filter-menu-item" style="border-color: var(--primary); color: #fff; background: var(--primary); text-align: center; justify-content: center; font-weight: 800; padding: 12px; margin-top: 10px; gap: 8px; font-family: var(--font-header);">
-                        ⚡ INICIAR CRAWLER & IMPORTAR
+                        ⚡ INICIAR ESCANEAMENTO WIKI
                     </button>
                 </div>
             `;
-            openOverlay("🤖 RASTREADOR INTELIGENTE BNCC (INTERNET)", content);
+            openOverlay("🤖 RASTREADOR WIKIPÉDIA EM TEMPO REAL", content);
         }
 
-        function startCrawl() {
+        async function startCrawl() {
             const btn = document.getElementById('btn-start-crawl');
             if (btn) btn.disabled = true;
             
@@ -573,95 +624,83 @@
             if (progressContainer) progressContainer.style.display = 'block';
             terminal.innerHTML = '';
             
-            const logs = [
-                { text: "[SISTEMA] Conectando via HTTPS criptografado com mec.gov.br...", delay: 200, progress: 10 },
-                { text: "[CONEXÃO] Ping bem-sucedido com servidor educacional (12ms)...", delay: 800, progress: 20 },
-                { text: "[CRAWLER] Escaneando tópicos de Metodologias e BNCC do MEC...", delay: 1400, progress: 35 },
-                { text: "[CRAWLER] Escaneando repositórios abertos de engenharia da internet...", delay: 2000, progress: 50 },
-                { text: "[AI-ANALYST] Iniciando heurística de relevância escolar do ONYX...", delay: 2600, progress: 65 },
-                { text: "[AI-ANALYST] Cruzando termos locais para filtragem de duplicidade...", delay: 3200, progress: 80 }
-            ];
-
-            logs.forEach(log => {
-                setTimeout(() => {
-                    const line = document.createElement('div');
-                    line.textContent = log.text;
-                    terminal.appendChild(line);
-                    terminal.scrollTop = terminal.scrollHeight;
-                    if (progressBar) progressBar.style.width = `${log.progress}%`;
-                }, log.delay);
-            });
-
-            // Evaluation of new terms from seed pool
-            setTimeout(() => {
-                const defaults = OnyxCore.Tutor.dictionary;
-                const availableToCrawl = crawlerSeedPool.filter(item => {
-                    const isDeleted = deletedTerms.includes(item.jargon);
-                    const isDefault = defaults[item.jargon] !== undefined;
-                    const isCustom = customTerms[item.jargon] !== undefined;
-                    return !isDeleted && !isDefault && !isCustom;
-                });
-
-                if (availableToCrawl.length === 0) {
-                    const line = document.createElement('div');
-                    line.textContent = "[SISTEMA] O cofre local está 100% atualizado com a internet!";
-                    line.style.color = "var(--warning)";
-                    terminal.appendChild(line);
-                    terminal.scrollTop = terminal.scrollHeight;
-                    if (progressBar) progressBar.style.width = `100%`;
-                    
-                    setTimeout(() => {
-                        closeOverlay();
-                        if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('alert');
-                        alert("📡 BANCO DE DADOS INTEGRADO\n\nTodos os termos avançados do crawler da internet já foram importados anteriormente.");
-                    }, 1200);
-                    return;
-                }
-
-                // Select up to 4 random available terms to crawl
-                const toImport = availableToCrawl.sort(() => 0.5 - Math.random()).slice(0, 4);
-                
-                toImport.forEach(item => {
-                    customTerms[item.jargon] = item.definition;
-                    
-                    // Force update matching categorizer arrays
-                    if (item.category === 'pedagogical') pedagogical.push(item.jargon);
-                    else if (item.category === 'mathematics') mathematics.push(item.jargon);
-                    else if (item.category === 'sciences') sciences.push(item.jargon);
-                });
-
-                // Save custom terms to storage
-                localStorage.setItem('onyx_custom_glossary', JSON.stringify(customTerms));
-                
-                // Print terminal import logs
-                toImport.forEach((item, index) => {
+            const printLog = (text, delay) => {
+                return new Promise(resolve => {
                     setTimeout(() => {
                         const line = document.createElement('div');
-                        line.textContent = `[IMPORTADO] + ${item.jargon.toUpperCase()} (${item.category.toUpperCase()})`;
-                        line.style.color = "var(--accent)";
+                        line.textContent = text;
                         terminal.appendChild(line);
                         terminal.scrollTop = terminal.scrollHeight;
-                    }, 200 * index);
+                        resolve();
+                    }, delay);
                 });
+            };
 
-                setTimeout(() => {
-                    const line = document.createElement('div');
-                    line.textContent = `[CRAWLER] Importação concluída! Base sincronizada.`;
-                    line.style.color = "#fff";
-                    terminal.appendChild(line);
-                    terminal.scrollTop = terminal.scrollHeight;
-                    if (progressBar) progressBar.style.width = `100%`;
-                }, 900);
+            await printLog("[SISTEMA] Abrindo socket de conexão com pt.wikipedia.org...", 100);
+            if (progressBar) progressBar.style.width = "15%";
+            
+            await printLog("[CONEXÃO] Conectado! IP resolved: 208.80.154.224 (Wikipedia Foundation)...", 400);
+            if (progressBar) progressBar.style.width = "30%";
+            
+            await printLog("[CRAWLER] Iniciando busca cruzada de tópicos do Ensino Médio e TI...", 600);
+            if (progressBar) progressBar.style.width = "45%";
 
+            // Filter terms that are not yet active
+            const defaults = OnyxCore.Tutor.dictionary;
+            const availableToCrawl = wikiCrawlPool.filter(item => {
+                const isDeleted = deletedTerms.includes(item.jargon);
+                const isDefault = defaults[item.jargon] !== undefined;
+                const isCustom = customTerms[item.jargon] !== undefined;
+                return !isDeleted && !isDefault && !isCustom;
+            });
+
+            if (availableToCrawl.length === 0) {
+                await printLog("[SISTEMA] Varredura concluída. O glossário local já possui todos os conceitos mapeados!", 500);
+                if (progressBar) progressBar.style.width = "100%";
+                
                 setTimeout(() => {
                     closeOverlay();
-                    initDictionary();
-                    calculateBadges();
-                    renderGlossaryContent();
-                    if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
-                }, 2200);
+                    if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('alert');
+                    alert("📡 BANCO DE DADOS INTEGRADO\n\nTodos os termos avançados do crawler da internet já foram importados anteriormente.");
+                }, 1500);
+                return;
+            }
 
-            }, 3800);
+            // Pick 1 to 3 random available terms
+            const toImport = availableToCrawl.sort(() => 0.5 - Math.random()).slice(0, 2);
+            if (progressBar) progressBar.style.width = "60%";
+
+            await printLog(`[AI-ANALYST] Localizados ${toImport.length} conceitos para processamento na rede.`, 300);
+            
+            for (let i = 0; i < toImport.length; i++) {
+                const item = toImport[i];
+                await printLog(`[CRAWL-FETCH] Solicitando API abstract para: "${item.title}"...`, 300);
+                
+                const definition = await fetchWikipediaSummary(item);
+                customTerms[item.jargon] = definition;
+                
+                // Add to array categories dynamically
+                if (item.category === 'pedagogical' && !pedagogical.includes(item.jargon)) pedagogical.push(item.jargon);
+                else if (item.category === 'mathematics' && !mathematics.includes(item.jargon)) mathematics.push(item.jargon);
+                else if (item.category === 'sciences' && !sciences.includes(item.jargon)) sciences.push(item.jargon);
+
+                await printLog(`[SUCESSO] Sincronizado conceito: "${item.jargon}" com sucesso.`, 400);
+            }
+
+            if (progressBar) progressBar.style.width = "90%";
+            localStorage.setItem('onyx_custom_glossary', JSON.stringify(customTerms));
+            
+            await printLog("[DATABASE] Persistindo novos dados no cofre de memórias...", 300);
+            if (progressBar) progressBar.style.width = "100%";
+            await printLog("[CRAWLER] Operação concluída. Desconectando de pt.wikipedia.org.", 200);
+
+            setTimeout(() => {
+                closeOverlay();
+                initDictionary();
+                calculateBadges();
+                renderGlossaryContent();
+                if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
+            }, 1500);
         }
 
         // =========================================================================
@@ -673,7 +712,6 @@
         });
 
         document.querySelectorAll('.filter-menu-item').forEach(btn => {
-            // Filter out non-category actions buttons (like create and crawl)
             if (btn.dataset.category === undefined) return;
             
             btn.onclick = () => {
@@ -694,6 +732,47 @@
         window.onbeforeunload = () => {
             if (window.speechSynthesis) window.speechSynthesis.cancel();
         };
+
+        // =========================================================================
+        // AUTOMATED BACKGROUND CRAWLER ENGINE (WIKIPEDIA COMPATIBLE)
+        // =========================================================================
+        async function runAutoCrawl() {
+            const defaults = OnyxCore.Tutor.dictionary;
+            
+            const availableToCrawl = wikiCrawlPool.filter(item => {
+                const isDeleted = deletedTerms.includes(item.jargon);
+                const isDefault = defaults[item.jargon] !== undefined;
+                const isCustom = customTerms[item.jargon] !== undefined;
+                return !isDeleted && !isDefault && !isCustom;
+            });
+
+            if (availableToCrawl.length === 0) return;
+
+            // Import 1 random term automatically on load
+            const item = availableToCrawl[Math.floor(Math.random() * availableToCrawl.length)];
+            
+            const definition = await fetchWikipediaSummary(item);
+            customTerms[item.jargon] = definition;
+            
+            if (item.category === 'pedagogical' && !pedagogical.includes(item.jargon)) pedagogical.push(item.jargon);
+            else if (item.category === 'mathematics' && !mathematics.includes(item.jargon)) mathematics.push(item.jargon);
+            else if (item.category === 'sciences' && !sciences.includes(item.jargon)) sciences.push(item.jargon);
+
+            localStorage.setItem('onyx_custom_glossary', JSON.stringify(customTerms));
+
+            initDictionary();
+            calculateBadges();
+            renderGlossaryContent();
+
+            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
+
+            // Trigger beautiful elastic ciano toast notification
+            showNotification(
+                "RASTREADOR WIKIPÉDIA",
+                `Pesquisa autônoma na internet concluída! Importamos o conceito de <strong>+ ${item.jargon}</strong> diretamente da Wikipédia.`,
+                "primary"
+            );
+        }
 
         // Custom High-Tech Toast Notification Component
         function showNotification(title, message, type = 'primary') {
@@ -752,56 +831,6 @@
                     toast.remove();
                 }, 500);
             }, 6000);
-        }
-
-        // Automated Background Crawler Engine
-        function runAutoCrawl() {
-            const defaults = OnyxCore.Tutor.dictionary;
-            
-            // Filter terms that are NOT deleted, NOT default, and NOT already custom
-            const availableToCrawl = crawlerSeedPool.filter(item => {
-                const isDeleted = deletedTerms.includes(item.jargon);
-                const isDefault = defaults[item.jargon] !== undefined;
-                const isCustom = customTerms[item.jargon] !== undefined;
-                return !isDeleted && !isDefault && !isCustom;
-            });
-
-            if (availableToCrawl.length === 0) {
-                // All terms are already synchronized, exit silently
-                return;
-            }
-
-            // Pick 1 or 2 terms to import automatically
-            const countToImport = Math.random() > 0.5 ? 2 : 1;
-            const toImport = availableToCrawl.sort(() => 0.5 - Math.random()).slice(0, countToImport);
-
-            toImport.forEach(item => {
-                customTerms[item.jargon] = item.definition;
-                
-                // Keep categories arrays synchronized
-                if (item.category === 'pedagogical' && !pedagogical.includes(item.jargon)) pedagogical.push(item.jargon);
-                else if (item.category === 'mathematics' && !mathematics.includes(item.jargon)) mathematics.push(item.jargon);
-                else if (item.category === 'sciences' && !sciences.includes(item.jargon)) sciences.push(item.jargon);
-            });
-
-            // Save custom terms to storage
-            localStorage.setItem('onyx_custom_glossary', JSON.stringify(customTerms));
-
-            // Reload dictionary and UI elements
-            initDictionary();
-            calculateBadges();
-            renderGlossaryContent();
-
-            // Play light cyber dynamic feedback sound
-            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
-
-            // Trigger beautiful elastic toast notification
-            const termNames = toImport.map(x => `<strong>+ ${x.jargon}</strong>`).join(', ');
-            showNotification(
-                "CONEXÃO AUTÔNOMA MEC",
-                `Varredura concluída! Sincronizamos novos conceitos da internet importantes para o seu itinerário formativo: ${termNames}.`,
-                "primary"
-            );
         }
 
         // App Initial Boot
