@@ -221,7 +221,13 @@ window.OnyxEngines = {
             }
 
             const shuffledPool = window.OnyxEngines.shuffle(unseenPool);
-            const selection = shuffledPool.slice(0, count);
+            let selection = [];
+            if (shuffledPool.length > 0) {
+                while (selection.length < count) {
+                    selection = selection.concat(window.OnyxEngines.shuffle(shuffledPool));
+                }
+                selection = selection.slice(0, count);
+            }
             const questions = [];
             
             selection.forEach((pick) => {

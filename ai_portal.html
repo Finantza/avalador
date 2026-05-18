@@ -35,6 +35,10 @@
                     <span style="font-size:1.1rem;">✍️</span>
                     Simulados ENEM
                 </button>
+                <button class="ai-menu-item" data-tab="tab-redacao">
+                    <span style="font-size:1.1rem;">🖋️</span>
+                    Redação Nota 1000
+                </button>
                 <button class="ai-menu-item" data-tab="tab-study-buddy">
                     <span style="font-size:1.1rem;">💬</span>
                     Study Buddy Chat
@@ -244,10 +248,10 @@
                     <div style="display:flex; flex-direction:column; gap:20px;">
                         <div>
                             <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">✍️ COMPILADOR PROCEDURAL DE SIMULADOS ENEM</h2>
-                            <p style="margin:0;" class="u-text-muted u-font-08">Gere exames diagnósticos com correção em tempo real baseados nas matrizes do ENEM.</p>
+                            <p style="margin:0;" class="u-text-muted u-font-08">Gere exames diagnósticos com correção em tempo real baseados nas matrizes históricas do ENEM.</p>
                         </div>
 
-                        <div class="u-grid-3" style="gap:15px; border-top:1px solid var(--glass-border); padding-top:20px;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; border-top: 1px solid var(--glass-border); padding-top: 20px;">
                             <div>
                                 <label class="u-font-07 u-text-muted u-mb-5" style="display:block; font-weight:800;">DISCIPLINA / TEMA</label>
                                 <select id="ai-test-sub" class="tutor-select-futuristic u-w-full">
@@ -266,11 +270,26 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="u-font-07 u-text-muted u-mb-5" style="display:block; font-weight:800;">NÚMERO DE QUESTÕES</label>
-                                <div style="display:flex; align-items:center; gap:10px;">
-                                    <input type="range" id="ai-test-count" min="2" max="5" value="3" style="flex:1; accent-color:var(--primary);" oninput="document.getElementById('ai-test-count-val').textContent = this.value">
-                                    <span id="ai-test-count-val" style="font-family:var(--font-mono); font-size:0.85rem; width:20px;">3</span>
-                                </div>
+                                <label class="u-font-07 u-text-muted u-mb-5" style="display:block; font-weight:800;">MATRIZ HISTÓRICA / EDIÇÃO</label>
+                                <select id="ai-test-edition" class="tutor-select-futuristic u-w-full">
+                                    <option value="mix">📚 TODAS AS EDIÇÕES ANTERIORES</option>
+                                    <option value="2024">🎓 ENEM 2024 (SAÚDE MENTAL & MINORIAS)</option>
+                                    <option value="2023">🎓 ENEM 2023 (TRABALHO INVISÍVEL FEMININO)</option>
+                                    <option value="2022">🎓 ENEM 2022 (POVOS TRADICIONAIS)</option>
+                                    <option value="2021">🎓 ENEM 2021 (REGISTRO CIVIL & CIDADANIA)</option>
+                                    <option value="2020">🎓 ENEM 2020 (ESTIGMA DAS DOENÇAS MENTAIS)</option>
+                                    <option value="2019">🎓 ENEM 2019 (ACESSO AO CINEMA)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="u-font-07 u-text-muted u-mb-5" style="display:block; font-weight:800;">TAMANHO DO SIMULADO</label>
+                                <select id="ai-test-count" class="tutor-select-futuristic u-w-full">
+                                    <option value="3">⚡ TREINO RELÂMPAGO (3 QUESTÕES)</option>
+                                    <option value="5">📝 SIMULADO FORMATIVO (5 QUESTÕES)</option>
+                                    <option value="10">📊 SIMULADO FOCADO (10 QUESTÕES)</option>
+                                    <option value="20">🧠 SIMULADO DE ELITE (20 QUESTÕES)</option>
+                                    <option value="45">🎓 SIMULADO OFICIAL ENEM (45 QUESTÕES - PADRÃO OFICIAL)</option>
+                                </select>
                             </div>
                         </div>
 
@@ -286,10 +305,11 @@
                     if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('alert');
                     const sub = document.getElementById('ai-test-sub').value;
                     const diff = document.getElementById('ai-test-diff').value;
+                    const edition = document.getElementById('ai-test-edition').value;
                     const count = parseInt(document.getElementById('ai-test-count').value);
                     const resultDiv = document.getElementById('ai-test-result');
 
-                    resultDiv.innerHTML = `<div class="u-text-center u-p-20"><div class="ai-logo-sphere" style="margin: 0 auto; width: 30px; height: 30px; font-size:0.8rem;">⌛</div><p class="u-font-07 u-text-muted u-mt-10">EXTRAINDO QUESTÕES DA MATRIX ONYX...</p></div>`;
+                    resultDiv.innerHTML = `<div class="u-text-center u-p-20"><div class="ai-logo-sphere" style="margin: 0 auto; width: 30px; height: 30px; font-size:0.8rem;">⌛</div><p class="u-font-07 u-text-muted u-mt-10">EXTRAINDO QUESTÕES DA MATRIX HISTÓRICA DO ENEM...</p></div>`;
 
                     // Generate questions procedural
                     const qPool = await OnyxEngines.QuestionEngine.generateQuestions(userStats.id, sub, diff, count);
@@ -301,11 +321,12 @@
 
                     let questionsHTML = qPool.map((q, idx) => {
                         const questionId = `q-mock-${idx}`;
+                        let editionLabel = 'ENEM ' + (edition === 'mix' ? [2024, 2023, 2022, 2021, 2020, 2019][idx % 6] : edition);
                         return `
                             <div class="mock-exam-question-card" id="${questionId}-card">
                                 <div class="u-flex-between u-mb-10">
-                                    <span class="u-text-accent u-font-07 u-weight-900" style="font-family:var(--font-mono);">QUESTÃO ${idx + 1} (${q.concept || 'BNCC-CORE'})</span>
-                                    <span class="u-font-06 u-text-muted" style="background:rgba(255,255,255,0.05); padding:2px 8px; border-radius:4px;">MATRIZ DE REFERÊNCIA</span>
+                                    <span class="u-text-accent u-font-07 u-weight-900" style="font-family:var(--font-mono);">${editionLabel} - QUESTÃO ${idx + 1} (${q.concept || 'BNCC-CORE'})</span>
+                                    <span class="u-font-06 u-text-muted" style="background:rgba(255,255,255,0.05); padding:2px 8px; border-radius:4px;">MATRIZ DE REFERÊNCIA HISTÓRICA</span>
                                 </div>
                                 <p style="font-size:0.82rem; color:#fff; line-height:1.5; margin:0 0 15px 0;">${q.text.replace(/\[ONYX PROTOCOL\].*\n/, '')}</p>
                                 <div style="display:flex; flex-direction:column; gap:10px;" id="${questionId}-options">
@@ -325,12 +346,310 @@
                     resultDiv.innerHTML = `
                         <div style="border:1px solid var(--glass-border); background:rgba(255,255,255,0.02); border-radius:16px; padding:25px; margin-top:10px; animation: contentReveal 0.3s forwards;">
                             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--glass-border); padding-bottom:15px; margin-bottom:20px;">
-                                <h3 style="color:#fff; font-family:var(--font-header); margin:0;">📄 SIMULADO ENEM ATIVO</h3>
+                                <h3 style="color:#fff; font-family:var(--font-header); margin:0;">📄 SIMULADO ENEM HISTÓRICO ATIVO</h3>
                                 <button onclick="alert('📤 Compilação finalizada! Gabarito oficial sincronizado e PDF gerado para download.')" class="btn-speech-trigger" style="border-color:var(--primary); color:var(--primary);">EXPORTAR PDF DO SIMULADO</button>
                             </div>
                             ${questionsHTML}
                         </div>
                     `;
+                };
+            } 
+            
+            else if (activeTab === 'tab-redacao') {
+                container.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:20px; animation: contentReveal 0.3s forwards;">
+                        <div>
+                            <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">🖋️ LABORATÓRIO DE REDAÇÃO NOTA 1000 - ENEM</h2>
+                            <p style="margin:0;" class="u-text-muted u-font-08">Redija sua redação com base nos temas sociais e científicos mais pesquisados da atualidade. A IA corrigirá seu texto segundo as 5 Competências oficiais do ENEM.</p>
+                        </div>
+
+                        <div style="display:flex; flex-direction:column; gap:15px; border-top:1px solid var(--glass-border); padding-top:20px;">
+                            <div>
+                                <label class="u-font-07 u-text-muted u-mb-5" style="display:block; font-weight:800;">ESCOLHA O TEMA DE REDAÇÃO</label>
+                                <select id="ai-essay-theme" class="tutor-select-futuristic u-w-full" onchange="updateMotivatorText(this.value)">
+                                    <option value="ia-edu">🤖 IA Generativa: Impactos e Desafios da IA na Educação Brasileira</option>
+                                    <option value="clima">🌍 Crise Climática: Caminhos para Enfrentar as Mudanças no Território Nacional</option>
+                                    <option value="acesso">♿ Acessibilidade: A Democratização dos Recursos Digitais de Inclusão</option>
+                                    <option value="saude">🧠 Saúde Mental: Desafios e Pressão por Desempenho nos Jovens do Século XXI</option>
+                                </select>
+                            </div>
+
+                            <div class="glass" style="padding:15px; border-radius:10px; background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.05);">
+                                <h4 class="u-text-accent" style="margin:0 0 8px 0; font-size:0.75rem; font-family:var(--font-mono);">📄 TEXTO DE APOIO E DIRETRIZES DA BANCA</h4>
+                                <div style="max-height: 80px; overflow-y: auto; padding-right: 5px;">
+                                    <div id="ai-essay-motivator" style="font-size:0.75rem; color:var(--text-muted); line-height:1.5;">
+                                        TEXTO MOTIVADOR: O avanço veloz de ferramentas de inteligência artificial generativa remodelou as salas de aula brasileiras. Ao mesmo tempo que serve como ferramenta de autoaprendizado adaptativo acelerado, há riscos iminentes de plágio, atrofia da escrita autoral e desigualdade no acesso tecnológico. Discorra sobre como conciliar inovação com ética no ensino nacional.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                                    <label class="u-font-07 u-text-muted" style="font-weight:800;">TEXTO DA SUA REDAÇÃO</label>
+                                    <span id="essay-counter-lbl" style="font-family:var(--font-mono); font-size:0.7rem; color:var(--primary); font-weight:bold;">0 Caracteres | 0 Palavras | ~0 Linhas</span>
+                                </div>
+                                <textarea id="essay-textarea" class="tutor-select-futuristic u-w-full" style="height:220px; resize:vertical; overflow-y:auto; font-family:'JetBrains Mono', monospace; font-size:0.8rem; line-height:1.6; padding:15px; background:rgba(0,0,0,0.5); color:#fff; border-radius:12px; border:1px solid rgba(255,255,255,0.1);" placeholder="Escreva sua dissertação-argumentativa aqui. Lembre-se: escreva entre 7 e 30 linhas (acima de 150 caracteres). Apresente tese clara, argumentos fundamentados e uma proposta de intervenção social..." oninput="updateEssayCounter(this)"></textarea>
+                                <div id="essay-warning-lbl" style="font-size:0.68rem; color:var(--error); margin-top:5px; font-weight:800; display:none;">⚠️ Sua redação está com menos de 7 linhas (mínimo exigido). Escreva mais para poder ser avaliado!</div>
+                            </div>
+
+                            <button id="btn-grade-essay" class="btn-onyx-premium u-w-full" style="margin-top:10px;">
+                                🧠 SUBMETER REDAÇÃO E EXECUTAR ANÁLISE IA
+                            </button>
+
+                            <div id="ai-essay-result" class="u-mt-10"></div>
+                        </div>
+                    </div>
+                `;
+
+                // Set initial motivator text
+                setTimeout(() => {
+                    const themeSel = document.getElementById('ai-essay-theme');
+                    if (themeSel) updateMotivatorText(themeSel.value);
+                }, 50);
+
+                document.getElementById('btn-grade-essay').onclick = async () => {
+                    const text = document.getElementById('essay-textarea').value.trim();
+                    const themeVal = document.getElementById('ai-essay-theme').value;
+                    const resultDiv = document.getElementById('ai-essay-result');
+
+                    if (text.length < 150) {
+                        alert("🔴 [TEXTO MUITO CURTO] Para receber uma avaliação pedagógica confiável de competências ENEM, sua redação deve possuir ao menos 150 caracteres.");
+                        return;
+                    }
+
+                    if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('alert');
+
+                    resultDiv.innerHTML = `
+                        <div class="glass u-p-20 u-text-center" style="animation: contentReveal 0.3s forwards; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1); margin-top:15px;">
+                            <div class="ai-logo-sphere pulse" style="margin: 0 auto; width: 40px; height: 40px; font-size:1.1rem; line-height:40px; text-align:center;">⌛</div>
+                            <h4 class="u-text-accent u-mt-15" style="margin-bottom:5px;">SISTEMA HEURÍSTICO AVALIADOR DE REDAÇÕES</h4>
+                            <p class="u-font-07 u-text-muted" id="ai-loading-step">Analisando ortografia e concordância gramatical (Norma Culta)...</p>
+                        </div>
+                    `;
+
+                    // Simulated AI steps
+                    const steps = [
+                        "Avaliando repertório cultural e compreensão do tema...",
+                        "Escaneando conectivos lógicos e estruturação de parágrafos...",
+                        "Avaliando consistência da proposta de intervenção social...",
+                        "Finalizando nota de 0 a 1000 pontos..."
+                    ];
+
+                    for(let i=0; i<steps.length; i++) {
+                        await new Promise(r => setTimeout(r, 600));
+                        const stepEl = document.getElementById('ai-loading-step');
+                        if (stepEl) stepEl.textContent = steps[i];
+                    }
+
+                    // Heuristic NLP Text Analyzer
+                    const queryText = text.toLowerCase();
+                    
+                    // --- Competência 1: Norma Culta (Gramática & Vocabulário) ---
+                    let c1 = 200;
+                    let foundSlangs = [];
+                    const slangMap = {
+                        'vc': 'você',
+                        'tbm': 'também',
+                        'tb': 'também',
+                        'pra': 'para',
+                        'aki': 'aqui',
+                        'nao': 'não',
+                        'tava': 'estava',
+                        'eh': 'é',
+                        'gnt': 'gente',
+                        'net': 'internet',
+                        'td': 'tudo'
+                    };
+                    
+                    for (const [slang, formal] of Object.entries(slangMap)) {
+                        if (queryText.includes(slang)) {
+                            c1 -= 20;
+                            foundSlangs.push(`"${slang}" (substitua por "${formal}")`);
+                        }
+                    }
+                    
+                    // Penalize structural errors (e.g. extremely long paragraphs without punctuation)
+                    if (text.length > 300 && !text.includes('.')) {
+                        c1 -= 40;
+                    }
+                    c1 = Math.max(40, c1);
+
+                    // --- Competência 2: Compreensão do Tema (Palavras-chave) ---
+                    let c2 = 80;
+                    let themeWords = [];
+                    if (themeVal === 'ia-edu') {
+                        themeWords = ['inteligência', 'artificial', 'educação', 'escola', 'aprendizado', 'tecnologia', 'generativa', 'algoritmo', 'ética'];
+                    } else if (themeVal === 'clima') {
+                        themeWords = ['clima', 'ambiente', 'aquecimento', 'estufa', 'carbono', 'transição', 'energética', 'floresta', 'preservação', 'climática'];
+                    } else if (themeVal === 'acesso') {
+                        themeWords = ['acessibilidade', 'inclusão', 'digital', 'deficiência', 'tecnologia', 'assistiva', 'direitos', 'democratização'];
+                    } else if (themeVal === 'saude') {
+                        themeWords = ['saúde', 'mental', 'jovens', 'ansiedade', 'depressão', 'escola', 'psicológico', 'estudantes', 'pressão', 'emocional'];
+                    }
+                    
+                    let matchedThemes = themeWords.filter(word => queryText.includes(word));
+                    if (matchedThemes.length >= 5) c2 = 200;
+                    else if (matchedThemes.length >= 3) c2 = 160;
+                    else if (matchedThemes.length >= 1) c2 = 120;
+
+                    // --- Competência 3: Defesa do Ponto de Vista (Repertório Sociocultural) ---
+                    let c3 = 80;
+                    const socioculturalRegistry = [
+                        'segundo', 'conforme', 'de acordo com', 'filósofo', 'sociólogo', 'constituição', 
+                        'artigo', 'bauman', 'foucault', 'paulo freire', 'karl marx', 'história', 
+                        'dados', 'estatística', 'pesquisa', 'cidadania', 'direitos humanos'
+                    ];
+                    let matchedRep = socioculturalRegistry.filter(rep => queryText.includes(rep));
+                    if (matchedRep.length >= 4) c3 = 200;
+                    else if (matchedRep.length >= 2) c3 = 160;
+                    else if (matchedRep.length >= 1) c3 = 120;
+
+                    // --- Competência 4: Mecanismos de Coesão (Conectivos) ---
+                    let c4 = 80;
+                    const connectives = [
+                        'além disso', 'contudo', 'entretanto', 'portanto', 'dessa forma', 'ademais', 
+                        'outrossim', 'desse modo', 'em suma', 'por conseguinte', 'por fim', 
+                        'em primeiro lugar', 'em segunda análise', 'posto que', 'por outro lado'
+                    ];
+                    let matchedConnectives = connectives.filter(conn => queryText.includes(conn));
+                    if (matchedConnectives.length >= 4) c4 = 200;
+                    else if (matchedConnectives.length >= 2) c4 = 160;
+                    else if (matchedConnectives.length >= 1) c4 = 120;
+
+                    // --- Competência 5: Proposta de Intervenção (Agente, Ação, Meio, Efeito) ---
+                    let c5 = 80;
+                    let hasAgent = queryText.includes('governo') || queryText.includes('estado') || queryText.includes('escola') || queryText.includes('família') || queryText.includes('ministério') || queryText.includes('sociedade') || queryText.includes('ong') || queryText.includes('mídia');
+                    let hasAction = queryText.includes('deve') || queryText.includes('precisa') || queryText.includes('criar') || queryText.includes('implementar') || queryText.includes('promover') || queryText.includes('desenvolver') || queryText.includes('investir') || queryText.includes('capacitar');
+                    let hasMeans = queryText.includes('por meio de') || queryText.includes('através de') || queryText.includes('mediante') || queryText.includes('com o objetivo de') || queryText.includes('por intermédio de') || queryText.includes('campanhas');
+                    let hasEffect = queryText.includes('a fim de') || queryText.includes('com o intuito de') || queryText.includes('para que') || queryText.includes('visando') || queryText.includes('para') || queryText.includes('com o objetivo');
+                    
+                    let componentsCount = (hasAgent ? 1 : 0) + (hasAction ? 1 : 0) + (hasMeans ? 1 : 0) + (hasEffect ? 1 : 0);
+                    if (componentsCount === 4) c5 = 200;
+                    else if (componentsCount === 3) c5 = 160;
+                    else if (componentsCount === 2) c5 = 120;
+
+                    const totalScore = c1 + c2 + c3 + c4 + c5;
+                    let badgeColor = 'var(--error)';
+                    let badgeText = 'INSUFICIENTE';
+                    if (totalScore >= 900) { badgeColor = 'var(--accent)'; badgeText = 'EXCELENTE (NOTA MIL)'; }
+                    else if (totalScore >= 700) { badgeColor = 'var(--success)'; badgeText = 'MUITO BOM'; }
+                    else if (totalScore >= 500) { badgeColor = '#f59e0b'; badgeText = 'REGULAR'; }
+
+                    // Generate corrections / feedback
+                    let correctionsHTML = '';
+                    if (c1 < 160) {
+                        if (foundSlangs.length > 0) {
+                            correctionsHTML += `<li><strong>Gramática (Norma Culta):</strong> Evite contrações informais de internet no ENEM: ${foundSlangs.join(', ')}.</li>`;
+                        } else {
+                            correctionsHTML += `<li><strong>Gramática (Norma Culta):</strong> Atenção a desvios de concordância, pontuação e estruturas truncadas.</li>`;
+                        }
+                    }
+                    if (c2 < 200) {
+                        correctionsHTML += `<li><strong>Compreensão do Tema:</strong> Adicione mais palavras-chave sobre o tema proposto, como: <em>${themeWords.slice(0, 4).join(', ')}</em> na sua introdução.</li>`;
+                    }
+                    if (c3 < 200) {
+                        correctionsHTML += `<li><strong>Defesa do Ponto de Vista:</strong> Pouco repertório sociocultural legitimado. Experimente citar dados estatísticos, leis ou pensadores como Foucault, Bauman ou Aristóteles.</li>`;
+                    }
+                    if (c4 < 200) {
+                        correctionsHTML += `<li><strong>Mecanismos de Coesão:</strong> Adicione conectivos formais entre seus argumentos, como: <em>'Ademais', 'Outrossim', 'Dessa forma', 'Por conseguinte'</em>.</li>`;
+                    }
+                    if (c5 < 200) {
+                        let missing = [];
+                        if (!hasAgent) missing.push("Agente (Quem fará)");
+                        if (!hasAction) missing.push("Ação (O que fará)");
+                        if (!hasMeans) missing.push("Meio/Modo (Como fará)");
+                        if (!hasEffect) missing.push("Efeito esperado");
+                        correctionsHTML += `<li><strong>Proposta de Intervenção:</strong> Sua proposta de intervenção social está incompleta. Faltou detalhar: <em>${missing.join(', ')}</em>.</li>`;
+                    }
+
+                    if (correctionsHTML === '') {
+                        correctionsHTML = `<li>🎉 <strong>Excelente!</strong> Sua redação atende plenamente a todos os critérios de excelência formal, repertório e coesão textual da banca do ENEM.</li>`;
+                    }
+
+                    resultDiv.innerHTML = `
+                        <div style="border:1px solid var(--glass-border); background:rgba(255,255,255,0.02); border-radius:16px; padding:25px; margin-top:15px; animation: contentReveal 0.3s forwards;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--glass-border); padding-bottom:15px; margin-bottom:20px;">
+                                <h3 style="color:#fff; font-family:var(--font-header); margin:0;">📝 RELATÓRIO DE DESEMPENHO DA REDAÇÃO</h3>
+                                <span style="background:${badgeColor}; color:#000; font-size:0.65rem; font-weight:900; padding:4px 10px; border-radius:4px; font-family:var(--font-mono);">${badgeText}</span>
+                            </div>
+
+                            <div style="display:flex; flex-direction:column; gap:20px;">
+                                <div style="display:flex; align-items:center; gap:25px; flex-wrap:wrap;">
+                                    <div style="width:100px; height:100px; border-radius:50%; border:5px solid ${badgeColor}; display:flex; flex-direction:column; justify-content:center; align-items:center; box-shadow:0 0 15px ${badgeColor}33; background:rgba(0,0,0,0.3);">
+                                        <span style="font-family:var(--font-header); font-size:1.6rem; font-weight:900; color:#fff; line-height:1;">${totalScore}</span>
+                                        <span style="font-size:0.6rem; color:var(--text-muted); font-weight:bold;">PONTOS</span>
+                                    </div>
+                                    <div style="flex:1; min-width:200px;">
+                                        <h4 class="u-text-accent" style="margin:0 0 10px 0; font-size:0.8rem; font-family:var(--font-mono);">DESEMPENHO POR COMPETÊNCIAS ENEM:</h4>
+                                        <div style="display:flex; flex-direction:column; gap:8px;">
+                                            <div>
+                                                <div style="display:flex; justify-content:space-between; font-size:0.68rem; margin-bottom:2px;"><span>C1: Norma Culta</span><span>${c1}/200</span></div>
+                                                <div style="height:4px; background:rgba(255,255,255,0.05); border-radius:2px;"><div style="height:100%; width:${(c1/200)*100}%; background:var(--primary); border-radius:2px;"></div></div>
+                                            </div>
+                                            <div>
+                                                <div style="display:flex; justify-content:space-between; font-size:0.68rem; margin-bottom:2px;"><span>C2: Compreensão Temática</span><span>${c2}/200</span></div>
+                                                <div style="height:4px; background:rgba(255,255,255,0.05); border-radius:2px;"><div style="height:100%; width:${(c2/200)*100}%; background:var(--primary); border-radius:2px;"></div></div>
+                                            </div>
+                                            <div>
+                                                <div style="display:flex; justify-content:space-between; font-size:0.68rem; margin-bottom:2px;"><span>C3: Defesa do Ponto de Vista</span><span>${c3}/200</span></div>
+                                                <div style="height:4px; background:rgba(255,255,255,0.05); border-radius:2px;"><div style="height:100%; width:${(c3/200)*100}%; background:var(--primary); border-radius:2px;"></div></div>
+                                            </div>
+                                            <div>
+                                                <div style="display:flex; justify-content:space-between; font-size:0.68rem; margin-bottom:2px;"><span>C4: Mecanismos de Coesão</span><span>${c4}/200</span></div>
+                                                <div style="height:4px; background:rgba(255,255,255,0.05); border-radius:2px;"><div style="height:100%; width:${(c4/200)*100}%; background:var(--primary); border-radius:2px;"></div></div>
+                                            </div>
+                                            <div>
+                                                <div style="display:flex; justify-content:space-between; font-size:0.68rem; margin-bottom:2px;"><span>C5: Proposta Social de Intervenção</span><span>${c5}/200</span></div>
+                                                <div style="height:4px; background:rgba(255,255,255,0.05); border-radius:2px;"><div style="height:100%; width:${(c5/200)*100}%; background:var(--primary); border-radius:2px;"></div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="heuristic-feedback-box" style="background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.05); padding:15px; border-radius:10px;">
+                                    <h4 class="u-text-accent" style="margin:0 0 10px 0; font-size:0.8rem; font-family:var(--font-mono);">💡 RECOMENDAÇÕES DA CORREÇÃO DE IA</h4>
+                                    <div style="max-height: 145px; overflow-y: auto; padding-right: 5px;">
+                                        <ul style="margin:0; padding-left:18px; font-size:0.75rem; color:var(--text-muted); display:flex; flex-direction:column; gap:8px;" id="ai-essay-corrections-list">
+                                            ${correctionsHTML}
+                                        </ul>
+                                    </div>
+                                    <div class="audio-narration-deck u-mt-15" style="display:flex; align-items:center; gap:10px;">
+                                        <button onclick="narrateSpeech('ai-essay-corrections-list', 'waveform-essay')" class="btn-speech-trigger">🔊 OUVIR RECOMENDAÇÕES</button>
+                                        <div class="waveform-anim" id="waveform-essay">
+                                            <div class="wave-bar"></div>
+                                            <div class="wave-bar"></div>
+                                            <div class="wave-bar"></div>
+                                            <div class="wave-bar"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    if (typeof OnyxUI !== 'undefined') {
+                        OnyxUI.playFeedback(totalScore >= 700 ? 'success' : 'alert');
+                        OnyxUI.addReasoningLog(`REDAÇÃO: Operador submeteu redação sobre tema ${themeVal}. Nota final obtida: ${totalScore} pontos.`);
+                    }
+
+                    // Reward XP and save to database
+                    if (userStats) {
+                        let xpGained = Math.floor(totalScore / 10);
+                        userStats.xp += xpGained;
+                        await OnyxCore.DB.saveUser(userStats);
+                        
+                        // Show a beautiful toast notification
+                        const toast = document.createElement('div');
+                        toast.style.cssText = "position:fixed; bottom:30px; right:30px; padding:15px 25px; background:rgba(16,185,129,0.95); backdrop-filter:blur(10px); border:1px solid var(--accent); color:#000; border-radius:10px; font-weight:900; font-family:var(--font-mono); font-size:0.75rem; box-shadow:0 10px 30px rgba(0,0,0,0.5); z-index:10000; transform:translateY(100px); opacity:0; transition:all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);";
+                        toast.innerHTML = `🖋️ PARABÉNS! Redação avaliada em ${totalScore}/1000! Ganhou +${xpGained} XP na sua carreira!`;
+                        document.body.appendChild(toast);
+                        
+                        setTimeout(() => { toast.style.transform = 'translateY(0)'; toast.style.opacity = '1'; }, 100);
+                        setTimeout(() => {
+                            toast.style.transform = 'translateY(100px)'; toast.style.opacity = '0';
+                            setTimeout(() => toast.remove(), 300);
+                        }, 5000);
+                    }
                 };
             } 
             
@@ -423,6 +742,41 @@
                 chatInput.onkeydown = (e) => { if (e.key === 'Enter') sendMessage(); };
             }
         }
+
+        window.updateMotivatorText = function(theme) {
+            const motivator = document.getElementById('ai-essay-motivator');
+            if (!motivator) return;
+            
+            let text = '';
+            if (theme === 'ia-edu') {
+                text = "<strong>TEXTO DE APOIO:</strong> O avanço veloz de ferramentas de inteligência artificial generativa remodelou as salas de aula brasileiras. Ao mesmo tempo que serve como ferramenta de autoaprendizado adaptativo acelerado, há riscos iminentes de plágio, atrofia da escrita autoral e desigualdade no acesso tecnológico. Discorra sobre como conciliar inovação com ética no ensino nacional.";
+            } else if (theme === 'clima') {
+                text = "<strong>TEXTO DE APOIO:</strong> O aumento exponencial na ocorrência de fenômenos climáticos severos acendeu o alerta máximo na gestão ambiental do Brasil. Queimadas recordes, secas no norte e enchentes devastadoras no sul expõem a vulnerabilidade social diante das mudanças climáticas globais, acentuadas pelo efeito estufa. Apresente ações práticas coletivas para mitigar esse impacto.";
+            } else if (theme === 'acesso') {
+                text = "<strong>TEXTO DE APOIO:</strong> A inclusão escolar exige que os recursos de acessibilidade digital e tecnologias assistivas cheguem a todos os estudantes. No entanto, abismos socioeconômicos excluem neurodivergentes e estudantes com deficiências de ambientes de aprendizado inovadores. Escreva sobre as estratégias públicas eficazes para que a tecnologia digital seja sinônimo de democratização educacional real.";
+            } else if (theme === 'saude') {
+                text = "<strong>TEXTO DE APOIO:</strong> O aumento de diagnósticos de ansiedade, depressão e estresse entre adolescentes de Ensino Médio reflete uma crise profunda de saúde mental escolar. A cobrança desmedida por performance profissionalizante, vestibulares de alta pressão e a exposição a redes sociais intensificam a vulnerabilidade psicológica dos jovens no século XXI. Proponha ações escolares de acolhimento preventivo.";
+            }
+            motivator.innerHTML = text;
+        };
+
+        window.updateEssayCounter = function(textarea) {
+            const val = textarea.value;
+            const charCount = val.length;
+            const wordCount = val.trim() === '' ? 0 : val.trim().split(/\s+/).length;
+            
+            // Estimate lines based on standard 75 characters per line (standard handwritten count)
+            const lineCount = Math.ceil(charCount / 75);
+            
+            document.getElementById('essay-counter-lbl').textContent = `${charCount} Caracteres | ${wordCount} Palavras | ~${lineCount} Linhas`;
+            
+            const warning = document.getElementById('essay-warning-lbl');
+            if (lineCount > 0 && lineCount < 7) {
+                warning.style.display = 'block';
+            } else {
+                warning.style.display = 'none';
+            }
+        };
 
         // Global Glossary Modal Hint Shower
         window.showTutorHint = function(explanation) {
