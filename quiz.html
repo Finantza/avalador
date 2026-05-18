@@ -493,23 +493,24 @@
                 } else {
                     stats.xp = (stats.xp || 0) + totalXPGained;
                     
+                    // Update Bounties (Added to stats.xp BEFORE level-up check)
+                    if (stats.bounties) {
+                        const q = stats.bounties.quests.find(x => x.type === 'play_subject' && x.target === subject && !x.done);
+                        if (q) {
+                            q.current++;
+                            if (q.current >= q.amount) {
+                                q.done = true;
+                                stats.xp += q.reward;
+                            }
+                        }
+                    }
+
+                    // Level Up calculations (Includes both mission and daily bounty XP rewards)
                     let nextXP = (stats.level || 1) * 100;
                     while (stats.xp >= nextXP) {
                         stats.level++;
                         stats.xp -= nextXP;
                         nextXP = stats.level * 100;
-                    }
-                }
-                
-                // Update Bounties
-                if (!failed && stats.bounties) {
-                    const q = stats.bounties.quests.find(x => x.type === 'play_subject' && x.target === subject && !x.done);
-                    if (q) {
-                        q.current++;
-                        if (q.current >= q.amount) {
-                            q.done = true;
-                            stats.xp += q.reward;
-                        }
                     }
                 }
 

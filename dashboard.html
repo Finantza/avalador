@@ -22,6 +22,7 @@
                 <a href="#" class="nav-item" id="btn-show-ai-hub">🤖 <span>Portal de IA</span></a>
                 <a href="#" class="nav-item" id="btn-show-ranking">🏆 <span>Classificação</span></a>
                 <a href="#" class="nav-item" id="btn-show-profile">👤 <span>Perfil</span></a>
+                <a href="#" class="nav-item" id="btn-show-glossary">📖 <span>Glossário</span></a>
                 <a href="#" class="nav-item" id="btn-logout">🚪 <span>Desconectar</span></a>
             </nav>
             <div class="glass u-p-20 u-mt-20" id="online-users-panel">
@@ -387,6 +388,29 @@
                 }, 10);
             }
 
+            async function addGlobalXP(xpAmount) {
+                if (!userStats) return;
+                userStats.xp = (userStats.xp || 0) + xpAmount;
+                
+                let nextXP = (userStats.level || 1) * 100;
+                let leveledUp = false;
+                while (userStats.xp >= nextXP) {
+                    userStats.level++;
+                    userStats.xp -= nextXP;
+                    nextXP = userStats.level * 100;
+                    leveledUp = true;
+                }
+                
+                await OnyxCore.DB.saveUser(userStats);
+                renderLeveling();
+                updateLocks();
+                
+                if (leveledUp && typeof OnyxUI !== 'undefined') {
+                    OnyxUI.playFeedback('success');
+                    OnyxUI.addReasoningLog(`PROMOÇÃO: Operador ${userStats.id.toUpperCase()} promovido ao NÍVEL ${userStats.level}!`);
+                }
+            }
+
             async function finishBattle() {
                 const win = battleScore >= 2;
                 let xp = win ? 200 : 50;
@@ -404,9 +428,7 @@
                     }
                 }
 
-                userStats.xp += xp;
-                await OnyxCore.DB.saveUser(userStats);
-                renderLeveling();
+                await addGlobalXP(xp);
 
                 const resultHTML = `
                     <div class="u-p-20 u-text-center">
@@ -437,6 +459,16 @@
                 roleEl.innerHTML = userRole === 'gestor' 
                     ? `<span style="color:var(--accent); font-weight:800;">💼 GESTOR DO SISTEMA</span>` 
                     : `<span style="color:var(--primary); font-weight:800;">🎒 ESTUDANTE</span>`;
+            }
+
+            // Centralized profile permission toggler
+            const btnAcademic = document.getElementById('btn-show-academic');
+            if (btnAcademic) {
+                if (userRole === 'gestor') {
+                    btnAcademic.style.display = 'flex';
+                } else {
+                    btnAcademic.style.display = 'none';
+                }
             }
             
             renderSubjectGrid();
@@ -799,6 +831,92 @@
             `;
             openOverlay("CLASSIFICAÇÃO GLOBAL", tableHTML);
         }
+
+        function renderGlossary() {
+            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
+            
+            const terms = OnyxCore.Tutor.dictionary;
+            
+            function getCategory(jargon) {
+                const pedagogical = ["BNCC", "Itinerário Formativo", "ENEM", "Empreendedorismo", "Acessibilidade"];
+                const mathematics = ["Álgebra", "Geometria", "Estatística"];
+                const sciences = ["Termodinâmica", "Fotossíntese", "Mitocôndria", "DNA", "Globalização"];
+                if (pedagogical.includes(jargon)) return { label: "Pedagógico", emoji: "🏫", color: "var(--accent)" };
+                if (mathematics.includes(jargon)) return { label: "Matemática", emoji: "📐", color: "var(--primary)" };
+                if (sciences.includes(jargon)) return { label: "Ciências & Sociedade", emoji: "🧬", color: "#c084fc" };
+                return { label: "Computação & Tech", emoji: "💻", color: "var(--warning)" };
+            }
+
+            const glossaryHTML = `
+                <div class="u-p-10" style="max-width: 750px; margin: 0 auto;">
+                    <p class="u-text-muted u-mb-20 u-font-09 u-text-center">
+                        Explore o dicionário explicativo do <strong>Onyx Tutor Inteligente</strong>. Encontre conceitos pedagógicos, científicos e de tecnologia explicados de forma simples e intuitiva.
+                    </p>
+                    
+                    <!-- Search Input Wrapper -->
+                    <div class="u-mb-25" style="position: relative;">
+                        <input type="text" id="glossary-search-input" class="u-w-full" style="background: rgba(0,0,0,0.6); border: 1px solid var(--glass-border); border-radius: 12px; color: #fff; padding: 14px 20px 14px 45px; font-size: 0.95rem; outline: none; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.25);" placeholder="Buscar termo ou conceito pedagógico...">
+                        <span style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%); font-size: 1.1rem; opacity: 0.5;">🔍</span>
+                    </div>
+
+                    <!-- Glossary Scroll List -->
+                    <div id="glossary-list-container" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; padding-right: 5px;">
+                        ${Object.entries(terms).map(([jargon, definition]) => {
+                            const cat = getCategory(jargon);
+                            const cleanDef = definition.includes('(') ? definition.substring(definition.indexOf('(') + 1, definition.lastIndexOf(')')) : definition;
+                            return `
+                                <div class="glass glossary-card" data-term="${jargon.toLowerCase()}" data-def="${definition.toLowerCase()}" style="border: 1px solid var(--glass-border); border-left: 4px solid ${cat.color}; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 10px; transition: all 0.2s;">
+                                    <div class="u-flex-between">
+                                        <div class="u-flex-center-gap-10">
+                                            <span style="font-size: 1.1rem;">${cat.emoji}</span>
+                                            <h3 style="margin: 0; font-family: var(--font-header); font-size: 1.15rem; color: #fff; letter-spacing: -0.3px;">${jargon}</h3>
+                                        </div>
+                                        <div class="u-flex-center-gap-10">
+                                            <span class="u-font-06" style="background: ${cat.color}20; color: ${cat.color}; border: 1px solid ${cat.color}40; padding: 4px 10px; border-radius: 20px; font-weight: 800; font-family: var(--font-mono); text-transform: uppercase;">${cat.label}</span>
+                                            <button onclick="window.speakGlossaryTerm('${jargon}', '${cleanDef.replace(/'/g, "\\'")}')" class="btn-speak-term" style="background: transparent; border: none; color: var(--primary); cursor: pointer; font-size: 1.1rem; padding: 4px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s;" title="Ouvir termo e definição">🔊</button>
+                                        </div>
+                                    </div>
+                                    <p class="u-text-muted u-font-08" style="margin: 0; line-height: 1.6; color: rgba(255,255,255,0.85);">${cleanDef}</p>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+            
+            openOverlay("📖 GLOSSÁRIO COGNITIVO ONYX", glossaryHTML);
+
+            // Add Search Event Listener
+            const searchInput = document.getElementById('glossary-search-input');
+            const cards = document.querySelectorAll('.glossary-card');
+            if (searchInput) {
+                searchInput.addEventListener('input', () => {
+                    const query = searchInput.value.toLowerCase().trim();
+                    cards.forEach(card => {
+                        const term = card.dataset.term;
+                        const def = card.dataset.def;
+                        if (term.includes(query) || def.includes(query)) {
+                            card.style.display = 'flex';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            }
+        }
+
+        // Global function for Text-to-Speech inside the glossary
+        window.speakGlossaryTerm = (term, definition) => {
+            if (!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            
+            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
+            
+            const utterance = new SpeechSynthesisUtterance(`${term}. Significa: ${definition}`);
+            utterance.lang = 'pt-BR';
+            utterance.rate = 1.0;
+            window.speechSynthesis.speak(utterance);
+        };
 
         function generateRadarChart(data) {
             const size = 300;
@@ -1694,6 +1812,13 @@
             renderProfile();
         };
 
+        document.getElementById('btn-show-glossary').onclick = (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            document.getElementById('btn-show-glossary').classList.add('active');
+            renderGlossary();
+        };
+
         window.showTutorHint = (hintText) => {
             if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
             openOverlay("💡 APRENDIZAGEM POR COMPETÊNCIAS - BNCC", `
@@ -1772,10 +1897,8 @@
                     if (result.correct) {
                         // Transfer Ultimate points to Onyx Global System
                         const earnedXP = result.xpEarned || (challenge.points * 2);
-                        userStats.xp += earnedXP;
                         
                         if (typeof OnyxUI !== 'undefined') {
-                            OnyxUI.playFeedback('success');
                             OnyxUI.showXPGain(earnedXP);
                         }
                         
@@ -1787,9 +1910,7 @@
                             </div>
                         `);
                         
-                        await OnyxCore.DB.saveUser(userStats);
-                        renderLeveling();
-                        updateLocks();
+                        await addGlobalXP(earnedXP);
                     } else {
                         if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
                         openOverlay("FALHA DE COMPUTAÇÃO", `
@@ -1879,29 +2000,21 @@
                                 const isCorrect = idx === q.correct;
                                 
                                 if (isCorrect) {
-                                    userStats.xp += 50;
                                     if (typeof OnyxUI !== 'undefined') {
-                                        OnyxUI.playFeedback('success');
                                         OnyxUI.showXPGain(50);
                                     }
                                     openOverlay("SUCESSO!", `<div class="u-p-20 u-text-primary u-text-center"><h1 class="u-font-header">VITÓRIA</h1><p class="u-mt-10">Você ganhou 50 XP.</p></div>`);
+                                    await addGlobalXP(50);
                                 } else {
-                                    userStats.xp = Math.max(0, userStats.xp - 25);
                                     if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
                                     openOverlay("FALHA!", `<div class="u-p-20 u-text-center" style="color:var(--error);"><h1 class="u-font-header">DERROTA</h1><p class="u-mt-10">Você perdeu 25 XP.</p></div>`);
+                                    
+                                    // Handle penalty securely
+                                    userStats.xp = Math.max(0, (userStats.xp || 0) - 25);
+                                    await OnyxCore.DB.saveUser(userStats);
+                                    renderLeveling();
+                                    updateLocks();
                                 }
-                                
-                                // Level up check
-                                const nextXP = userStats.level * 100;
-                                if (userStats.xp >= nextXP) {
-                                    userStats.level++;
-                                    userStats.xp = 0;
-                                    if (typeof OnyxUI !== 'undefined') OnyxUI.showLevelUpAnimation(userStats.level);
-                                }
-                                
-                                await OnyxCore.DB.saveUser(userStats);
-                                renderLeveling();
-                                updateLocks();
                             };
                         });
                     };

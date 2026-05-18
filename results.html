@@ -87,7 +87,7 @@
 
             const stats = await OnyxCore.DB.getUser(user);
             const history = await OnyxCore.DB.getHistory(user);
-            const lastMission = history[history.length - 1];
+            const lastMission = history[0];
 
             if (!lastMission) { location.href = 'dashboard.html'; return; }
 

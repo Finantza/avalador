@@ -78,7 +78,8 @@ body {
 .ai-deck-wrapper {
     display: grid;
     grid-template-columns: 280px 1fr;
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
     box-sizing: border-box;
 }
 
@@ -182,7 +183,7 @@ body {
     gap: 30px;
     box-sizing: border-box;
     overflow-y: auto;
-    max-height: 100vh;
+    height: 100vh;
 }
 
 /* Header Info Block */
@@ -508,6 +509,8 @@ body {
     .ai-deck-wrapper {
         grid-template-columns: 1fr;
         grid-template-rows: auto 1fr;
+        height: auto;
+        overflow: visible;
     }
     .ai-sidebar {
         border-right: none;
@@ -540,7 +543,8 @@ body {
     }
     .ai-viewport {
         padding: 20px;
-        max-height: none;
+        height: auto;
+        overflow-y: visible;
     }
     .u-grid-3, .u-grid-2 {
         grid-template-columns: 1fr;
