@@ -695,10 +695,122 @@
             if (window.speechSynthesis) window.speechSynthesis.cancel();
         };
 
+        // Custom High-Tech Toast Notification Component
+        function showNotification(title, message, type = 'primary') {
+            const colors = {
+                primary: 'var(--primary)',
+                accent: 'var(--accent)',
+                warning: 'var(--warning)',
+                error: '#ef4444'
+            };
+            
+            const toast = document.createElement('div');
+            toast.className = 'glass';
+            toast.style.position = 'fixed';
+            toast.style.bottom = '30px';
+            toast.style.right = '30px';
+            toast.style.zIndex = '9999';
+            toast.style.border = `1px solid var(--glass-border)`;
+            toast.style.borderLeft = `4px solid ${colors[type] || colors.primary}`;
+            toast.style.borderRadius = '12px';
+            toast.style.padding = '16px 20px';
+            toast.style.maxWidth = '350px';
+            toast.style.background = 'rgba(10, 20, 35, 0.92)';
+            toast.style.boxShadow = '0 10px 30px rgba(0,0,0,0.5)';
+            toast.style.color = '#fff';
+            toast.style.display = 'flex';
+            toast.style.flexDirection = 'column';
+            toast.style.gap = '5px';
+            toast.style.transform = 'translateY(100px)';
+            toast.style.opacity = '0';
+            toast.style.transition = 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            toast.style.backdropFilter = 'blur(15px)';
+            toast.style.webkitBackdropFilter = 'blur(15px)';
+            
+            toast.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-family: var(--font-header); font-size: 0.85rem; color: ${colors[type]}">
+                    🤖 ${title}
+                </div>
+                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.85); line-height: 1.4;">
+                    ${message}
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Slide Up & Fade In
+            setTimeout(() => {
+                toast.style.transform = 'translateY(0)';
+                toast.style.opacity = '1';
+            }, 100);
+            
+            // Remove with Slide Down after 6 seconds
+            setTimeout(() => {
+                toast.style.transform = 'translateY(100px)';
+                toast.style.opacity = '0';
+                setTimeout(() => {
+                    toast.remove();
+                }, 500);
+            }, 6000);
+        }
+
+        // Automated Background Crawler Engine
+        function runAutoCrawl() {
+            const defaults = OnyxCore.Tutor.dictionary;
+            
+            // Filter terms that are NOT deleted, NOT default, and NOT already custom
+            const availableToCrawl = crawlerSeedPool.filter(item => {
+                const isDeleted = deletedTerms.includes(item.jargon);
+                const isDefault = defaults[item.jargon] !== undefined;
+                const isCustom = customTerms[item.jargon] !== undefined;
+                return !isDeleted && !isDefault && !isCustom;
+            });
+
+            if (availableToCrawl.length === 0) {
+                // All terms are already synchronized, exit silently
+                return;
+            }
+
+            // Pick 1 or 2 terms to import automatically
+            const countToImport = Math.random() > 0.5 ? 2 : 1;
+            const toImport = availableToCrawl.sort(() => 0.5 - Math.random()).slice(0, countToImport);
+
+            toImport.forEach(item => {
+                customTerms[item.jargon] = item.definition;
+                
+                // Keep categories arrays synchronized
+                if (item.category === 'pedagogical' && !pedagogical.includes(item.jargon)) pedagogical.push(item.jargon);
+                else if (item.category === 'mathematics' && !mathematics.includes(item.jargon)) mathematics.push(item.jargon);
+                else if (item.category === 'sciences' && !sciences.includes(item.jargon)) sciences.push(item.jargon);
+            });
+
+            // Save custom terms to storage
+            localStorage.setItem('onyx_custom_glossary', JSON.stringify(customTerms));
+
+            // Reload dictionary and UI elements
+            initDictionary();
+            calculateBadges();
+            renderGlossaryContent();
+
+            // Play light cyber dynamic feedback sound
+            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
+
+            // Trigger beautiful elastic toast notification
+            const termNames = toImport.map(x => `<strong>+ ${x.jargon}</strong>`).join(', ');
+            showNotification(
+                "CONEXÃO AUTÔNOMA MEC",
+                `Varredura concluída! Sincronizamos novos conceitos da internet importantes para o seu itinerário formativo: ${termNames}.`,
+                "primary"
+            );
+        }
+
         // App Initial Boot
         initDictionary();
         calculateBadges();
         renderGlossaryContent();
+
+        // Boot automated background crawler after 3 seconds of navigation
+        setTimeout(runAutoCrawl, 3000);
     </script>
 </body>
 </html>
