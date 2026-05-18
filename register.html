@@ -56,6 +56,7 @@
 
     <script src="js/onyx_ui.js"></script>
     <script src="js/onyx_core.js"></script>
+    <script src="js/onyx_db_manager.js"></script>
     <script>
         const UI = {
             status: document.getElementById('reg-status'),
@@ -64,7 +65,11 @@
         };
 
         async function init() {
-            await OnyxCore.DB.init();
+            if (window.OnyxDBManager) {
+                await window.OnyxDBManager.init();
+            } else {
+                await OnyxCore.DB.init();
+            }
         }
 
         function showMsg(msg, isError) {

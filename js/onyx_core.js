@@ -11,11 +11,12 @@ window.OnyxCore = {
             return new Promise((resolve) => {
                 const timeout = setTimeout(() => resolve(null), 3000);
                 try {
-                    // Increased version to 13 to support Cloud Sync
-                    const request = indexedDB.open('OnyxEliteDB', 13);
+                    // v14: question_bank store com índice sd (subject_difficulty)
+                    const request = indexedDB.open('OnyxEliteDB', 14);
                     request.onupgradeneeded = (e) => {
                         const db = e.target.result;
-                        console.log("[ONYX] Upgrading DB to v13...");
+                        const oldVer = e.oldVersion;
+                        console.log(`[ONYX] Upgrading DB v${oldVer} → v14...`);
                         if (!db.objectStoreNames.contains('global_stats')) {
                             db.createObjectStore('global_stats', { keyPath: 'id' });
                         }
@@ -27,6 +28,15 @@ window.OnyxCore = {
                         }
                         if (!db.objectStoreNames.contains('dynamic_questions')) {
                             db.createObjectStore('dynamic_questions', { autoIncrement: true });
+                        }
+                        // NOVO: banco persistente de questões indexado por subject+difficulty
+                        if (!db.objectStoreNames.contains('question_bank')) {
+                            const qStore = db.createObjectStore('question_bank', { autoIncrement: true });
+                            qStore.createIndex('subject', 'subject', { unique: false });
+                            qStore.createIndex('difficulty', 'difficulty', { unique: false });
+                            qStore.createIndex('sd', 'sd', { unique: false }); // "subject_difficulty"
+                            qStore.createIndex('source', 'source', { unique: false });
+                            console.log('[ONYX] Store question_bank criado com índices.');
                         }
                     };
                     request.onsuccess = (e) => {

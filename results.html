@@ -78,10 +78,15 @@
     </footer>
 
     <script src="js/onyx_core.js"></script>
+    <script src="js/onyx_db_manager.js"></script>
     <script src="js/onyx_engines.js"></script>
     <script>
         async function loadResults() {
-            await OnyxCore.DB.init();
+            if (window.OnyxDBManager) {
+                await window.OnyxDBManager.init();
+            } else {
+                await OnyxCore.DB.init();
+            }
             const user = OnyxCore.Session.getCurrentUser();
             if (!user) { location.href = 'index.html'; return; }
 

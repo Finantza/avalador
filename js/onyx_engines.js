@@ -311,6 +311,84 @@ window.OnyxEngines = {
                 explanation: "O autor destaca a contradição ('paradox') de estarmos em uma era de hiperconexão ('hyper-connection'), mas ao mesmo tempo nos sentirmos mais isolados ('isolated'), onde interações cara a cara são trocadas por toques rápidos em telas.",
                 hint: "Observe a contradição ('yet we have never been more isolated') de estar conectado eletronicamente e isolado pessoalmente.",
                 concept: "Identificação de Paradoxo"
+            },
+            {
+                q: "An API, or Application Programming Interface, acts as a contract between two software systems. It defines the methods and data formats that applications can use to communicate with each other, enabling developers to integrate services without accessing the internal source code.\n\nCom base no texto técnico em inglês, a função principal de uma API é:",
+                a: "Definir as regras de comunicação entre sistemas de software, permitindo integrações sem acesso ao código-fonte interno.",
+                d: [
+                    "Substituir completamente os bancos de dados relacionais por planilhas em nuvem.",
+                    "Criptografar o código-fonte para impedir cópias ilegais de aplicativos proprietários.",
+                    "Fornecer ao usuário final uma interface gráfica de botões e menus interativos.",
+                    "Transferir fisicamente servidores entre data centers de diferentes continentes."
+                ],
+                explanation: "O texto define API como um 'contrato' ('contract') que define métodos e formatos de dados ('methods and data formats') para que sistemas se comuniquem ('communicate') sem precisar acessar o código interno ('without accessing the internal source code').",
+                hint: "Foque na palavra 'contract' e na ideia de comunicação entre sistemas sem expor o código interno.",
+                concept: "Tech Vocabulary — API"
+            },
+            {
+                q: "Debugging is one of the most critical skills in software development. When a program behaves unexpectedly, developers must trace the execution flow, inspect variable values, and identify the root cause of the failure. A good debugger is as important as a good coder.\n\nNo contexto do desenvolvimento de software descrito no texto em inglês, 'debugging' refere-se a:",
+                a: "O processo de identificar e corrigir erros no comportamento inesperado de um programa.",
+                d: [
+                    "O ato de compilar o código-fonte para gerar um arquivo executável final distribuível.",
+                    "A instalação automática de atualizações de segurança em servidores de produção.",
+                    "A técnica de escrever testes automatizados antes de codificar qualquer funcionalidade.",
+                    "O processo de otimizar a velocidade de carregamento de páginas web com cache."
+                ],
+                explanation: "O texto explica que 'debugging' envolve rastrear o fluxo de execução ('trace the execution flow'), inspecionar variáveis ('inspect variable values') e identificar a causa raiz de uma falha ('root cause of the failure') — ou seja, encontrar e corrigir bugs.",
+                hint: "A palavra 'bug' em inglês técnico significa erro de software. 'Debug' = remover o bug.",
+                concept: "Tech Vocabulary — Debugging"
+            },
+            {
+                q: "Open source software refers to programs whose source code is publicly available for anyone to view, modify, and distribute. This collaborative model has driven innovation across the tech industry, enabling communities to build powerful tools like the Linux operating system and the Python programming language.\n\nDe acordo com o trecho em inglês, a característica central do software de código aberto (open source) é:",
+                a: "A disponibilidade pública do código-fonte, que permite que qualquer pessoa visualize, modifique e distribua o programa.",
+                d: [
+                    "A obrigatoriedade de pagamento de licença comercial para uso em empresas privadas.",
+                    "O bloqueio do código-fonte para proteger patentes registradas pelos desenvolvedores.",
+                    "A restrição de uso exclusivo para governos e instituições públicas de ensino.",
+                    "A proibição de qualquer modificação para garantir a estabilidade da versão original."
+                ],
+                explanation: "O texto define open source como programas cujo código-fonte é 'publicly available' (disponível publicamente) para qualquer um 'view, modify, and distribute' (ver, modificar e distribuir), exemplificado por Linux e Python.",
+                hint: "'Open' = aberto. 'Source' = código-fonte. Foco na liberdade de acesso e modificação.",
+                concept: "Tech Vocabulary — Open Source"
+            },
+            {
+                q: "In networking, bandwidth refers to the maximum rate of data transfer across a given path. It is commonly measured in bits per second (bps) and determines how much data can be transmitted simultaneously. Higher bandwidth allows more data to flow, resulting in faster internet connections and smoother streaming experiences.\n\nSegundo o texto técnico em inglês, 'bandwidth' (largura de banda) é melhor definido como:",
+                a: "A taxa máxima de transferência de dados em uma rede, medida em bits por segundo, que determina a quantidade de dados transmitidos simultaneamente.",
+                d: [
+                    "O espaço físico em disco rígido disponível para armazenar arquivos de vídeo em streaming.",
+                    "O número de usuários conectados simultaneamente a um servidor de autenticação.",
+                    "A frequência de ondas de rádio usada para transmitir sinais de satélite GPS.",
+                    "O protocolo de segurança que criptografa dados em redes Wi-Fi públicas."
+                ],
+                explanation: "O texto define bandwidth como 'maximum rate of data transfer' (taxa máxima de transferência de dados), medida em 'bits per second (bps)', determinando quanta informação pode ser transmitida ao mesmo tempo.",
+                hint: "'Band' = faixa; 'width' = largura. Pense na 'largura' do cano por onde passam os dados.",
+                concept: "Tech Vocabulary — Networking"
+            },
+            {
+                q: "Agile is a software development methodology based on iterative progress, collaboration, and flexibility. Teams work in short cycles called sprints, delivering functional software frequently and responding quickly to change. The Scrum framework is one of the most widely adopted Agile implementations in the tech industry.\n\nCom base no texto em inglês sobre metodologia Ágil, qual é a principal vantagem do desenvolvimento por 'sprints'?",
+                a: "Entregar software funcional com frequência e responder rapidamente a mudanças, por meio de ciclos curtos e iterativos.",
+                d: [
+                    "Eliminar completamente a necessidade de documentação formal em projetos de grande escala.",
+                    "Garantir que apenas um desenvolvedor trabalhe em cada módulo de forma isolada.",
+                    "Fixar todos os requisitos do projeto antes de iniciar qualquer linha de código.",
+                    "Substituir reuniões diárias por relatórios mensais escritos para a gerência."
+                ],
+                explanation: "O texto define Agile como baseado em 'iterative progress' (progresso iterativo) e 'short cycles called sprints' (ciclos curtos chamados sprints), com o objetivo de 'delivering functional software frequently' e 'responding quickly to change'.",
+                hint: "'Sprint' = corrida curta. Cada sprint entrega algo funcional. A agilidade está em ciclos rápidos e adaptáveis.",
+                concept: "Tech Vocabulary — Agile & Scrum"
+            },
+            {
+                q: "Deployment is the process of releasing a software application to a production environment where end users can access it. Modern DevOps practices use automated pipelines to streamline deployment, reducing human error and enabling continuous delivery of new features and bug fixes.\n\nO texto técnico em inglês descreve 'deployment' como um processo relacionado a:",
+                a: "Lançar uma aplicação para o ambiente de produção onde usuários finais podem acessá-la, geralmente automatizado por pipelines de DevOps.",
+                d: [
+                    "Escrever os requisitos funcionais de um sistema antes da fase de prototipagem inicial.",
+                    "Migrar fisicamente servidores para novos data centers durante janelas de manutenção.",
+                    "Realizar testes unitários de regressão em código recém-escrito por desenvolvedores júnior.",
+                    "Criptografar o banco de dados de produção contra ataques de injeção de SQL."
+                ],
+                explanation: "O texto define deployment como 'releasing a software application to a production environment' (lançar para o ambiente de produção), automatizado por 'pipelines' para 'continuous delivery' (entrega contínua) de novas funcionalidades.",
+                hint: "'Deploy' = implantar/lançar. O 'ambiente de produção' é onde o usuário real usa o sistema.",
+                concept: "Tech Vocabulary — Deployment & DevOps"
             }
         ]
     },
@@ -597,6 +675,58 @@ window.OnyxEngines = {
                         concept = "Political & Social Reading";
                         explanation = "O autor lista explicitamente que eles atuaram através de 'global strikes' (greves globais) e 'leveraging digital media' (alavancando/usando as mídias digitais).";
                         hint = "Associe as expressões 'global strikes' e 'leveraging digital media' com greves coletivas e redes de comunicação social.";
+                    },
+                    () => {
+                        q = "An API, or Application Programming Interface, acts as a bridge between two software systems. It defines rules for how applications communicate, allowing developers to use external services without knowing their internal code. REST APIs use standard HTTP methods like GET, POST, PUT, and DELETE.\n\nCom base no texto técnico em inglês, qual é a função essencial de uma API REST?";
+                        a = "Definir as regras de comunicação entre sistemas usando métodos HTTP, sem exigir conhecimento do código interno.";
+                        d = [
+                            "Armazenar fisicamente os dados do usuário em servidores locais protegidos por firewall.",
+                            "Renderizar a interface gráfica de botões e formulários visíveis ao usuário final.",
+                            "Criptografar arquivos de banco de dados para impedir ataques de ransomware.",
+                            "Substituir o sistema operacional por um ambiente virtual de desenvolvimento."
+                        ];
+                        concept = "Tech Vocabulary — API & REST";
+                        explanation = "O texto descreve a API como uma 'ponte' ('bridge') com regras de comunicação ('rules for how applications communicate') usando métodos HTTP como GET e POST, sem necessidade de conhecer o código interno.";
+                        hint = "REST usa verbos HTTP: GET (buscar), POST (criar), PUT (atualizar), DELETE (apagar).";
+                    },
+                    () => {
+                        q = "Version control systems like Git allow developers to track changes in their codebase, collaborate with teammates, and revert to previous states when bugs are introduced. A 'commit' saves a snapshot of the current code, while a 'branch' allows isolated development of new features.\n\nNo contexto do texto em inglês sobre controle de versão, o que um 'branch' no Git permite ao desenvolvedor?";
+                        a = "Desenvolver novas funcionalidades de forma isolada sem afetar o código principal do projeto.";
+                        d = [
+                            "Apagar definitivamente versões antigas do código para economizar espaço em disco.",
+                            "Publicar o software diretamente na loja de aplicativos sem revisão de código.",
+                            "Bloquear outros desenvolvedores de acessar o repositório durante a programação.",
+                            "Converter automaticamente o código-fonte em linguagem de máquina compilada."
+                        ];
+                        concept = "Tech Vocabulary — Git & Version Control";
+                        explanation = "O texto explica que um 'branch' permite 'isolated development of new features' (desenvolvimento isolado de novas funcionalidades), enquanto um 'commit' salva um instantâneo ('snapshot') do estado atual do código.";
+                        hint = "'Branch' = galho/ramo. É como criar um ramo separado da árvore principal para testar algo novo.";
+                    },
+                    () => {
+                        q = "Cloud computing enables organizations to access computing resources — servers, storage, databases, and networking — over the internet, on demand, without owning physical infrastructure. The three main service models are IaaS (Infrastructure), PaaS (Platform), and SaaS (Software), each offering different levels of control.\n\nDe acordo com o texto técnico em inglês, qual é a principal vantagem da computação em nuvem para as organizações?";
+                        a = "Acessar recursos computacionais sob demanda pela internet, sem necessidade de possuir infraestrutura física própria.";
+                        d = [
+                            "Eliminar a necessidade de conexão à internet ao processar todos os dados localmente.",
+                            "Garantir que apenas um usuário por vez possa acessar os servidores do sistema.",
+                            "Obrigar as empresas a comprar e manter seus próprios data centers físicos.",
+                            "Substituir programadores humanos por sistemas autônomos de inteligência artificial."
+                        ];
+                        concept = "Tech Vocabulary — Cloud Computing";
+                        explanation = "O texto define cloud computing como acesso a recursos ('access computing resources') pela internet ('over the internet') sob demanda ('on demand'), sem possuir infraestrutura física ('without owning physical infrastructure').";
+                        hint = "'Cloud' = nuvem. Os dados e programas ficam em servidores remotos, não no seu computador.";
+                    },
+                    () => {
+                        q = "Cybersecurity is the practice of protecting systems, networks, and programs from digital attacks. These attacks often aim to access, change, or destroy sensitive information. Common threats include phishing, ransomware, and SQL injection. A strong security posture requires both technical defenses and user awareness training.\n\nSegundo o texto em inglês sobre cibersegurança, quais são os principais objetivos dos ataques digitais?";
+                        a = "Acessar, alterar ou destruir informações sensíveis de sistemas e redes vulneráveis.";
+                        d = [
+                            "Aumentar a velocidade de processamento de servidores por meio de scripts automatizados.",
+                            "Instalar atualizações de software para corrigir falhas de desempenho em produção.",
+                            "Distribuir gratuitamente sistemas operacionais de código aberto para usuários finais.",
+                            "Criar backups automáticos de dados em ambientes de nuvem privada corporativa."
+                        ];
+                        concept = "Tech Vocabulary — Cybersecurity";
+                        explanation = "O texto afirma que os ataques 'often aim to access, change, or destroy sensitive information' (acessar, alterar ou destruir informações sensíveis), listando ameaças como phishing, ransomware e SQL injection.";
+                        hint = "Foque no trecho 'access, change, or destroy sensitive information' para identificar os objetivos dos ataques.";
                     }
                 ];
                 templates[Math.floor(Math.random() * templates.length)]();
@@ -617,90 +747,99 @@ window.OnyxEngines = {
         },
 
         async generateQuestions(userId, subject, difficulty, count = 10) {
-            const db = window.OnyxDatabase || {};
             let pool = [];
-            
-            const trendDB = window.OnyxEngines.TrendSensingDatabase || {};
-            const hasTrend = trendDB[subject] && trendDB[subject].length > 0;
 
-            if (hasTrend || window.currentSimulateEdition === 'trends') {
-                // Use TrendSensingDatabase if available for this specific subject
-                pool = trendDB[subject] || [];
+            // ── TIER 1: OnyxDBManager (IndexedDB indexado — mais rápido) ────────
+            if (window.OnyxDBManager) {
+                try {
+                    const banked = await window.OnyxDBManager.getPool(subject, difficulty);
+                    if (banked.length > 0) {
+                        pool = banked;
+                        console.log(`[QuestionEngine] DBManager: ${pool.length} questões para ${subject}/${difficulty}`);
+                    }
+                } catch(e) { console.warn('[QuestionEngine] DBManager falhou, usando fallback.', e); }
             }
 
-            // If no trend pool found (or empty), always pull from OnyxDatabase for the exact subject
-            if (!pool || pool.length === 0) {
-                if (db && typeof db.getFreshPool === 'function') {
-                    pool = db.getFreshPool(subject, difficulty);
-                } else {
-                    const subjectData = db[subject];
-                    if (subjectData) {
-                        pool = subjectData[difficulty] || subjectData['easy'] || [];
-                    }
+            // ── TIER 2: TrendSensingDatabase (questões contextuais curadas) ─────
+            if (pool.length < count) {
+                const trendDB = window.OnyxEngines.TrendSensingDatabase || {};
+                const hasTrend = trendDB[subject] && trendDB[subject].length > 0;
+                if (hasTrend || window.currentSimulateEdition === 'trends') {
+                    pool = [...pool, ...(trendDB[subject] || [])];
                 }
             }
-            
-            // Merge Dynamic Questions from CloudSync (IndexedDB)
-            if (window.OnyxCore) {
-                const dynQ = await window.OnyxCore.DB.getDynamicQuestions();
-                const matchedDynQ = dynQ.filter(q => q.subject === subject && q.difficulty === difficulty).map(q => q.data);
-                pool = [...pool, ...matchedDynQ];
+
+            // ── TIER 3: OnyxDatabase (gerador procedural local) ──────────────────
+            if (pool.length < count) {
+                const staticDB = window.OnyxDatabase || {};
+                if (typeof staticDB.getFreshPool === 'function') {
+                    pool = [...pool, ...staticDB.getFreshPool(subject, difficulty)];
+                } else if (staticDB[subject]) {
+                    const d = staticDB[subject];
+                    pool = [...pool, ...(d[difficulty] || d['easy'] || [])];
+                }
             }
-            
-            // Deduplicate pool to ensure we never have identical questions
-            const uniquePool = [];
+
+            // ── Merge legacy CloudSync questions ────────────────────────────────
+            if (window.OnyxCore) {
+                try {
+                    const dynQ = await window.OnyxCore.DB.getDynamicQuestions();
+                    const matched = dynQ
+                        .filter(q => q.subject === subject && q.difficulty === difficulty)
+                        .map(q => q.data);
+                    pool = [...pool, ...matched];
+                } catch(e) {}
+            }
+
+            // ── Deduplicar ───────────────────────────────────────────────────────
             const seenText = new Set();
-            pool.forEach(item => {
+            pool = pool.filter(item => {
                 if (item && item.q && !seenText.has(item.q)) {
                     seenText.add(item.q);
-                    uniquePool.push(item);
+                    return true;
                 }
+                return false;
             });
-            pool = uniquePool;
-            
-            if (!pool || pool.length === 0) return [];
 
-            // Adaptive Anti-Repetition Engine
+            if (pool.length === 0) return [];
+
+            // ── Anti-Repetição Adaptativa ────────────────────────────────────────
             let stats = { seenQuestions: [] };
             if (userId && window.OnyxCore) {
-                const fetchedStats = await window.OnyxCore.DB.getUser(userId);
-                if (fetchedStats) stats = fetchedStats;
+                const fetched = await window.OnyxCore.DB.getUser(userId);
+                if (fetched) stats = fetched;
                 if (!stats.seenQuestions) stats.seenQuestions = [];
             }
-            
-            // Prioritize unseen questions
+
             let unseenPool = pool.filter(q => !stats.seenQuestions.includes(q.q));
-            
-            // If unseen pool is smaller than count, generate and persist brand new procedural questions on-the-fly!
+
+            // ── Geração Procedural sob demanda (deficit) ─────────────────────────
             if (unseenPool.length < count) {
                 const deficit = count - unseenPool.length;
-                const newQuestionsToSave = [];
+                const newRaw = [];
                 for (let i = 0; i < deficit; i++) {
-                    const generated = window.OnyxEngines.QuestionEngine.generateNewProceduralQuestion(subject, difficulty);
-                    
-                    // Format for database
-                    const dbFormat = {
-                        q: generated.rawQText,
-                        a: generated.rawAns,
-                        d: generated.rawDistractors,
-                        explanation: generated.explanation,
-                        hint: generated.hint,
-                        concept: generated.concept
+                    const gen = window.OnyxEngines.QuestionEngine.generateNewProceduralQuestion(subject, difficulty);
+                    const fmt = {
+                        q: gen.rawQText, a: gen.rawAns, d: gen.rawDistractors,
+                        explanation: gen.explanation, hint: gen.hint, concept: gen.concept
                     };
-                    newQuestionsToSave.push({
-                        id: generated.id,
-                        subject: subject,
-                        difficulty: difficulty,
-                        data: dbFormat
-                    });
-                    
-                    // Add directly to unseen pool
-                    unseenPool.push(dbFormat);
+                    newRaw.push(fmt);
+                    unseenPool.push(fmt);
                 }
-                
-                // Persist new questions globally in the database (IndexedDB) so they can be reused later
-                if (window.OnyxCore && newQuestionsToSave.length > 0) {
-                    await window.OnyxCore.DB.saveDynamicQuestions(newQuestionsToSave);
+
+                // Persistir no OnyxDBManager (question_bank) — caminho principal
+                if (window.OnyxDBManager && newRaw.length > 0) {
+                    window.OnyxDBManager.saveQuestions(subject, difficulty, newRaw)
+                        .then(n => console.log(`[QuestionEngine] ${n} novas questões salvas no DBManager.`));
+                }
+
+                // Também persiste no store legado dynamic_questions (compatibilidade)
+                if (window.OnyxCore && newRaw.length > 0) {
+                    const legacyFmt = newRaw.map((q, idx) => ({
+                        id: `proc-${subject}-${difficulty}-${Date.now()}-${idx}`,
+                        subject, difficulty, data: q
+                    }));
+                    window.OnyxCore.DB.saveDynamicQuestions(legacyFmt);
                 }
             }
 

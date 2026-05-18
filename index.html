@@ -87,6 +87,7 @@
     </footer>
 
     <script src="js/onyx_core.js"></script>
+    <script src="js/onyx_db_manager.js"></script>
     <script>
         const UI = {
             status: document.getElementById('login-status'),
@@ -154,7 +155,11 @@
         }, 3000);
 
         window.onload = async () => {
-            await OnyxCore.DB.init();
+            if (window.OnyxDBManager) {
+                await window.OnyxDBManager.init();
+            } else {
+                await OnyxCore.DB.init();
+            }
             if (OnyxCore.Session.getCurrentUser()) {
                 location.href = 'dashboard.html';
             }

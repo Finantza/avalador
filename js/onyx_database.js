@@ -49,15 +49,19 @@ window.OnyxDatabase = (function() {
                 { singular: 'caráter', plural: 'caracteres', errados: ['caráteres', 'caraters', 'carateres'], bncc: 'EM13LGG102', analogia: 'Caráter muda completamente de grafia no plural. Lembre-se dos caracteres do seu teclado de computador!' },
                 { singular: 'alemão', plural: 'alemães', errados: ['alemãos', 'alemões', 'alemãoes'], bncc: 'EM13LGG101', analogia: 'Palavras de origem germânica ou nacionalidades terminadas em -ão geralmente terminam em -ães no plural, como pães.' },
                 { singular: 'tabelião', plural: 'tabeliães', errados: ['tabeliãos', 'tabeliões', 'tabeliãoes'], bncc: 'EM13LGG301', analogia: 'Tabelião atua no cartório registrando papéis. Pense em escrivães, que também terminam em -ães no plural!' },
-                { singular: 'júnior', plural: 'juniores', errados: ['júniors', 'juniores', 'júniorees'], bncc: 'EM13LGG301', analogia: 'Palavras terminadas em -r ganham -es e mudam a sílaba tônica. Júnior vira juniores!' }
+                { singular: 'júnior', plural: 'juniores', errados: ['júniors', 'juniores', 'júniorees'], bncc: 'EM13LGG301', analogia: 'Palavras terminadas em -r ganham -es e mudam a sílaba tônica. Júnior vira juniores!' },
+                { singular: 'mal-entendido', plural: 'mal-entendidos', errados: ['males-entendidos', 'mal-entendidoes', 'males-entendido'], bncc: 'EM13LGG101', analogia: 'Em compostos ligados por hífen, se o primeiro termo for advérbio (mal), ele permanece invariável. Apenas o segundo termo flexiona.' },
+                { singular: 'guarda-chuva', plural: 'guarda-chuvas', errados: ['guardas-chuva', 'guardas-chuvas', 'guarda-chuvae'], bncc: 'EM13LGG101', analogia: 'Se o primeiro termo for verbo (guarda), ele não flexiona. Apenas o substantivo (chuvas) vai para o plural.' },
+                { singular: 'segunda-feira', plural: 'segundas-feiras', errados: ['segunda-feiras', 'segundas-feira', 'segunda-feiraes'], bncc: 'EM13LGG101', analogia: 'Quando ambos os termos são flexionáveis (numeral + substantivo), ambos vão para o plural.' },
+                { singular: 'pão-de-ló', plural: 'pães-de-ló', errados: ['pão-de-lós', 'pães-de-lós', 'pão-des-lós'], bncc: 'EM13LGG301', analogia: 'Em substantivos compostos com elementos de ligação (de), apenas o primeiro elemento vai para o plural.' },
+                { singular: 'decreto-lei', plural: 'decretos-lei', errados: ['decreto-leis', 'decretos-leis', 'decreto-leiy'], bncc: 'EM13LGG301', analogia: 'Quando o segundo substantivo limita ou especifica o primeiro, pode-se flexionar apenas o primeiro ou ambos (decretos-lei ou decretos-leis).' }
             ];
 
             for (let i = 0; i < 20; i++) {
-                const item = randChoice(palavrasMorfologia);
-                const a = randRange(3, 15);
+                const item = palavrasMorfologia[i % palavrasMorfologia.length];
                 if (lvl === 'easy' || lvl === 'medium') {
                     pool.push({
-                        q: `Identifique a flexão de número correta: Na frase "Os ${item.singular}s da nação precisam votar", qual é o plural gramatical adequado de "${item.singular}"?`,
+                        q: `[Caso ${i+1}] Identifique a flexão de número correta: Na frase "Os ${item.singular}s da nação precisam votar", qual é o plural gramatical adequado de "${item.singular}"?`,
                         a: item.plural,
                         d: item.errados,
                         explanation: `De acordo com a norma-padrão da Língua Portuguesa, o plural de '${item.singular}' é '${item.plural}'. ${item.analogia}`,
@@ -66,7 +70,7 @@ window.OnyxDatabase = (function() {
                     });
                 } else {
                     pool.push({
-                        q: `[ANÁLISE SINTÁTICA] A palavra '${item.singular}' atua no período moderno como núcleo nominal. Sua transposição para o plural '${item.plural}' exige:`,
+                        q: `[Análise Morfológica ${i+1}] A palavra '${item.singular}' atua no período moderno como núcleo nominal. Sua transposição para o plural '${item.plural}' exige:`,
                         a: `Ajuste morfofonético para preservação da acentuação tônica`,
                         d: ['Apenas a duplicação da vogal final semântica', 'Uma transposição direta por empréstimo lexical estrangeiro', 'Nenhuma alteração, pois é um substantivo uniforme invariável'],
                         explanation: `Questões complexas de morfossintaxe exigem a compreensão das regras de deslocamento de acento tônico e flexões internas.`,
@@ -83,14 +87,19 @@ window.OnyxDatabase = (function() {
                 { titulo: 'O Cortiço', autor: 'Aluísio Azevedo', escola: 'Naturalismo', foco: 'a influência do meio social sobre o homem', bncc: 'EM13LGG302' },
                 { titulo: 'Vidas Secas', autor: 'Graciliano Ramos', escola: 'Modernismo (Geração de 30)', foco: 'a seca do Nordeste e a desumanização de Fabiano', bncc: 'EM13LGG302' },
                 { titulo: 'Iracema', autor: 'José de Alencar', escola: 'Romantismo', foco: 'a idealização da índia como símbolo da pátria', bncc: 'EM13LGG302' },
-                { titulo: 'Sagarana', autor: 'João Guimarães Rosa', escola: 'Modernismo (Geração de 45)', foco: 'o sertão místico e a linguagem inovadora', bncc: 'EM13LGG302' }
+                { titulo: 'Sagarana', autor: 'João Guimarães Rosa', escola: 'Modernismo (Geração de 45)', foco: 'o sertão místico e a linguagem inovadora', bncc: 'EM13LGG302' },
+                { titulo: 'Macunaíma', autor: 'Mário de Andrade', escola: 'Modernismo (Geração de 22)', foco: 'o herói sem nenhum caráter e o folclore nacional', bncc: 'EM13LGG302' },
+                { titulo: 'A Bagaceira', autor: 'José Américo de Almeida', escola: 'Modernismo (Geração de 30)', foco: 'o êxodo de retirantes e a vida nos engenhos', bncc: 'EM13LGG302' },
+                { titulo: 'O Ateneu', autor: 'Raul Pompeia', escola: 'Realismo/Naturalismo', foco: 'a vida interna sob regime de internato escolar', bncc: 'EM13LGG302' },
+                { titulo: 'Claro Enigma', autor: 'Carlos Drummond de Andrade', escola: 'Modernismo (Geração de 45)', foco: 'a reflexão filosófica e melancólica sobre a existência', bncc: 'EM13LGG302' },
+                { titulo: 'Memórias Póstumas de Brás Cubas', autor: 'Machado de Assis', escola: 'Realismo', foco: 'a ironia fina de um defunto autor sobre a elite carioca', bncc: 'EM13LGG302' }
             ];
 
             for (let i = 0; i < 20; i++) {
-                const obra = randChoice(obras);
+                const obra = obras[i % obras.length];
                 if (lvl === 'easy' || lvl === 'medium') {
                     pool.push({
-                        q: `Qual é o autor e a respectiva escola literária da obra "${obra.titulo}", marco da nossa literatura brasileira?`,
+                        q: `[Análise ${i+1}] Qual é o autor e a respectiva escola literária da obra "${obra.titulo}", marco da nossa literatura brasileira?`,
                         a: `${obra.autor} (${obra.escola})`,
                         d: [`José de Alencar (Barroco)`, `Clarice Lispector (Romantismo)`, `Castro Alves (Realismo)`],
                         explanation: `A grande obra clássica "${obra.titulo}" foi escrita pelo mestre ${obra.autor} sob as diretrizes estéticas do ${obra.escola}, retratando ${obra.foco}.`,
@@ -99,7 +108,7 @@ window.OnyxDatabase = (function() {
                     });
                 } else {
                     pool.push({
-                        q: `[ANÁLISE LITERÁRIA] Na obra "${obra.titulo}", a construção do personagem principal reflete:`,
+                        q: `[Estudo Crítico ${i+1}] Na obra "${obra.titulo}", a construção do personagem principal reflete:`,
                         a: `A crítica social e o determinismo estético de sua época`,
                         d: ['Apenas um sentimentalismo ingênuo e sem bases políticas', 'O culto às formas clássicas medievais jesuíticas', 'A total recusa do uso de metáforas ou linguagem subjetiva'],
                         explanation: `A literatura brasileira no ENEM exige a correlação entre a obra literária, a estética de sua escola e o momento sócio-histórico do Brasil.`,
@@ -112,17 +121,25 @@ window.OnyxDatabase = (function() {
 
         else if (sub === 'ingles') {
             const cognatos = [
-                { termo: 'actually', trad: 'realmente', falso: 'atualmente', bncc: 'EM13LGG401', analogia: 'Actually parece atualmente, mas significa na verdade ou realmente. Pense em "actual" como algo real.' },
-                { termo: 'push', trad: 'empurrar', falso: 'puxar', bncc: 'EM13LGG401', analogia: 'Push parece puxar, mas é exatamente o contrário: significa empurrar! Lembre-se das portas de bancos.' },
+                { termo: 'actually', trad: 'realmente / na verdade', falso: 'atualmente', bncc: 'EM13LGG401', analogia: 'Actually parece atualmente, mas significa na verdade ou realmente. Pense em "actual" como algo real e concreto.' },
+                { termo: 'push', trad: 'empurrar', falso: 'puxar', bncc: 'EM13LGG401', analogia: 'Push parece puxar, mas é exatamente o contrário: significa empurrar! Lembre-se das portas de bancos que dizem PUSH.' },
                 { termo: 'pretend', trad: 'fingir', falso: 'pretender', bncc: 'EM13LGG401', analogia: 'Pretend parece pretender, mas significa fingir. Se você pretende fazer algo, use "intend"!' },
-                { termo: 'novel', trad: 'romance (livro)', falso: 'novela de TV', bncc: 'EM13LGG401', analogia: 'Novel é um livro de romance. Para novelas de TV, os americanos usam "soap opera"!' }
+                { termo: 'novel', trad: 'romance (livro)', falso: 'novela de TV', bncc: 'EM13LGG401', analogia: 'Novel é um livro de romance. Para novelas de TV, os americanos usam "soap opera"!' },
+                { termo: 'hardware', trad: 'componentes físicos do computador', falso: 'ferragem de loja de construção', bncc: 'EM13LGG401', analogia: '"Hard" = rígido/físico. Hardware são as peças físicas: placa-mãe, processador, HD.' },
+                { termo: 'bug', trad: 'erro de software / falha no código', falso: 'inseto ou barata', bncc: 'EM13LGG401', analogia: 'Tecnicamente, "bug" vem de quando insetos reais travavam computadores antigos.' },
+                { termo: 'script', trad: 'arquivo de código / sequência de comandos', falso: 'roteiro de teatro apenas', bncc: 'EM13LGG401', analogia: 'Em tecnologia, um script é um arquivo com instruções que o computador executa automaticamente.' },
+                { termo: 'commit', trad: 'salvar uma versão do código no repositório', falso: 'comprometer-se emocionalmente', bncc: 'EM13LGG401', analogia: 'No Git, "commit" é como tirar uma foto do código naquele momento.' },
+                { termo: 'deploy', trad: 'publicar / implantar o sistema em produção', falso: 'destruir ou desativar', bncc: 'EM13LGG401', analogia: '"Deploy" vem do francês "deployer" (desdobrar tropas).' },
+                { termo: 'framework', trad: 'estrutura de ferramentas para desenvolvimento de software', falso: 'quadro de parede ou moldura', bncc: 'EM13LGG401', analogia: 'Framework é como um esqueleto pronto. Em vez de construir tudo do zero, o programador usa essa estrutura base.' },
+                { termo: 'runtime', trad: 'ambiente de execução / tempo em que o programa está rodando', falso: 'tempo de corrida esportiva', bncc: 'EM13LGG401', analogia: '"Runtime" é quando o programa já está em execução. Um "runtime error" é um erro que aparece enquanto o programa já está rodando.' },
+                { termo: 'repository', trad: 'local de armazenamento centralizado de código-fonte', falso: 'repositório de impostos fiscais', bncc: 'EM13LGG401', analogia: 'Um repository (repo) no GitHub é como uma pasta inteligente que guarda todo o histórico de mudanças.' }
             ];
 
             for (let i = 0; i < 20; i++) {
-                const item = randChoice(cognatos);
+                const item = cognatos[i % cognatos.length];
                 if (lvl === 'easy' || lvl === 'medium') {
                     pool.push({
-                        q: `No inglês instrumental e de exames como o ENEM, qual é o real significado do falso cognato (false friend) "${item.termo}"?`,
+                        q: `[Questão ${i+1}] No inglês instrumental e de exames como o ENEM, qual é o real significado do falso cognato (false friend) "${item.termo}"?`,
                         a: item.trad,
                         d: [item.falso, 'escrever', 'desistir'],
                         explanation: `O termo inglês "${item.termo}" é um falso amigo clássico: parece "${item.falso}", mas significa "${item.trad}". ${item.analogia}`,
@@ -130,13 +147,76 @@ window.OnyxDatabase = (function() {
                         concept: item.bncc
                     });
                 } else {
+                    const techPassages = [
+                        {
+                            q: `Read the excerpt:\n"A RESTful API uses HTTP requests to perform CRUD operations: Create (POST), Read (GET), Update (PUT/PATCH), and Delete (DELETE). Each endpoint represents a resource, and responses are typically formatted in JSON or XML. Statelessness is a key constraint — each request must contain all information necessary for the server to process it."\n\nDe acordo com o texto técnico em inglês, qual princípio fundamental garante que cada requisição de uma API REST seja autocontida?`,
+                            a: `A ausência de estado (statelessness) — cada requisição deve conter todas as informações necessárias para ser processada pelo servidor.`,
+                            d: [
+                                `O uso obrigatório do formato XML em todas as respostas das rotas de autenticação.`,
+                                `A exigência de que o servidor armazene o histórico de todas as requisições anteriores do cliente.`,
+                                `A separação do banco de dados em múltiplos microserviços distribuídos geograficamente.`
+                            ],
+                            explanation: `O texto define 'statelessness' como restrição-chave: "each request must contain all information necessary for the server to process it" — tornando cada chamada independente e autocontida.`,
+                            hint: `'Stateless' = sem estado. O servidor não guarda memória entre requisições.`,
+                            concept: 'EM13LGG402 — Tech Reading: API REST'
+                        },
+                        {
+                            q: `Read the excerpt:\n"Git's branching model allows teams to develop features in isolation. A developer creates a branch, makes commits, and opens a pull request when ready. Reviewers inspect the diff — the set of changes — before merging into the main branch. If conflicts arise, they must be resolved manually before the merge can proceed."\n\nCom base no trecho técnico em inglês, o que é um 'pull request' no contexto do Git?`,
+                            a: `Uma solicitação formal para que revisores analisem as alterações feitas em um branch antes de mesclá-las ao código principal.`,
+                            d: [
+                                `Um comando que baixa automaticamente a versão mais recente do repositório para o computador local.`,
+                                `Um arquivo de configuração que define as permissões de acesso ao repositório remoto.`,
+                                `Uma ferramenta que apaga commits antigos para reduzir o tamanho do repositório.`
+                            ],
+                            explanation: `O texto descreve o pull request como parte do fluxo onde "reviewers inspect the diff... before merging into the main branch" — ou seja, é um pedido de revisão das mudanças antes da integração.`,
+                            hint: `'Pull request' = pedido de "puxar" o código para o branch principal após revisão.`,
+                            concept: 'EM13LGG402 — Tech Reading: Git'
+                        },
+                        {
+                            q: `Read the excerpt:\n"Cloud providers offer auto-scaling capabilities, meaning the infrastructure dynamically adjusts the number of active servers based on real-time demand. During traffic spikes, new instances are provisioned automatically; during low-traffic periods, unused instances are terminated to reduce costs. This elasticity is one of the defining features of modern cloud architecture."\n\nSegundo o trecho técnico em inglês, o que é 'auto-scaling' na computação em nuvem?`,
+                            a: `A capacidade da infraestrutura de ajustar automaticamente o número de servidores ativos conforme a demanda em tempo real, reduzindo custos em períodos de baixo tráfego.`,
+                            d: [
+                                `O processo manual de configurar novos servidores físicos durante grandes eventos de lançamento de produtos.`,
+                                `Um sistema de backup automático que replica dados entre diferentes regiões geográficas simultaneamente.`,
+                                `A funcionalidade de atualização automática do sistema operacional em todos os servidores da nuvem.`
+                            ],
+                            explanation: `O texto define auto-scaling como infraestrutura que "dynamically adjusts the number of active servers based on real-time demand", aumentando em picos e reduzindo em períodos de baixo uso para economizar recursos.`,
+                            hint: `'Scale' = escalar. 'Auto' = automático. Servidores sobem e descem conforme o tráfego.`,
+                            concept: 'EM13LGG402 — Tech Reading: Cloud'
+                        },
+                        {
+                            q: `Read the excerpt:\n"Phishing attacks rely on social engineering rather than technical exploits. Attackers craft convincing emails that impersonate trusted entities, tricking users into revealing credentials or clicking malicious links. Multi-factor authentication (MFA) significantly reduces the risk, as stolen passwords alone are insufficient to gain access."\n\nDe acordo com o texto de cibersegurança em inglês, por que a autenticação multifator (MFA) mitiga o risco de ataques de phishing?`,
+                            a: `Because senhas roubadas sozinhas tornam-se insuficientes para acesso, já que um segundo fator de verificação independente é exigido.`,
+                            d: [
+                                `Porque o MFA criptografa automaticamente os e-mails recebidos antes que o usuário os abra no cliente de e-mail.`,
+                                `Porque o sistema bloqueia permanentemente o endereço IP do atacante após a primeira tentativa malsucedida.`,
+                                `Porque o MFA escaneia os links presentes nos e-mails e remove automaticamente os maliciosos.`
+                            ],
+                            explanation: `O texto afirma que "stolen passwords alone are insufficient to gain access" quando o MFA está ativo — ou seja, mesmo com a senha, o atacante não consegue entrar sem o segundo fator.`,
+                            hint: `'Multi-factor' = mais de um fator. Senha + código no celular = dois fatores.`,
+                            concept: 'EM13LGG402 — Tech Reading: Cybersecurity'
+                        },
+                        {
+                            q: `Read the excerpt:\n"In Agile development, the Product Backlog is a prioritized list of features, improvements, and bug fixes maintained by the Product Owner. During Sprint Planning, the team selects items from the backlog to complete in the upcoming sprint. At the end of each sprint, a Sprint Review is held to demonstrate the working software to stakeholders."\n\nCom base no texto técnico em inglês sobre Agile/Scrum, qual é o papel do 'Product Owner' na metodologia descrita?`,
+                            a: `Manter e priorizar o Product Backlog — a lista ordenada de funcionalidades, melhorias e correções a serem desenvolvidas pela equipe.`,
+                            d: [
+                                `Escrever todos os testes automatizados de regressão antes de cada ciclo de desenvolvimento da equipe técnica.`,
+                                `Gerenciar a infraestrutura de servidores e garantir a disponibilidade do ambiente de produção.`,
+                                `Apresentar o software funcionando aos stakeholders ao final de cada sprint durante o Sprint Review.`
+                            ],
+                            explanation: `O texto afirma que o Product Backlog é "maintained by the Product Owner" — ele é responsável por manter e priorizar essa lista de itens.`,
+                            hint: `'Owner' = dono. O Product Owner é o dono da lista de prioridades do produto.`,
+                            concept: 'EM13LGG402 — Tech Reading: Agile/Scrum'
+                        }
+                    ];
+                    const passage = techPassages[i % techPassages.length];
                     pool.push({
-                        q: `[SINTAXE INGLESA] Analise o período: "He actually pretended to read the novel". A tradução mais fiel e coerente é:`,
-                        a: `Ele realmente fingiu ler o livro de romance`,
-                        d: ['Ele atualmente pretendeu ler a novela da televisão', 'Ele fingiu que lia no momento atual da novela', 'Ele de fato empurrou a leitura do romance no presente'],
-                        explanation: `Nesta frase, combinamos múltiplos falsos cognatos em uma única estrutura sintática complexa.`,
-                        hint: `Traduza termo a termo com atenção às regras de tempos verbais no passado.`,
-                        concept: 'EM13LGG402'
+                        q: `[Tech Reading ${i+1}] ${passage.q}`,
+                        a: passage.a,
+                        d: passage.d,
+                        explanation: passage.explanation,
+                        hint: passage.hint,
+                        concept: passage.concept
                     });
                 }
             }
@@ -147,14 +227,18 @@ window.OnyxDatabase = (function() {
                 { nome: 'Modernismo', marco: 'Semana de Arte Moderna de 1922', artista: 'Tarsila do Amaral', caracteristica: 'A busca por uma identidade artística puramente brasileira', bncc: 'EM13LGG201' },
                 { nome: 'Cubismo', marco: 'Les Demoiselles d\'Avignon', artista: 'Pablo Picasso', caracteristica: 'A fragmentação geométrica das formas e múltiplos pontos de vista', bncc: 'EM13LGG202' },
                 { nome: 'Impressionismo', marco: 'Impressão, nascer do sol', artista: 'Claude Monet', caracteristica: 'O estudo da luz natural nas pinceladas rápidas ao ar livre', bncc: 'EM13LGG201' },
-                { nome: 'Renascimento', marco: 'Teto da Capela Sistina', artista: 'Michelangelo', caracteristica: 'O humanismo clássico, simetria e perspectiva matemática', bncc: 'EM13LGG202' }
+                { nome: 'Renascimento', marco: 'Teto da Capela Sistina', artista: 'Michelangelo', caracteristica: 'O humanismo clássico, simetria e perspectiva matemática', bncc: 'EM13LGG202' },
+                { nome: 'Surrealismo', marco: 'A Persistência da Memória', artista: 'Salvador Dalí', caracteristica: 'A exploração do subconsciente, sonhos e a lógica do absurdo', bncc: 'EM13LGG201' },
+                { nome: 'Barroco', marco: 'Esculturas dos Profetas', artista: 'Aleijadinho', caracteristica: 'O drama, contraste de luz e sombra e a religiosidade expressiva', bncc: 'EM13LGG202' },
+                { nome: 'Dadaísmo', marco: 'A Fonte', artista: 'Marcel Duchamp', caracteristica: 'A negação total de regras estéticas convencionais e o anti-arte', bncc: 'EM13LGG201' },
+                { nome: 'Expressionismo', marco: 'O Grito', artista: 'Edvard Munch', caracteristica: 'A deformação da realidade para expressar sentimentos e angústias humanas', bncc: 'EM13LGG201' }
             ];
 
             for (let i = 0; i < 20; i++) {
-                const mov = randChoice(movimentos);
+                const mov = movimentos[i % movimentos.length];
                 if (lvl === 'easy' || lvl === 'medium') {
                     pool.push({
-                        q: `Qual é a característica marcante e principal artista associado ao movimento artístico do "${mov.nome}"?`,
+                        q: `[Movimento ${i+1}] Qual é a característica marcante e principal artista associado ao movimento artístico do "${mov.nome}"?`,
                         a: `${mov.artista} - ${mov.caracteristica}`,
                         d: [`Aleijadinho - O uso de arte em computador tridimensional`, `Monet - A criação de estátuas de bronze barrocas`, `Picasso - Pinturas realistas com simetria clássica perfeita`],
                         explanation: `O movimento "${mov.nome}" tem como um de seus maiores ícones ${mov.artista}, marcando a história da arte com: ${mov.caracteristica}.`,
@@ -163,7 +247,7 @@ window.OnyxDatabase = (function() {
                     });
                 } else {
                     pool.push({
-                        q: `[ESTÉTICA DA ARTE] A revolução plástica promovida pelo movimento "${mov.nome}" rompeu com:`,
+                        q: `[Estética ${i+1}] A revolução plástica promovida pelo movimento "${mov.nome}" rompeu com:`,
                         a: `O academicismo tradicional e a representação mimética da realidade`,
                         d: ['A utilização de tintas a óleo e telas de tecido importadas', 'A liberdade criativa dos artistas, impondo regras matemáticas medievais', 'A temática religiosa que dominava todos os salões de arte moderna'],
                         explanation: `Os movimentos de vanguarda artística romperam drasticamente com a mimese (cópia fiel da realidade) ensinada nas academias tradicionais.`,
@@ -175,30 +259,38 @@ window.OnyxDatabase = (function() {
         }
 
         else if (sub === 'educacao_fisica') {
+            const esportesEdFisica = [
+                { modalidade: 'Futebol', beneficio: 'Melhoria da resistência aeróbica e coordenação motora grossa', risco: 'Lesões de ligamento cruzado anterior e estiramento muscular', bncc: 'EM13LGG501' },
+                { modalidade: 'Atletismo (Corrida)', beneficio: 'Aumento da capacidade pulmonar e fortalecimento do sistema cardiovascular', risco: 'Tendinite patelar e canelite por impacto repetitivo', bncc: 'EM13LGG501' },
+                { modalidade: 'Natação', beneficio: 'Fortalecimento muscular global de baixo impacto para articulações', risco: 'Otite externa e fadiga do manguito rotador dos ombros', bncc: 'EM13LGG501' },
+                { modalidade: 'Ginástica Olímpica', beneficio: 'Desenvolvimento extremo de flexibilidade, força e equilíbrio corporal', risco: 'Entorses graves de tornozelo e fraturas por estresse ósseo', bncc: 'EM13LGG501' },
+                { modalidade: 'Basquetebol', beneficio: 'Estímulo à agilidade lateral e capacidade de salto vertical explosivo', risco: 'Luxações nos dedos e entorse de tornozelo por aterrissagem incorreta', bncc: 'EM13LGG501' }
+            ];
+
             for (let i = 0; i < 20; i++) {
+                const item = esportesEdFisica[i % esportesEdFisica.length];
                 if (lvl === 'easy' || lvl === 'medium') {
                     pool.push({
-                        q: `Qual é o benefício fisiológico e metabólico comprovado da prática regular de atividades aeróbicas na adolescência?`,
-                        a: `Melhoria da capacidade cardiorrespiratória e aumento do VO2 máximo`,
+                        q: `[Esporte ${i+1}] Qual é o benefício fisiológico e metabólico comprovado da prática regular de "${item.modalidade}" na adolescência?`,
+                        a: item.beneficio,
                         d: ['Redução drástica das células de memória do cérebro', 'Aumento instantâneo do peso ósseo com risco de fraturas', 'Diminuição da circulação sanguínea periférica geral'],
-                        explanation: `Exercícios aeróbicos (corrida, natação, ciclismo) treinam o coração e pulmões, expandindo o VO2 máximo, que é a capacidade de consumir oxigênio.`,
-                        hint: `Pense na saúde do músculo cardíaco e no transporte de oxigênio pelo sangue.`,
-                        concept: 'EM13LGG501'
+                        explanation: `A prática de ${item.modalidade} traz benefícios biológicos expressivos: ${item.beneficio}.`,
+                        hint: `Pense na saúde do músculo cardíaco e nos benefícios sistêmicos da modalidade.`,
+                        concept: item.bncc
                     });
                 } else {
                     pool.push({
-                        q: `[CORPO E SOCIEDADE] O culto excessivo ao padrão corporal imposto pelas mídias sociais pode acarretar distúrbios graves como:`,
-                        a: `Vigorexia e dismorfia corporal associadas a comportamentos obsessivos`,
-                        d: ['Apenas melhoria na autoestima e socialização saudável', 'Uma imunidade biológica natural contra vírus de gripe', 'Aceleração do desenvolvimento intelectual sem efeitos colaterais'],
-                        explanation: `A Educação Física no Novo Ensino Médio discute a imagem corporal, o consumo e os distúrbios de imagem estimulados por padrões inalcançáveis.`,
-                        hint: `Dismorfia é a distorção da própria autoimagem; vigorexia é a obsessão por músculos.`,
+                        q: `[Morfofuncional ${i+1}] No contexto de prevenção de lesões na prática de "${item.modalidade}", os principais riscos biomecânicos incluem:`,
+                        a: item.risco,
+                        d: ['Aumento da capacidade cognitiva visual involuntária', 'Nenhum, pois a prática desportiva elimina qualquer possibilidade de trauma físico', 'Aceleração congênita do crescimento ósseo em adultos'],
+                        explanation: `O esporte ${item.modalidade} exige condicionamento físico adequado para mitigar o risco de: ${item.risco}.`,
+                        hint: `Diferencie lesões agudas (como entorses) de lesões crônicas de estresse de impacto.`,
                         concept: 'EM13LGG502'
                     });
                 }
             }
         }
 
-        // 2. FAMÍLIA MATEMÁTICA (Álgebra, Geometria, Estatística, Mat. Financeira)
         else if (sub === 'algebra') {
             for (let i = 0; i < 20; i++) {
                 const a = randRange(2, 6);
@@ -208,7 +300,7 @@ window.OnyxDatabase = (function() {
                 
                 if (lvl === 'easy' || lvl === 'medium') {
                     pool.push({
-                        q: `[FUNÇÃO AFIM] Uma empresa de táxi cobra uma taxa fixa de R$ ${b},00 mais R$ ${a},00 por quilômetro rodado. Se a corrida de um aluno custou R$ ${y},00, quantos quilômetros foram percorridos?`,
+                        q: `[Modelo ${i+1}] Uma empresa de táxi cobra uma taxa fixa de R$ ${b},00 mais R$ ${a},00 por quilômetro rodado. Se a corrida de um aluno custou R$ ${y},00, quantos quilômetros foram percorridos?`,
                         a: `${x} km`,
                         d: [`${x+2} km`, `${x-1} km`, `${x+4} km`],
                         explanation: `A equação do custo é dada por C(x) = ${a}x + ${b}. Igualando a R$ ${y}, temos: ${a}x + ${b} = ${y} => ${a}x = ${y - b} => x = ${x}.`,
@@ -218,10 +310,10 @@ window.OnyxDatabase = (function() {
                 } else {
                     const c = randRange(2, 4);
                     pool.push({
-                        q: `[EQUAÇÃO QUADRÁTICA] Dada a função de custo marginal f(x) = x² - ${a+c}x + ${a*c}. Quais são as raízes reais desta equação que indicam pontos de equilíbrio de produção?`,
+                        q: `[Equilíbrio ${i+1}] Dada a função de custo marginal f(x) = x² - ${a+c}x + ${a*c}. Quais são as raízes reais desta equação que indicam pontos de equilíbrio de produção?`,
                         a: `x = ${a} e x = ${c}`,
                         d: [`x = ${a+1} e x = ${c-1}`, `x = -${a} e x = -${c}`, `Não existem raízes reais para esta função`],
-                        explanation: `As raízes de uma equação quadrática x² - Sx + P = 0 podem ser encontradas por soma (S = ${a+c}) e produto (P = ${a*c}), resultando em x1 = ${a} e x2 = ${c}.`,
+                        explanation: `As raízes de uma equação quadrática x² - Sx + P = 0 podem ser encontradas por soma (S = ${a+c}) e produto (P = ${a*c}), resultando in x1 = ${a} e x2 = ${c}.`,
                         hint: `Use a fórmula de Bhaskara ou o método de Soma e Produto.`,
                         concept: 'EM13MAT302'
                     });
@@ -237,7 +329,7 @@ window.OnyxDatabase = (function() {
                 
                 if (lvl === 'easy' || lvl === 'medium') {
                     pool.push({
-                        q: `[GEOMETRIA ESPACIAL] Um reservatório de água possui o formato de um cilindro circular reto com raio da base medindo ${r} metros e altura medindo ${h} metros. Usando pi = 3, qual é o volume total de água suportado?`,
+                        q: `[Cálculo ${i+1}] Um reservatório de água possui o formato de um cilindro circular reto com raio da base medindo ${r} metros e altura medindo ${h} metros. Usando pi = 3, qual é o volume total de água suportado?`,
                         a: `${3 * areaBase * h} m³`,
                         d: [`${areaBase * h} m³`, `${2 * 3 * r * h} m³`, `${3 * r * h * h} m³`],
                         explanation: `O volume do cilindro é V = Área da Base * Altura. Área da base = pi * R² = 3 * ${r}² = ${3 * areaBase}. Volume = ${3 * areaBase} * ${h} = ${3 * areaBase * h} metros cúbicos.`,
@@ -246,7 +338,7 @@ window.OnyxDatabase = (function() {
                     });
                 } else {
                     pool.push({
-                        q: `[TRIGONOMETRIA] Um observador de altura desprezível avista o topo de uma torre sob um ângulo de 30° com a horizontal. Sabendo que ele está a 100 metros da base da torre e que tan(30°) = 0.58, qual é a altura aproximada da torre?`,
+                        q: `[Trigonometria ${i+1}] Um observador de altura desprezível avista o topo de uma torre sob um ângulo de 30° com a horizontal. Sabendo que ele está a 100 metros da base da torre e que tan(30°) = 0.58, qual é a altura aproximada da torre?`,
                         a: `58 metros`,
                         d: ['100 metros', '30 metros', '173 metros'],
                         explanation: `A tangente de um ângulo em um triângulo retângulo é a razão entre o cateto oposto (altura H) e o cateto adjacente (distância D = 100m). Logo, tan(30°) = H/100 => H = 100 * 0.58 = 58 metros.`,
@@ -268,7 +360,7 @@ window.OnyxDatabase = (function() {
                 
                 if (lvl === 'easy' || lvl === 'medium') {
                     pool.push({
-                        q: `[MÉDIA ARITMÉTICA] Em um trimestre acadêmico, o estudante ${randChoice(nomesAlunos)} obteve as notas ${n1 * 1.5}, ${n2} e ${n3}. Qual é a média final aproximada dele?`,
+                        q: `[Média ${i+1}] Em um trimestre acadêmico, o estudante ${randChoice(nomesAlunos)} obteve as notas ${n1 * 1.5}, ${n2} e ${n3}. Qual é a média final aproximada dele?`,
                         a: `${Math.round(((n1 * 1.5 + n2 + n3) / 3) * 10) / 10}`,
                         d: [`${Math.round(((n1 * 1.5 + n2 + n3) / 3) * 10) / 10 + 1.2}`, `${Math.round(((n1 * 1.5 + n2 + n3) / 3) * 10) / 10 - 0.8}`, '5.0'],
                         explanation: `A média aritmética simples é calculada somando todas as notas obtidas e dividindo a soma pelo número total de avaliações (3).`,
@@ -277,7 +369,7 @@ window.OnyxDatabase = (function() {
                     });
                 } else {
                     pool.push({
-                        q: `[PROBABILIDADE CONDICIONAL] Uma urna de estudos do ENEM contém 6 bolas pretas e 4 vermelhas. Se retirarmos duas bolas sucessivamente e sem reposição, qual é a probabilidade exata de ambas serem pretas?`,
+                        q: `[Probabilidade ${i+1}] Uma urna de estudos do ENEM contém 6 bolas pretas e 4 vermelhas. Se retirarmos duas bolas sucessivamente e sem reposição, qual é a probabilidade exata de ambas serem pretas?`,
                         a: `1/3 (aproximadamente 33.3%)`,
                         d: ['36% (0.36)', '24% (0.24)', '50% (0.50)'],
                         explanation: `A probabilidade da primeira bola ser preta é 6/10. Sem reposição, restam 5 pretas em 9 bolas. A probabilidade da segunda ser preta é 5/9. Probabilidade conjunta = (6/10) * (5/9) = 30/90 = 1/3.`,
@@ -297,7 +389,7 @@ window.OnyxDatabase = (function() {
                 
                 if (lvl === 'easy' || lvl === 'medium') {
                     pool.push({
-                        q: `[JUROS SIMPLES] Se um estudante aplicar R$ ${cap},00 em uma poupança estudantil que rende R$ ${taxa}% de juros simples ao ano, qual será o montante de juros rendido ao final de ${tempo} anos?`,
+                        q: `[Aplicação ${i+1}] Se um estudante aplicar R$ ${cap},00 em uma poupança estudantil que rende R$ ${taxa}% de juros simples ao ano, qual será o montante de juros rendido ao final de ${tempo} anos?`,
                         a: `R$ ${jurosSimples},00`,
                         d: [`R$ ${jurosSimples + 150},00`, `R$ ${jurosSimples - 80},00`, `R$ ${cap * 1.5},00`],
                         explanation: `A fórmula dos juros simples é J = C * i * t, onde C = ${cap}, i = ${taxa / 100} e t = ${tempo}. Logo, J = ${cap} * ${taxa / 100} * ${tempo} = R$ ${jurosSimples},00.`,
@@ -307,7 +399,7 @@ window.OnyxDatabase = (function() {
                 } else {
                     const montanteComp = cap * Math.pow(1 + (taxa/100), tempo);
                     pool.push({
-                        q: `[JUROS COMPOSTOS] Um jovem empreendedor pegou um empréstimo de R$ ${cap},00 sob regime de juros compostos com taxa de ${taxa}% ao ano. Qual será o montante total devido após ${tempo} anos?`,
+                        q: `[Simulação ${i+1}] Um jovem empreendedor pegou um empréstimo de R$ ${cap},00 sob regime de juros compostos com taxa de ${taxa}% ao ano. Qual será o montante total devido após ${tempo} anos?`,
                         a: `R$ ${Math.round(montanteComp).toFixed(2)}`,
                         d: [`R$ ${(cap + jurosSimples).toFixed(2)}`, `R$ ${(cap * 2.5).toFixed(2)}`, `R$ ${Math.round(montanteComp * 1.2).toFixed(2)}`],
                         explanation: `A fórmula dos juros compostos é M = C * (1 + i)^t. Os juros incidem sobre o montante acumulado do período anterior.`,
@@ -318,7 +410,6 @@ window.OnyxDatabase = (function() {
             }
         }
 
-        // 3. FAMÍLIA CIÊNCIAS DA NATUREZA (Física, Química, Biologia)
         else if (sub === 'fisica') {
             for (let i = 0; i < 20; i++) {
                 const dist = randChoice([100, 200, 400, 800]);
@@ -327,7 +418,7 @@ window.OnyxDatabase = (function() {
                 
                 if (lvl === 'easy' || lvl === 'medium') {
                     pool.push({
-                        q: `[CINEMÁTICA] Um atleta de corrida de alta performance do ${randChoice(escolas)} percorre uma distância de ${dist} metros em exatamente ${tempo} segundos. Qual é a sua velocidade média?`,
+                        q: `[Movimento ${i+1}] Um atleta de corrida de alta performance do ${randChoice(escolas)} percorre uma distância de ${dist} metros em exatamente ${tempo} segundos. Qual é a sua velocidade média?`,
                         a: `${vel} m/s`,
                         d: [`${vel * 3.6} m/s`, `${vel + 5} m/s`, `${vel - 3} m/s`],
                         explanation: `A velocidade média é calculada dividindo-se a variação do espaço (distância = ${dist}m) pela variação do tempo (${tempo}s). Vm = S / T = ${vel} m/s.`,
@@ -338,7 +429,7 @@ window.OnyxDatabase = (function() {
                     const m = randRange(2, 10);
                     const a = randRange(2, 5);
                     pool.push({
-                        q: `[DINÂMICA - LEIS DE NEWTON] Um robô de laboratório com massa de ${m} kg é empurrado por um atuador elétrico, sofrendo uma aceleração constante de ${a} m/s². Qual é a força resultante aplicada sobre o robô?`,
+                        q: `[Dinâmica ${i+1}] Um robô de laboratório com massa de ${m} kg é empurrado por um atuador elétrico, sofrendo uma aceleração constante de ${a} m/s². Qual é a força resultante aplicada sobre o robô?`,
                         a: `${m * a} Newtons`,
                         d: [`${m + a} Newtons`, `${m / a} Newtons`, `${m * a * 9.8} Newtons`],
                         explanation: `Pela Segunda Lei de Newton (Princípio Fundamental da Dinâmica), a Força Resultante é o produto da massa do corpo pela sua aceleração: F = m * a = ${m} * ${a} = ${m * a} Newtons.`,
@@ -353,14 +444,19 @@ window.OnyxDatabase = (function() {
             const ligacoes = [
                 { composto: 'Cloreto de Sódio (NaCl)', tipo: 'Iônica', caracteristica: 'Transferência definitiva de elétrons com alta temperatura de fusão', bncc: 'EM13CNT201' },
                 { composto: 'Água (H2O)', tipo: 'Covalente Polar', caracteristica: 'Compartilhamento de elétrons com formação de polos elétricos', bncc: 'EM13CNT201' },
-                { composto: 'Dióxido de Carbono (CO2)', tipo: 'Covalente Apolar', caracteristica: 'Compartilhamento simétrico de elétrons sem polo resultante', bncc: 'EM13CNT201' }
+                { composto: 'Dióxido de Carbono (CO2)', tipo: 'Covalente Apolar', caracteristica: 'Compartilhamento simétrico de elétrons sem polo resultante', bncc: 'EM13CNT201' },
+                { composto: 'Gás Oxigênio (O2)', tipo: 'Covalente Apolar', caracteristica: 'Ligação dupla compartilhada entre dois átomos iguais de oxigênio', bncc: 'EM13CNT201' },
+                { composto: 'Metano (CH4)', tipo: 'Covalente Apolar', caracteristica: 'Geometria tetraédrica com compartilhamento simétrico de elétrons', bncc: 'EM13CNT201' },
+                { composto: 'Amônia (NH3)', tipo: 'Covalente Polar', caracteristica: 'Geometria piramidal trigonal com forte polo de eletronegatividade', bncc: 'EM13CNT201' },
+                { composto: 'Cobre Metálico (Cu)', tipo: 'Metálica', caracteristica: 'Nuvem de elétrons livres que garante alta condutibilidade térmica', bncc: 'EM13CNT201' },
+                { composto: 'Ácido Clorídrico (HCl)', tipo: 'Covalente Polar', caracteristica: 'Forte atração eletrônica do cloro gerando alta ionização em água', bncc: 'EM13CNT201' }
             ];
 
             for (let i = 0; i < 20; i++) {
-                const item = randChoice(ligacoes);
+                const item = ligacoes[i % ligacoes.length];
                 if (lvl === 'easy' || lvl === 'medium') {
                     pool.push({
-                        q: `Qual é o tipo de ligação química predominante e a característica molecular do composto "${item.composto}"?`,
+                        q: `[Reação ${i+1}] Qual é o tipo de ligação química predominante e a característica molecular do composto "${item.composto}"?`,
                         a: `${item.tipo} - ${item.caracteristica}`,
                         d: [`Metálica - Fusão de elétrons livres gasosos`, `Iônica - Compartilhamento de prótons no núcleo`, `Covalente - Perda total de nêutrons por radiação`],
                         explanation: `O composto "${item.composto}" apresenta ligação do tipo "${item.tipo}", gerando uma estrutura estável baseada em: ${item.caracteristica}.`,
@@ -369,7 +465,7 @@ window.OnyxDatabase = (function() {
                     });
                 } else {
                     pool.push({
-                        q: `[ESTEQUIOMETRIA] Na quebra de glicose para produção de energia celular, o balanceamento correto dos reagentes exige compreender:`,
+                        q: `[Estequiometria ${i+1}] Na quebra de glicose para produção de energia celular, o balanceamento correto dos reagentes exige compreender:`,
                         a: `A Lei de Conservação das Massas (Lavoisier) nos coeficientes estequiométricos`,
                         d: ['Apenas a eliminação de átomos de hidrogênio redundantes do sistema', 'A fusão de núcleos atômicos gerando novos elementos artificiais', 'A destruição parcial da matéria para liberação de fótons gasosos'],
                         explanation: `Toda reação química deve obedecer à Lei de Lavoisier: "Na natureza nada se cria, nada se perde, tudo se transforma". O número de átomos deve ser igual em ambos os lados da equação.`,
@@ -385,14 +481,18 @@ window.OnyxDatabase = (function() {
                 { nome: 'Mitocôndria', funcao: 'Realizar a respiração celular para produção de energia (ATP)', bncc: 'EM13CNT301', analogia: 'A mitocôndria funciona exatamente como a usina hidrelétrica ou gerador de energia da nossa célula.' },
                 { nome: 'Ribossomo', funcao: 'Realizar a síntese (produção) de novas proteínas celulares', bncc: 'EM13CNT301', analogia: 'O ribossomo atua como a fábrica de blocos de montar da célula, juntando pecinhas chamadas aminoácidos.' },
                 { nome: 'Cloroplasto', funcao: 'Realizar a fotossíntese para produção de açúcares nas plantas', bncc: 'EM13CNT301', analogia: 'O cloroplasto é o painel de energia solar das plantas, convertendo raios de luz em alimento orgânico.' },
-                { nome: 'Lisossomo', funcao: 'Realizar a digestão intracelular e reciclagem de materiais velhos', bncc: 'EM13CNT301', analogia: 'O lisossomo é o caminhão de lixo e reciclagem da célula, quebrando o que não serve mais.' }
+                { nome: 'Lisossomo', funcao: 'Realizar a digestão intracelular e reciclagem de materiais velhos', bncc: 'EM13CNT301', analogia: 'O lisossomo é o caminhão de lixo e reciclagem da célula, quebrando o que não serve mais.' },
+                { nome: 'Complexo de Golgi', funcao: 'Modificar, empacotar e secretar proteínas fabricadas na célula', bncc: 'EM13CNT301', analogia: 'O complexo de Golgi funciona como a agência dos correios da célula, etiquetando e despachando pacotes.' },
+                { nome: 'Retículo Endoplasmático Rugoso', funcao: 'Sintetizar e transportar proteínas com o auxílio de ribossomos', bncc: 'EM13CNT301', analogia: 'Funciona como uma esteira transportadora de fábrica que já possui operários acoplados.' },
+                { nome: 'Retículo Endoplasmático Liso', funcao: 'Sintetizar lipídios e realizar a desintoxicação celular de álcool', bncc: 'EM13CNT301', analogia: 'Atua como a central de desintoxicação e síntese de óleos/gorduras essenciais.' },
+                { nome: 'Membrana Plasmática', funcao: 'Controlar a entrada e saída de substâncias (permeabilidade seletiva)', bncc: 'EM13CNT301', analogia: 'Funciona como a portaria ou segurança de um condomínio fechado.' }
             ];
 
             for (let i = 0; i < 20; i++) {
-                const org = randChoice(organelas);
+                const org = organelas[i % organelas.length];
                 if (lvl === 'easy' || lvl === 'medium') {
                     pool.push({
-                        q: `Qual é a função biológica vital da organela celular conhecida como "${org.nome}"?`,
+                        q: `[Citologia ${i+1}] Qual é a função biológica vital da organela celular conhecida como "${org.nome}"?`,
                         a: org.funcao,
                         d: [`Controlar a circulação de sangue no cérebro`, `Filtrar a urina e toxinas do fígado`, `Realizar a divisão muscular por impulsos elétricos`],
                         explanation: `A organela celular "${org.nome}" desempenha o papel vital de: ${org.funcao}. ${org.analogia}`,
@@ -401,7 +501,7 @@ window.OnyxDatabase = (function() {
                     });
                 } else {
                     pool.push({
-                        q: `[GENÉTICA MENDELIANA] Se cruzarmos duas plantas heterozigotas para uma característica dominante (Aa x Aa), qual será a proporção fenotípica esperada na descendência?`,
+                        q: `[Genética ${i+1}] Se cruzarmos duas plantas heterozigotas para uma característica dominante (Aa x Aa), qual será a proporção fenotípica esperada na descendência?`,
                         a: `3 dominantes para 1 recessivo (3:1)`,
                         d: ['1 dominante para 1 recessivo (1:1)', 'Todas as plantas recessivas (0:4)', '9 dominantes para 3 recessivos (9:3)'],
                         explanation: `No cruzamento Aa x Aa, os genótipos resultantes são AA (25%), Aa (50%) e aa (25%). Como AA e Aa expressam o fenótipo dominante, temos 75% dominantes (3 partes) e 25% recessivos (1 parte).`,
@@ -412,19 +512,22 @@ window.OnyxDatabase = (function() {
             }
         }
 
-        // 4. FAMÍLIA CIÊNCIAS HUMANAS (História, Geografia, Filosofia, Sociologia)
         else if (sub === 'historia') {
             const fatos = [
                 { evento: 'Independência do Brasil', ano: '1822', lider: 'Dom Pedro I', consequencia: 'Ruptura colonial com Portugal e início do Primeiro Reinado', bncc: 'EM13CHS101' },
                 { evento: 'Proclamação da República', ano: '1889', lider: 'Marechal Deodoro da Fonseca', consequencia: 'Queda do Império e início do período republicano oligárquico', bncc: 'EM13CHS101' },
-                { evento: 'Revolução Francesa', ano: '1789', lider: 'Burguesia e classes populares', consequencia: 'Fim do Absolutismo e consagração dos Direitos do Homem', bncc: 'EM13CHS102' }
+                { evento: 'Revolução Francesa', ano: '1789', lider: 'Burguesia e classes populares', consequencia: 'Fim do Absolutismo e consagração dos Direitos do Homem', bncc: 'EM13CHS102' },
+                { evento: 'Revolução Industrial', ano: '1760', lider: 'Burguesia manufatureira inglesa', consequencia: 'Surgimento do operariado urbano e mecanização da produção', bncc: 'EM13CHS102' },
+                { evento: 'Era Vargas', ano: '1930', lider: 'Getúlio Vargas', consequencia: 'Centralização do poder, criação das leis trabalhistas (CLT) e industrialização', bncc: 'EM13CHS101' },
+                { evento: 'Guerra Fria', ano: '1947', lider: 'EUA e União Soviética', consequencia: 'Bipolarização do mundo e corrida armamentista e espacial sem confronto direto', bncc: 'EM13CHS102' },
+                { evento: 'Descobrimento do Brasil', ano: '1500', lider: 'Pedro Álvares Cabral', consequencia: 'Início da colonização portuguesa nas terras sul-americanas', bncc: 'EM13CHS101' }
             ];
 
             for (let i = 0; i < 20; i++) {
-                const fato = randChoice(fatos);
+                const fato = fatos[i % fatos.length];
                 if (lvl === 'easy' || lvl === 'medium') {
                     pool.push({
-                        q: `Qual foi a principal consequência histórica do evento "${fato.evento}" ocorrido em ${fato.ano}?`,
+                        q: `[Fato Histórico ${i+1}] Qual foi a principal consequência histórica do evento "${fato.evento}" ocorrido em ${fato.ano}?`,
                         a: fato.consequencia,
                         d: [`A colonização do Brasil pela Inglaterra e perda de soberania`, `O fechamento de todos os portos e proibição do comércio cafeeiro`, `A fundação de Brasília como capital federal imediata do Império`],
                         explanation: `O evento "${fato.evento}" liderado por ${fato.lider} gerou como marco definitivo a ${fato.consequencia}.`,
@@ -433,7 +536,7 @@ window.OnyxDatabase = (function() {
                     });
                 } else {
                     pool.push({
-                        q: `[HISTORIOGRAFIA] O conceito de "cidadania" na Grécia Antiga (Atenas) difere da cidadania contemporânea porque:`,
+                        q: `[Historiografia ${i+1}] O conceito de "cidadania" na Grécia Antiga (Atenas) difere da cidadania contemporânea porque:`,
                         a: `Era restrita a homens livres, filhos de atenienses, excluindo mulheres, escravos e estrangeiros`,
                         d: ['Garantia direito ao voto universal secreto para todas as classes sociais infantis', 'Era decidida apenas por computadores de inteligência artificial de rede', 'Exigia que todo cidadão fosse obrigatoriamente um imperador hereditário absoluto'],
                         explanation: `A democracia ateniense era direta, mas extremamente excludente se comparada à democracia representativa e universal contemporânea.`,
@@ -447,14 +550,18 @@ window.OnyxDatabase = (function() {
         else if (sub === 'geografia') {
             const conceitosGeo = [
                 { termo: 'Globalização', definicao: 'A integração econômica, cultural e tecnológica dos países em escala mundial', bncc: 'EM13CHS201', analogia: 'Globalização é a razão de você poder comprar um smartphone projetado na Califórnia, fabricado na China e usado no Brasil.' },
-                { termo: 'Urbanização', definicao: 'O crescimento das cidades impulsionado pela migração do campo para a cidade (êxodo rural)', bncc: 'EM13CHS202', analogia: 'Urbanização ocorre quando a população da cidade cresce mais rápido que a população do campo.' }
+                { termo: 'Urbanização', definicao: 'O crescimento das cidades impulsionado pela migração do campo para a cidade (êxodo rural)', bncc: 'EM13CHS202', analogia: 'Urbanização ocorre quando a população da cidade cresce mais rápido que a população do campo.' },
+                { termo: 'Efeito Estufa', definicao: 'O aquecimento natural da Terra provocado pela retenção de calor por gases na atmosfera', bncc: 'EM13CHS203', analogia: 'Sem o efeito estufa a Terra seria congelante; o problema é a sua intensificação pela queima de combustíveis fósseis.' },
+                { termo: 'Bioma', definicao: 'Um conjunto de ecossistemas com vegetação, solo e clima característicos e integrados', bncc: 'EM13CHS202', analogia: 'No Brasil temos biomas únicos como a Caatinga, o Cerrado e a Floresta Amazônica.' },
+                { termo: 'Bacia Hidrográfica', definicao: 'Uma área de drenagem onde toda a água da chuva converge para um rio principal e seus afluentes', bncc: 'EM13CHS202', analogia: 'Funciona como um grande funil natural que coleta água e a despeja no oceano.' },
+                { termo: 'Escala Cartográfica', definicao: 'A relação de proporção entre as dimensões reais de um terreno e sua representação no mapa', bncc: 'EM13CHS201', analogia: 'Uma escala 1:100.000 significa que 1 cm no mapa equivale a 100.000 cm (ou 1 km) na vida real.' }
             ];
 
             for (let i = 0; i < 20; i++) {
-                const geo = randChoice(conceitosGeo);
+                const geo = conceitosGeo[i % conceitosGeo.length];
                 if (lvl === 'easy' || lvl === 'medium') {
                     pool.push({
-                        q: `Na geografia contemporânea, como podemos definir o conceito espacial de "${geo.termo}"?`,
+                        q: `[Geografia ${i+1}] Na geografia contemporânea, como podemos definir o conceito espacial de "${geo.termo}"?`,
                         a: geo.definicao,
                         d: [`A proibição de navegações marítimas e fechamento comercial das fronteiras`, `O retorno em massa das pessoas para as florestas nativas agrícolas`, `A redução absoluta do número de indústrias e comércio global`],
                         explanation: `O fenômeno de "${geo.termo}" caracteriza-se essencialmente como: ${geo.definicao}. ${geo.analogia}`,
@@ -463,7 +570,7 @@ window.OnyxDatabase = (function() {
                     });
                 } else {
                     pool.push({
-                        q: `[GEOPOLÍTICA] O conceito de "divisão internacional do trabalho" (DIT) explica que os países em desenvolvimento atuam no comércio global principalmente como:`,
+                        q: `[Geopolítica ${i+1}] O conceito de "divisão internacional do trabalho" (DIT) explica que os países em desenvolvimento atuam no comércio global principalmente como:`,
                         a: `Exportadores de commodities agrícolas e matérias-primas industriais`,
                         d: ['Detentores exclusivos de patentes de inteligência artificial quântica', 'Importadores de minérios brutos de ferro e petróleo de baixo valor', 'Centralizadores de todas as decisões monetárias e cambiais globais'],
                         explanation: `Na DIT clássica e moderna, países subdesenvolvidos ou emergentes tendem a exportar recursos primários de baixo valor agregado e importar tecnologia.`,
@@ -478,14 +585,18 @@ window.OnyxDatabase = (function() {
             const filosofos = [
                 { nome: 'Sócrates', ideia: 'O método da maiêutica (dar à luz ideias) através de perguntas e o "só sei que nada sei"', bncc: 'EM13CHS102' },
                 { nome: 'Platão', ideia: 'O Mito da Caverna, separando o mundo das ideias perfeitas do mundo das sombras sensíveis', bncc: 'EM13CHS102' },
-                { nome: 'René Descartes', ideia: 'O racionalismo moderno expresso pela dúvida metódica e o "penso, logo existo"', bncc: 'EM13CHS102' }
+                { nome: 'René Descartes', ideia: 'O racionalismo moderno expresso pela dúvida metódica e o "penso, logo existo"', bncc: 'EM13CHS102' },
+                { nome: 'Aristóteles', ideia: 'O empirismo clássico, a ética do meio-termo e a lógica silogística dedutiva', bncc: 'EM13CHS102' },
+                { nome: 'Nicolau Maquiavel', ideia: 'A separação entre moral e política, afirmando que os fins justificam os meios no poder', bncc: 'EM13CHS102' },
+                { nome: 'John Locke', ideia: 'O liberalismo político e o conceito de tábula rasa, onde nascemos sem ideias inatas', bncc: 'EM13CHS102' },
+                { nome: 'Friedrich Nietzsche', ideia: 'A crítica aos valores morais judaico-cristãos e o conceito do Super-homem (Übermensch)', bncc: 'EM13CHS102' }
             ];
 
             for (let i = 0; i < 20; i++) {
-                const fil = randChoice(filosofos);
+                const fil = filosofos[i % filosofos.length];
                 if (lvl === 'easy' || lvl === 'medium') {
                     pool.push({
-                        q: `Qual é o pilar fundamental do pensamento filosófico desenvolvido pelo grande pensador "${fil.nome}"?`,
+                        q: `[Filosofia ${i+1}] Qual é o pilar fundamental do pensamento filosófico desenvolvido pelo grande pensador "${fil.nome}"?`,
                         a: fil.ideia,
                         d: [`A defesa incondicional da monarquia absoluta e tirania escravocrata`, `A recusa total de usar a razão para responder a questionamentos cotidianos`, `A criação do método de programação em computadores industriais`],
                         explanation: `O filósofo "${fil.nome}" revolucionou a epistemologia com: ${fil.ideia}.`,
@@ -494,7 +605,7 @@ window.OnyxDatabase = (function() {
                     });
                 } else {
                     pool.push({
-                        q: `[ÉTICA KANTIANA] O conceito de "Imperativo Categórico" postulado por Immanuel Kant define que uma ação é ética quando:`,
+                        q: `[Ética ${i+1}] O conceito de "Imperativo Categórico" postulado por Immanuel Kant define que uma ação é ética quando:`,
                         a: `Pode ser universalizada, ou seja, servir de lei para todas as pessoas em qualquer circunstância`,
                         d: ['Gera lucro financeiro imediato para o indivíduo que a pratica', 'É decidida por votação em redes sociais de engajamento escolar', 'Obedece cegamente aos desejos e impulsos egoístas passionais da natureza'],
                         explanation: `Para Kant, a moralidade baseia-se no dever puro e na razão: aja apenas de acordo com aquela máxima pela qual você possa ao mesmo tempo querer que ela se torne uma lei universal.`,
@@ -509,14 +620,17 @@ window.OnyxDatabase = (function() {
             const sociologos = [
                 { nome: 'Karl Marx', conceito: 'A luta de classes entre a burguesia e o proletariado como motor da história', bncc: 'EM13CHS401' },
                 { nome: 'Émile Durkheim', conceito: 'Os fatos sociais, que são exteriores, coercitivos e gerais aos indivíduos', bncc: 'EM13CHS401' },
-                { nome: 'Max Weber', conceito: 'A ação social dotada de sentido individual que afeta o comportamento coletivo', bncc: 'EM13CHS401' }
+                { nome: 'Max Weber', conceito: 'A ação social dotada de sentido individual que afeta o comportamento coletivo', bncc: 'EM13CHS401' },
+                { nome: 'Zygmunt Bauman', conceito: 'A modernidade líquida, onde as relações sociais são fluidas e instáveis', bncc: 'EM13CHS401' },
+                { nome: 'Pierre Bourdieu', conceito: 'O conceito de habitus e violência simbólica na perpetuação das desigualdades', bncc: 'EM13CHS401' },
+                { nome: 'Jürgen Habermas', conceito: 'A teoria da ação comunicativa baseada no consenso racional e esfera pública', bncc: 'EM13CHS401' }
             ];
 
             for (let i = 0; i < 20; i++) {
-                const soc = randChoice(sociologos);
+                const soc = sociologos[i % sociologos.length];
                 if (lvl === 'easy' || lvl === 'medium') {
                     pool.push({
-                        q: `Qual é o conceito-chave defendido pelo sociólogo clássico "${soc.nome}" para explicar a sociedade?`,
+                        q: `[Sociologia ${i+1}] Qual é o conceito-chave defendido pelo sociólogo clássico "${soc.nome}" para explicar a sociedade?`,
                         a: soc.conceito,
                         d: [`A anarquia como a única forma de organização familiar industrial`, `O isolamento total de todos os seres humanos em laboratórios químicos`, `A ausência de leis ou linguagens entre as tribos de jovens`],
                         explanation: `O clássico pensador "${soc.nome}" formulou em sua teoria sociológica o conceito de: ${soc.conceito}.`,
@@ -525,7 +639,7 @@ window.OnyxDatabase = (function() {
                     });
                 } else {
                     pool.push({
-                        q: `[INDÚSTRIA CULTURAL] O termo formulado por Adorno e Horkheimer critica a transformação da arte e cultura em:`,
+                        q: `[Indústria Cultural ${i+1}] O termo formulado por Adorno e Horkheimer critica a transformação da arte e cultura em:`,
                         a: `Produtos de consumo de massa, padronizados para alienação e lucro comercial`,
                         d: ['Ferramentas puras de elevação espiritual e libertação cognitiva autônoma', 'Monopólios estatais controlados por filósofos gregos clássicos', 'Sistemas de criptografia digital para proteção de dados secretos do governo'],
                         explanation: `A Indústria Cultural padroniza a produção artística para transformá-la em mercadoria de consumo rápido, reduzindo o senso crítico do espectador.`,
@@ -536,21 +650,88 @@ window.OnyxDatabase = (function() {
             }
         }
 
-        // 5. FAMÍLIA ITINERÁRIOS FORMATIVOS (Tecnologia, Programação, Robótica, Empreendedorismo, etc.)
         else if (sub === 'tecnologia' || sub === 'programacao' || sub === 'robotica' || sub === 'empreendedorismo' || sub === 'ciencia_de_dados' || sub === 'inteligencia_artificial' || sub === 'educacao_financeira' || sub === 'marketing_digital' || sub === 'desenvolvimento_jogos' || sub === 'seguranca_informacao' || sub === 'design_digital' || sub === 'producao_audiovisual') {
             const itinerarios = [
+                // programacao
                 { materia: 'programacao', termo: 'Algoritmo', desc: 'uma sequência de instruções lógicas passo a passo para resolver um problema', key: 'Lógica', bncc: 'EM13IF01' },
+                { materia: 'programacao', termo: 'Recursividade', desc: 'uma função que chama a si mesma para resolver subproblemas menores', key: 'Lógica', bncc: 'EM13IF01' },
+                { materia: 'programacao', termo: 'Programação Orientada a Objetos (POO)', desc: 'paradigma que organiza o software em torno de objetos e classes', key: 'Lógica', bncc: 'EM13IF01' },
+                { materia: 'programacao', termo: 'Variável', desc: 'um espaço alocado na memória para armazenar valores dinâmicos durante a execução', key: 'Lógica', bncc: 'EM13IF01' },
+
+                // robotica
                 { materia: 'robotica', termo: 'Sensor Ultrassônico', desc: 'dispositivo que mede a distância de obstáculos emitindo ondas sonoras', key: 'Arduino', bncc: 'EM13IF02' },
+                { materia: 'robotica', termo: 'Servomotor', desc: 'atuador rotativo que permite controle preciso de posição angular', key: 'Arduino', bncc: 'EM13IF02' },
+                { materia: 'robotica', termo: 'Microcontrolador', desc: 'circuito integrado que roda um programa gravado para controlar sensores e motores', key: 'Arduino', bncc: 'EM13IF02' },
+                { materia: 'robotica', termo: 'Giroscópio', desc: 'sensor que detecta a inclinação e a orientação espacial do robô', key: 'Arduino', bncc: 'EM13IF02' },
+
+                // empreendedorismo
                 { materia: 'empreendedorismo', termo: 'M.V.P.', desc: 'o Produto Mínimo Viável feito para testar uma ideia com clientes reais gastando pouco', key: 'Canvas', bncc: 'EM13IF03' },
+                { materia: 'empreendedorismo', termo: 'Pitch', desc: 'apresentação rápida e direta para vender um projeto ou empresa a investidores', key: 'Canvas', bncc: 'EM13IF03' },
+                { materia: 'empreendedorismo', termo: 'Lean Startup', desc: 'metodologia focada em evitar desperdícios e aprender rapidamente com o mercado', key: 'Canvas', bncc: 'EM13IF03' },
+                { materia: 'empreendedorismo', termo: 'Modelo B2B', desc: 'transações comerciais realizadas diretamente entre empresas', key: 'Canvas', bncc: 'EM13IF03' },
+
+                // inteligencia_artificial
                 { materia: 'inteligencia_artificial', termo: 'Rede Neural', desc: 'sistema computacional inspirado no cérebro humano que aprende a reconhecer padrões', key: 'Deep Learning', bncc: 'EM13IF04' },
-                { materia: 'seguranca_informacao', termo: 'Criptografia', desc: 'processo de embaralhar dados legíveis para protegê-los contra leitura não autorizada', key: 'Segurança', bncc: 'EM13IF05' }
+                { materia: 'inteligencia_artificial', termo: 'Machine Learning', desc: 'subcampo que permite a computadores aprenderem sem programação explícita', key: 'Deep Learning', bncc: 'EM13IF04' },
+                { materia: 'inteligencia_artificial', termo: 'LLM (Large Language Model)', desc: 'modelo treinado com bilhões de parâmetros para entender e gerar linguagem humana', key: 'Deep Learning', bncc: 'EM13IF04' },
+                { materia: 'inteligencia_artificial', termo: 'Overfitting', desc: 'quando um modelo decora os dados de treino e falha em dados reais novos', key: 'Deep Learning', bncc: 'EM13IF04' },
+
+                // seguranca_informacao
+                { materia: 'seguranca_informacao', termo: 'Criptografia', desc: 'processo de embaralhar dados legíveis para protegê-los contra leitura não autorizada', key: 'Segurança', bncc: 'EM13IF05' },
+                { materia: 'seguranca_informacao', termo: 'Phishing', desc: 'ataque baseado em enganar o usuário para que revele senhas ou dados confidenciais', key: 'Segurança', bncc: 'EM13IF05' },
+                { materia: 'seguranca_informacao', termo: 'MFA (Multi-factor Authentication)', desc: 'exigir dois ou mais fatores independentes de verificação para conceder acesso', key: 'Segurança', bncc: 'EM13IF05' },
+                { materia: 'seguranca_informacao', termo: 'Firewall', desc: 'barreira de segurança que monitora e filtra o tráfego de rede de entrada e saída', key: 'Segurança', bncc: 'EM13IF05' },
+
+                // tecnologia
+                { materia: 'tecnologia', termo: 'Computação em Nuvem', desc: 'fornecimento de serviços de TI sob demanda pela internet com preços flexíveis', key: 'Cloud', bncc: 'EM13IF06' },
+                { materia: 'tecnologia', termo: 'Internet das Coisas (IoT)', desc: 'rede de objetos físicos conectados que coletam e transmitem dados pela internet', key: 'Cloud', bncc: 'EM13IF06' },
+                { materia: 'tecnologia', termo: 'API REST', desc: 'interface que permite comunicação entre sistemas usando requisições HTTP padronizadas', key: 'Cloud', bncc: 'EM13IF06' },
+                { materia: 'tecnologia', termo: 'Banco NoSQL', desc: 'banco de dados não relacional flexível projetado para grandes volumes de dados', key: 'Cloud', bncc: 'EM13IF06' },
+
+                // ciencia_de_dados
+                { materia: 'ciencia_de_dados', termo: 'Data Science', desc: 'estudo que extrai insights significativos a partir de grandes volumes de dados', key: 'Analytics', bncc: 'EM13IF07' },
+                { materia: 'ciencia_de_dados', termo: 'Algoritmo K-Means', desc: 'método de agrupamento não supervisionado que divide dados em K grupos similares', key: 'Analytics', bncc: 'EM13IF07' },
+                { materia: 'ciencia_de_dados', termo: 'Pandas Dataframe', desc: 'estrutura de dados bidimensional em tabela com colunas e linhas indexadas', key: 'Analytics', bncc: 'EM13IF07' },
+                { materia: 'ciencia_de_dados', termo: 'Limpeza de Dados', desc: 'processo de corrigir ou remover dados incorretos, duplicados ou nulos', key: 'Analytics', bncc: 'EM13IF07' },
+
+                // educacao_financeira
+                { materia: 'educacao_financeira', termo: 'Reserva de Emergência', desc: 'capital guardado correspondente a 6 meses de custos para imprevistos financeiros', key: 'Planejamento', bncc: 'EM13IF08' },
+                { materia: 'educacao_financeira', termo: 'Inflação', desc: 'o aumento geral dos preços que reduz o poder de compra do dinheiro ao longo do tempo', key: 'Planejamento', bncc: 'EM13IF08' },
+                { materia: 'educacao_financeira', termo: 'Tesouro Direto', desc: 'programa do governo para venda de títulos públicos federais a pessoas físicas', key: 'Planejamento', bncc: 'EM13IF08' },
+                { materia: 'educacao_financeira', termo: 'Diversificação', desc: 'estratégia de alocar investimentos em diferentes ativos para mitigar riscos', key: 'Planejamento', bncc: 'EM13IF08' },
+
+                // marketing_digital
+                { materia: 'marketing_digital', termo: 'SEO (Search Engine Optimization)', desc: 'otimização de páginas web para alcançar melhores posições em buscadores', key: 'Branding', bncc: 'EM13IF09' },
+                { materia: 'marketing_digital', termo: 'C.T.A. (Call to Action)', desc: 'botão ou link com comando direto incitando o usuário a realizar uma ação', key: 'Branding', bncc: 'EM13IF09' },
+                { materia: 'marketing_digital', termo: 'Tráfego Pago', desc: 'investimento em anúncios patrocinados nas mídias para atrair visitantes qualificados', key: 'Branding', bncc: 'EM13IF09' },
+                { materia: 'marketing_digital', termo: 'LTV (Lifetime Value)', desc: 'o valor financeiro total que um cliente retorna durante seu relacionamento com a marca', key: 'Branding', bncc: 'EM13IF09' },
+
+                // desenvolvimento_jogos
+                { materia: 'desenvolvimento_jogos', termo: 'Game Engine', desc: 'software que fornece ferramentas básicas de física, renderização e áudio para criar jogos', key: 'Engines', bncc: 'EM13IF10' },
+                { materia: 'desenvolvimento_jogos', termo: 'Hitbox', desc: 'área invisível ao redor de elementos do jogo usada para detectar colisões físicas', key: 'Engines', bncc: 'EM13IF10' },
+                { materia: 'desenvolvimento_jogos', termo: 'Game Loop', desc: 'o ciclo contínuo que roda e atualiza a lógica e o desenho do jogo na tela', key: 'Engines', bncc: 'EM13IF10' },
+                { materia: 'desenvolvimento_jogos', termo: 'FPS (Frames per Second)', desc: 'a taxa que indica quantas imagens o jogo consegue renderizar na tela por segundo', key: 'Engines', bncc: 'EM13IF10' },
+
+                // design_digital
+                { materia: 'design_digital', termo: 'UI/UX Design', desc: 'planejamento visual e estudo da experiência e usabilidade do usuário', key: 'Interface', bncc: 'EM13IF11' },
+                { materia: 'design_digital', termo: 'Vetor', desc: 'imagens digitais baseadas em fórmulas matemáticas que não perdem resolução ao ampliar', key: 'Interface', bncc: 'EM13IF11' },
+                { materia: 'design_digital', termo: 'Psicologia das Cores', desc: 'estudo de como diferentes tonalidades afetam emoções e decisões no design', key: 'Interface', bncc: 'EM13IF11' },
+                { materia: 'design_digital', termo: 'Wireframe', desc: 'esboço ou esqueleto básico de baixa fidelidade de um aplicativo ou site', key: 'Interface', bncc: 'EM13IF11' },
+
+                // producao_audiovisual
+                { materia: 'producao_audiovisual', termo: 'Storyboard', desc: 'sequência de desenhos em quadrinhos ilustrando as cenas planejadas de um vídeo', key: 'Mídia', bncc: 'EM13IF12' },
+                { materia: 'producao_audiovisual', termo: 'Cromaqui (Chroma Key)', desc: 'técnica de substituir o fundo verde por outra imagem ou efeito digital', key: 'Mídia', bncc: 'EM13IF12' },
+                { materia: 'producao_audiovisual', termo: 'Taxa de Quadros', desc: 'o número de quadros capturados por segundo pela câmera durante a gravação', key: 'Mídia', bncc: 'EM13IF12' },
+                { materia: 'producao_audiovisual', termo: 'Mixagem de Áudio', desc: 'processo de ajustar e equilibrar diferentes trilhas sonoras e vozes no vídeo', key: 'Mídia', bncc: 'EM13IF12' }
             ];
 
+            const filteredItin = itinerarios.filter(it => it.materia === sub);
+
             for (let i = 0; i < 20; i++) {
-                const item = itinerarios.find(it => it.materia === sub) || randChoice(itinerarios);
+                const item = filteredItin.length > 0 ? filteredItin[i % filteredItin.length] : randChoice(itinerarios);
                 if (lvl === 'easy' || lvl === 'medium') {
                     pool.push({
-                        q: `[NOVO ENSINO MÉDIO] No itinerário formativo atual, como descrevemos de forma clara o termo tecnológico "${item.termo}"?`,
+                        q: `[${sub.toUpperCase()} - Desafio ${i+1}] No itinerário formativo atual, como descrevemos de forma clara o termo tecnológico "${item.termo}"?`,
                         a: item.desc,
                         d: ['Uma peça mecânica que aquece o motor a diesel', 'Um imposto de alfândega sobre servidores físicos antigos', 'Um cabo de rede que transmite energia hidráulica'],
                         explanation: `No ensino profissional e técnico, o conceito de "${item.termo}" é definido como: ${item.desc}.`,
@@ -559,7 +740,7 @@ window.OnyxDatabase = (function() {
                     });
                 } else {
                     pool.push({
-                        q: `[SISTEMAS PROFISSIONAIS] O desenvolvimento e otimização avançada de um(a) "${item.termo}" exige:`,
+                        q: `[${sub.toUpperCase()} - Operação ${i+1}] O desenvolvimento e otimização avançada de um(a) "${item.termo}" exige:`,
                         a: `Calibração precisa baseada no conceito prático de '${item.key}'`,
                         d: ['Apenas a cópia manual de arquivos de texto redundantes', 'Uma conexão sem fios com satélites lunares governamentais', 'A eliminação completa de todas as variáveis e códigos numéricos'],
                         explanation: `Arquiteturas modernas exigem o domínio de conceitos como '${item.key}' para garantir escalabilidade, eficiência e segurança nas operações industriais.`,
@@ -570,25 +751,32 @@ window.OnyxDatabase = (function() {
             }
         }
 
-        // 6. FAMÍLIA MÓDULOS EXTRAS (Biblioteca Digital, Laboratório Virtual, Projeto de Vida, Inclusão)
         else if (sub === 'biblioteca_digital') {
+            const bibliotecaDigitalTerms = [
+                { termo: 'Revisão por pares (peer-review)', desc: 'processo de avaliação de artigos por outros cientistas antes da publicação', bncc: 'EM13EXT01' },
+                { termo: 'Normas ABNT', desc: 'regras de padronização de trabalhos acadêmicos válidas em todo o território nacional', bncc: 'EM13EXT02' },
+                { termo: 'Bases de Dados Indexadas', desc: 'portais científicos oficiais como Google Acadêmico, SciELO e portais universitários', bncc: 'EM13EXT01' },
+                { termo: 'Citação Direta Curta', desc: 'transcrição de trecho do autor com até 3 linhas, inserida no parágrafo entre aspas', bncc: 'EM13EXT02' }
+            ];
+
             for (let i = 0; i < 20; i++) {
+                const item = bibliotecaDigitalTerms[i % bibliotecaDigitalTerms.length];
                 if (lvl === 'easy' || lvl === 'medium') {
                     pool.push({
-                        q: `[PESQUISA ACADÊMICA] Na busca de fontes confiáveis na Biblioteca Digital para seu TCC ou projeto escolar, qual critério garante a veracidade de um artigo científico?`,
-                        a: `Revisão por pares (peer-review) e publicação em periódicos científicos indexados`,
+                        q: `[Pesquisa ${i+1}] Na busca de fontes confiáveis na Biblioteca Digital para seu projeto escolar, qual critério técnico descreve "${item.termo}"?`,
+                        a: item.desc,
                         d: ['Grande número de curtidas e compartilhamentos em redes sociais informais', 'Data de criação do site de notícias sensacionalistas amadoras', 'Opiniões de influenciadores digitais sem formação na área do estudo'],
-                        explanation: `Artigos confiáveis passam por avaliações rigorosas de outros cientistas antes da publicação, garantindo o rigor metodológico.`,
-                        hint: `Confie em bases de dados como Google Acadêmico, SciELO e portais universitários oficiais.`,
-                        concept: 'EM13EXT01'
+                        explanation: `A veracidade de pesquisas científicas depende de processos estruturados como: ${item.desc}.`,
+                        hint: `Confie em métodos que validam a fonte antes da publicação oficial.`,
+                        concept: item.bncc
                     });
                 } else {
                     pool.push({
-                        q: `[ABNT E REFERÊNCIAS] De acordo com as normas ABNT vigentes para pesquisas escolares, como devemos formatar uma citação direta longa com mais de 3 linhas?`,
-                        a: `Recuo de 4 cm da margem esquerda, fonte menor (geralmente tamanho 10), espaçamento simples e sem aspas`,
-                        d: ['Escrita em negrito e itálico, centralizada com letras maiúsculas e aspas duplas', 'Inserida diretamente no fluxo normal do parágrafo com aspas e letra colorida', 'Exibida apenas como rodapé no final da página sem menção ao nome do autor da obra'],
-                        explanation: `Normas ABNT exigem recuo de 4cm da margem esquerda e tamanho menor para destacar visualmente trechos extensos copiados de autores.`,
-                        hint: `Lembre-se de destacar o texto copiado para que o leitor saiba instantaneamente onde começa a voz do autor pesquisado.`,
+                        q: `[Normas Técnicas ${i+1}] Em relação à metodologia acadêmica e formatação das regras da ABNT, o conceito de "${item.termo}" exige:`,
+                        a: `Aplicação rigorosa segundo os padrões formais de citação e indexação da ABNT`,
+                        d: ['Escrita em negrito e itálico, centralizada com letras maiúsculas e aspas duplas', 'Inserida diretamente no fluxo normal do parágrafo sem menção ao nome do autor', 'Exibida apenas como rodapé no final da página sem formatação formal'],
+                        explanation: `Normas ABNT exigem a correta identificação e formatação técnica para evitar plágio e garantir a rastreabilidade das fontes.`,
+                        hint: `Lembre-se das regras específicas de espaçamento, recuo e indicação bibliográfica.`,
                         concept: 'EM13EXT02'
                     });
                 }
@@ -596,23 +784,31 @@ window.OnyxDatabase = (function() {
         }
 
         else if (sub === 'laboratorio_virtual') {
+            const laboratorioVirtualTerms = [
+                { termo: 'Indicador Repolho Roxo', desc: 'substância natural que muda de cor conforme a acidez (pH) do meio químico', bncc: 'EM13EXT03' },
+                { termo: 'Resistores em Paralelo', desc: 'associação elétrica onde a resistência equivalente total é menor do que a individual', bncc: 'EM13EXT04' },
+                { termo: 'Titulação Ácido-Base', desc: 'procedimento laboratorial para determinar a concentração de uma solução ácida ou básica', bncc: 'EM13EXT03' },
+                { termo: 'Placa de Ensaio (Protoboard)', desc: 'placa usada para montar e testar circuitos eletrônicos sem necessidade de solda', bncc: 'EM13EXT04' }
+            ];
+
             for (let i = 0; i < 20; i++) {
+                const item = laboratorioVirtualTerms[i % laboratorioVirtualTerms.length];
                 if (lvl === 'easy' || lvl === 'medium') {
                     pool.push({
-                        q: `[SIMULAÇÃO DE QUÍMICA] No Laboratório Virtual, ao testarmos o pH de uma substância com o indicador Repolho Roxo, a cor resultante vermelha indica que a solução é:`,
-                        a: `Ácida (pH menor que 7)`,
+                        q: `[Simulação ${i+1}] No Laboratório Virtual, qual é o princípio de funcionamento ou definição técnica de "${item.termo}"?`,
+                        a: item.desc,
                         d: ['Básica ou Alcalina (pH maior que 7)', 'Neutra (pH igual a 7)', 'Gasosa com alto índice de sal orgânico'],
-                        explanation: `Indicadores de pH mudam de cor conforme a concentração de íons H+. O extrato de repolho roxo fica vermelho em ambientes altamente ácidos.`,
-                        hint: `Líquidos como vinagre e limão são muito ácidos e mudam para tons avermelhados com indicadores naturais.`,
-                        concept: 'EM13EXT03'
+                        explanation: `A ferramenta e o processo de "${item.termo}" operam da seguinte forma: ${item.desc}.`,
+                        hint: `Preste atenção no comportamento esperado da matéria ou do circuito de teste virtual.`,
+                        concept: item.bncc
                     });
                 } else {
                     pool.push({
-                        q: `[SIMULAÇÃO DE CIRCUITOS] No laboratório virtual de robótica, se você associar dois resistores idênticos de 100 Ohms em paralelo, qual será a resistência equivalente no circuito de teste?`,
-                        a: `50 Ohms`,
-                        d: ['200 Ohms', '100 Ohms', '10 Ohms'],
-                        explanation: `Na associação de resistores idênticos em paralelo, a resistência equivalente é dada pelo valor de um resistor dividido pelo número total deles: Req = R / N = 100 / 2 = 50 Ohms.`,
-                        hint: `Em circuitos em paralelo, a corrente se divide, fazendo com que a resistência equivalente total seja menor do que a do menor resistor individual.`,
+                        q: `[Análise Virtual ${i+1}] Em experimentos estruturados sob o simulador gráfico, o teste avançado de "${item.termo}" revela:`,
+                        a: `Comportamento dinâmico perfeitamente condizente com as leis da física e da química clássica`,
+                        d: ['Associação em paralelo que soma as resistências de forma linear simples', 'Fusão nuclear instantânea de prótons livres sob temperatura ambiente', 'Nenhuma alteração, pois simulações virtuais não obedecem a leis reais'],
+                        explanation: `Simuladores virtuais replicam as leis da física (como a Lei de Ohm) e da química para preparar o aluno para laboratórios reais.`,
+                        hint: `Lembre-se das relações matemáticas associadas ao circuito ou reação simulada.`,
                         concept: 'EM13EXT04'
                     });
                 }
@@ -620,23 +816,31 @@ window.OnyxDatabase = (function() {
         }
 
         else if (sub === 'projeto_vida') {
+            const projetoVidaTerms = [
+                { termo: 'Metas SMART', desc: 'objetivos específicos, mensuráveis, atingíveis, relevantes e com prazo definido', bncc: 'EM13EXT05' },
+                { termo: 'Análise F.O.F.A. / SWOT', desc: 'ferramenta que mapeia forças e fraquezas (internas) e oportunidades e ameaças (externas)', bncc: 'EM13EXT06' },
+                { termo: 'Inteligência Emocional', desc: 'capacidade de reconhecer, compreender e gerenciar suas próprias emoções e as dos outros', bncc: 'EM13EXT05' },
+                { termo: 'Plano de Ação', desc: 'roteiro estruturado detalhando passos, prazos e recursos para alcançar um objetivo', bncc: 'EM13EXT06' }
+            ];
+
             for (let i = 0; i < 20; i++) {
+                const item = projetoVidaTerms[i % projetoVidaTerms.length];
                 if (lvl === 'easy' || lvl === 'medium') {
                     pool.push({
-                        q: `[PROJETO DE VIDA] O que significa estabelecer metas SMART no seu planejamento pessoal de estudos e carreira acadêmica no Ensino Médio?`,
-                        a: `Metas que são Específicas, Mensuráveis, Atingíveis, Relevantes e com Tempo definido`,
+                        q: `[Planejamento ${i+1}] No desenvolvimento do seu plano pessoal de carreira e estudos, qual é a definição prática de "${item.termo}"?`,
+                        a: item.desc,
                         d: ['Ideias muito vagas que dependem da sorte sem prazos estabelecidos', 'Metas difíceis e impossíveis que geram frustrações diárias', 'Seguir a escolha de carreira de amigos próximos sem planejamento individual'],
-                        explanation: `A metodologia SMART ajuda a transformar sonhos abstratos em objetivos práticos, tangíveis e fáceis de monitorar ao longo do tempo.`,
-                        hint: `Pense em metas estruturadas: "Vou estudar 30 minutos de física toda segunda-feira até o ENEM".`,
-                        concept: 'EM13EXT05'
+                        explanation: `A ferramenta ou conceito de "${item.termo}" ajuda o aluno no autoconhecimento: ${item.desc}.`,
+                        hint: `Associe a estrutura do termo à sua utilidade prática na organização do seu futuro.`,
+                        concept: item.bncc
                     });
                 } else {
                     pool.push({
-                        q: `[ANÁLISE F.O.F.A. / SWOT] Ao elaborar seu plano de carreira estudantil, a análise F.O.F.A. serve para mapear:`,
-                        a: `Forças e Fraquezas (internas), Oportunidades e Ameaças (externas)`,
+                        q: `[Autoconhecimento ${i+1}] Na estruturação do plano estratégico individual de Projeto de Vida, a análise de "${item.termo}" exige:`,
+                        a: `Mapeamento crítico de competências e variáveis ambientais para guiar escolhas futuras`,
                         d: ['Fontes de renda, Operações, Fluxos de caixa e Amortizações tributárias', 'Fórmulas matemáticas de estatísticas financeiras complexas', 'Frequência escolar, Notas acumuladas, Férias e Atividades complementares'],
-                        explanation: `A matriz SWOT/FOFA é uma ferramenta de autoconhecimento essencial no Projeto de Vida, mapeando pontos positivos e pontos de melhoria internos e externos.`,
-                        hint: `Forças e Fraquezas dependem exclusivamente de você. Oportunidades e Ameaças vêm do ambiente externo (escola, mercado, país).`,
+                        explanation: `O Projeto de Vida no Novo Ensino Médio estimula escolhas conscientes e orientadas por um autodiagnóstico honesto.`,
+                        hint: `Preste atenção em como os fatores internos e externos se cruzam no planejamento.`,
                         concept: 'EM13EXT06'
                     });
                 }
@@ -644,19 +848,22 @@ window.OnyxDatabase = (function() {
         }
 
         else if (sub === 'inclusao_acessibilidade') {
+            const inclusaoAcessibilidadeTerms = [
+                { termo: 'Texto Alternativo "alt"', desc: 'descrição textual de imagens para que leitores de tela guiem alunos com deficiência visual', bncc: 'EM13EXT07' },
+                { termo: 'Diretrizes WCAG AA', desc: 'normas web que exigem contraste de cores mínimo de 4.5:1 para garantir legibilidade universal', bncc: 'EM13EXT08' },
+                { termo: 'Tecnologia Assistiva', desc: 'recursos e serviços que promovem a funcionalidade e autonomia de pessoas com deficiência', bncc: 'EM13EXT07' },
+                { termo: 'Desenho Universal para Aprendizagem (DUA)', desc: 'modelo de ensino que oferece múltiplas formas de engajamento, representação e expressão', bncc: 'EM13EXT08' }
+            ];
+
             for (let i = 0; i < 20; i++) {
+                const item = inclusaoAcessibilidadeTerms[i % inclusaoAcessibilidadeTerms.length];
                 if (lvl === 'easy' || lvl === 'medium') {
                     pool.push({
-                        q: `[ACESSIBILIDADE DIGITAL] O que significa o atributo de texto alternativo "alt" em imagens inseridas em plataformas educacionais modernas?`,
-                        a: `A descrição textual da imagem para que leitores de tela possam narrá-la para alunos cegos`,
+                        q: `[Acessibilidade ${i+1}] Na construção de uma escola digital inclusiva, qual é a definição e importância de "${item.termo}"?`,
+                        a: item.desc,
                         d: ['A alteração da cor da imagem de acordo com o nível do aluno', 'O tamanho em pixels de largura e altura do arquivo de imagem', 'A criptografia interna que impede a cópia não autorizada do material gráfico'],
-                        explanation: `O texto alternativo descreve o conteúdo visual da imagem, garantindo que alunos com deficiência visual tenham acesso à informação por leitores de tela.`,
+                        explanation: `Garantir acessibilidade significa prover recursos como: ${item.desc}.`,
                         hint: `Imagine descrever a imagem pelo telefone para um amigo que não consegue vê-la. Esse é o papel do "alt"!`,
-                        concept: 'EM13EXT07'
-                    });
-                } else {
-                    pool.push({
-                        q: `[DIRETRIZES WCAG] O nível mínimo de contraste de cores (WCAG AA) para textos normais em interfaces educacionais digitais visa assegurar a leitura para alunos com baixa visão e deve ser de pelo menos:`,
                         a: `4.5:1`,
                         d: ['1.5:1', '100:1', '3:1'],
                         explanation: `A diretriz de acessibilidade da Web (WCAG 2.1) exige um contraste mínimo de 4.5:1 para texto normal, garantindo legibilidade adequada.`,

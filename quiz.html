@@ -73,6 +73,7 @@
     <script src="js/onyx_database.js"></script>
     <script src="js/onyx_engines.js"></script>
     <script src="js/onyx_core.js"></script>
+    <script src="js/onyx_db_manager.js"></script>
     <script>
         OnyxCore.Session.checkAuth();
         const userName = OnyxCore.Session.getCurrentUser();
@@ -578,7 +579,11 @@
         }
 
         window.onload = async () => {
-            await OnyxCore.DB.init();
+            if (window.OnyxDBManager) {
+                await window.OnyxDBManager.init();
+            } else {
+                await OnyxCore.DB.init();
+            }
             startMission();
         };
     </script>

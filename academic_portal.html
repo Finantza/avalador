@@ -81,6 +81,7 @@
 
     <!-- Script imports -->
     <script src="js/onyx_core.js"></script>
+    <script src="js/onyx_db_manager.js"></script>
     <script src="js/onyx_database.js"></script>
     <script src="js/onyx_engines.js"></script>
     <script src="js/onyx_ui.js"></script>
@@ -95,7 +96,11 @@
             OnyxCore.Session.checkAuth();
             const userName = OnyxCore.Session.getCurrentUser();
             
-            await OnyxCore.DB.init();
+            if (window.OnyxDBManager) {
+                await window.OnyxDBManager.init();
+            } else {
+                await OnyxCore.DB.init();
+            }
             userStats = await OnyxCore.DB.getUser(userName);
             if (!userStats) userStats = { id: userName, level: 1, xp: 0 };
 
