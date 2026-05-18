@@ -317,8 +317,30 @@ window.OnyxEngines = {
 
     QuestionEngine: {
         generateNewProceduralQuestion(subject, difficulty) {
-            const subjects = ['matematica', 'ciencias', 'humanas', 'linguagens'];
-            const sub = subjects.includes(subject) ? subject : 'matematica';
+            // Map every platform subject to a procedural generation group
+            const subjectGroupMap = {
+                // Linguagens
+                portugues: 'linguagens', literatura: 'linguagens', ingles: 'ingles',
+                artes: 'linguagens', educacao_fisica: 'linguagens',
+                // Matemática
+                algebra: 'matematica', geometria: 'matematica', estatistica: 'matematica',
+                matematica_financeira: 'matematica',
+                // Ciências da Natureza
+                fisica: 'ciencias', quimica: 'ciencias', biologia: 'ciencias',
+                // Ciências Humanas
+                historia: 'humanas', geografia: 'humanas', filosofia: 'humanas', sociologia: 'humanas',
+                // Itinerários / Tecnologia
+                tecnologia: 'matematica', programacao: 'matematica', robotica: 'ciencias',
+                empreendedorismo: 'humanas', ciencia_de_dados: 'matematica',
+                inteligencia_artificial: 'ciencias', educacao_financeira: 'matematica',
+                marketing_digital: 'humanas', desenvolvimento_jogos: 'matematica',
+                seguranca_informacao: 'ciencias', design_digital: 'linguagens',
+                producao_audiovisual: 'linguagens',
+                // Extras
+                biblioteca_digital: 'linguagens', laboratorio_virtual: 'ciencias',
+                projeto_vida: 'humanas', inclusao_acessibilidade: 'linguagens'
+            };
+            const sub = subjectGroupMap[subject] || 'humanas';
             const diffs = ['easy', 'medium', 'hard'];
             const diff = diffs.includes(difficulty) ? difficulty : 'medium';
             
@@ -598,17 +620,24 @@ window.OnyxEngines = {
             const db = window.OnyxDatabase || {};
             let pool = [];
             
-            if (subject === 'ingles') {
-                const trendDB = window.OnyxEngines.TrendSensingDatabase || {};
-                pool = trendDB['ingles'] || [];
-            } else if (window.currentSimulateEdition === 'trends') {
-                const trendDB = window.OnyxEngines.TrendSensingDatabase || {};
-                pool = trendDB[subject] || trendDB['matematica'] || [];
-            } else if (db && typeof db.getFreshPool === 'function') {
-                pool = db.getFreshPool(subject, difficulty);
-            } else {
-                const subjectData = db[subject] || db['matematica'];
-                pool = subjectData[difficulty] || subjectData['easy'] || [];
+            const trendDB = window.OnyxEngines.TrendSensingDatabase || {};
+            const hasTrend = trendDB[subject] && trendDB[subject].length > 0;
+
+            if (hasTrend || window.currentSimulateEdition === 'trends') {
+                // Use TrendSensingDatabase if available for this specific subject
+                pool = trendDB[subject] || [];
+            }
+
+            // If no trend pool found (or empty), always pull from OnyxDatabase for the exact subject
+            if (!pool || pool.length === 0) {
+                if (db && typeof db.getFreshPool === 'function') {
+                    pool = db.getFreshPool(subject, difficulty);
+                } else {
+                    const subjectData = db[subject];
+                    if (subjectData) {
+                        pool = subjectData[difficulty] || subjectData['easy'] || [];
+                    }
+                }
             }
             
             // Merge Dynamic Questions from CloudSync (IndexedDB)
