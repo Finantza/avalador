@@ -44,7 +44,13 @@ window.OnyxCore = {
             if (!this.instance) return;
             try {
                 const tx = this.instance.transaction(['global_stats'], 'readwrite');
-                tx.objectStore('global_stats').put({ id: 'OPERADOR TESTE', password: '1234', level: 1, xp: 0 });
+                const store = tx.objectStore('global_stats');
+                // Usuário de testes: Aluno
+                store.put({ id: 'aluno', password: '1234', level: 1, xp: 0, role: 'aluno' });
+                // Usuário de testes: Gestor
+                store.put({ id: 'gestor', password: '1234', level: 5, xp: 150, role: 'gestor' });
+                // Fallback anterior
+                store.put({ id: 'OPERADOR TESTE', password: '1234', level: 1, xp: 0, role: 'aluno' });
             } catch(e) {}
         },
 

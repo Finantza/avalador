@@ -99,7 +99,14 @@
             userStats = await OnyxCore.DB.getUser(userName);
             if (!userStats) userStats = { id: userName, level: 1, xp: 0 };
 
-            document.getElementById('logged-user-name').textContent = userStats.id.toUpperCase();
+            const userRole = userStats.role || 'aluno';
+            if (userRole !== 'gestor') {
+                alert("🚨 ACESSO RESTRITO A GESTORES\n\nEste terminal administrativo é reservado exclusivamente a diretores, professores e funcionários credenciados.");
+                location.href = 'dashboard.html';
+                return;
+            }
+
+            document.getElementById('logged-user-name').innerHTML = userStats.id.toUpperCase() + ` <span style="color:var(--accent); font-size:0.7rem; font-weight:800; font-family:var(--font-mono);">[GESTOR]</span>`;
 
             // Set up sidebar tabs
             document.querySelectorAll('.role-menu-item').forEach(btn => {
@@ -122,6 +129,16 @@
                 localStorage.setItem('onyx_school_students', JSON.stringify(defaultStudents));
             }
 
+            // Default teacher list in localStorage if not exists
+            if (!localStorage.getItem('onyx_school_teachers')) {
+                const defaultTeachers = [
+                    { id: 1, name: "Prof. Marcos Aurelio", subject: "Matemática e suas Tecnologias", status: "Ativo" },
+                    { id: 2, name: "Profa. Julia Mendes", subject: "Ciências da Natureza", status: "Ativo" },
+                    { id: 3, name: "Prof. Carlos Silveira", subject: "Linguagens e Códigos", status: "Ativo" }
+                ];
+                localStorage.setItem('onyx_school_teachers', JSON.stringify(defaultTeachers));
+            }
+
             renderWorkspace();
         }
 
@@ -129,147 +146,104 @@
             const container = document.getElementById('workspace-card');
             
             if (activeTab === 'tab-direcao') {
-                container.innerHTML = `<div class="u-text-center u-p-20"><p class="u-text-muted u-font-08">ANALISANDO DADOS PEDAGÓGICOS DA DIRETORIA...</p></div>`;
-                
-                // Get AI Heuristic Insights
-                const insight = await OnyxEngines.generateProfileInsight(userStats.id);
+                const students = getStudents();
+                const studentOptions = students.map(s => `<option value="${s.id}">${s.name} (Média: ${s.grade.toFixed(1)} | Presença: ${s.freq}%)</option>`).join('');
 
                 container.innerHTML = `
                     <div style="display:flex; flex-direction:column; gap:25px;">
                         <div>
-                            <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">📊 MÓDULO DE DIREÇÃO ESCOLAR (PREVISÕES PEDAGÓGICAS COM IA)</h2>
-                            <p style="margin:0;" class="u-text-muted u-font-08">Análise heurística de desempenho, evasão e engajamento escolar em tempo real.</p>
+                            <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">📊 DIRETORIA ESCOLAR (PREVISÕES PEDAGÓGICAS COM IA)</h2>
+                            <p style="margin:0;" class="u-text-muted u-font-08">Análise preditiva heurística de desempenho, evasão e engajamento escolar em tempo real.</p>
                         </div>
 
-                        <!-- Heuristic Predictive metrics -->
-                        <div class="metrics-card-grid" style="border-top:1px solid var(--glass-border); padding-top:20px;">
-                            <div class="metric-glass-card">
-                                <span class="u-font-07 u-text-muted" style="display:block; font-weight:800; font-family:var(--font-mono);">IA PREDITIVA: RISCO DE EVASÃO</span>
-                                <span class="u-font-15 u-weight-900 u-mt-10" style="display:block; font-size:1.8rem; color:${insight.dropoutRiskColor};">
-                                    ${insight.dropoutRisk}
-                                </span>
-                                <p class="u-font-07 u-text-muted u-mt-5" style="margin:0;">Risco de evasão escolar calculado a partir da curva de proficiência do estudante.</p>
-                            </div>
-                            <div class="metric-glass-card">
-                                <span class="u-font-07 u-text-muted" style="display:block; font-weight:800; font-family:var(--font-mono);">ÍNDICE DE ENGAJAMENTO GERAL</span>
-                                <div class="u-flex-between u-mt-10 u-mb-5">
-                                    <span class="u-font-15 u-weight-900" style="font-size:1.5rem; color:var(--primary);">${insight.engagementLevel}%</span>
-                                    <span class="u-font-07 u-text-muted">MÉTRICA ATIVA</span>
-                                </div>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar-inner" style="width:${insight.engagementLevel}%; background:var(--primary);"></div>
-                                </div>
-                            </div>
-                            <div class="metric-glass-card">
-                                <span class="u-font-07 u-text-muted" style="display:block; font-weight:800; font-family:var(--font-mono);">TENDÊNCIA PEDAGÓGICA</span>
-                                <span class="u-font-15 u-weight-900 u-mt-10" style="display:block; font-size:1.6rem; color:${insight.trendColor};">
-                                    ${insight.trend}
-                                </span>
-                                <p class="u-font-07 u-text-muted u-mt-5" style="margin:0;">Variação nas últimas 5 missões de treinamento calibradas no ecossistema.</p>
-                            </div>
+                        <!-- Student Selector for AI prediction -->
+                        <div class="metric-glass-card" style="padding: 15px 20px; display:flex; flex-direction:column; gap:8px;">
+                            <label class="u-font-07 u-text-muted" style="font-weight:800; font-family:var(--font-mono);">📊 SELECIONE UM ESTUDANTE PARA ESTRATÉGIA E DIAGNÓSTICO DE IA PREDITIVA:</label>
+                            <select id="diretoria-student-selector" class="academic-input u-w-full" onchange="loadStudentAIInsight()" style="background:rgba(0,0,0,0.5); padding:10px; border:1px solid var(--glass-border); color:#fff; cursor:pointer;">
+                                ${studentOptions}
+                            </select>
                         </div>
 
-                        <!-- BNCC Competencies averages -->
-                        <div class="metric-glass-card" style="margin-top:10px;">
-                            <h3 style="margin:0 0 15px 0; font-family:var(--font-header); color:#fff; font-size:1rem;">🎯 MAPA DE PROFICIÊNCIA POR ÁREAS DE COMPETÊNCIA BNCC</h3>
-                            <div class="u-grid-2" style="gap:20px;">
-                                <div>
-                                    <div style="display:flex; flex-direction:column; gap:12px;">
-                                        <div>
-                                            <div class="u-flex-between u-mb-5 u-font-07">
-                                                <span>📚 LINGUAGENS E SUAS TECNOLOGIAS</span>
-                                                <span class="u-text-accent u-weight-800">${insight.competenciesMap.linguagens}%</span>
-                                            </div>
-                                            <div class="progress-bar-container"><div class="progress-bar-inner" style="width:${insight.competenciesMap.linguagens}%; background:var(--accent);"></div></div>
-                                        </div>
-                                        <div>
-                                            <div class="u-flex-between u-mb-5 u-font-07">
-                                                <span>📐 MATEMÁTICA E SUAS TECNOLOGIAS</span>
-                                                <span class="u-text-primary u-weight-800">${insight.competenciesMap.matematica}%</span>
-                                            </div>
-                                            <div class="progress-bar-container"><div class="progress-bar-inner" style="width:${insight.competenciesMap.matematica}%; background:var(--primary);"></div></div>
-                                        </div>
-                                        <div>
-                                            <div class="u-flex-between u-mb-5 u-font-07">
-                                                <span>🧬 CIÊNCIAS DA NATUREZA</span>
-                                                <span class="u-text-warning u-weight-800">${insight.competenciesMap.natureza}%</span>
-                                            </div>
-                                            <div class="progress-bar-container"><div class="progress-bar-inner" style="width:${insight.competenciesMap.natureza}%; background:var(--warning);"></div></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div style="display:flex; flex-direction:column; gap:12px;">
-                                        <div>
-                                            <div class="u-flex-between u-mb-5 u-font-07">
-                                                <span>🌍 HUMANAS E SOCIAIS APLICADAS</span>
-                                                <span style="color:#a855f7; font-weight:800;">${insight.competenciesMap.humanas}%</span>
-                                            </div>
-                                            <div class="progress-bar-container"><div class="progress-bar-inner" style="width:${insight.competenciesMap.humanas}%; background:#a855f7;"></div></div>
-                                        </div>
-                                        <div>
-                                            <div class="u-flex-between u-mb-5 u-font-07">
-                                                <span>🚀 ITINERÁRIOS PROFISSIONAIS</span>
-                                                <span class="u-text-accent u-weight-800">${insight.competenciesMap.itinerarios}%</span>
-                                            </div>
-                                            <div class="progress-bar-container"><div class="progress-bar-inner" style="width:${insight.competenciesMap.itinerarios}%; background:var(--accent);"></div></div>
-                                        </div>
-                                        <div>
-                                            <div class="u-flex-between u-mb-5 u-font-07">
-                                                <span>✨ EXTENSÕES E LABORATÓRIOS</span>
-                                                <span class="u-text-primary u-weight-800">${insight.competenciesMap.extras}%</span>
-                                            </div>
-                                            <div class="progress-bar-container"><div class="progress-bar-inner" style="width:${insight.competenciesMap.extras}%; background:var(--primary);"></div></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Recommendations alert -->
-                        <div style="background:rgba(245, 158, 11, 0.05); border:1px solid rgba(245,158,11,0.2); border-radius:12px; padding:15px; font-size:0.8rem; line-height:1.5;">
-                            <strong>📢 RECOMENDAÇÃO HEURÍSTICA DA DIREÇÃO:</strong> ${insight.recommendation}
+                        <!-- Container filled dynamically by loadStudentAIInsight() -->
+                        <div id="diretoria-insights-container" style="display:flex; flex-direction:column; gap:25px;">
+                            <div class="u-text-center u-p-20"><p class="u-text-muted u-font-08">INICIANDO DIAGNÓSTICO DO ALUNO...</p></div>
                         </div>
                     </div>
                 `;
+
+                loadStudentAIInsight();
             } 
             
             else if (activeTab === 'tab-corpo-docente') {
                 container.innerHTML = `
                     <div style="display:flex; flex-direction:column; gap:20px;">
                         <div>
-                            <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">👩‍🏫 PORTAL DO PROFESSOR (REGISTRO E BLOQUEIOS)</h2>
-                            <p style="margin:0;" class="u-text-muted u-font-08">Identifique conteúdos críticos de reprovação e ajuste proficiência escolar de alunos.</p>
+                            <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">👩‍🏫 GESTÃO DE CORPO DOCENTE E LANÇAMENTO</h2>
+                            <p style="margin:0;" class="u-text-muted u-font-08">Cadastre novos docentes, gerencie áreas curriculares e ajuste a proficiência de estudantes.</p>
                         </div>
 
                         <div class="u-grid-2" style="gap:20px; border-top:1px solid var(--glass-border); padding-top:20px;">
-                            <!-- Active difficulty blocks -->
-                            <div class="metric-glass-card">
-                                <h3 style="margin:0 0 10px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">🚫 MAPA COGNITIVO DE MATÉRIAS TRAVADAS</h3>
-                                <p class="u-font-07 u-text-muted u-mb-15">Tópicos com índice de reprovação do aluno acumulado acima de 40% nas tentativas:</p>
-                                <div style="display:flex; flex-direction:column; gap:8px;">
-                                    <div class="u-flex-between u-p-10" style="background:rgba(239,68,68,0.05); border:1px solid rgba(239,68,68,0.15); border-radius:8px; font-size:0.75rem;">
-                                        <span class="u-weight-800" style="color:var(--error);">📐 Geometria Espacial (Matemática)</span>
-                                        <span class="u-text-muted">Aprov: 38%</span>
+                            <!-- Left Column: Trapped subjects + Teacher Registration Form -->
+                            <div style="display:flex; flex-direction:column; gap:20px;">
+                                <div class="metric-glass-card">
+                                    <h3 style="margin:0 0 10px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">🚫 MAPA COGNITIVO DE MATÉRIAS TRAVADAS</h3>
+                                    <p class="u-font-07 u-text-muted u-mb-15">Tópicos com índice de reprovação do aluno acumulado acima de 40% nas tentativas:</p>
+                                    <div style="display:flex; flex-direction:column; gap:8px;">
+                                        <div class="u-flex-between u-p-10" style="background:rgba(239,68,68,0.05); border:1px solid rgba(239,68,68,0.15); border-radius:8px; font-size:0.75rem;">
+                                            <span class="u-weight-800" style="color:var(--error);">📐 Geometria Espacial (Matemática)</span>
+                                            <span class="u-text-muted">Aprov: 38%</span>
+                                        </div>
+                                        <div class="u-flex-between u-p-10" style="background:rgba(239,68,68,0.05); border:1px solid rgba(239,68,68,0.15); border-radius:8px; font-size:0.75rem;">
+                                            <span class="u-weight-800" style="color:var(--error);">🧪 Estequiometria Celular (Química)</span>
+                                            <span class="u-text-muted">Aprov: 45%</span>
+                                        </div>
                                     </div>
-                                    <div class="u-flex-between u-p-10" style="background:rgba(239,68,68,0.05); border:1px solid rgba(239,68,68,0.15); border-radius:8px; font-size:0.75rem;">
-                                        <span class="u-weight-800" style="color:var(--error);">🧪 Estequiometria Celular (Química)</span>
-                                        <span class="u-text-muted">Aprov: 45%</span>
+                                </div>
+
+                                <div class="metric-glass-card">
+                                    <h3 style="margin:0 0 10px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">👨‍🏫 CADASTRAR NOVO DOCENTE (CRUD)</h3>
+                                    <div style="display:flex; flex-direction:column; gap:12px; margin-top:15px;">
+                                        <div style="display:flex; flex-direction:column; gap:5px;">
+                                            <label class="u-font-07 u-text-muted" style="font-weight:800;">NOME COMPLETO DO DOCENTE</label>
+                                            <input type="text" id="prof-add-name" placeholder="Ex: Prof. Rogério Souza" class="academic-input" autocomplete="off" style="font-size:0.8rem;">
+                                        </div>
+                                        <div style="display:flex; flex-direction:column; gap:5px;">
+                                            <label class="u-font-07 u-text-muted" style="font-weight:800;">DEPARTAMENTO / MATRIZ CURRICULAR</label>
+                                            <select id="prof-add-subject" class="academic-input" style="background:rgba(0,0,0,0.5); padding:10px; border:1px solid var(--glass-border); color:#fff; cursor:pointer; font-size:0.8rem;">
+                                                <option value="Matemática e suas Tecnologias">📐 MATEMÁTICA E SUAS TECNOLOGIAS</option>
+                                                <option value="Ciências da Natureza">🧬 CIÊNCIAS DA NATUREZA</option>
+                                                <option value="Linguagens e Códigos">📚 LINGUAGENS E CÓDIGOS</option>
+                                                <option value="Ciências Humanas e Sociais">🌍 CIÊNCIAS HUMANAS E SOCIAIS</option>
+                                                <option value="Itinerários e Tecnologia">🚀 ITINERÁRIOS E TECNOLOGIA</option>
+                                            </select>
+                                        </div>
+                                        <button onclick="matriculateTeacher()" class="btn-academic-primary" style="justify-content:center; margin-top:10px;">
+                                            ➕ REGISTRAR PROFESSOR NO NÚCLEO
+                                        </button>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Classroom Grading list -->
-                            <div class="metric-glass-card">
-                                <h3 style="margin:0 0 10px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">📝 LANÇAMENTO DE NOTAS / AJUSTE PEDAGÓGICO</h3>
-                                <p class="u-font-07 u-text-muted u-mb-15">Simule ajustes de nota pedagógicos com bonificação automática de XP no perfil do aluno:</p>
-                                <div id="prof-students-grading-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+                            <!-- Right Column: Classroom Grading list + Registered Teachers list -->
+                            <div style="display:flex; flex-direction:column; gap:20px;">
+                                <div class="metric-glass-card">
+                                    <h3 style="margin:0 0 10px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">📝 LANÇAMENTO DE NOTAS / AJUSTE PEDAGÓGICO</h3>
+                                    <p class="u-font-07 u-text-muted u-mb-15">Simule ajustes de nota pedagógicos com bonificação automática de XP no perfil do aluno:</p>
+                                    <div id="prof-students-grading-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+                                </div>
+
+                                <div class="metric-glass-card">
+                                    <h3 style="margin:0 0 10px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">👥 CORPO DOCENTE CADASTRADO</h3>
+                                    <p class="u-font-07 u-text-muted u-mb-15">Docentes ativos no ecossistema acadêmico do Ensino Médio:</p>
+                                    <div id="prof-teachers-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 `;
 
                 renderTeacherStudentList();
+                renderTeachersList();
             } 
             
             else if (activeTab === 'tab-secretaria') {
@@ -362,6 +336,239 @@
             localStorage.setItem('onyx_school_students', JSON.stringify(arr));
         }
 
+        function getTeachers() {
+            return JSON.parse(localStorage.getItem('onyx_school_teachers') || '[]');
+        }
+
+        function saveTeachers(arr) {
+            localStorage.setItem('onyx_school_teachers', JSON.stringify(arr));
+        }
+
+        function renderTeachersList() {
+            const list = document.getElementById('prof-teachers-list');
+            if (!list) return;
+
+            const teachers = getTeachers();
+            if (teachers.length === 0) {
+                list.innerHTML = `<p class="u-text-muted u-font-07 u-text-center" style="margin:10px 0; font-style:italic;">Nenhum docente cadastrado no momento.</p>`;
+                return;
+            }
+
+            list.innerHTML = teachers.map(tc => `
+                <div class="u-flex-between u-p-10" style="background:rgba(255,255,255,0.02); border:1px solid var(--glass-border); border-radius:10px; font-size:0.8rem; animation: contentReveal 0.2s forwards; margin-bottom:8px;">
+                    <div>
+                        <strong style="color:#fff;">${tc.name}</strong>
+                        <div class="u-font-06" style="color:var(--accent); font-weight:800; font-family:var(--font-mono); margin-top:2px;">${tc.subject.toUpperCase()}</div>
+                    </div>
+                    <button onclick="removeTeacher(${tc.id})" class="btn-academic-outline" style="color:var(--error); border-color:rgba(239,68,68,0.2); padding:4px 8px; font-size:0.65rem; font-family:var(--font-mono); cursor:pointer;">🗑️ REMOVER</button>
+                </div>
+            `).join('');
+        }
+
+        window.removeTeacher = function(id) {
+            let teachers = getTeachers();
+            const teacher = teachers.find(t => t.id === id);
+            if (teacher) {
+                teachers = teachers.filter(t => t.id !== id);
+                saveTeachers(teachers);
+                renderTeachersList();
+                if (typeof OnyxUI !== 'undefined') {
+                    OnyxUI.playFeedback('alert');
+                    OnyxUI.addReasoningLog(`GRADES: Gestor removeu docente ${teacher.name} do ecossistema.`);
+                }
+            }
+        };
+
+        window.matriculateTeacher = function() {
+            const nameInput = document.getElementById('prof-add-name');
+            const subjectSelect = document.getElementById('prof-add-subject');
+            const name = nameInput.value.trim();
+            const subject = subjectSelect.value;
+
+            if (!name) {
+                alert("🔴 O nome do docente é obrigatório.");
+                return;
+            }
+
+            const teachers = getTeachers();
+            const newId = teachers.length > 0 ? Math.max(...teachers.map(t => t.id)) + 1 : 1;
+            const newTeacher = { id: newId, name: name, subject: subject, status: "Ativo" };
+            teachers.push(newTeacher);
+            saveTeachers(teachers);
+
+            nameInput.value = '';
+            renderTeachersList();
+
+            if (typeof OnyxUI !== 'undefined') {
+                OnyxUI.playFeedback('success');
+                OnyxUI.addReasoningLog(`GRADES: Novo docente ${name} matriculado no departamento de ${subject}.`);
+            }
+
+            // Reward Operator with +25 XP
+            if (userStats) {
+                userStats.xp += 25;
+                OnyxCore.DB.saveUser(userStats);
+            }
+
+            alert(`✅ Docente ${name} cadastrado com sucesso na matriz de ${subject}! (+25 XP Administrador)`);
+        };
+
+        // --- Direção Tab AI Preditiva Controller ---
+        window.loadStudentAIInsight = async function() {
+            const selector = document.getElementById('diretoria-student-selector');
+            if (!selector) return;
+
+            const studentId = parseInt(selector.value);
+            const students = getStudents();
+            const student = students.find(s => s.id === studentId) || students[0];
+            if (!student) {
+                document.getElementById('diretoria-insights-container').innerHTML = `
+                    <div class="u-text-center u-p-20"><p class="u-text-muted u-font-08">Nenhum estudante disponível para análise.</p></div>
+                `;
+                return;
+            }
+
+            const insightsContainer = document.getElementById('diretoria-insights-container');
+            if (insightsContainer) {
+                insightsContainer.innerHTML = `<div class="u-text-center u-p-20"><p class="u-text-muted u-font-08" style="font-family:var(--font-mono); letter-spacing:1px; color:var(--primary);">🔮 CONECTANDO À REDE NEURAL E RECONSTRUINDO COGNIÇÃO...</p></div>`;
+            }
+
+            setTimeout(() => {
+                let dropoutRisk = "BAIXO";
+                let dropoutRiskColor = "var(--accent)";
+                if (student.freq < 75) {
+                    dropoutRisk = "MUITO ALTO 🚨";
+                    dropoutRiskColor = "var(--error)";
+                } else if (student.freq < 85 || student.grade < 6.5) {
+                    dropoutRisk = "MÉDIO ⚠️";
+                    dropoutRiskColor = "var(--warning)";
+                }
+
+                const engagementLevel = Math.round(student.freq * 0.9 + (student.grade * 1.0));
+
+                let trend = "ESTÁVEL";
+                let trendColor = "var(--warning)";
+                if (student.grade >= 8.5) {
+                    trend = "ALTAMENTE ACELERADA 📈";
+                    trendColor = "var(--accent)";
+                } else if (student.grade < 6.5) {
+                    trend = "CURVA DE DECLÍNIO 📉";
+                    trendColor = "var(--error)";
+                }
+
+                const baseProf = Math.min(100, Math.round(student.grade * 10));
+                const compLinguagens = Math.max(20, Math.min(100, baseProf + Math.round((Math.random() - 0.5) * 12)));
+                const compMatematica = Math.max(20, Math.min(100, baseProf + Math.round((Math.random() - 0.5) * 12)));
+                const compNatureza = Math.max(20, Math.min(100, baseProf + Math.round((Math.random() - 0.5) * 12)));
+                const compHumanas = Math.max(20, Math.min(100, baseProf + Math.round((Math.random() - 0.5) * 12)));
+                const compItinerarios = Math.max(20, Math.min(100, baseProf + Math.round((Math.random() - 0.5) * 12)));
+                const compExtras = Math.max(20, Math.min(100, baseProf + Math.round((Math.random() - 0.5) * 12)));
+
+                let recommendation = `Manter plano de estudo preventivo ativo.`;
+                if (student.freq < 75) {
+                    recommendation = `⚠️ ACIONAMENTO URGENTE: Disparar canal direto com os Pais no portal devido ao risco severo de reprovação por falta (${student.freq}%). Agendar reforço presencial de acompanhamento de presença.`;
+                } else if (student.grade < 7.0) {
+                    recommendation = `💡 INTERVENÇÃO DE CONTEÚDO: O aluno apresenta dificuldade em tópicos matriciais. Recomenda-se acionar o portal do professor para efetuar lançamento compensatório de XP.`;
+                } else if (student.grade >= 8.5) {
+                    recommendation = `🚀 ACELERAMENTO ACADÊMICO: Estudante com altíssimo potencial. Recomendado para inclusão na Olimpíada Nacional de Ciências e Itinerários Avançados de IA.`;
+                }
+
+                if (insightsContainer) {
+                    insightsContainer.innerHTML = `
+                        <!-- Heuristic Predictive metrics -->
+                        <div class="metrics-card-grid" style="border-top:1px solid var(--glass-border); padding-top:20px; animation: contentReveal 0.3s forwards;">
+                            <div class="metric-glass-card">
+                                <span class="u-font-07 u-text-muted" style="display:block; font-weight:800; font-family:var(--font-mono);">IA PREDITIVA: RISCO DE EVASÃO</span>
+                                <span class="u-font-15 u-weight-900 u-mt-10" style="display:block; font-size:1.8rem; color:${dropoutRiskColor};">
+                                    ${dropoutRisk}
+                                </span>
+                                <p class="u-font-07 u-text-muted u-mt-5" style="margin:0;">Curva de deserção escolar calculada por assiduidade às aulas do Novo Ensino Médio.</p>
+                            </div>
+                            <div class="metric-glass-card">
+                                <span class="u-font-07 u-text-muted" style="display:block; font-weight:800; font-family:var(--font-mono);">ÍNDICE DE ENGAJAMENTO GERAL</span>
+                                <div class="u-flex-between u-mt-10 u-mb-5">
+                                    <span class="u-font-15 u-weight-900" style="font-size:1.5rem; color:var(--primary);">${engagementLevel}%</span>
+                                    <span class="u-font-07 u-text-muted">MÉTRICA ATIVA</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-inner" style="width:${engagementLevel}%; background:var(--primary);"></div>
+                                </div>
+                            </div>
+                            <div class="metric-glass-card">
+                                <span class="u-font-07 u-text-muted" style="display:block; font-weight:800; font-family:var(--font-mono);">TENDÊNCIA PEDAGÓGICA</span>
+                                <span class="u-font-15 u-weight-900 u-mt-10" style="display:block; font-size:1.6rem; color:${trendColor};">
+                                    ${trend}
+                                </span>
+                                <p class="u-font-07 u-text-muted u-mt-5" style="margin:0;">Variação no rendimento médio acumulativo e missões adaptativas concluídas.</p>
+                            </div>
+                        </div>
+
+                        <!-- BNCC Competencies averages -->
+                        <div class="metric-glass-card" style="margin-top:10px; animation: contentReveal 0.3s forwards;">
+                            <h3 style="margin:0 0 15px 0; font-family:var(--font-header); color:#fff; font-size:1rem;">🎯 MAPA DE PROFICIÊNCIA POR ÁREAS DE COMPETÊNCIA BNCC</h3>
+                            <div class="u-grid-2" style="gap:20px;">
+                                <div>
+                                    <div style="display:flex; flex-direction:column; gap:12px;">
+                                        <div>
+                                            <div class="u-flex-between u-mb-5 u-font-07">
+                                                <span>📚 LINGUAGENS E SUAS TECNOLOGIAS</span>
+                                                <span class="u-text-accent u-weight-800">${compLinguagens}%</span>
+                                            </div>
+                                            <div class="progress-bar-container"><div class="progress-bar-inner" style="width:${compLinguagens}%; background:var(--accent);"></div></div>
+                                        </div>
+                                        <div>
+                                            <div class="u-flex-between u-mb-5 u-font-07">
+                                                <span>📐 MATEMÁTICA E SUAS TECNOLOGIAS</span>
+                                                <span class="u-text-primary u-weight-800">${compMatematica}%</span>
+                                            </div>
+                                            <div class="progress-bar-container"><div class="progress-bar-inner" style="width:${compMatematica}%; background:var(--primary);"></div></div>
+                                        </div>
+                                        <div>
+                                            <div class="u-flex-between u-mb-5 u-font-07">
+                                                <span>🧬 CIÊNCIAS DA NATUREZA</span>
+                                                <span class="u-text-warning u-weight-800">${compNatureza}%</span>
+                                            </div>
+                                            <div class="progress-bar-container"><div class="progress-bar-inner" style="width:${compNatureza}%; background:var(--warning);"></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div style="display:flex; flex-direction:column; gap:12px;">
+                                        <div>
+                                            <div class="u-flex-between u-mb-5 u-font-07">
+                                                <span>🌍 HUMANAS E SOCIAIS APLICADAS</span>
+                                                <span style="color:#a855f7; font-weight:800;">${compHumanas}%</span>
+                                            </div>
+                                            <div class="progress-bar-container"><div class="progress-bar-inner" style="width:${compHumanas}%; background:#a855f7;"></div></div>
+                                        </div>
+                                        <div>
+                                            <div class="u-flex-between u-mb-5 u-font-07">
+                                                <span>🚀 ITINERÁRIOS PROFISSIONAIS</span>
+                                                <span class="u-text-accent u-weight-800">${compItinerarios}%</span>
+                                            </div>
+                                            <div class="progress-bar-container"><div class="progress-bar-inner" style="width:${compItinerarios}%; background:var(--accent);"></div></div>
+                                        </div>
+                                        <div>
+                                            <div class="u-flex-between u-mb-5 u-font-07">
+                                                <span>✨ EXTENSÕES E LABORATÓRIOS</span>
+                                                <span class="u-text-primary u-weight-800">${compExtras}%</span>
+                                            </div>
+                                            <div class="progress-bar-container"><div class="progress-bar-inner" style="width:${compExtras}%; background:var(--primary);"></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recommendations alert -->
+                        <div style="background:rgba(245, 158, 11, 0.05); border:1px solid rgba(245,158,11,0.2); border-radius:12px; padding:15px; font-size:0.8rem; line-height:1.5; animation: contentReveal 0.3s forwards;">
+                            <strong>📢 RECOMENDAÇÃO HEURÍSTICA DA DIREÇÃO:</strong> ${recommendation}
+                        </div>
+                    `;
+                }
+            }, 600);
+        };
+
         // --- Teacher Tab Grading ---
         function renderTeacherStudentList() {
             const list = document.getElementById('prof-students-grading-list');
@@ -412,18 +619,38 @@
             if (!list) return;
 
             const students = getStudents();
+            if (students.length === 0) {
+                list.innerHTML = `<p class="u-text-muted u-font-07 u-text-center" style="margin:20px 0; font-style:italic;">Nenhum estudante matriculado.</p>`;
+                return;
+            }
+
             list.innerHTML = students.map(st => `
-                <div class="u-flex-between u-mb-10 u-p-10" style="background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); border-radius:8px; font-size:0.75rem;">
+                <div class="u-flex-between u-mb-10 u-p-10" style="background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); border-radius:8px; font-size:0.75rem; animation: contentReveal 0.2s forwards;">
                     <div>
                         <strong style="color:#fff;">${st.name}</strong>
-                        <div class="u-font-06 u-text-muted">FREQUÊNCIA: <span id="sec-freq-${st.id}" style="color:${st.freq < 75 ? 'var(--error)' : 'var(--accent)'}; font-weight:800;">${st.freq}%</span></div>
+                        <div class="u-font-06 u-text-muted">FREQUÊNCIA: <span id="sec-freq-${st.id}" style="color:${st.freq < 75 ? 'var(--error)' : 'var(--accent)'}; font-weight:800;">${st.freq}%</span> | NOTA: <span class="u-text-accent">${st.grade.toFixed(1)}</span></div>
                     </div>
-                    <div style="display:flex; gap:10px; align-items:center;">
-                        <button onclick="giveAttendance(${st.id})" class="btn-academic-outline" style="background:rgba(16,185,129,0.1); border-color:var(--accent); color:var(--accent); font-weight:800; font-size:0.6rem;">👍 PRESENÇA (+2%)</button>
+                    <div style="display:flex; gap:6px; align-items:center;">
+                        <button onclick="giveAttendance(${st.id})" class="btn-academic-outline" style="background:rgba(16,185,129,0.08); border-color:rgba(16,185,129,0.3); color:var(--accent); font-weight:800; font-size:0.6rem; cursor:pointer;">👍 PRESENÇA</button>
+                        <button onclick="removeStudent(${st.id})" class="btn-academic-outline" style="background:rgba(239,68,68,0.08); border-color:rgba(239,68,68,0.3); color:var(--error); font-weight:800; font-size:0.6rem; cursor:pointer;">🗑️ REMOVER</button>
                     </div>
                 </div>
             `).join('');
         }
+
+        window.removeStudent = function(id) {
+            let students = getStudents();
+            const student = students.find(s => s.id === id);
+            if (student) {
+                students = students.filter(s => s.id !== id);
+                saveStudents(students);
+                renderSecretariaLists();
+                if (typeof OnyxUI !== 'undefined') {
+                    OnyxUI.playFeedback('alert');
+                    OnyxUI.addReasoningLog(`SECRETARIA: Gestor removeu matrícula do estudante ${student.name}.`);
+                }
+            }
+        };
 
         window.giveAttendance = function(id) {
             const students = getStudents();

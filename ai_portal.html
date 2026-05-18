@@ -105,7 +105,11 @@
             userStats = await OnyxCore.DB.getUser(userName);
             if (!userStats) userStats = { id: userName, level: 1, xp: 0 };
 
-            document.getElementById('logged-user-name').textContent = userStats.id.toUpperCase();
+            const userRole = userStats.role || 'aluno';
+            document.getElementById('logged-user-name').innerHTML = userStats.id.toUpperCase() + 
+                (userRole === 'gestor' 
+                    ? ` <span style="color:var(--accent); font-size:0.7rem; font-weight:800; font-family:var(--font-mono);">[GESTOR]</span>` 
+                    : ` <span style="color:var(--primary); font-size:0.7rem; font-weight:800; font-family:var(--font-mono);">[ESTUDANTE]</span>`);
 
             // Set up sidebar tabs
             document.querySelectorAll('.ai-menu-item').forEach(btn => {
@@ -123,8 +127,26 @@
 
         function renderWorkspace() {
             const container = document.getElementById('workspace-card');
+            const userRole = userStats.role || 'aluno';
             
             if (activeTab === 'tab-planos') {
+                if (userRole !== 'gestor') {
+                    container.innerHTML = `
+                        <div style="text-align:center; padding:50px 30px; animation: contentReveal 0.3s forwards;">
+                            <div style="font-size:3rem; margin-bottom:20px;">🔒</div>
+                            <h3 class="u-text-error" style="font-family:var(--font-header); margin:0 0 10px 0; font-size:1.3rem;">CONTEÚDO EXCLUSIVO PARA EDUCADORES</h3>
+                            <p class="u-text-muted u-font-08" style="max-width:420px; margin:0 auto 20px auto; line-height:1.6;">
+                                O gerador de planos de aula e cronogramas pedagógicos adaptados à BNCC é de uso exclusivo para perfis do <strong>Corpo Docente e Gestores</strong>.
+                            </p>
+                            <div style="display:flex; justify-content:center; gap:12px;">
+                                <button onclick="document.querySelectorAll('.ai-menu-item')[1].click()" class="btn-onyx-premium" style="font-size:0.75rem; padding:10px 20px;">IR PARA SIMULADOS</button>
+                                <button onclick="document.querySelectorAll('.ai-menu-item')[2].click()" class="btn-onyx-premium" style="font-size:0.75rem; padding:10px 20px; background:rgba(255,255,255,0.05); color:#fff; border:1px solid rgba(255,255,255,0.1); box-shadow:none;">IR PARA O TUTOR</button>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
                 container.innerHTML = `
                     <div style="display:flex; flex-direction:column; gap:20px;">
                         <div>

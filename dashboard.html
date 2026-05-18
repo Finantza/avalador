@@ -55,7 +55,7 @@
                     </div>
                     <div>
                         <h2 id="logged-user-name" class="glitch-text">...</h2>
-                        <p class="u-text-muted u-font-08">OPERADOR DE SISTEMAS</p>
+                        <p class="u-text-muted u-font-08" id="logged-user-role">OPERADOR DE SISTEMAS</p>
                     </div>
                 </div>
 
@@ -430,6 +430,14 @@
             if (!userStats) userStats = { id: user, level: 1, xp: 0 };
 
             document.getElementById('logged-user-name').textContent = userStats.id;
+            
+            const userRole = userStats.role || 'aluno';
+            const roleEl = document.getElementById('logged-user-role');
+            if (roleEl) {
+                roleEl.innerHTML = userRole === 'gestor' 
+                    ? `<span style="color:var(--accent); font-weight:800;">💼 GESTOR DO SISTEMA</span>` 
+                    : `<span style="color:var(--primary); font-weight:800;">🎒 ESTUDANTE</span>`;
+            }
             
             renderSubjectGrid();
             renderLeveling();
@@ -1658,7 +1666,13 @@
         
         document.getElementById('btn-show-academic').onclick = (e) => {
             e.preventDefault();
-            location.href = 'academic_portal.html';
+            const userRole = (userStats && userStats.role) || 'aluno';
+            if (userRole === 'gestor') {
+                location.href = 'academic_portal.html';
+            } else {
+                if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
+                alert("🚨 ACESSO RESTRITO A GESTORES\n\nIdentificação de estudante identificada. Este terminal administrativo é reservado a diretores, professores e funcionários autorizados.");
+            }
         };
 
         document.getElementById('btn-show-ai-hub').onclick = (e) => {
