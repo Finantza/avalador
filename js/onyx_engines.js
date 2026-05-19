@@ -167,6 +167,7 @@ window.OnyxEngines = {
             }
         }
     },
+
     TrendSensingDatabase: {
         algebra: [
             {
@@ -175,7 +176,8 @@ window.OnyxEngines = {
                 d: ["14,4 toneladas", "2,4 toneladas", "72,0 toneladas", "288,0 toneladas"],
                 explanation: "Pegada de Carbono de IA: 80.000 req/s * 3600s = 288.000.000 req/hora. Multiplicado por 0,5g por req = 144.000.000 gramas = 144.000 kg = 144 toneladas de CO2 por hora.",
                 hint: "Lembre-se de converter segundos para horas e gramas para toneladas métricas.",
-                concept: "Pegada Ecológica de IA"
+                concept: "Pegada Ecológica de IA",
+                difficulty: "hard"
             },
             {
                 q: "No processo de transição para o Hidrogênio Verde (H2V), a eficiência energética de células de eletrólise tem crescido devido aos incentivos globais. Em uma planta de refino experimental em alta na atualidade, obteve-se um rendimento útil de 72% na conversão de energia elétrica de fonte solar em energia química do H2. Se o custo bruto de produção de energia elétrica solar no complexo é de R$ 0,15 por kWh, o valor efetivo aproveitado de energia química acumulada por kWh de hidrogênio gerado custará aproximadamente:",
@@ -183,7 +185,8 @@ window.OnyxEngines = {
                 d: ["R$ 0,11", "R$ 0,26", "R$ 0,32", "R$ 0,18"],
                 explanation: "Matemática e Rendimento de Hidrogênio Verde: Custo efetivo = Custo bruto / Rendimento = 0,15 / 0,72 = R$ 0,208 (R$ 0,21 aproximado).",
                 hint: "Divida o custo unitário bruto pelo percentual de eficiência para achar o valor real.",
-                concept: "Transição Energética e Eficiência"
+                concept: "Transição Energética e Eficiência",
+                difficulty: "hard"
             },
             {
                 q: "O acúmulo de e-waste (lixo eletrônico) global cresce de forma preocupante. Dados das agências ambientais mundiais indicam que o acúmulo de e-waste no Brasil no ano n (a partir de 2020) é modelado pela expressão E(n) = 1,4 + 0,15n em milhões de toneladas de lixo eletrônico descartado por ano. O acúmulo total estimado descartado anualmente no ano de 2026 (n = 6) será de:",
@@ -191,7 +194,8 @@ window.OnyxEngines = {
                 d: ["2,15 milhões de toneladas", "1,95 milhões de toneladas", "2,45 milhões de toneladas", "2,60 milhões de toneladas"],
                 explanation: "Estimativa de E-Waste: substituindo n = 6 na equação temos E(6) = 1,4 + 0,15 * 6 = 1,4 + 0,90 = 2,30 milhões de toneladas.",
                 hint: "Substitua n por 6 (anos decorridos desde 2020) na equação do modelo linear fornecido.",
-                concept: "Progressão Linear e E-Waste"
+                concept: "Progressão Linear e E-Waste",
+                difficulty: "medium"
             }
         ],
         biologia: [
@@ -201,23 +205,30 @@ window.OnyxEngines = {
                 d: ["Mutação genética imediata no genoma viral induzida pela radiação infravermelha solar", "Aumento da umidade relativa do ar induzida pela seca no Centro-Oeste", "Seleção natural de mosquitos que respiram exclusivamente gás carbônico de efeito estufa", "Substituição do vírus por bactérias fotossintetizantes oportunistas"],
                 explanation: "Fisiologia e Clima: O aumento de temperatura atua como um catalisador térmico para as reações enzimáticas e metabólicas de insetos ectotérmicos como o mosquito, acelerando seu desenvolvimento larval.",
                 hint: "Insetos não regulam a própria temperatura corporal. O calor externo dita a velocidade metabólica.",
-                concept: "Metabolismo Ectotérmico e Clima"
-            },
+                concept: "Metabolismo Ectotérmico e Clima",
+                difficulty: "hard"
+            }
+        ],
+        quimica: [
             {
                 q: "O hidrogênio verde desponta como pilar para a descarbonização industrial. Quimicamente, ele é obtido através da eletrólise da água usando eletricidade limpa de fontes renováveis. Durante a eletrólise ácida da água, ocorre a oxidação de moléculas de água no anodo e a redução de íons no catodo. A equação de meia-reação global que representa o processo catódico (onde o gás hidrogênio é gerado) é:",
                 a: "2H⁺ + 2e⁻ → H₂",
                 d: ["2H₂O + 2e⁻ → H₂ + 2OH⁻", "O₂ + 4H⁺ + 4e⁻ → 2H₂O", "2H₂O → O₂ + 4H⁺ + 4e⁻", "H₂ → 2H⁺ + 2e⁻"],
                 explanation: "Química da Eletrólise: No catodo ocorre o processo de redução, onde prótons H+ recebem elétrons para formar gás hidrogênio gasoso H2.",
                 hint: "Lembre-se que redução envolve ganho de elétrons no catodo (polo negativo).",
-                concept: "Redução Eletroquímica do Hidrogênio"
-            },
+                concept: "Redução Eletroquímica do Hidrogênio",
+                difficulty: "hard"
+            }
+        ],
+        fisica: [
             {
-                q: "Estudos geofísicos em alta na atualidade alertam que o Sol atingiu seu pico de atividade magnética de ciclo de 11 anos, gerando intensas ejeções de massa coronal. Ao colidir com a magnetosfera terrestre, esse plasma induz Correntes Geomagneticamente Induzidas (GICs) de baixíssima frequência em cabos metálicos de transmissão elétrica de longa distância. De acordo com os princípios do eletromagnetismo, o surgimento dessas correntes induzidas em transformadores de energia se explica por qual lei física?",
+                q: "Estudos geofísicos em alta na atualidade alertam que o Sol atingiu seu pico de activity magnética de ciclo de 11 anos, gerando intensas ejeções de massa coronal. Ao colidir com a magnetosfera terrestre, esse plasma induz Correntes Geomagneticamente Induzidas (GICs) de baixíssima frequência em cabos metálicos de transmissão elétrica de longa distância. De acordo com os princípios do eletromagnetismo, o surgimento dessas correntes induzidas em transformadores de energia se explica por qual lei física?",
                 a: "Lei da Indução de Faraday, provocada pela variação temporal do fluxo de campo magnético solar",
                 d: ["Lei de Coulomb, provocada pelo acúmulo estático de cargas na fiação subterrânea", "Lei de Ohm, indicando que a resistência do cobre cai a zero sob calor solar", "Efeito Joule, que transforma energia luminosa solar diretamente em corrente alternada", "Princípio da Superposição de Ondas Sonoras ionosféricas"],
                 explanation: "Eletromagnetismo e Tempestades Solares: A Lei da Indução de Faraday estabelece que a variação temporal de um fluxo de campo magnético gera uma força eletromotriz induzida em condutores metálicos fechados.",
                 hint: "Correntes elétricas induzidas aparecem devido a campos magnéticos variáveis no tempo.",
-                concept: "Leis de Indução Eletromagnética"
+                concept: "Leis de Indução Eletromagnética",
+                difficulty: "hard"
             }
         ],
         historia: [
@@ -227,7 +238,8 @@ window.OnyxEngines = {
                 d: ["Democracia participativa virtual, permitindo ascensão de renda universal equitativa", "Desindustrialização sustentável, onde máquinas substituem a agricultura periférica", "Solidariedade orgânica clássica durkheimiana de bem-estar social universal", "Coerção social descentralizada por sindicatos agropecuários multinacionais"],
                 explanation: "Sociologia da Tecnologia: A exploração de mão de obra barata no Sul Global para alimentar monopólios tecnológicos do Norte Global perpetua dependências geopolíticas coloniais sob novas vestes de Big Techs.",
                 hint: "Analise a divisão geográfica global entre fornecedores de mão de obra barata e donos da tecnologia.",
-                concept: "Divisão do Trabalho e Big Techs"
+                concept: "Divisão do Trabalho e Big Techs",
+                difficulty: "hard"
             },
             {
                 q: "A escolha de Belém do Pará para sediar a COP30 reacendeu o debate sobre o papel estratégico das florestas tropicais na geopolítica ambiental internacional. Economistas climáticos discutem a implementação de mechanisms de Crédito de Carbono para financiar a proteção da biodiversidade amazônica. Sob a perspectiva da sociologia ambiental e das Relações Internacionais, a governança da Amazônia e os créditos de carbono frequentemente enfrentam críticas relativas a:",
@@ -235,7 +247,8 @@ window.OnyxEngines = {
                 d: ["Centralização absoluta dos fundos ambientais em bancos exclusivamente municipais da Amazônia", "Redução drástica na demanda global de energias solares em países emergentes", "Aumento na imigração desregulada de operários têxteis europeus para o interior florestal", "Eliminação de impostos sobre minérios não-metálicos importados"],
                 explanation: "Geopolítica Ambiental: A monetização das florestas via créditos de carbono é frequentemente criticada por transformar ecossistemas em mercadorias financeiras, facilitando que indústrias poluidoras comprem compensações sem reduzir suas pegadas originais de combustíveis fósseis.",
                 hint: "Crédito de carbono cria um ativo comercial que pode servir como desculpa para não poluir menos.",
-                concept: "Geopolítica de Crédito de Carbono"
+                concept: "Geopolítica de Crédito de Carbono",
+                difficulty: "hard"
             },
             {
                 q: "O deslocamento forçado de populações devido a secas severas na região do Sahel, queimadas crônicas na América do Sul e o aumento do nível do mar em ilhas do Pacífico criou a categoria contemporânea em alta dos 'Refugiados Climáticos'. A ausência de um tratado internacional com valor jurídico que reconheça o estatuto desses refugiados sob a égide da ONU reflete:",
@@ -243,7 +256,8 @@ window.OnyxEngines = {
                 d: ["Excesso de acordos de livre circulação de pessoas entre os continentes em crise climática", "Declínio nas emissões industriais que reduziu a relevância do debate nas assembleias globais", "Recusa absoluta de ajuda humanitária por parte de ONGs no hemisfério Sul", "Vetores migratórios restritos apenas ao interior territorial do norte europeu"],
                 explanation: "Geopolítica e Refugiados: A Convenção da ONU sobre o Estatuto dos Refugiados de 1951 não contempla causas climáticas e ambientais como critérios de asilo, deixando dezenas de milhões de migrantes ambientais em grave vulnerabilidade jurídica internacional.",
                 hint: "A definição clássica de refugiado da ONU de pós-guerra foca apenas em ameaças humanas ou ideológicas.",
-                concept: "Vulnerabilidade de Migrantes Climáticos"
+                concept: "Vulnerabilidade de Migrantes Climáticos",
+                difficulty: "hard"
             }
         ],
         portugues: [
@@ -253,7 +267,8 @@ window.OnyxEngines = {
                 d: ["Iluminismo digital, que restabelece a razão pura como base do discurso racional", "Inclusão midiática anárquica, eliminando quaisquer filtros algorítmicos das redes sociais", "Neutralidade discursiva, na qual todos os interlocutores concordam cientificamente", "Supremacia da oralidade analógica tradicional das mídias impressas"],
                 explanation: "Estudos de Comunicação e Linguagens: A facilidade de falsificação de áudios e vídeos via IA impulsiona a era da pós-verdade, na qual fatos empíricos objetivos perdem força comunicativa frente a simulacros sintéticos projetados para apelo emocional polarizado.",
                 hint: "Pense no enfraquecimento dos fatos científicos diante de simulações digitais cativantes.",
-                concept: "Linguagem Sintética e Pós-Verdade"
+                concept: "Linguagem Sintética e Pós-Verdade",
+                difficulty: "hard"
             },
             {
                 q: "O design de interfaces de redes sociais atuais foca em engajamento contínuo baseado em algoritmos de recomendação preditiva. Esses sistemas de inteligência artificial filtram o feed priorizando publicações que despertam reações emocionais extremas, como indignação moral ou pertencimento tribal. Linguistas e semiólogos apontam que essa arquitetura algorítmica transforma a comunicação social em:",
@@ -261,7 +276,8 @@ window.OnyxEngines = {
                 d: ["Ágora democrática plena, onde todas as vozes e dialetos gozam de visibilidade idêntica", "Redes de letramento tradicional, resgatando a sintaxe acadêmica clássica do século XIX", "Sistemas autônomos de tradução que eliminam as barreiras pragmáticas regionais", "Ambientes neutros isentos de fins comerciais ou de monetização corporativa"],
                 explanation: "Linguagem e Redes Sociais: Os algoritmos priorizam conteúdos polarizadores para maximizar o tempo de tela do usuário, agrupando indivíduos em 'bolhas' isoladas que rejeitam o debate saudável e reduzem o convívio democrático construtivo.",
                 hint: "Feed preditivo isola usuários com os mesmos gostos e opiniões extremistas, silenciando o contraditório.",
-                concept: "Polarização e Câmaras de Eco"
+                concept: "Polarização e Câmaras de Eco",
+                difficulty: "hard"
             },
             {
                 q: "Com o avanço e popularização de feeds infinitos de microvídeos verticais de 15 segundos acompanhados de legendas automáticas e trilhas aceleradas, pesquisadores de cognição observam uma alteração profunda na atenção concentrada de crianças e adolescentes. O consumo ininterrupto desse formato estimula a dependência química de dopamina cerebral e afeta a capacidade de processamento de textos longos. Sob a ótica da neurociência da linguagem, esse fenômeno resulta em:",
@@ -269,7 +285,8 @@ window.OnyxEngines = {
                 d: ["Aumento imediato no QI verbal e aceleração na interpretação de textos literários clássicos", "Substituição integral da língua escrita pela linguagem de sinais universal de computadores", "Eliminação de desvios gramaticais informais devido ao uso de inteligência sintética", "Estabilidade perfeita na estrutura dos lobos frontais sem alterações sinápticas"],
                 explanation: "Linguagem e Letramento Digital: Microvídeos treinam o cérebro para estímulos hiper-curtos de dopamina rápida, gerando fadiga e atrofia no processamento de leituras densas e profundas que exigem atenção sustentada.",
                 hint: "A dopamina de curtíssimo prazo reduz o foco necessário para decodificar textos longos.",
-                concept: "Letramento na Era de Microtelas"
+                concept: "Letramento na Era de Microtelas",
+                difficulty: "hard"
             }
         ],
         ingles: [
@@ -277,14 +294,15 @@ window.OnyxEngines = {
                 q: "The rise of generative AI has sparked intense global debate. While some argue that artificial systems can replicate human creativity, others maintain that art requires an authentic conscious experience. Technology might mimic style, but it cannot feel the weight of existence.\n\nO fragmento de texto em inglês reflete sobre a ascensão da Inteligência Artificial Generativa. De acordo com o autor, o fator limitante que impede a tecnologia de replicar integralmente a arte humana é:",
                 a: "A ausência de uma experiência consciente e sentimental genuína ligada à existência humana.",
                 d: [
-                    "A incapacidade de emular estilos estéticos clássicos do século XIX.",
+                    "A incapacidade de emular styles estéticos clássicos do século XIX.",
                     "O alto custo de processamento energético dos data centers mundiais.",
                     "A ausência de algoritmos preditivos baseados na web semântica.",
                     "A restrição legal de direitos autorais imposta pelo Sul Global."
                 ],
                 explanation: "O texto afirma explicitamente que a tecnologia pode imitar estilos ('mimic style'), mas não consegue sentir o peso da existência ('cannot feel the weight of existence'), o que remete à experiência consciente e emocional humana.",
                 hint: "Associe a incapacidade descrita ('cannot feel the weight of existence') com sentimentos e consciência humana.",
-                concept: "Leitura Instrumental de IA"
+                concept: "Leitura Instrumental de IA",
+                difficulty: "medium"
             },
             {
                 q: "Climate change is no longer a distant threat; it is our current reality. Young activists worldwide are raising their voices, demanding that world leaders move beyond empty promises and invest in green infrastructure. Our future is not negotiable.\n\nNo texto opinativo apresentado, a expressão em inglês 'move beyond empty promises' é utilizada para indicar que os jovens ativistas exigem dos líderes mundiais:",
@@ -297,7 +315,8 @@ window.OnyxEngines = {
                 ],
                 explanation: "O termo 'empty promises' significa promessas vazias. Exigir que líderes 'move beyond' (vão além de) tais promessas significa cobrar medidas práticas e investimentos reais.",
                 hint: "Pense na cobrança dos jovens por atitude real ao invés de discursos teóricos.",
-                concept: "Identificação de Expressão"
+                concept: "Identificação de Expressão",
+                difficulty: "medium"
             },
             {
                 q: "We live in an age of hyper-connection, yet we have never been more isolated. The endless vertical scroll of social media feeds design-engineered to capture our attention has transformed conversation into short interactions. We look at screens instead of eyes.\n\nA reflexão apresentada em inglês discute as contradições do uso de redes sociais. O paradoxo central apontado pelo autor reside no fato de que:",
@@ -310,7 +329,8 @@ window.OnyxEngines = {
                 ],
                 explanation: "O autor destaca a contradição ('paradox') de estarmos em uma era de hiperconexão ('hyper-connection'), mas ao mesmo tempo nos sentirmos mais isolados ('isolated'), onde interações cara a cara são trocadas por toques rápidos em telas.",
                 hint: "Observe a contradição ('yet we have never been more isolated') de estar conectado eletronicamente e isolado pessoalmente.",
-                concept: "Identificação de Paradoxo"
+                concept: "Identificação de Paradoxo",
+                difficulty: "medium"
             },
             {
                 q: "An API, or Application Programming Interface, acts as a contract between two software systems. It defines the methods and data formats that applications can use to communicate with each other, enabling developers to integrate services without accessing the internal source code.\n\nCom base no texto técnico em inglês, a função principal de uma API é:",
@@ -323,7 +343,8 @@ window.OnyxEngines = {
                 ],
                 explanation: "O texto define API como um 'contrato' ('contract') que define métodos e formatos de dados ('methods and data formats') para que sistemas se comuniquem ('communicate') sem precisar acessar o código interno ('without accessing the internal source code').",
                 hint: "Foque na palavra 'contract' e na ideia de comunicação entre sistemas sem expor o código interno.",
-                concept: "Tech Vocabulary — API"
+                concept: "Tech Vocabulary — API",
+                difficulty: "hard"
             },
             {
                 q: "Debugging is one of the most critical skills in software development. When a program behaves unexpectedly, developers must trace the execution flow, inspect variable values, and identify the root cause of the failure. A good debugger is as important as a good coder.\n\nNo contexto do desenvolvimento de software descrito no texto em inglês, 'debugging' refere-se a:",
@@ -336,7 +357,8 @@ window.OnyxEngines = {
                 ],
                 explanation: "O texto explica que 'debugging' envolve rastrear o fluxo de execução ('trace the execution flow'), inspecionar variáveis ('inspect variable values') e identificar a causa raiz de uma falha ('root cause of the failure') — ou seja, encontrar e corrigir bugs.",
                 hint: "A palavra 'bug' em inglês técnico significa erro de software. 'Debug' = remover o bug.",
-                concept: "Tech Vocabulary — Debugging"
+                concept: "Tech Vocabulary — Debugging",
+                difficulty: "hard"
             },
             {
                 q: "Open source software refers to programs whose source code is publicly available for anyone to view, modify, and distribute. This collaborative model has driven innovation across the tech industry, enabling communities to build powerful tools like the Linux operating system and the Python programming language.\n\nDe acordo com o trecho em inglês, a característica central do software de código aberto (open source) é:",
@@ -349,7 +371,8 @@ window.OnyxEngines = {
                 ],
                 explanation: "O texto define open source como programas cujo código-fonte é 'publicly available' (disponível publicamente) para qualquer um 'view, modify, and distribute' (ver, modificar e distribuir), exemplificado por Linux e Python.",
                 hint: "'Open' = aberto. 'Source' = código-fonte. Foco na liberdade de acesso e modificação.",
-                concept: "Tech Vocabulary — Open Source"
+                concept: "Tech Vocabulary — Open Source",
+                difficulty: "easy"
             },
             {
                 q: "In networking, bandwidth refers to the maximum rate of data transfer across a given path. It is commonly measured in bits per second (bps) and determines how much data can be transmitted simultaneously. Higher bandwidth allows more data to flow, resulting in faster internet connections and smoother streaming experiences.\n\nSegundo o texto técnico em inglês, 'bandwidth' (largura de banda) é melhor definido como:",
@@ -362,7 +385,8 @@ window.OnyxEngines = {
                 ],
                 explanation: "O texto define bandwidth como 'maximum rate of data transfer' (taxa máxima de transferência de dados), medida em 'bits per second (bps)', determinando quanta informação pode ser transmitida ao mesmo tempo.",
                 hint: "'Band' = faixa; 'width' = largura. Pense na 'largura' do cano por onde passam os dados.",
-                concept: "Tech Vocabulary — Networking"
+                concept: "Tech Vocabulary — Networking",
+                difficulty: "medium"
             },
             {
                 q: "Agile is a software development methodology based on iterative progress, collaboration, and flexibility. Teams work in short cycles called sprints, delivering functional software frequently and responding quickly to change. The Scrum framework is one of the most widely adopted Agile implementations in the tech industry.\n\nCom base no texto em inglês sobre metodologia Ágil, qual é a principal vantagem do desenvolvimento por 'sprints'?",
@@ -375,7 +399,8 @@ window.OnyxEngines = {
                 ],
                 explanation: "O texto define Agile como baseado em 'iterative progress' (progresso iterativo) e 'short cycles called sprints' (ciclos curtos chamados sprints), com o objetivo de 'delivering functional software frequently' e 'responding quickly to change'.",
                 hint: "'Sprint' = corrida curta. Cada sprint entrega algo funcional. A agilidade está em ciclos rápidos e adaptáveis.",
-                concept: "Tech Vocabulary — Agile & Scrum"
+                concept: "Tech Vocabulary — Agile & Scrum",
+                difficulty: "hard"
             },
             {
                 q: "Deployment is the process of releasing a software application to a production environment where end users can access it. Modern DevOps practices use automated pipelines to streamline deployment, reducing human error and enabling continuous delivery of new features and bug fixes.\n\nO texto técnico em inglês descreve 'deployment' como um processo relacionado a:",
@@ -388,350 +413,444 @@ window.OnyxEngines = {
                 ],
                 explanation: "O texto define deployment como 'releasing a software application to a production environment' (lançar para o ambiente de produção), automatizado por 'pipelines' para 'continuous delivery' (entrega contínua) de novas funcionalidades.",
                 hint: "'Deploy' = implantar/lançar. O 'ambiente de produção' é onde o usuário real usa o sistema.",
-                concept: "Tech Vocabulary — Deployment & DevOps"
+                concept: "Tech Vocabulary — Deployment & DevOps",
+                difficulty: "hard"
             }
         ]
     },
 
     QuestionEngine: {
         generateNewProceduralQuestion(subject, difficulty) {
-            // Map every platform subject to a procedural generation group
-            const subjectGroupMap = {
-                // Linguagens
-                portugues: 'linguagens', literatura: 'linguagens', ingles: 'ingles',
-                artes: 'linguagens', educacao_fisica: 'linguagens',
-                // Matemática
-                algebra: 'matematica', geometria: 'matematica', estatistica: 'matematica',
-                matematica_financeira: 'matematica',
-                // Ciências da Natureza
-                fisica: 'ciencias', quimica: 'ciencias', biologia: 'ciencias',
-                // Ciências Humanas
-                historia: 'humanas', geografia: 'humanas', filosofia: 'humanas', sociologia: 'humanas',
-                // Itinerários / Tecnologia
-                tecnologia: 'matematica', programacao: 'matematica', robotica: 'ciencias',
-                empreendedorismo: 'humanas', ciencia_de_dados: 'matematica',
-                inteligencia_artificial: 'ciencias', educacao_financeira: 'matematica',
-                marketing_digital: 'humanas', desenvolvimento_jogos: 'matematica',
-                seguranca_informacao: 'ciencias', design_digital: 'linguagens',
-                producao_audiovisual: 'linguagens',
-                // Extras
-                biblioteca_digital: 'linguagens', laboratorio_virtual: 'ciencias',
-                projeto_vida: 'humanas', inclusao_acessibilidade: 'linguagens'
-            };
-            const sub = subjectGroupMap[subject] || 'humanas';
-            const diffs = ['easy', 'medium', 'hard'];
-            const diff = diffs.includes(difficulty) ? difficulty : 'medium';
-            
+            const sub = subject || 'portugues';
+            const lvl = difficulty || 'medium';
             const randomId = Math.floor(Math.random() * 1000000);
+            
             let q = "";
             let a = "";
             let d = [];
             let concept = "BNCC-GEN";
             let explanation = "";
             let hint = "";
-            
-            if (sub === 'matematica') {
-                const templates = [
-                    () => {
-                        const growth = 10 + Math.floor(Math.random() * 31); // 10% to 40%
-                        const initial = 5 + Math.floor(Math.random() * 21); // 5 to 25 million
-                        const year = 2024 + Math.floor(Math.random() * 3); // 2024 to 2026
-                        const correctVal = (initial * (1 + growth / 100)).toFixed(2);
-                        
-                        q = `Uma edtech brasileira de inteligência artificial registrou uma taxa de crescimento anual de faturamento de ${growth}% no ano de ${year}. Sabendo que o faturamento da empresa no ano anterior era de R$ ${initial},00 milhões, o faturamento estimado alcançado nesta edição em milhões é igual a:`;
-                        a = `R$ ${correctVal} milhões`;
-                        d = [
-                            `R$ ${(initial * (1 + (growth - 5) / 100)).toFixed(2)} milhões`,
-                            `R$ ${(initial * (1 + (growth + 5) / 100)).toFixed(2)} milhões`,
-                            `R$ ${(initial * 1.05).toFixed(2)} milhões`,
-                            `R$ ${(initial * (1.10 + growth/100)).toFixed(2)} milhões`
-                        ];
-                        concept = "Matemática Financeira";
-                        explanation = `Faturamento = Faturamento Anterior * (1 + Taxa de Crescimento). Portanto: ${initial} * (1 + ${growth}/100) = ${correctVal} milhões.`;
-                        hint = "Utilize a fórmula padrão de juros compostos ou fator multiplicativo de acréscimo linear.";
-                    },
-                    () => {
-                        const acc = 85 + Math.floor(Math.random() * 11); // 85% to 95%
-                        const batch = 100 + Math.floor(Math.random() * 401); // 100 to 500
-                        const correctVal = Math.round(batch * (acc / 100));
-                        
-                        q = `Um corretor automático por IA foi calibrado para analisar redações do ENEM. O motor possui uma taxa de acurácia comprovada de ${acc}% na identificação de desvios da Competência I. Ao avaliar um lote de ${batch} redações nesta rodada, o número aproximado de redações avaliadas com perfeita precisão estatística é:`;
-                        a = `${correctVal} redações`;
-                        d = [
-                            `${correctVal - 15} redações`,
-                            `${correctVal + 25} redações`,
-                            `${Math.round(batch * 0.70)} redações`,
-                            `${Math.round(batch * 0.50)} redações`
-                        ];
-                        concept = "Estatística Computacional";
-                        explanation = `Quantidade de acertos estimados = Total de redações * Taxa de acurácia. Calculando: ${batch} * (${acc}/100) = ${correctVal} redações precisas.`;
-                        hint = "Multiplique o tamanho total do lote pela taxa percentual de precisão da IA.";
-                    },
-                    () => {
-                        const users = 50 + Math.floor(Math.random() * 151); // 50 to 200 users
-                        const rate = 2 + Math.floor(Math.random() * 4); // 2 to 5 MB/s
-                        const durationSec = 3600; // 1 hour
-                        const correctVal = ((users * rate * durationSec) / 1024).toFixed(1);
-                        
-                        q = `Uma rede de laboratório escolar do Novo Ensino Médio consome uma média de ${rate} MB/s de tráfego de dados por segundo para cada um dos seus ${users} usuários ativos navegando na plataforma de simulados. O volume total acumulado de dados trafegados na rede em 1 hora de simulação contínua, expresso em Gigabytes (GB), é de aproximadamente:`;
-                        a = `${correctVal} GB`;
-                        d = [
-                            `${(correctVal * 0.8).toFixed(1)} GB`,
-                            `${(correctVal * 1.2).toFixed(1)} GB`,
-                            `${(users * rate).toFixed(1)} GB`,
-                            `${((users * rate * 60) / 1024).toFixed(1)} GB`
-                        ];
-                        concept = "Análise de Tráfego de Redes";
-                        explanation = `Tráfego total = Usuários * Taxa de dados por segundo * Segundos em 1 hora. Portanto: ${users} * ${rate} MB/s * 3600s = ${users * rate * 3600} Megabytes. Convertendo para Gigabytes (dividindo por 1024) temos ${correctVal} GB.`;
-                        hint = "Converta o tempo de 1 hora para segundos (3600s), calcule o tráfego em Megabytes e depois divida por 1024 para converter para Gigabytes.";
-                    }
+
+            if (sub === 'portugues') {
+                const plurals = [
+                    { s: 'cidadão', p: 'cidadãos', err: ['cidadões', 'cidadães', 'cidadãoes'] },
+                    { s: 'caráter', p: 'caracteres', err: ['caráteres', 'caraters', 'carateres'] },
+                    { s: 'tabelião', p: 'tabeliães', err: ['tabeliãos', 'tabeliões', 'tabeliãoes'] },
+                    { s: 'júnior', p: 'juniores', err: ['júniors', 'juniores', 'júniorees'] }
                 ];
-                templates[Math.floor(Math.random() * templates.length)]();
-            } else if (sub === 'ciencias') {
-                const templates = [
-                    () => {
-                        const massNaOH = 40 + Math.floor(Math.random() * 41); // 40g to 80g
-                        const molesNaOH = (massNaOH / 40).toFixed(2); // NaOH molar mass = 40g/mol
-                        const molesH2SO4 = (molesNaOH / 2).toFixed(2); // H2SO4 + 2NaOH -> Na2SO4 + 2H2O
-                        
-                        q = `Para tratar resíduos de descarte químico ácida contendo ácido sulfúrico (H₂SO₄), um laboratório de química adiciona exatamente ${massNaOH}g de hidróxido de sódio (NaOH) purificado para promover a neutralização completa. Sabendo que a reação balanceada é: H₂SO₄ + 2NaOH → Na₂SO₄ + 2H₂O. A quantidade de matéria em mols de H₂SO₄ que será completamente neutralizada por essa massa de base é igual a:`;
-                        a = `${molesH2SO4} mols`;
-                        d = [
-                            `${molesNaOH} mols`,
-                            `${(molesNaOH * 2).toFixed(2)} mols`,
-                            `${(molesH2SO4 * 1.5).toFixed(2)} mols`,
-                            `${(molesH2SO4 / 2).toFixed(2)} mols`
-                        ];
-                        concept = "Estequiometria e Neutralização";
-                        explanation = `Massa molar do NaOH = 40g/mol. Número de mols de NaOH = ${massNaOH}g / 40g/mol = ${molesNaOH} mols. Pela estequiometria 1:2, o número de mols de ácido neutralizado é a metade da base: ${molesNaOH} / 2 = ${molesH2SO4} mols de H₂SO₄.`;
-                        hint = "Converta primeiro a massa de NaOH para mols usando sua massa molar (40g/mol) e observe a proporção molar de 1 para 2 da equação química balanceada.";
-                    },
-                    () => {
-                        const area = 2 + Math.floor(Math.random() * 5); // 2 to 6 m²
-                        const solarRad = 800 + Math.floor(Math.random() * 401); // 800 to 1200 W/m²
-                        const efficiency = 15 + Math.floor(Math.random() * 11); // 15% to 25%
-                        const correctVal = Math.round(area * solarRad * (efficiency / 100));
-                        
-                        q = `Um painel solar fotovoltaico de ${area} m² de área é instalado no teto de um laboratório verde escolar. A irradiação solar média local no momento é de ${solarRad} W/m² e a eficiência de conversão elétrica das células de silício é de ${efficiency}%. A potência elétrica útil gerada pelo painel sob essas condições de iluminação é de:`;
-                        a = `${correctVal} W`;
-                        d = [
-                            `${Math.round(area * solarRad)} W`,
-                            `${Math.round(area * solarRad * 0.50)} W`,
-                            `${correctVal - 80} W`,
-                            `${correctVal + 120} W`
-                        ];
-                        concept = "Termodinâmica e Energia Solar";
-                        explanation = `Potência Útil = Área * Irradiação * Eficiência. Calculando: ${area} * ${solarRad} * (${efficiency}/100) = ${correctVal} Watts de potência útil gerada.`;
-                        hint = "Multiplique a irradiação solar incidente pela área do painel para obter a potência total recebida, e então aplique a taxa percentual de eficiência de conversão.";
-                    },
-                    () => {
-                        const baseTemp = 20 + Math.floor(Math.random() * 11); // 20 to 30 C
-                        const factor = 1.5 + (Math.random() * 1.5); // 1.5 to 3.0
-                        const cycles = 3 + Math.floor(Math.random() * 3); // 3 to 5 cycles
-                        const finalPop = Math.round(100 * Math.pow(factor, cycles));
-                        
-                        q = `Em um experimento biológico sobre dispersão epidêmica em alta temperatura, uma cultura inicial de 100 bactérias ectotérmicas patogênicas é submetida a um estresse térmico controlado de ${baseTemp}°C. A população bacteriana cresce de acordo com a progressão geométrica exponencial $P(t) = 100 \\cdot (${factor.toFixed(1)})^{t}$ a cada ciclo t de incubação. O número total de bactérias esperado após ${cycles} ciclos t de exposição contínua é de:`;
-                        a = `${finalPop} bactérias`;
-                        d = [
-                            `${finalPop - 120} bactérias`,
-                            `${finalPop + 250} bactérias`,
-                            `${Math.round(100 * factor * cycles)} bactérias`,
-                            `${finalPop * 2} bactérias`
-                        ];
-                        concept = "Cinética e Reprodução Microbiana";
-                        explanation = `População final = População Inicial * Fator^Ciclos. Portanto: 100 * (${factor.toFixed(1)})^${cycles} = ${finalPop} bactérias ativas.`;
-                        hint = "Eleve o fator multiplicativo de crescimento bacteriano ao expoente que representa os ciclos e depois multiplique pelo tamanho da população inicial.";
-                    }
+                const item = plurals[Math.floor(Math.random() * plurals.length)];
+                q = `Identifique a flexão de número correta para o substantivo "${item.s}". Qual é o plural gramatical adequado de acordo com a norma-padrão?`;
+                a = item.p;
+                d = item.err;
+                concept = "Morfossintaxe e Plural";
+                explanation = `O plural de "${item.s}" é "${item.p}" segundo as normas gramaticais.`;
+                hint = "Lembre-se de que as palavras que mudam de tônica ou que terminam em -ão têm plurais específicos.";
+            } else if (sub === 'literatura') {
+                const books = [
+                    { t: 'Dom Casmurro', a: 'Machado de Assis', e: 'Realismo' },
+                    { t: 'O Cortiço', a: 'Aluísio Azevedo', e: 'Naturalismo' },
+                    { t: 'Vidas Secas', a: 'Graciliano Ramos', e: 'Modernismo' },
+                    { t: 'Iracema', a: 'José de Alencar', e: 'Romantismo' }
                 ];
-                templates[Math.floor(Math.random() * templates.length)]();
-            } else if (sub === 'humanas') {
-                const templates = [
-                    () => {
-                        const philosopher = ["Zygmunt Bauman", "Michel Foucault", "Karl Marx", "Immanuel Kant"][Math.floor(Math.random() * 4)];
-                        const topic = ["Modernidade Líquida", "Biopoder e Vigilância", "Alienação do Trabalho", "Imperativo Categórico"][["Zygmunt Bauman", "Michel Foucault", "Karl Marx", "Immanuel Kant"].indexOf(philosopher)];
-                        
-                        q = `No contexto sociopolítico atual de rápidas mudanças impulsionadas pelas tecnologias digitais, a perda de vínculos sociais estáveis e a volatilidade das relações de consumo são temas centrais de reflexão. A teoria que analisa essa fragmentação social contemporânea das instituições e a fragilidade das relações humanas sob o conceito de "${topic}" foi formulada por qual pensador clássico/contemporâneo?`;
-                        a = philosopher;
-                        d = [
-                            "Émile Durkheim",
-                            "Max Weber",
-                            "Auguste Comte",
-                            philosopher === "Karl Marx" ? "Michel Foucault" : "Karl Marx"
-                        ];
-                        concept = "Teoria Sociológica Contemporânea";
-                        explanation = `A teoria de "${topic}" que discute a fragmentação das relações e instituições na atualidade é uma marca da obra do pensador ${philosopher}.`;
-                        hint = "Associe o conceito filosófico do tema líquido, de controle corporal ou de mais-valia industrial ao autor clássico correspondente.";
-                    },
-                    () => {
-                        const city = ["Belém (COP30)", "São Paulo", "Rio de Janeiro", "Curitiba"][Math.floor(Math.random() * 4)];
-                        
-                        q = `A reestruturação urbana de grandes centros urbanos brasileiros, a exemplo das intervenções em infraestrutura e governança na cidade de ${city}, reflete a integração dos espaços locais aos fluxos globais da chamada globalização. Esse fenômeno geográfico e socioeconômico frequentemente gera contradições marcadas por qual impacto socioespacial estrutural?`;
-                        a = "Segregação socioespacial e gentrificação de bairros históricos com exclusão de populações de baixa renda";
-                        d = [
-                            "Distribuição homogênea de renda e democratização integral de todos os territórios periféricos",
-                            "Descentralização absoluta de redes de transporte rodoviário com eliminação de veículos elétricos",
-                            "Redução drástica no custo de moradia nas áreas centrais com incentivo à agricultura camponesa",
-                            "Eliminação completa de conexões virtuais com redes de satélite internacionais"
-                        ];
-                        concept = "Geografia Urbana e Globalização";
-                        explanation = "A modernização urbana voltada a atrair investimentos globais causa a valorização imobiliária desproporcional (gentrificação) e empurra os moradores tradicionais de baixa renda para as periferias (segregação).";
-                        hint = "Pense na contradição clássica da valorização imobiliária que encarece o custo de vida e exclui os mais pobres.";
-                    },
-                    () => {
-                        q = "A aprovação da Lei de Diretrizes e Bases da Educação Nacional (LDB) e as diretrizes curriculares da BNCC no Brasil buscam unificar competências para preparar os estudantes para o mercado de trabalho digital. Sob o ponto de vista histórico-crítico, a adequação de currículos escolares às necessidades da divisão técnica do trabalho do mercado capitalista atende a qual modelo de desenvolvimento socioeconômico?";
-                        a = "Tecnicismo e instrumentalização do aprendizado focado na produtividade industrial e corporativa";
-                        d = [
-                            "Humanismo integral focado no ócio criativo clássico grego de contemplação pura",
-                            "Educação libertadora freireana baseada na superação de classes sem especialização técnica",
-                            "Anarquismo pedagógico de autogestão absoluta das salas de aula sem avaliações estatais",
-                            "Escolástica medieval clássica focada na exegese teológica dogmática"
-                        ];
-                        concept = "História da Educação no Brasil";
-                        explanation = "O alinhamento curricular voltado exclusivamente a preencher postos de trabalho e atender à eficiência operacional caracteriza o modelo tecnicista-instrumental da pedagogia produtivista.";
-                        hint = "O modelo focado na produtividade e eficácia técnica das competências do mercado chama-se tecnicismo.";
-                    }
-                ];
-                templates[Math.floor(Math.random() * templates.length)]();
-            } else if (sub === 'linguagens') {
-                const templates = [
-                    () => {
-                        q = "Considere o enunciado: 'Se a Inteligência Artificial serve como potente assistente cognitivo, sua autonomia irrestrita pode eclipsar a autoria intelectual dos estudantes.' A conjunção oracional 'Se' empregada na frase acima estabelece uma relação de sentido de:";
-                        a = "Condição, indicando a hipótese para a ocorrência do fato principal apresentado na oração subsequente";
-                        d = [
-                            "Concessão, atenuando o contraste óbvio entre as ideias expostas nas duas orações",
-                            "Causa, justificando o motivo biológico do desenvolvimento intelectual humano",
-                            "Tempo, sinalizando o momento cronológico exato em que a tecnologia foi programada",
-                            "Conseqüência, revelando o efeito consumado das práticas escolares regulamentadas"
-                        ];
-                        concept = "Sintaxe de Períodos Compostos";
-                        explanation = "A conjunção subordinativa 'Se' introduz uma oração condicional, representando uma condição/hipótese para que o efeito de eclipsar a autoria ocorra.";
-                        hint = "Substitua a conjunção 'Se' por 'Caso' e note a estrutura de hipótese condicional.";
-                    },
-                    () => {
-                        q = "A proliferação de gêneros digitais textuais (como memes, podcasts escolares, infográficos interativos e microvídeos informativos) no Novo Ensino Médio exige um letramento de mídia avançado dos estudantes. A característica essencial que define a linguagem desses novos genres textuais no ambiente de redes digitais é:";
-                        a = "Multimodalidade, integrando linguagem verbal escrita com recursos sonoros, visuais e cinéticos";
-                        d = [
-                            "Monocromia, restringindo a comunicação a caracteres alfanuméricos estritamente formais",
-                            "Linearidade clássica rígida, impedindo a navegação por hiperlinks ou atalhos multimídia",
-                            "Oralidade pura informal, vedando qualquer tipo de registro ou escrita ortográfica regulamentar",
-                            "Ausência de intencionalidade discursiva ou de apelo argumentativo ao interlocutor"
-                        ];
-                        concept = "Gêneros Textuais e Letramento Digital";
-                        explanation = "Gêneros textuais digitais utilizam diferentes modos de representação simultâneos (texto, imagem, áudio, animação), caracterizando a multimodalidade textual.";
-                        hint = "Considere a fusão de textos verbais, imagens, áudios e vídeos operando juntos em um mesmo post.";
-                    },
-                    () => {
-                        q = "Em campanhas oficiais de conscientização estudantil sobre saúde mental e cyberbullying nas redes escolares, costuma-se empregar predominantemente a Função Conativa (ou Apelativa) da linguagem. A marca gramatical e estilística que atesta a presença dessa função nos textos de propaganda é o uso frequente de:";
-                        a = "Verbos no imperativo e pronomes de segunda pessoa com o objetivo de persuadir e direcionar a conduta do leitor";
-                        d = [
-                            "Vocabulário denotativo estritamente objetivo focado em descrever fatos científicos de terceiros",
-                            "Metáforas herméticas e rimas ricas com foco exclusivo na estética e sonoridade poética da mensagem",
-                            "Interrogações existenciais em tom melancólico expressando sentimentos íntimos do próprio emissor",
-                            "Termos técnicos e jargões computacionais sem menção ao receptor da informação"
-                        ];
-                        concept = "Funções da Linguagem";
-                        explanation = "A função conativa (ou apelativa) foca no receptor, buscando influenciar seu comportamento. Suas marcas típicas são verbos no imperativo (ex: 'participe', 'ajude') e pronomes direcionados ao leitor.";
-                        hint = "Pense na linguagem publicitária ou de campanhas que estimulam o leitor a tomar uma ação direta.";
-                    }
-                ];
-                templates[Math.floor(Math.random() * templates.length)]();
+                const book = books[Math.floor(Math.random() * books.length)];
+                q = `A obra clássica "${book.t}", um dos marcos da literatura nacional, pertence a qual autor e escola literária?`;
+                a = `${book.a} (${book.e})`;
+                d = [`Clarice Lispector (Modernismo)`, `José de Alencar (Realismo)`, `Machado de Assis (Romantismo)`].filter(x => x !== `${book.a} (${book.e})`).slice(0, 3);
+                concept = "Escolas Literárias Brasileiras";
+                explanation = `"${book.t}" é de autoria de ${book.a} e pertence à escola do ${book.e}.`;
+                hint = "Relacione o autor à estética realista, romântica ou modernista.";
             } else if (sub === 'ingles') {
-                const templates = [
-                    () => {
-                        q = "Generative AI systems are developing at an unprecedented speed, reshaping the future of labor. Many routine tasks are being automated, raising worries about job displacement. However, technology also creates opportunities, demanding new cognitive skills and technological adaptation.\n\nO parágrafo em inglês analisa o impacto das IAs generativas no mercado de trabalho. De acordo com o texto, a ascensão tecnológica acarreta simultaneamente:";
-                        a = "Preocupações com a perda de empregos rotineiros e o surgimento de novas oportunidades que exigem letramento digital";
-                        d = [
-                            "O fim absoluto das carreiras industriais periféricas e a estagnação salarial do Norte Global",
-                            "A proibição legal das redes preditivas e o retorno exclusivo ao comércio têxtil artesanal",
-                            "O aumento na imigração ilegal europeia devido à atrofia de computadores corporativos",
-                            "Uma estagnação completa na produção de softwares proprietários sem código aberto"
-                        ];
-                        concept = "Interpretative Synthesis";
-                        explanation = "O autor explica que enquanto tarefas rotineiras são automatizadas gerando temores de perda de empregos ('job displacement'), oportunidades são geradas exigindo adaptação e habilidades ('opportunities demanding new skills').";
-                        hint = "Conecte os conceitos de ameaça ('worries about job displacement') e oportunidade ('creates opportunities') expressos no fragmento.";
-                    },
-                    () => {
-                        q = "E-waste represents one of the fastest-growing environmental challenges of our time. Every year, millions of electronic devices are discarded, releasing toxic heavy metals into the soil. Promoting a circular economy is key to reclaiming valuable resources and protecting local communities.\n\nO excerto em inglês aborda o descarte contínuo de lixo eletrônico. A solução apontada pelo autor para mitigar a liberação de metais tóxicos reside em:";
-                        a = "Promover a economia circular para recuperar recursos valiosos e proteger as comunidades locais";
-                        d = [
-                            "Aumentar as tarifas alfandegárias de aparelhos celulares importados pela ONU",
-                            "Enterrar o lixo tecnológico exclusivamente nas regiões frias do hemisfério Sul",
-                            "Suspender a fabricação de componentes de cobre e silício industriais",
-                            "Eliminar os impostos incidentes sobre combustíveis fósseis"
-                        ];
-                        concept = "Vocabulary & Text Solutions";
-                        explanation = "O texto afirma diretamente que promover uma economia circular ('circular economy') é a chave ('is key') para recuperar recursos valiosos e proteger as populações locais.";
-                        hint = "Busque o trecho final que apresenta a solução recomendada pelo autor ('Promoting a circular economy is key...').";
-                    },
-                    () => {
-                        q = "Youth climate activists are no longer waiting for governmental action. By organizing massive global strikes and leveraging digital media, they have forced environmental policies to the forefront of international debate. Action, they argue, is a moral imperative.\n\nConsiderando a atuação política dos ativistas climáticos juvenis expressa no fragmento em inglês, o principal recurso prático utilizado por eles para pautar o debate internacional foi:";
-                        a = "Organizar greves globais em massa e utilizar estrategicamente as mídias digitais de comunicação";
-                        d = [
-                            "Financiar a abertura de empresas privadas de exploração mineral na Amazônia",
-                            "Votar em tratados de livre comércio restritos à exportação de algodão",
-                            "Recusar o uso de aparelhos de telefonia móvel e conexões virtuais",
-                            "Boicotar a entrada de novos estudantes em cursos de graduação clássicos"
-                        ];
-                        concept = "Political & Social Reading";
-                        explanation = "O autor lista explicitamente que eles atuaram através de 'global strikes' (greves globais) e 'leveraging digital media' (alavancando/usando as mídias digitais).";
-                        hint = "Associe as expressões 'global strikes' e 'leveraging digital media' com greves coletivas e redes de comunicação social.";
-                    },
-                    () => {
-                        q = "An API, or Application Programming Interface, acts as a bridge between two software systems. It defines rules for how applications communicate, allowing developers to use external services without knowing their internal code. REST APIs use standard HTTP methods like GET, POST, PUT, and DELETE.\n\nCom base no texto técnico em inglês, qual é a função essencial de uma API REST?";
-                        a = "Definir as regras de comunicação entre sistemas usando métodos HTTP, sem exigir conhecimento do código interno.";
-                        d = [
-                            "Armazenar fisicamente os dados do usuário em servidores locais protegidos por firewall.",
-                            "Renderizar a interface gráfica de botões e formulários visíveis ao usuário final.",
-                            "Criptografar arquivos de banco de dados para impedir ataques de ransomware.",
-                            "Substituir o sistema operacional por um ambiente virtual de desenvolvimento."
-                        ];
-                        concept = "Tech Vocabulary — API & REST";
-                        explanation = "O texto descreve a API como uma 'ponte' ('bridge') com regras de comunicação ('rules for how applications communicate') usando métodos HTTP como GET e POST, sem necessidade de conhecer o código interno.";
-                        hint = "REST usa verbos HTTP: GET (buscar), POST (criar), PUT (atualizar), DELETE (apagar).";
-                    },
-                    () => {
-                        q = "Version control systems like Git allow developers to track changes in their codebase, collaborate with teammates, and revert to previous states when bugs are introduced. A 'commit' saves a snapshot of the current code, while a 'branch' allows isolated development of new features.\n\nNo contexto do texto em inglês sobre controle de versão, o que um 'branch' no Git permite ao desenvolvedor?";
-                        a = "Desenvolver novas funcionalidades de forma isolada sem afetar o código principal do projeto.";
-                        d = [
-                            "Apagar definitivamente versões antigas do código para economizar espaço em disco.",
-                            "Publicar o software diretamente na loja de aplicativos sem revisão de código.",
-                            "Bloquear outros desenvolvedores de acessar o repositório durante a programação.",
-                            "Converter automaticamente o código-fonte em linguagem de máquina compilada."
-                        ];
-                        concept = "Tech Vocabulary — Git & Version Control";
-                        explanation = "O texto explica que um 'branch' permite 'isolated development of new features' (desenvolvimento isolado de novas funcionalidades), enquanto um 'commit' salva um instantâneo ('snapshot') do estado atual do código.";
-                        hint = "'Branch' = galho/ramo. É como criar um ramo separado da árvore principal para testar algo novo.";
-                    },
-                    () => {
-                        q = "Cloud computing enables organizations to access computing resources — servers, storage, databases, and networking — over the internet, on demand, without owning physical infrastructure. The three main service models are IaaS (Infrastructure), PaaS (Platform), and SaaS (Software), each offering different levels of control.\n\nDe acordo com o texto técnico em inglês, qual é a principal vantagem da computação em nuvem para as organizações?";
-                        a = "Acessar recursos computacionais sob demanda pela internet, sem necessidade de possuir infraestrutura física própria.";
-                        d = [
-                            "Eliminar a necessidade de conexão à internet ao processar todos os dados localmente.",
-                            "Garantir que apenas um usuário por vez possa acessar os servidores do sistema.",
-                            "Obrigar as empresas a comprar e manter seus próprios data centers físicos.",
-                            "Substituir programadores humanos por sistemas autônomos de inteligência artificial."
-                        ];
-                        concept = "Tech Vocabulary — Cloud Computing";
-                        explanation = "O texto define cloud computing como acesso a recursos ('access computing resources') pela internet ('over the internet') sob demanda ('on demand'), sem possuir infraestrutura física ('without owning physical infrastructure').";
-                        hint = "'Cloud' = nuvem. Os dados e programas ficam em servidores remotos, não no seu computador.";
-                    },
-                    () => {
-                        q = "Cybersecurity is the practice of protecting systems, networks, and programs from digital attacks. These attacks often aim to access, change, or destroy sensitive information. Common threats include phishing, ransomware, and SQL injection. A strong security posture requires both technical defenses and user awareness training.\n\nSegundo o texto em inglês sobre cibersegurança, quais são os principais objetivos dos ataques digitais?";
-                        a = "Acessar, alterar ou destruir informações sensíveis de sistemas e redes vulneráveis.";
-                        d = [
-                            "Aumentar a velocidade de processamento de servidores por meio de scripts automatizados.",
-                            "Instalar atualizações de software para corrigir falhas de desempenho em produção.",
-                            "Distribuir gratuitamente sistemas operacionais de código aberto para usuários finais.",
-                            "Criar backups automáticos de dados em ambientes de nuvem privada corporativa."
-                        ];
-                        concept = "Tech Vocabulary — Cybersecurity";
-                        explanation = "O texto afirma que os ataques 'often aim to access, change, or destroy sensitive information' (acessar, alterar ou destruir informações sensíveis), listando ameaças como phishing, ransomware e SQL injection.";
-                        hint = "Foque no trecho 'access, change, or destroy sensitive information' para identificar os objetivos dos ataques.";
-                    }
+                const words = [
+                    { en: 'bandwidth', pt: 'largura de banda', desc: 'taxa máxima de transmissão de dados' },
+                    { en: 'deployment', pt: 'implantação/lançamento', desc: 'processo de disponibilizar o software' },
+                    { en: 'debugging', pt: 'depuração de código', desc: 'processo de encontrar e corrigir erros' }
                 ];
-                templates[Math.floor(Math.random() * templates.length)]();
+                const word = words[Math.floor(Math.random() * words.length)];
+                q = `In technical English for computing and networks, what is the meaning and context of the term "${word.en}"?`;
+                a = `${word.pt}: ${word.desc}`;
+                d = [`Interface gráfica com o usuário final`, `Configuração de hardware local`, `Exclusão definitiva de banco de dados`];
+                concept = "Inglês Técnico Instrumental";
+                explanation = `"${word.en}" traduz-se como ${word.pt}, referindo-se a: ${word.desc}.`;
+                hint = "Pense no jargão técnico utilizado por desenvolvedores de software no dia a dia.";
+            } else if (sub === 'artes') {
+                const styles = [
+                    { n: 'Semana de Arte Moderna de 1922', c: 'romper com o academicismo e criar uma arte genuinamente brasileira' },
+                    { n: 'Cubismo', c: 'geometrização das formas e representação sob múltiplos pontos de vista' },
+                    { n: 'Expressionismo', c: 'deformação da realidade para expressar emoções subjetivas e angústias' }
+                ];
+                const style = styles[Math.floor(Math.random() * styles.length)];
+                q = `Qual é a proposta estética fundamental do movimento artístico conhecido como "${style.n}"?`;
+                a = style.c;
+                d = [`Representação fiel e fotográfica da realidade objetiva`, `Uso exclusivo de cores pastéis sem contrastes`, `Foco exclusivo na arte clássica greco-romana medieval`];
+                concept = "História da Arte e Movimentos Estéticos";
+                explanation = `O movimento "${style.n}" tem como proposta: ${style.c}.`;
+                hint = "Lembre-se de que a arte moderna buscou novas linguagens e rompeu com a imitação clássica.";
+            } else if (sub === 'educacao_fisica') {
+                const health = [
+                    { t: 'Frequência Cardíaca Máxima', d: '220 menos a idade do indivíduo' },
+                    { t: 'IMC (Índice de Massa Corporal)', d: 'peso dividido pela altura elevada ao quadrado' },
+                    { t: 'Atividade Aeróbica', d: 'exercício de longa duração e intensidade moderada que consome oxigênio' }
+                ];
+                const item = health[Math.floor(Math.random() * health.length)];
+                q = `No estudo de fisiologia do exercício e saúde corporal, qual é a definição e método de medição para "${item.t}"?`;
+                a = item.d;
+                d = [`O dobro da pressão arterial sistólica sistêmica`, `O volume de ar inspirado por minuto no repouso`, `A quantidade total de gordura visceral acumulada`];
+                concept = "Fisiologia e Saúde Corporal";
+                explanation = `O conceito de "${item.t}" refere-se a: ${item.d}.`;
+                hint = "Pense nos cálculos simples aplicados à saúde física e aos exercícios físicos orientados.";
+            } else if (sub === 'algebra') {
+                const aVal = 2 + Math.floor(Math.random() * 5);
+                const bVal = 5 + Math.floor(Math.random() * 10);
+                const xVal = 3 + Math.floor(Math.random() * 4);
+                const yVal = aVal * xVal + bVal;
+                q = `Dada a função afim f(x) = ${aVal}x + ${bVal}, qual é o valor de f(${xVal})?`;
+                a = `${yVal}`;
+                d = [`${yVal - 3}`, `${yVal + 3}`, `${aVal * xVal}`, `${bVal}`];
+                concept = "Funções e Modelagem Algébrica";
+                explanation = `Substituindo x por ${xVal} na equação: f(${xVal}) = ${aVal} * ${xVal} + ${bVal} = ${aVal * xVal} + ${bVal} = ${yVal}.`;
+                hint = "Substitua o valor de x na expressão linear dada e execute as operações aritméticas.";
+            } else if (sub === 'geometria') {
+                const base = 4 + Math.floor(Math.random() * 6);
+                const height = 5 + Math.floor(Math.random() * 6);
+                const area = (base * height) / 2;
+                q = `Um triângulo retângulo possui uma base de ${base} cm e uma altura de ${height} cm. Qual é a área deste triângulo em cm²?`;
+                a = `${area} cm²`;
+                d = [`${base * height} cm²`, `${(base * height) / 4} cm²`, `${area + 5} cm²`, `10 cm²`];
+                concept = "Cálculo de Áreas Geométricas";
+                explanation = `A área do triângulo é calculada pela fórmula (base * altura) / 2. Logo: (${base} * ${height}) / 2 = ${area} cm².`;
+                hint = "Aplique a fórmula padrão de área de triângulos dividindo o produto da base pela altura por 2.";
+            } else if (sub === 'estatistica') {
+                const numbers = [];
+                let sum = 0;
+                for (let i = 0; i < 5; i++) {
+                    const num = 10 + Math.floor(Math.random() * 20);
+                    numbers.push(num);
+                    sum += num;
+                }
+                const mean = (sum / 5).toFixed(1);
+                q = `Dada a seguinte amostra de dados numéricos coletados em laboratório: [${numbers.join(', ')}]. A média aritmética aproximada dessa amostra é igual a:`;
+                a = `${mean}`;
+                d = [`${(sum / 4).toFixed(1)}`, `${(sum / 6).toFixed(1)}`, `${(sum / 5 - 2).toFixed(1)}`, `0.0`];
+                concept = "Medidas de Tendência Central";
+                explanation = `A média aritmética é a soma dos elementos dividida pela quantidade de elementos: (${numbers.join(' + ')}) / 5 = ${sum} / 5 = ${mean}.`;
+                hint = "Some todos os 5 valores da lista e divida o resultado obtido exatamente por 5.";
+            } else if (sub === 'matematica_financeira') {
+                const capital = 1000 * (1 + Math.floor(Math.random() * 5));
+                const rate = 5 + Math.floor(Math.random() * 6);
+                const interest = capital * (rate / 100);
+                q = `Um capital inicial de R$ ${capital},00 é aplicado sob o regime de juros simples com uma taxa de ${rate}% ao ano. O rendimento obtido em 1 ano será de:`;
+                a = `R$ ${interest.toFixed(2)}`;
+                d = [`R$ ${(interest * 2).toFixed(2)}`, `R$ ${(interest / 2).toFixed(2)}`, `R$ ${capital.toFixed(2)}`, `R$ 100.00`];
+                concept = "Juros Simples e Capitalização";
+                explanation = `Juros = Capital * Taxa * Tempo. Logo: ${capital} * (${rate}/100) * 1 = ${interest.toFixed(2)}.`;
+                hint = "Aplique o percentual da taxa anual diretamente sobre o capital inicial aplicado.";
+            } else if (sub === 'fisica') {
+                const force = 10 + Math.floor(Math.random() * 41);
+                const mass = 2 + Math.floor(Math.random() * 9);
+                const accel = (force / mass).toFixed(2);
+                q = `De acordo com a Segunda Lei de Newton (F = m.a), se uma força resultante constante de ${force} N é aplicada a um bloco de massa ${mass} kg, qual será a aceleração adquirida pelo bloco em m/s²?`;
+                a = `${accel} m/s²`;
+                d = [`${(force * mass).toFixed(2)} m/s²`, `${(mass / force).toFixed(2)} m/s²`, `${accel - 1} m/s²`, `9.8 m/s²`];
+                concept = "Dinâmica e Leis de Newton";
+                explanation = `A aceleração é dada por a = F / m. Calculando: ${force} N / ${mass} kg = ${accel} m/s².`;
+                hint = "Isole a aceleração 'a' dividindo a força 'F' aplicada pela massa 'm' do objeto.";
+            } else if (sub === 'quimica') {
+                const mass = 10 + Math.floor(Math.random() * 50);
+                const volume = 250 + Math.floor(Math.random() * 751);
+                const conc = (mass / (volume / 1000)).toFixed(2);
+                q = `Em uma aula prática de soluções químicas, um estudante dissolve ${mass}g de sal em um béquer contendo exatamente ${volume} mL de água. A concentração comum da solução resultante em g/L é igual a:`;
+                a = `${conc} g/L`;
+                d = [`${(mass * 2).toFixed(2)} g/L`, `${(mass / volume).toFixed(2)} g/L`, `${(conc / 2).toFixed(2)} g/L`, `1.00 g/L`];
+                concept = "Concentração de Soluções";
+                explanation = `Concentração = Massa (g) / Volume (L). Volume de ${volume} mL = ${volume / 1000} L. Logo, ${mass}g / ${volume / 1000}L = ${conc} g/L.`;
+                hint = "Converta o volume do béquer de mililitros (mL) para litros (L) antes de dividir a massa.";
+            } else if (sub === 'biologia') {
+                const bio = [
+                    { t: 'DNA (Ácido Desoxirribonucleico)', c: 'molécula de dupla hélice que carrega as instruções genéticas' },
+                    { t: 'Mitocôndria', c: 'organela celular responsável pela respiração celular e síntese de ATP' },
+                    { t: 'Fotossíntese', c: 'processo celular de conversão de energia luminosa em energia química' }
+                ];
+                const item = bio[Math.floor(Math.random() * bio.length)];
+                q = `No estudo de citologia e genética no Ensino Médio, qual é a definição e papel celular do elemento "${item.t}"?`;
+                a = item.c;
+                d = [`Eliminação de resíduos metabólicos gasosos por difusão simples`, `Criação de barreiras lipídicas externas contra vírus`, `Síntese exclusiva de clorofila livre na parede celular`];
+                concept = "Biologia Celular e Genética";
+                explanation = `O elemento "${item.t}" realiza o seguinte papel: ${item.c}.`;
+                hint = "Lembre-se das principais estruturas e funções das organelas da célula.";
+            } else if (sub === 'historia') {
+                const events = [
+                    { y: '1889', n: 'Proclamação da República', f: 'o fim da monarquia constitucional brasileira' },
+                    { y: '1822', n: 'Independência do Brasil', f: 'o rompimento do pacto colonial com Portugal' },
+                    { y: '1888', n: 'Assinatura da Lei Áurea', f: 'a abolição formal do regime de escravidão' }
+                ];
+                const ev = events[Math.floor(Math.random() * events.length)];
+                q = `O marco histórico da "${ev.n}", ocorrido no ano de ${ev.y}, teve como consequência estrutural direta na história do Brasil:`;
+                a = ev.f;
+                d = [`A criação instantânea da primeira constituição federalista`, `O início da colonização holandesa na região Nordeste`, `A transferência da capital federal de Salvador para o Rio de Janeiro`];
+                concept = "História do Brasil";
+                explanation = `A "${ev.n}" ocorrida em ${ev.y} resultou em: ${ev.f}.`;
+                hint = "Relacione o ano do marco histórico com a transição política correspondente.";
+            } else if (sub === 'geografia') {
+                const geos = [
+                    { n: 'Efeito Estufa', c: 'fenômeno natural que retém calor na atmosfera terrestre mantendo o planeta habitável' },
+                    { n: 'El Niño', c: 'aquecimento anômalo das águas superficiais do Oceano Pacífico Equatorial' },
+                    { n: 'Curvas de Nível', c: 'linhas que unem pontos de mesma altitude para representar o relevo em mapas' }
+                ];
+                const geo = geos[Math.floor(Math.random() * geos.length)];
+                q = `Na análise cartográfica e no estudo de climatologia geográfica, qual é o conceito que define o termo "${geo.n}"?`;
+                a = geo.c;
+                d = [`A taxa de natalidade dividida pela mortalidade regional`, `O movimento de rotação da Terra ao redor do Sol`, `A divisão geopolítica dos blocos econômicos europeus`];
+                concept = "Geografia Física e Ambiental";
+                explanation = `O termo "${geo.n}" conceitua-se como: ${geo.c}.`;
+                hint = "Pense nas dinâmicas térmicas do planeta ou nas formas de mapeamento do terreno.";
+            } else if (sub === 'filosofia') {
+                const phils = [
+                    { n: 'Sócrates', c: 'o método da maiêutica através do diálogo para dar parto às ideias' },
+                    { n: 'Immanuel Kant', c: 'o imperativo categórico que estabelece o dever moral universal' },
+                    { n: 'René Descartes', c: 'o racionalismo fundamentado no método da dúvida metódica' }
+                ];
+                const phil = phils[Math.floor(Math.random() * phils.length)];
+                q = `Qual é o pilar filosófico fundamental defendido pelo pensador clássico "${phil.n}" na história do pensamento ocidental?`;
+                a = phil.c;
+                d = [`O empirismo radical focado exclusivamente na intuição mística`, `A negação completa da existência de qualquer lei moral social`, `A valorização absoluta do determinismo geográfico físico`];
+                concept = "História da Filosofia e Ética";
+                explanation = `O filósofo "${phil.n}" formulou e defendeu: ${phil.c}.`;
+                hint = "Lembre-se das frases e métodos mais famosos associados ao pensador da questão.";
+            } else if (sub === 'sociologia') {
+                const socs = [
+                    { n: 'Émile Durkheim', c: 'o fato social como objeto de estudo coercitivo e exterior ao indivíduo' },
+                    { n: 'Max Weber', c: 'a ação social compreensiva e a teoria da burocracia racional' },
+                    { n: 'Karl Marx', c: 'a luta de classes como motor histórico das transformações sociais' }
+                ];
+                const soc = socs[Math.floor(Math.random() * socs.length)];
+                q = `No âmbito do desenvolvimento das ciências sociais, qual é o conceito central formulado por "${soc.n}" para analisar a estrutura social?`;
+                a = soc.c;
+                d = [`O tecnicismo escolar focado na produtividade industrial`, `O existencialismo poético subjetivo individualista`, `A teoria do caos quântico aplicada à psicologia familiar`];
+                concept = "Teoria Sociológica Clássica";
+                explanation = `O clássico da sociologia "${soc.n}" estabelece: ${soc.c}.`;
+                hint = "Lembre-se dos termos-chave como classes, burocracia, ou fatos sociais.";
+            } else if (sub === 'tecnologia') {
+                const techTerms = [
+                    { t: 'Computação em Nuvem', d: 'provedores de infraestrutura que fornecem servidores e bancos de dados sob demanda via internet' },
+                    { t: 'API RESTful', d: 'padrão de interface que permite a comunicação entre sistemas através do protocolo HTTP' },
+                    { t: 'Endereço IP', d: 'identificador numérico único associado a cada dispositivo conectado a uma rede' }
+                ];
+                const item = techTerms[Math.floor(Math.random() * techTerms.length)];
+                q = `Na infraestrutura de tecnologia de redes modernas e arquiteturas web, qual é a definição exata de "${item.t}"?`;
+                a = item.d;
+                d = [`O circuito eletrônico interno que acelera o processador`, `A linguagem exclusiva para formatação de planilhas locais`, `A criptografia física aplicada a cabos ópticos subterrâneos`];
+                concept = "Infraestrutura de Redes e Sistemas";
+                explanation = `"${item.t}" é definido como: ${item.d}.`;
+                hint = "Pense na forma como computadores se comunicam e compartilham recursos online.";
+            } else if (sub === 'programacao') {
+                const varNames = ['contador', 'total', 'limite', 'soma', 'resultado'];
+                const varName = varNames[Math.floor(Math.random() * varNames.length)];
+                const initialVal = Math.floor(Math.random() * 5);
+                const steps = 3 + Math.floor(Math.random() * 5);
+                const correctVal = initialVal + steps;
+                q = `Considere o seguinte trecho de código em Python:\n\n${varName} = ${initialVal}\nfor i in range(${steps}):\n    ${varName} += 1\n\nQual será o valor da variável "${varName}" após a execução do loop?`;
+                a = `${correctVal}`;
+                d = [`${correctVal - 1}`, `${correctVal + 1}`, `${initialVal}`, `0`];
+                concept = "Estruturas de Repetição";
+                explanation = `O loop range(${steps}) executa exatamente ${steps} vezes. Como a variável começa com ${initialVal} e é incrementada em 1 a cada iteração, o valor final será ${initialVal} + ${steps} = ${correctVal}.`;
+                hint = "Lembre-se de que a função range(n) repete o loop n vezes, incrementando o contador em 1 a cada iteração.";
+            } else if (sub === 'robotica') {
+                const roboTerms = [
+                    { t: 'Sensor Ultrassônico', d: 'sensor que calcula a distância de obstáculos medindo o tempo de ida e volta de ondas sonoras' },
+                    { t: 'Servomotor', d: 'atuador eletromecânico que permite controle preciso da posição angular de eixos rotativos' },
+                    { t: 'Arduino UNO', d: 'placa de prototipagem eletrônica baseada em microcontrolador com portas digitais e analógicas' }
+                ];
+                const item = roboTerms[Math.floor(Math.random() * roboTerms.length)];
+                q = `No desenvolvimento de projetos de automação e robótica educativa, qual é o papel técnico do dispositivo "${item.t}"?`;
+                a = item.d;
+                d = [`Um conversor de corrente contínua para alta voltagem química`, `Um módulo que simula conexões neurais biológicas no ar`, `Um software de renderização gráfica 3D offline`];
+                concept = "Hardware e Sensores Eletrônicos";
+                explanation = `O componente "${item.t}" desempenha a função de: ${item.d}.`;
+                hint = "Pense em como os robôs coletam informações ambientais ou realizam movimentos físicos controlados.";
+            } else if (sub === 'empreendedorismo') {
+                const empTerms = [
+                    { t: 'M.V.P. (Produto Mínimo Viável)', d: 'versão simplificada de um produto com recursos mínimos para testar hipóteses com clientes' },
+                    { t: 'Pitch', d: 'apresentação verbal ultrarrápida projetada para convencer investidores sobre a viabilidade de uma startup' },
+                    { t: 'Business Model Canvas', d: 'mapa visual contendo nove blocos para estruturar a proposta de valor e a operação de um negócio' }
+                ];
+                const item = empTerms[Math.floor(Math.random() * empTerms.length)];
+                q = `No ecossistema de startups e na criação de novos empreendimentos de sucesso, qual é o conceito prático associado a "${item.t}"?`;
+                a = item.d;
+                d = [`O lucro líquido final apurado após auditoria anual externa`, `Um contrato legal formal para contratação de operários industriais`, `A taxa de juros composta cobrada por bancos estatais`];
+                concept = "Validação e Modelagem de Negócios";
+                explanation = `A ferramenta/conceito de "${item.t}" atua como: ${item.d}.`;
+                hint = "Lembre-se de conceitos de validação rápida com o cliente e apresentações sintéticas a investidores.";
+            } else if (sub === 'ciencia_de_dados') {
+                const dataTerms = [
+                    { t: 'Limpeza de Dados (Data Cleaning)', d: 'processo de identificar, corrigir ou remover dados incorretos, inconsistentes ou nulos em uma base' },
+                    { t: 'DataFrame', d: 'estrutura bidimensional em formato de tabela com colunas de diferentes tipos organizada em linhas indexadas' },
+                    { t: 'Algoritmo K-Means', d: 'método de aprendizado não supervisionado que agrupa dados por proximidade matemática e centroides' }
+                ];
+                const item = dataTerms[Math.floor(Math.random() * dataTerms.length)];
+                q = `No ciclo de análise e ciência de dados aplicadas, qual é a definição e utilidade prática para "${item.t}"?`;
+                a = item.d;
+                d = [`O armazenamento físico de servidores em fitas magnéticas antigas`, `A criptografia que protege a transmissão de e-mails em redes locais`, `A renderização de sprites gráficos em jogos digitais`];
+                concept = "Processamento e Preparação de Dados";
+                explanation = `A técnica/estrutura de "${item.t}" é responsável por: ${item.d}.`;
+                hint = "Lembre-se de termos clássicos da biblioteca Pandas do Python e algoritmos de agrupamento.";
+            } else if (sub === 'inteligencia_artificial') {
+                const iaTerms = [
+                    { t: 'Rede Neural Artificial', d: 'modelo computacional inspirado no sistema nervoso biológico que aprende relações complexas em dados' },
+                    { t: 'Aprendizado de Máquina (Machine Learning)', d: 'campo da IA que treina computadores para identificar padrões e prever dados sem regras explícitas' },
+                    { t: 'LLM (Large Language Model)', d: 'redes profundas de atenção e bilhões de parâmetros que compreendem e geram textos semelhantes a humanos' }
+                ];
+                const item = iaTerms[Math.floor(Math.random() * iaTerms.length)];
+                q = `No estudo de tecnologias emergentes e algoritmos cognitivos de Inteligência Artificial, o conceito de "${item.t}" descreve:`;
+                a = item.d;
+                d = [`Uma sequência fixa de chaves criptográficas para servidores locais`, `A alteração da velocidade do processador físico de hardware`, `Um sistema de detecção de vírus em arquivos compactados`];
+                concept = "Modelos Heurísticos e Redes Neurais";
+                explanation = `"${item.t}" define-se na inteligência artificial como: ${item.d}.`;
+                hint = "Associe o termo ao aprendizado estatístico baseado em dados e processamento neural profundo.";
+            } else if (sub === 'educacao_financeira') {
+                const finTerms = [
+                    { t: 'Reserva de Emergência', d: 'montante equivalente a 6 meses de despesas básicas mantido em investimentos de alta liquidez' },
+                    { t: 'Inflação', d: 'processo contínuo de aumento dos preços de bens e serviços que corrói o poder de compra' },
+                    { t: 'Diversificação de Portfólio', d: 'distribuição de recursos financeiros em diferentes classes de ativos para mitigar riscos de perdas' }
+                ];
+                const item = finTerms[Math.floor(Math.random() * finTerms.length)];
+                q = `Na organização de finanças pessoais e poupança ativa no Ensino Médio, qual é a definição e importância prática de "${item.t}"?`;
+                a = item.d;
+                d = [`A contratação de empréstimos com taxas de juros flutuantes`, `O preenchimento de declarações fiscais de exportações multinacionais`, `O pagamento de juros de mora a bancos centrais nacionais`];
+                concept = "Planejamento e Saúde Financeira";
+                explanation = `Garantir estabilidade pessoal exige entender que "${item.t}" representa: ${item.d}.`;
+                hint = "Pense na prevenção de imprevistos cotidianos, na mitigação de riscos ou nos efeitos da perda do valor do dinheiro.";
+            } else if (sub === 'marketing_digital') {
+                const mktTerms = [
+                    { t: 'S.E.O. (Search Engine Optimization)', d: 'otimização técnica de páginas web para melhorar seu posicionamento orgânico em mecanismos de busca' },
+                    { t: 'C.T.A. (Call to Action)', d: 'chamadas textuais ou botões que incentivam o usuário a tomar uma ação imediata desejada' },
+                    { t: 'Funil de Vendas', d: 'modelo estratégico que representa a jornada do consumidor desde a descoberta até a decisão de compra' }
+                ];
+                const item = mktTerms[Math.floor(Math.random() * mktTerms.length)];
+                q = `Nas estratégias modernas de marketing de conversão e comunicação digital nas redes, qual é a definição de "${item.t}"?`;
+                a = item.d;
+                d = [`A criptografia aplicada a formulários de e-mails corporativos`, `A exclusão de dados inativos em servidores SQL remotos`, `A velocidade em bits transmitida em cabos de conexão Wi-Fi`];
+                concept = "Branding e Conversão Digital";
+                explanation = `"${item.t}" opera como: ${item.d}.`;
+                hint = "Lembre-se de termos como otimização para o Google, taxas de conversão ou atração de público qualificado.";
+            } else if (sub === 'desenvolvimento_jogos') {
+                const gameTerms = [
+                    { t: 'Game Loop', d: 'o ciclo central e contínuo responsável por atualizar a física do jogo e desenhar os frames na tela' },
+                    { t: 'Hitbox', d: 'forma geométrica bidimensional invisível associada a um objeto que monitora e detecta colisões' },
+                    { t: 'Game Engine (Motor de Jogo)', d: 'software especializado que provê ferramentas reutilizáveis de renderização gráfica, física e áudio' }
+                ];
+                const item = gameTerms[Math.floor(Math.random() * gameTerms.length)];
+                q = `Na arquitetura técnica de desenvolvimento de jogos digitais sob engines modernas, o termo "${item.t}" refere-se a:`;
+                a = item.d;
+                d = [`O armazenamento físico de arquivos binários compilados em nuvem`, `O controle de permissões de usuários logados no servidor multi-player`, `A taxa de compressão aplicada a trilhas de áudio MIDI`];
+                concept = "Arquitetura e Engenharia de Jogos";
+                explanation = `"${item.t}" representa fundamentalmente: ${item.d}.`;
+                hint = "Pense no ciclo constante de execução do jogo ou nos mecanismos básicos de colisões e motores gráficos.";
+            } else if (sub === 'seguranca_informacao') {
+                const secTerms = [
+                    { t: 'Criptografia Simétrica', d: 'algoritmo que utiliza uma única chave secreta compartilhada para cifrar e decifrar dados' },
+                    { t: 'Phishing', d: 'ataque cibernético baseado em engenharia social que simula páginas legítimas para roubar credenciais' },
+                    { t: 'Autenticação de Dois Fatores (2FA)', d: 'mecanismo de segurança que exige duas evidências de identidade distintas antes de liberar o login' }
+                ];
+                const item = secTerms[Math.floor(Math.random() * secTerms.length)];
+                q = `Na proteção de sistemas e segurança cibernética corporativa ou pessoal, qual é a definição e importância prática de "${item.t}"?`;
+                a = item.d;
+                d = [`O fechamento físico de portas de armários contendo servidores locais`, `A alteração da velocidade e latência de modems Wi-Fi residenciais`, `O processo de formatação total de unidades de disco rígido corrompidas`];
+                concept = "Ameaças Cibernéticas e Mitigações";
+                explanation = `Garantir a integridade digital exige conhecer que "${item.t}" refere-se a: ${item.d}.`;
+                hint = "Associe o termo a golpes em redes sociais, chaves matemáticas de proteção, ou etapas extras de senhas.";
+            } else if (sub === 'design_digital') {
+                const designTerms = [
+                    { t: 'UI/UX Design', d: 'planejamento focado na estética e facilidade de interação e usabilidade global do usuário' },
+                    { t: 'Wireframe', d: 'esboço ou esqueleto estrutural de baixa fidelidade para organizar o layout e conteúdo de um aplicativo' },
+                    { t: 'Psicologia das Cores', d: 'estudo das reações emocionais e comportamentos que diferentes paletas de cores causam no usuário' }
+                ];
+                const item = designTerms[Math.floor(Math.random() * designTerms.length)];
+                q = `No desenvolvimento e prototipagem de produtos digitais com foco em interfaces gráficas, qual é a definição prática de "${item.t}"?`;
+                a = item.d;
+                d = [`A compilação de código CSS em linguagem binária pura`, `A velocidade de renderização em frames por segundo da placa de vídeo`, `O controle físico de contraste dos monitores de tubo analógicos`];
+                concept = "Prototipagem e Experiência do Usuário";
+                explanation = `"${item.t}" é definido no design como: ${item.d}.`;
+                hint = "Lembre-se de conceitos como rascunhos rápidos no Figma, usabilidade de botões ou harmonia estética de paletas.";
+            } else if (sub === 'producao_audiovisual') {
+                const audioTerms = [
+                    { t: 'Storyboard', d: 'guia gráfico sequencial composto por desenhos das cenas planejadas para o vídeo' },
+                    { t: 'Cromaqui (Chroma Key)', d: 'técnica de pós-produção que consiste em remover o fundo verde para inserir cenários virtuais' },
+                    { t: 'Mixagem de Áudio', d: 'processo de ajustar e harmonizar volumes, frequências e efeitos de trilhas sonoras e falas' }
+                ];
+                const item = audioTerms[Math.floor(Math.random() * audioTerms.length)];
+                q = `No processo técnico de pós-produção e edição de vídeo profissional na área de multimídia, qual é a utilidade prática de "${item.t}"?`;
+                a = item.d;
+                d = [`A compressão de arquivos HTML em pacotes executáveis ZIP locais`, `A velocidade em bits da conexão de upload de vídeos em redes Wi-Fi`, `O controle físico de voltagem de gravadores de áudio analógicos`];
+                concept = "Edição e Montagem Multimídia";
+                explanation = `Na produção multimídia, a técnica/ferramenta de "${item.t}" serve para: ${item.d}.`;
+                hint = "Pense no planejamento visual em quadrinhos, na substituição de fundos ou na qualidade sonora final.";
+            } else if (sub === 'biblioteca_digital') {
+                const bibTerms = [
+                    { t: 'Citação Indireta', d: 'redação com suas próprias palavras das ideias de um autor pesquisado, mantendo a menção à fonte' },
+                    { t: 'Norma ABNT NBR 6023', d: 'diretriz nacional responsável pela padronização e estruturação formal de referências acadêmicas' },
+                    { t: 'Plágio Acadêmico', d: 'apropriação indébita de conceitos, frases ou obras inteiras de outros autores sem conceder o devido crédito' }
+                ];
+                const item = bibTerms[Math.floor(Math.random() * bibTerms.length)];
+                q = `Na elaboração de trabalhos de pesquisa e letramento acadêmico segundo os padrões nacionais vigentes, a definição de "${item.t}" é:`;
+                a = item.d;
+                d = [`A exclusão automática de arquivos duplicados no disco local`, `A velocidade de impressão de relatórios digitais físicos`, `A compilação de código de banco de dados SQL em planilhas simples`];
+                concept = "Metodologia Científica e Normas";
+                explanation = `Para garantir a ética e o padrão do trabalho científico, "${item.t}" conceitua-se como: ${item.d}.`;
+                hint = "Observe regras de escrita formal, ética na pesquisa ou leis de formatação de monografias.";
+            } else if (sub === 'laboratorio_virtual') {
+                const labTerms = [
+                    { t: 'Simulador Virtual de Circuitos', d: 'ambiente virtual interativo para montar placas digitais e testar resistores de forma segura e sem custos físicos' },
+                    { t: 'Vidraria de Segurança Virtual', d: 'representação visual digital de reagentes e béquer projetada para evitar acidentes químicos em laboratório real' },
+                    { t: 'Experimento Controlled Heurístico', d: 'simulação matemática de laboratório onde variáveis físicas e químicas podem ser alteradas para testar hipóteses' }
+                ];
+                const item = labTerms[Math.floor(Math.random() * labTerms.length)];
+                q = `No uso de plataformas e ambientes gráficos de laboratórios virtuais de física e química no Novo Ensino Médio, o recurso de "${item.t}" serve para:`;
+                a = item.d;
+                d = [`Eliminar a necessidade de estudar leis teóricas da física clássica`, `Criptografar dados pessoais do aluno em servidores escolares remotos`, `Acelerar o processador central do computador rodando simulações 3D offline`];
+                concept = "Simulações Científicas Virtuais";
+                explanation = `A ferramenta de "${item.t}" permite: ${item.d}.`;
+                hint = "Lembre-se das vantagens práticas das simulações digitais em evitar riscos e custos associados aos experimentos físicos.";
+            } else if (sub === 'projeto_vida') {
+                const pvTerms = [
+                    { t: 'Metas S.M.A.R.T.', d: 'metas que são específicas, mensuráveis, atingíveis, relevantes e com prazo temporal bem definido' },
+                    { t: 'Análise S.W.O.T. / F.O.F.A. pessoal', d: 'mapeamento estratégico de forças e fraquezas (internas) e oportunidades e ameaças (externas)' },
+                    { t: 'Plano de Ação Estruturado', d: 'roteiro prático contendo as etapas, recursos necessários e prazos reais para atingir um objetivo' }
+                ];
+                const item = pvTerms[Math.floor(Math.random() * pvTerms.length)];
+                q = `No planejamento estratégico de carreira, autoconhecimento e Projeto de Vida no Novo Ensino Médio, qual é a definição e importância prática de "${item.t}"?`;
+                a = item.d;
+                d = [`A especulação financeira de ativos na bolsa de valores regional`, `A contratação compulsória de seguros residenciais privados contra acidentes`, `A exclusão de notas escolares baixas do histórico escolar`];
+                concept = "Autoconhecimento e Planejamento Pessoal";
+                explanation = `A ferramenta de "${item.t}" auxilia na organização do futuro, permitindo: ${item.d}.`;
+                hint = "Pense em objetivos bem definidos e de curto/médio prazo ou no autodiagnóstico de virtudes e fraquezas.";
+            } else if (sub === 'inclusao_acessibilidade') {
+                const incTerms = [
+                    { t: 'Texto Alternativo (Alt Text)', d: 'descrições de imagens digitais lidas por leitores de tela para guiar alunos com deficiência visual' },
+                    { t: 'Contraste Mínimo WCAG 2.1 (AA)', d: 'diretriz web que exige contraste de cores de 4.5:1 para garantir a legibilidade universal do texto' },
+                    { t: 'Desenho Universal para Aprendizagem (DUA)', d: 'modelo pedagógico que provê múltiplas formas de engajamento, representação e expressão do saber' }
+                ];
+                const item = incTerms[Math.floor(Math.random() * incTerms.length)];
+                q = `Na construção de ambientes educacionais acessíveis e inclusão escolar digital, qual é o conceito associado ao termo "${item.t}"?`;
+                a = item.d;
+                d = [`A velocidade de conexão para estudantes que residem em zonas rurais`, `A criptografia que impede a reprodução não autorizada do material de aula`, `A conversão automática de notas baixas para aprovação compulsória`];
+                concept = "Acessibilidade Escolar Digital";
+                explanation = `Para garantir uma escola digital plenamente inclusiva, o recurso de "${item.t}" atua para: ${item.d}.`;
+                hint = "Pense em normas WCAG de contraste de cores, descrição textual de mídias ou formatos flexíveis de engajamento pedagógico.";
+            } else {
+                // Fallback for safety
+                q = `Questão de diagnóstico geral de proficiência na disciplina de ${sub}. Qual das seguintes alternativas apresenta o entendimento cientificamente aceito para este campo de estudos?`;
+                a = `A aplicação do método empírico fundamentado para validação de hipóteses e conceitos práticos`;
+                d = [
+                    `A rejeição total a dados estruturados em prol de pura adivinhação intuitiva`,
+                    `A formatação física offline sem qualquer vínculo a recursos digitais`,
+                    `A substituição de todas as etapas de estudo por IA sem qualquer revisão humana`
+                ];
+                concept = "Proficiência Interdisciplinar";
+                explanation = `Qualquer campo científico ou acadêmico se baseia em fundamentação teórica e validação empírica.`;
+                hint = "Lembre-se de buscar a opção focada no rigor metodológico e científico.";
             }
-            
+
             return {
                 id: `procedural-gen-${randomId}`,
                 text: `[ONYX PROTOCOL] ${subject.toUpperCase()} (${difficulty.toUpperCase()}):\n${q}`,
@@ -745,7 +864,6 @@ window.OnyxEngines = {
                 rawDistractors: d
             };
         },
-
         async generateQuestions(userId, subject, difficulty, count = 10) {
             let pool = [];
 
@@ -765,7 +883,8 @@ window.OnyxEngines = {
                 const trendDB = window.OnyxEngines.TrendSensingDatabase || {};
                 const hasTrend = trendDB[subject] && trendDB[subject].length > 0;
                 if (hasTrend || window.currentSimulateEdition === 'trends') {
-                    pool = [...pool, ...(trendDB[subject] || [])];
+                    const matchedTrend = (trendDB[subject] || []).filter(q => q.difficulty === difficulty);
+                    pool = [...pool, ...matchedTrend];
                 }
             }
 

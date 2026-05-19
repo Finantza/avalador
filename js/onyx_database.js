@@ -863,11 +863,16 @@ window.OnyxDatabase = (function() {
                         a: item.desc,
                         d: ['A alteração da cor da imagem de acordo com o nível do aluno', 'O tamanho em pixels de largura e altura do arquivo de imagem', 'A criptografia interna que impede a cópia não autorizada do material gráfico'],
                         explanation: `Garantir acessibilidade significa prover recursos como: ${item.desc}.`,
-                        hint: `Imagine descrever a imagem pelo telefone para um amigo que não consegue vê-la. Esse é o papel do "alt"!`,
-                        a: `4.5:1`,
-                        d: ['1.5:1', '100:1', '3:1'],
-                        explanation: `A diretriz de acessibilidade da Web (WCAG 2.1) exige um contraste mínimo de 4.5:1 para texto normal, garantindo legibilidade adequada.`,
-                        hint: `Evite usar texto cinza claro sobre fundo branco. Cores de contraste forte garantem acessibilidade universal.`,
+                        hint: `Preste atenção no papel e utilidade do termo "${item.termo}" na facilitação do acesso à informação.`,
+                        concept: item.bncc
+                    });
+                } else {
+                    pool.push({
+                        q: `[Diretrizes WCAG ${i+1}] No desenvolvimento de sistemas web acessíveis de nível profissional, o conceito de "${item.termo}" exige:`,
+                        a: `Implementação rigorosa seguindo as especificações da WCAG para garantir autonomia digital universal`,
+                        d: ['Uso de cores vibrantes sem contraste definido para chamar a atenção visual', 'Criação de caminhos e atalhos exclusivos apenas para usuários administradores', 'Nenhuma consideração adicional, visto que navegadores modernos tratam acessibilidade de forma nativa'],
+                        explanation: `As diretrizes de acessibilidade exigem a implementação padronizada de recursos como contraste mínimo e descrições para garantir usabilidade para todos.`,
+                        hint: `Lembre-se da importância de seguir padrões internacionais para acessibilidade web.`,
                         concept: 'EM13EXT08'
                     });
                 }
