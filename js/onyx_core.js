@@ -143,6 +143,17 @@ window.OnyxCore = {
             });
         },
 
+        async getRanking() {
+            const users = await this.getAllUsers();
+            return users
+                .sort((a, b) => {
+                    const scoreA = (a.level || 1) * 1000 + (a.xp || 0);
+                    const scoreB = (b.level || 1) * 1000 + (b.xp || 0);
+                    return scoreB - scoreA;
+                })
+                .slice(0, 10);
+        },
+
         async saveHistory(entry) {
             const db = await this.init();
             if (!db) return;

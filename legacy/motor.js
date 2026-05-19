@@ -633,18 +633,20 @@ console.log('\n--- RELATÓRIO DO ALUNO ---');
 console.log(JSON.stringify(engine.getStudentReport('aluno1'), null, 2));
 
 // 6) Gerar desafio diário
-const daily = await engine.generateDailyChallenge();
-console.log('\n--- DESAFIO DIÁRIO ---');
-console.log('Data:', daily.date);
-console.log('Bônus:', daily.bonusPoints, 'pontos');
-daily.challenges.forEach(c => {
-  console.log(`  [${c.domain}] ${c.question.substring(0, 50)}...`);
-});
+(async () => {
+  const daily = await engine.generateDailyChallenge();
+  console.log('\n--- DESAFIO DIÁRIO ---');
+  console.log('Data:', daily.date);
+  console.log('Bônus:', daily.bonusPoints, 'pontos');
+  daily.challenges.forEach(c => {
+    console.log(`  [${c.domain}] ${c.question.substring(0, 50)}...`);
+  });
 
-// 7) Leaderboard
-console.log('\n--- LEADERBOARD ---');
-console.log(engine.getLeaderboard());
+  // 7) Leaderboard
+  console.log('\n--- LEADERBOARD ---');
+  console.log(engine.getLeaderboard());
 
-// 8) Estatísticas gerais
-console.log('\n--- ESTATÍSTICAS GLOBAIS ---');
-console.log(JSON.stringify(engine.getStatistics(), null, 2));
+  // 8) Estatísticas gerais
+  console.log('\n--- ESTATÍSTICAS GLOBAIS ---');
+  console.log(JSON.stringify(engine.getStatistics(), null, 2));
+})();
