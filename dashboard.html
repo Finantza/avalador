@@ -245,6 +245,7 @@
     <script>var module = { exports: {} };</script>
     <script src="js/extremo.js"></script>
     <script src="js/onyx_engines.js"></script>
+    <script src="js/onyx_network.js"></script>
     <script>
         let selectedSub = 'matematica';
         let selectedDiff = 'easy';
@@ -290,23 +291,47 @@
             item.onclick = () => switchScreen(item.dataset.screen);
         });
 
-        // --- ARENA LOGIC ---
+        // --- ARENA LOGIC (NUCLEO MULTIPLAYER EM REDE REAL) ---
+        function setupNetworkListeners() {
+            if (typeof OnyxNetwork === 'undefined') return;
+
+            OnyxNetwork.onOperatorsUpdated = (operators) => {
+                const screenArena = document.getElementById('screen-arena');
+                if (screenArena && screenArena.classList.contains('active')) {
+                    renderOperatorsList(operators);
+                }
+            };
+
+            OnyxNetwork.onChallengeReceived = (challenge) => {
+                showChallengeInvitation(challenge);
+            };
+
+            OnyxNetwork.onBattleStateUpdated = (state) => {
+                handleBattleStateUpdate(state);
+            };
+
+            OnyxNetwork.onBattleEnded = (battleData) => {
+                handleBattleFinished(battleData);
+            };
+        }
+
         async function initArenaLobby() {
             const lobby = document.getElementById('arena-lobby');
             lobby.innerHTML = `
                 <div class="searching-overlay">
                     <div class="search-loader"></div>
-                    <p class="u-font-08 u-text-accent">SINCRONIZANDO COM A REDE GLOBAL...</p>
-                    <div id="search-logs" class="u-mt-15"></div>
+                    <p class="u-font-08 u-text-accent" style="letter-spacing:1px;">VARRENDO PORTAS DA REDE LOCAL E GLOBAL...</p>
+                    <div id="search-logs" class="u-mt-15 u-font-mono u-font-07" style="color:var(--text-muted); opacity:0.8;"></div>
                 </div>
             `;
             
             const searchLogs = document.getElementById('search-logs');
             const logSteps = [
-                "Iniciando varredura de pings...",
-                "Acessando base de registros locais...",
-                "Filtrando operadores por latência...",
-                "Sincronização de túneis concluída."
+                "Inicializando analisador de pacotes...",
+                `Obtendo chave de gateway (IP: ${OnyxNetwork.publicIp || '127.0.0.1'})...`,
+                "Buscando operadores em rede local (LAN)...",
+                "Mapeando túneis de operadores remotos (WAN)...",
+                "Conexão com a Rede ONYX sincronizada com sucesso."
             ];
 
             for (const step of logSteps) {
@@ -314,202 +339,576 @@
                 l.className = 'search-log-line';
                 l.textContent = `> ${step}`;
                 searchLogs.appendChild(l);
-                await new Promise(r => setTimeout(r, 500));
+                await new Promise(r => setTimeout(r, 250));
             }
 
-            // Fetch real users from DB
-            let realUsers = [];
-            try {
-                realUsers = await OnyxCore.DB.getAllUsers();
-            } catch (e) {
-                console.error("Erro ao buscar usuários reais:", e);
-            }
-
-            // Exclude current logged in user and format
-            const formattedRealUsers = realUsers
-                .filter(u => u.id !== userStats.id)
-                .map(u => ({
-                    name: u.id,
-                    level: u.level || 1,
-                    avatar: '👤',
-                    region: 'SESSÃO LOCAL',
-                    isReal: true
-                }));
-
-            // Combine with simulated ones, prioritizing real ones
-            let combinedPool = [...formattedRealUsers];
+            // Force immediate presence update
+            OnyxNetwork.broadcastPresence();
             
-            if (combinedPool.length < 4) {
-                const needed = 4 - combinedPool.length;
-                const realNames = new Set(combinedPool.map(u => u.name));
-                const availableSimulated = adversaryPool.filter(a => !realNames.has(a.name));
-                const extra = availableSimulated.sort(() => 0.5 - Math.random()).slice(0, needed);
-                combinedPool = [...combinedPool, ...extra];
-            } else {
-                combinedPool = combinedPool.sort(() => 0.5 - Math.random()).slice(0, 6); // Show more if we have them
-            }
+            // Render active operators immediately
+            renderOperatorsList(Array.from(OnyxNetwork.activeOperators.values()));
+        }
 
-            await new Promise(r => setTimeout(r, 400));
+        function renderOperatorsList(realOperators) {
+            const lobby = document.getElementById('arena-lobby');
+            if (!lobby) return;
+
+            // Filter out self just in case
+            const filteredReal = realOperators.filter(o => o.name !== userStats.id);
+
+            // Combine with bots to always maintain at least 4 cards, ensuring game is playable solo
+            const realNames = new Set(filteredReal.map(o => o.name));
+            const availableBots = adversaryPool.filter(a => !realNames.has(a.name));
+            
+            const neededBots = Math.max(0, 4 - filteredReal.length);
+            const selectedBots = availableBots.sort(() => 0.5 - Math.random()).slice(0, neededBots);
+            
+            const combinedPool = [
+                ...filteredReal.map(o => ({ ...o, isReal: true })),
+                ...selectedBots.map(b => ({ ...b, isReal: false, isLAN: false, region: 'BOT • ' + b.region }))
+            ];
+
             lobby.innerHTML = '';
             
-            for (const adv of combinedPool) {
+            if (combinedPool.length === 0) {
+                lobby.innerHTML = `
+                    <div class="glass u-p-20 u-text-center u-w-full">
+                        <p class="u-opacity-06">NENHUM OPERADOR DISPONÍVEL NO MOMENTO.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            combinedPool.forEach(adv => {
                 const card = document.createElement('div');
-                card.className = 'match-card glass';
+                card.className = `match-card glass`;
+                
                 if (adv.isReal) {
-                    card.style.borderColor = 'var(--success)';
-                    card.style.background = 'rgba(16, 185, 129, 0.05)';
+                    card.classList.add('premium-active-card');
+                    if (adv.isLAN) {
+                        card.style.borderColor = 'var(--success)';
+                        card.style.background = 'rgba(16, 185, 129, 0.03)';
+                        card.style.boxShadow = 'inset 0 0 10px rgba(16, 185, 129, 0.05), 0 4px 15px rgba(0,0,0,0.4)';
+                    } else {
+                        card.style.borderColor = 'var(--accent)';
+                        card.style.background = 'rgba(245, 158, 11, 0.03)';
+                        card.style.boxShadow = 'inset 0 0 10px rgba(245, 158, 11, 0.05), 0 4px 15px rgba(0,0,0,0.4)';
+                    }
+                } else {
+                    card.style.borderColor = 'rgba(255,255,255,0.05)';
                 }
 
+                const statusLabel = adv.isReal 
+                    ? (adv.isLAN ? '🟢 OPERADOR NA REDE LOCAL (LAN)' : '🔵 OPERADOR REMOTO (WAN)')
+                    : `SESSÃO SIMULADA • ${adv.region}`;
+
+                const labelColor = adv.isReal 
+                    ? (adv.isLAN ? 'var(--success)' : 'var(--accent)') 
+                    : 'rgba(255,255,255,0.4)';
+
+                const buttonStyle = adv.isReal
+                    ? (adv.isLAN ? 'background: var(--success); font-weight:800;' : 'background: var(--accent); font-weight:800;')
+                    : '';
+
                 card.innerHTML = `
-                    <p class="u-font-06 u-text-accent" style="color: ${adv.isReal ? 'var(--success)' : ''}">
-                        ${adv.isReal ? '🟢 OPERADOR REAL' : 'SESSÃO DISPONÍVEL • ' + adv.region}
+                    <p class="u-font-06" style="color: ${labelColor}; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">
+                        ${statusLabel}
                     </p>
-                    <div class="vs-container">
-                        <div class="vs-operator">
-                            <div class="vs-avatar">👤</div>
-                            <span class="u-font-07">${userStats.id}</span>
+                    <div class="vs-container" style="display: flex; justify-content: space-around; align-items: center; margin: 15px 0;">
+                        <div class="vs-operator" style="text-align: center; width:40%;">
+                            <div class="vs-avatar" style="font-size: 1.5rem; margin-bottom: 5px;">👤</div>
+                            <span class="u-font-07" style="color: #fff; font-weight: bold; overflow: hidden; text-overflow: ellipsis; display: block; white-space: nowrap;">${userStats.id}</span>
                         </div>
-                        <div class="vs-circle" style="${adv.isReal ? 'border-color:var(--success); color:var(--success); box-shadow:0 0 15px rgba(16,185,129,0.4);' : ''}">VS</div>
-                        <div class="vs-operator">
-                            <div class="vs-avatar">${adv.avatar}</div>
-                            <span class="u-font-07">${adv.name}</span>
+                        <div class="vs-circle" style="border: 2px solid ${adv.isReal ? (adv.isLAN ? 'var(--success)' : 'var(--accent)') : 'rgba(255,255,255,0.1)'}; color: ${adv.isReal ? (adv.isLAN ? 'var(--success)' : 'var(--accent)') : '#fff'}; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.75rem; box-shadow: ${adv.isReal ? `0 0 10px ${adv.isLAN ? 'rgba(16,185,129,0.3)' : 'rgba(245,158,11,0.3)'}` : 'none'};">VS</div>
+                        <div class="vs-operator" style="text-align: center; width:40%;">
+                            <div class="vs-avatar" style="font-size: 1.5rem; margin-bottom: 5px;">${adv.avatar || '👤'}</div>
+                            <span class="u-font-07" style="color: #fff; font-weight: bold; overflow: hidden; text-overflow: ellipsis; display: block; white-space: nowrap;">${adv.name}</span>
                         </div>
                     </div>
-                    <button class="btn-onyx btn-primary u-w-full u-font-07 btn-start-battle" data-adv="${adv.name}" style="${adv.isReal ? 'background:var(--success);' : ''}">
-                        DESAFIAR (LVL ${adv.level})
+                    <button class="btn-onyx btn-primary u-w-full u-font-07 btn-start-battle" data-adv="${adv.name}" data-real="${adv.isReal}" style="${buttonStyle}">
+                        ${adv.isReal ? `DESAFIAR OPERADOR (LVL ${adv.level})` : `DESAFIAR BOT (LVL ${adv.level})`}
                     </button>
                 `;
                 lobby.appendChild(card);
-                if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
-                await new Promise(r => setTimeout(r, 300));
-            }
+            });
 
             document.querySelectorAll('.btn-start-battle').forEach(btn => {
-                btn.onclick = () => startBattle(btn.dataset.adv);
+                btn.onclick = () => {
+                    const isReal = btn.dataset.real === 'true';
+                    const advName = btn.dataset.adv;
+                    if (isReal) {
+                        initiateRealChallenge(advName);
+                    } else {
+                        startBotBattle(advName);
+                    }
+                };
             });
         }
 
-        async function startBattle(advName) {
+        async function initiateRealChallenge(targetName) {
             if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('alert');
             
             const battleSub = document.getElementById('arena-battle-subject').value || 'tecnologia';
-            const questions = await OnyxEngines.QuestionEngine.generateQuestions(userStats.id, battleSub, 'medium', 3);
-            let battleScore = 0;
-            let currentB = 0;
             
-            const battleHTML = `
-                <div class="u-p-20">
-                    <h3 class="u-text-center u-mb-20">BATALHA VS ${advName}</h3>
-                    <div id="battle-q-text" class="u-mb-25 u-font-header">PREPARANDO...</div>
-                    <div id="battle-opts" class="nav-menu"></div>
-                    <div class="battle-timer"><div id="battle-timer-bar" class="battle-timer-inner"></div></div>
+            // 1. Generate local questions to transmit
+            const questions = await OnyxEngines.QuestionEngine.generateQuestions(userStats.id, battleSub, 'medium', 3);
+            if (!questions || questions.length === 0) {
+                openOverlay("FALHA DE COMBATE", "<div class='u-p-20 u-text-center'>Erro ao carregar banco de questões da arena. Tente outro domínio.</div>");
+                return;
+            }
+
+            // 2. Set currentBattle state locally
+            OnyxNetwork.currentBattle = {
+                opponent: targetName,
+                subject: battleSub,
+                difficulty: 'medium',
+                questions: questions,
+                selfScore: 0,
+                opponentScore: 0,
+                selfFinished: false,
+                opponentFinished: false,
+                status: 'pending'
+            };
+
+            // 3. Send challenge request via network engine
+            OnyxNetwork.sendChallenge(targetName, battleSub, 'medium', questions);
+
+            // 4. Open pending overlay with high fidelity design
+            const pendingHTML = `
+                <div class="u-p-20 u-text-center">
+                    <div class="search-loader u-mb-20" style="margin: 0 auto; width: 40px; height: 40px;"></div>
+                    <h3 class="u-text-primary u-font-header" style="letter-spacing: 0.5px;">SINCRONIZANDO CANAL PVP</h3>
+                    <p class="u-text-muted u-mt-10">Enviando diretrizes de combate para o Operador <strong>${targetName}</strong>...</p>
+                    <p class="u-text-accent u-font-07 u-mt-15">AGUARDANDO APROVAÇÃO E RESPOSTA DO OPONENTE...</p>
+                    
+                    <button id="btn-cancel-challenge" class="btn-onyx u-mt-25 btn-glass-bordered" style="color: var(--error); border-color: rgba(239, 68, 68, 0.3); background: transparent;">
+                        ABORTAR OPERAÇÃO
+                    </button>
                 </div>
             `;
+            openOverlay("SINCRONIZANDO COMBATE", pendingHTML);
+
+            document.getElementById('btn-cancel-challenge').onclick = () => {
+                OnyxNetwork.cancelActiveBattle();
+                closeOverlay();
+            };
+        }
+
+        function showChallengeInvitation(challenge) {
+            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('alert');
+
+            const inviteHTML = `
+                <div class="u-p-20 u-text-center">
+                    <div style="font-size: 2.8rem; margin-bottom: 15px; animation: pulse 1.5s infinite;">⚔️</div>
+                    <h2 class="u-text-primary u-font-header u-mb-15" style="color: var(--accent); font-size: 1.4rem;">SOLICITAÇÃO DE COMBATE</h2>
+                    <p class="u-text-muted u-line-16 u-mb-20">
+                        O Operador <strong>${challenge.sender}</strong> está solicitando engajamento imediato na Arena!
+                    </p>
+                    <div class="glass u-p-15 u-mb-25" style="text-align: left; background: rgba(255,255,255,0.02); border-radius: 10px; border: 1px solid var(--glass-border);">
+                        <p class="u-font-08"><span class="u-text-muted">DOMÍNIO:</span> <span class="u-text-accent" style="font-weight: 900; font-family: var(--font-mono);">${challenge.subject.toUpperCase()}</span></p>
+                        <p class="u-font-08 u-mt-5"><span class="u-text-muted">DIFICULDADE:</span> <span style="color: #fff; font-weight: 800; font-family: var(--font-mono);">${challenge.difficulty.toUpperCase()}</span></p>
+                        <p class="u-font-08 u-mt-5"><span class="u-text-muted">RECOMPENSA:</span> <span style="color: var(--success); font-weight: 900; font-family: var(--font-mono);">XP DUPLO (+400 XP)</span></p>
+                    </div>
+                    <div style="display: flex; gap: 15px;">
+                        <button id="btn-accept-invite" class="btn-onyx btn-primary u-w-full" style="background: var(--success); font-weight: 800;">
+                            ACEITAR DESAFIO
+                        </button>
+                        <button id="btn-decline-invite" class="btn-onyx u-w-full btn-glass-bordered" style="color: var(--error); border-color: rgba(239, 68, 68, 0.3);">
+                            REJEITAR
+                        </button>
+                    </div>
+                </div>
+            `;
+            openOverlay("SOLICITAÇÃO DE ARENA", inviteHTML);
+
+            document.getElementById('btn-accept-invite').onclick = () => {
+                OnyxNetwork.currentBattle = {
+                    opponent: challenge.sender,
+                    subject: challenge.subject,
+                    difficulty: challenge.difficulty,
+                    questions: challenge.questions,
+                    selfScore: 0,
+                    opponentScore: 0,
+                    selfFinished: false,
+                    opponentFinished: false,
+                    status: 'ready'
+                };
+                OnyxNetwork.sendChallengeResponse(challenge.sender, true);
+                startActivePvPQuiz();
+            };
+
+            document.getElementById('btn-decline-invite').onclick = () => {
+                OnyxNetwork.sendChallengeResponse(challenge.sender, false);
+                closeOverlay();
+            };
+        }
+
+        function handleBattleStateUpdate(state) {
+            if (state === 'ready') {
+                startActivePvPQuiz();
+            } else if (state === 'rejected') {
+                if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
+                openOverlay("DESAFIO RECUSADO", `
+                    <div class="u-p-20 u-text-center">
+                        <h3 class="u-font-header" style="color: var(--error);">COMBATE RECUSADO</h3>
+                        <p class="u-mt-10">O operador adversário recusou as diretrizes de combate.</p>
+                        <button onclick="closeOverlay()" class="btn-onyx btn-primary u-mt-25">RETORNAR À ARENA</button>
+                    </div>
+                `);
+            } else if (state === 'score_update' || state === 'opponent_finished') {
+                updateBattleLiveProgress();
+            }
+        }
+
+        function startActivePvPQuiz() {
+            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('alert');
             
-            openOverlay("ARENA ATIVA", battleHTML);
-            
-            function nextBattleQ() {
-                if (currentB >= questions.length) {
-                    finishBattle();
+            const battle = OnyxNetwork.currentBattle;
+            if (!battle) return;
+
+            let currentIdx = 0;
+            let battleScore = 0;
+
+            const battleHTML = `
+                <div class="u-p-20" style="position: relative;">
+                    <!-- Title Bar -->
+                    <div class="u-flex-between u-mb-20" style="border-bottom: 1px solid var(--glass-border); padding-bottom: 12px; align-items: center;">
+                        <span class="u-text-primary u-weight-900 u-font-header" style="font-size: 0.95rem; font-family: var(--font-mono);">⚔️ COMBATE REALTIME: ${battle.subject.toUpperCase()}</span>
+                        <div class="status-dot pulse" style="background: var(--success); width: 8px; height: 8px;"></div>
+                    </div>
+
+                    <!-- Split Progress Monitors -->
+                    <div class="u-grid-2 u-mb-20" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="glass u-p-10" style="border-left: 3px solid var(--primary); background: rgba(59, 130, 246, 0.02); border-radius: 8px;">
+                            <p class="u-font-06 u-text-muted" style="font-weight: 800;">VOCÊ (OPERADOR)</p>
+                            <h4 id="pvp-self-progress" style="margin-top: 5px; color: #fff; font-size: 1rem; font-family: var(--font-mono); font-weight:800;">Q1/3 • 0 pts</h4>
+                            <div class="xp-mini-bar-outer" style="height: 5px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; margin-top: 8px;">
+                                <div id="pvp-self-bar" class="xp-mini-bar-inner" style="width: 0%; height: 100%; border-radius: 4px; background: var(--primary);"></div>
+                            </div>
+                        </div>
+                        <div class="glass u-p-10" style="border-left: 3px solid var(--accent); background: rgba(245, 158, 11, 0.02); border-radius: 8px;">
+                            <p class="u-font-06 u-text-muted" style="font-weight: 800;">OPONENTE: ${battle.opponent.toUpperCase()}</p>
+                            <h4 id="pvp-opp-progress" style="margin-top: 5px; color: #fff; font-size: 1rem; font-family: var(--font-mono); font-weight:800;">Q1/3 • 0 pts</h4>
+                            <div class="xp-mini-bar-outer" style="height: 5px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; margin-top: 8px;">
+                                <div id="pvp-opp-bar" class="xp-mini-bar-inner" style="width: 0%; height: 100%; border-radius: 4px; background: var(--accent);"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question text with Onyx Cognitive simplify integration -->
+                    <div id="battle-q-text" class="u-mb-20 u-font-header" style="font-size: 1.05rem; line-height: 1.55; color: #fff; min-height: 90px; font-weight: 700; border: 1px solid rgba(255,255,255,0.03); padding:15px; border-radius:10px; background:rgba(0,0,0,0.2);">
+                        PREPARANDO VETORES DE COMBATE...
+                    </div>
+                    
+                    <!-- Options container -->
+                    <div id="battle-opts" class="nav-menu" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;"></div>
+                    
+                    <!-- Question live countbar -->
+                    <div class="battle-timer" style="height: 5px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden;">
+                        <div id="battle-timer-bar" class="battle-timer-inner" style="width: 100%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 15s linear;"></div>
+                    </div>
+
+                    <!-- Abort options -->
+                    <div class="u-text-center u-mt-15">
+                        <button id="btn-pvp-surrender" class="btn-onyx u-font-06" style="color: var(--error); border: 1px solid rgba(239,68,68,0.2); background: transparent; padding: 5px 12px; border-radius: 6px; cursor:pointer;">
+                            🏳️ RETIRAR-SE (DESISTIR)
+                        </button>
+                    </div>
+                </div>
+            `;
+            openOverlay("COMBATE ATIVO", battleHTML);
+
+            let timerTimeout = null;
+
+            function nextQ() {
+                if (timerTimeout) clearTimeout(timerTimeout);
+
+                if (currentIdx >= battle.questions.length) {
+                    OnyxNetwork.sendBattleFinished(battleScore);
+                    showWaitingScreen();
                     return;
                 }
+
+                // Update displays
+                document.getElementById('pvp-self-progress').textContent = `Q${currentIdx + 1}/3 • ${battleScore} pts`;
+                document.getElementById('pvp-self-bar').style.width = `${(currentIdx / 3) * 100}%`;
+
+                updateBattleLiveProgress();
+
+                // Stream current progress
+                OnyxNetwork.sendScoreUpdate(currentIdx, battleScore);
+
+                const q = battle.questions[currentIdx];
+                let textRaw = q.text || q.pergunta || '';
                 
-                const q = questions[currentB];
-                document.getElementById('battle-q-text').textContent = q.text;
+                // Integrate tutor highlighting automatically
+                if (typeof OnyxCore !== 'undefined' && OnyxCore.Tutor && OnyxCore.Tutor.simplifyText) {
+                    textRaw = OnyxCore.Tutor.simplifyText(textRaw);
+                }
+
+                document.getElementById('battle-q-text').innerHTML = textRaw;
+
                 const opts = document.getElementById('battle-opts');
                 opts.innerHTML = '';
-                
-                q.options.forEach((opt, i) => {
+
+                const qOptions = q.options || q.alternativas || [];
+                const correctIdx = q.correct !== undefined ? q.correct : q.resposta_correta;
+
+                qOptions.forEach((opt, i) => {
                     const b = document.createElement('button');
-                    b.className = 'btn-onyx u-mb-10 u-w-full';
+                    b.className = 'btn-onyx u-w-full u-text-left';
+                    b.style.padding = '12px 16px';
+                    b.style.fontSize = '0.85rem';
+                    b.style.border = '1px solid var(--glass-border)';
+                    b.style.borderRadius = '8px';
+                    b.style.transition = 'all 0.15s';
                     b.textContent = opt;
+                    
                     b.onclick = () => {
-                        if (i === q.correct) battleScore++;
-                        currentB++;
-                        nextBattleQ();
+                        if (i === correctIdx) {
+                            battleScore++;
+                            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
+                        } else {
+                            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
+                        }
+                        currentIdx++;
+                        nextQ();
                     };
                     opts.appendChild(b);
                 });
 
-                // Reset timer bar
+                // Reset timer
                 const bar = document.getElementById('battle-timer-bar');
                 bar.style.transition = 'none';
                 bar.style.width = '100%';
                 setTimeout(() => {
-                    bar.style.transition = 'width 10s linear';
+                    bar.style.transition = 'width 15000ms linear';
                     bar.style.width = '0%';
-                }, 10);
+                }, 50);
+
+                timerTimeout = setTimeout(() => {
+                    if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
+                    currentIdx++;
+                    nextQ();
+                }, 15000);
             }
 
-            async function addGlobalXP(xpAmount) {
-                if (!userStats) return;
-                userStats.xp = (userStats.xp || 0) + xpAmount;
-                
-                let nextXP = (userStats.level || 1) * 100;
-                let leveledUp = false;
-                while (userStats.xp >= nextXP) {
-                    userStats.level++;
-                    userStats.xp -= nextXP;
-                    nextXP = userStats.level * 100;
-                    leveledUp = true;
+            document.getElementById('btn-pvp-surrender').onclick = () => {
+                if (confirm("Tem certeza que quer se render e conceder a vitória ao operador oponente?")) {
+                    if (timerTimeout) clearTimeout(timerTimeout);
+                    OnyxNetwork.cancelActiveBattle();
+                    closeOverlay();
                 }
-                
-                await OnyxCore.DB.saveUser(userStats);
-                renderLeveling();
-                updateLocks();
-                
-                if (leveledUp && typeof OnyxUI !== 'undefined') {
-                    OnyxUI.playFeedback('success');
-                    OnyxUI.addReasoningLog(`PROMOÇÃO: Operador ${userStats.id.toUpperCase()} promovido ao NÍVEL ${userStats.level}!`);
-                }
-            }
+            };
 
-            async function finishBattle() {
-                const win = battleScore >= 2;
-                let xp = win ? 200 : 50;
-                
-                if (win && userStats.bounties) {
-                    const q = userStats.bounties.quests.find(x => x.type === 'arena_win' && !x.done);
-                    if (q) {
-                        q.current++;
-                        if (q.current >= q.amount) {
-                            q.done = true;
-                            xp += q.reward;
-                            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
-                        }
-                        renderBounties();
-                    }
-                }
-
-                // Save battle history to IndexedDB so the radar picks it up!
-                try {
-                    await OnyxCore.DB.saveHistory(userStats.id, {
-                        subject: battleSub,
-                        difficulty: 'medium',
-                        score: Math.round(battleScore * 33.33), // Percentage style score
-                        total: 3,
-                        date: new Date().toISOString()
-                    });
-                    await updateDashboardRadar();
-                } catch (e) {
-                    console.error("Failed to save battle history", e);
-                }
-
-                await addGlobalXP(xp);
-
-                const resultHTML = `
-                    <div class="u-p-20 u-text-center">
-                        <h1 class="${win ? 'u-text-primary' : 'u-text-error'}">${win ? 'VITÓRIA' : 'DERROTA'}</h1>
-                        <p class="u-mb-20">Você marcou ${battleScore}/3 pontos.</p>
-                        <p class="u-font-12">+${xp} XP OBTIDO</p>
-                        <button onclick="closeOverlay()" class="btn-onyx btn-primary u-mt-20">CONFIRMAR RESULTADO</button>
-                    </div>
-                `;
-                openOverlay("FIM DE COMBATE", resultHTML);
-            }
-
-            nextBattleQ();
+            nextQ();
         }
+
+        function updateBattleLiveProgress() {
+            const battle = OnyxNetwork.currentBattle;
+            if (!battle) return;
+
+            const oppBar = document.getElementById('pvp-opp-bar');
+            const oppText = document.getElementById('pvp-opp-progress');
+
+            if (oppBar && oppText) {
+                const oppQ = battle.opponentQuestion !== undefined ? battle.opponentQuestion : 0;
+                const oppScore = battle.opponentScore !== undefined ? battle.opponentScore : 0;
+                
+                oppText.textContent = battle.opponentFinished 
+                    ? `CONCLUÍDO • ${oppScore} pts`
+                    : `Q${oppQ + 1}/3 • ${oppScore} pts`;
+                    
+                oppBar.style.width = `${((battle.opponentFinished ? 3 : oppQ) / 3) * 100}%`;
+            }
+        }
+
+        function showWaitingScreen() {
+            const battle = OnyxNetwork.currentBattle;
+            if (!battle) return;
+
+            const waitingHTML = `
+                <div class="u-p-20 u-text-center">
+                    <div class="search-loader u-mb-20" style="margin: 0 auto; width: 40px; height: 40px;"></div>
+                    <h3 class="u-text-primary u-font-header">AGUARDANDO FINALIZAÇÃO</h3>
+                    <p class="u-text-muted u-mt-10">Seu score de combate: <strong>${OnyxNetwork.currentBattle.selfScore}/3 acertos</strong>.</p>
+                    <p class="u-text-accent u-font-07 u-mt-15">Sincronizando pings com o outro operador...</p>
+                    
+                    <div class="glass u-p-15 u-mt-20" style="background: rgba(255,255,255,0.01); border-radius: 8px; border: 1px solid var(--glass-border); max-width: 320px; margin: 20px auto 0 auto; text-align: left;">
+                        <p class="u-font-07"><span class="u-text-muted">OPONENTE:</span> <strong style="color: #fff;">${battle.opponent.toUpperCase()}</strong></p>
+                        <p class="u-font-07 u-mt-5"><span class="u-text-muted">STATUS DO OP:</span> <strong style="color: var(--accent);" id="waiting-opp-q">Questão Q1/3</strong></p>
+                    </div>
+                </div>
+            `;
+            openOverlay("OPERAÇÃO CONCLUÍDA", waitingHTML);
+
+            const updateWaitingText = () => {
+                const b = OnyxNetwork.currentBattle;
+                if (!b) return;
+                const txt = document.getElementById('waiting-opp-q');
+                if (txt) {
+                    const oppQ = b.opponentQuestion !== undefined ? b.opponentQuestion : 0;
+                    txt.textContent = b.opponentFinished 
+                        ? `Concluído (${b.opponentScore}/3 pontos)`
+                        : `Questão Q${oppQ + 1}/3 (${b.opponentScore || 0} acertos)`;
+                }
+            };
+
+            updateWaitingText();
+
+            // Slightly override the state updater to update overlay text in real-time
+            const oldCallback = OnyxNetwork.onBattleStateUpdated;
+            OnyxNetwork.onBattleStateUpdated = (state) => {
+                if (oldCallback) oldCallback(state);
+                updateWaitingText();
+            };
+        }
+
+        async function handleBattleFinished(battleData) {
+            if (typeof OnyxUI !== 'undefined') {
+                if (battleData.result === 'victory') {
+                    OnyxUI.playFeedback('success');
+                } else if (battleData.result === 'defeat') {
+                    OnyxUI.playFeedback('error');
+                } else {
+                    OnyxUI.playFeedback('click');
+                }
+            }
+
+            const win = battleData.result === 'victory';
+            const draw = battleData.result === 'draw';
+            
+            // Double XP bonus in multiplayer network PvP!
+            let xp = draw ? 150 : (win ? 400 : 100);
+            
+            if (win && userStats.bounties) {
+                const q = userStats.bounties.quests.find(x => x.type === 'arena_win' && !x.done);
+                if (q) {
+                    q.current++;
+                    if (q.current >= q.amount) {
+                        q.done = true;
+                        xp += q.reward;
+                        if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
+                    }
+                    renderBounties();
+                }
+            }
+
+            // Record history in IndexedDB
+            try {
+                await OnyxCore.DB.saveHistory({
+                    user: userStats.id,
+                    subject: battleData.subject,
+                    difficulty: 'medium',
+                    score: Math.round(battleData.selfScore * 33.33),
+                    total: 3,
+                    date: new Date().toISOString()
+                });
+                await updateDashboardRadar();
+            } catch (e) {
+                console.error("Falha ao persistir histórico no BD:", e);
+            }
+
+            await addGlobalXP(xp);
+
+            const resultHTML = `
+                <div class="u-p-20 u-text-center">
+                    <h1 class="u-font-header ${win ? 'u-text-success' : (draw ? 'u-text-accent' : 'u-text-error')}" style="font-size: 2rem; font-weight: 900; letter-spacing: -0.5px;">
+                        ${win ? 'VITÓRIA DE REDE' : (draw ? 'EMPATE OPERACIONAL' : 'DERROTA NA ARENA')}
+                    </h1>
+                    <p class="u-text-muted u-mt-10 u-mb-20" style="font-size: 0.9rem; line-height: 1.5;">
+                        Você obteve <strong>${battleData.selfScore}/3</strong> acertos.<br>
+                        O oponente <strong>${battleData.opponent}</strong> obteve <strong>${battleData.opponentScore === -1 ? 'Desistência' : battleData.opponentScore + '/3'}</strong> acertos.
+                    </p>
+                    
+                    <div class="glass u-p-15 u-mb-20" style="border: 1px solid var(--glass-border); border-radius: 8px; max-width: 250px; margin: 0 auto; background: rgba(255,255,255,0.02);">
+                        <span class="u-font-06 u-text-muted">RECOMPENSA DE REDE</span>
+                        <h2 class="u-text-primary u-mt-5" style="color: var(--success); font-family: var(--font-mono); font-weight: 900;">+${xp} XP</h2>
+                        <span class="u-font-06 u-text-accent" style="color: var(--success); font-weight: 800; letter-spacing: 0.5px;">BÔNUS MULTIPLAYER PVP ATIVO</span>
+                    </div>
+
+                    <button onclick="closeOverlay()" class="btn-onyx btn-primary u-w-200">CONFIRMAR RESULTADOS</button>
+                </div>
+            `;
+            openOverlay("SUMÁRIO DE COMBATE", resultHTML);
+
+            initArenaLobby();
+        }
+
+        async function startBotBattle(botName) {
+            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('alert');
+            
+            const battleSub = document.getElementById('arena-battle-subject').value || 'tecnologia';
+            const questions = await OnyxEngines.QuestionEngine.generateQuestions(userStats.id, battleSub, 'medium', 3);
+            
+            OnyxNetwork.currentBattle = {
+                opponent: botName,
+                subject: battleSub,
+                difficulty: 'medium',
+                questions: questions,
+                selfScore: 0,
+                opponentScore: 0,
+                selfFinished: false,
+                opponentFinished: false,
+                status: 'ready'
+            };
+
+            // Simulate bot progression
+            let botQ = 0;
+            let botScore = 0;
+
+            const botInterval = setInterval(() => {
+                if (!OnyxNetwork.currentBattle || OnyxNetwork.currentBattle.opponent !== botName) {
+                    clearInterval(botInterval);
+                    return;
+                }
+
+                botQ++;
+                if (Math.random() > 0.45) botScore++;
+
+                if (botQ >= 3) {
+                    clearInterval(botInterval);
+                    OnyxNetwork.currentBattle.opponentFinished = true;
+                    OnyxNetwork.currentBattle.opponentScore = botScore;
+                    
+                    if (OnyxNetwork.currentBattle.selfFinished) {
+                        OnyxNetwork.checkBattleEndCondition();
+                    } else {
+                        updateBattleLiveProgress();
+                    }
+                } else {
+                    OnyxNetwork.currentBattle.opponentQuestion = botQ;
+                    OnyxNetwork.currentBattle.opponentScore = botScore;
+                    updateBattleLiveProgress();
+                }
+            }, 3000 + Math.random() * 4000);
+
+            startActivePvPQuiz();
+        }
+
+        async function addGlobalXP(xpAmount) {
+            if (!userStats) return;
+            userStats.xp = (userStats.xp || 0) + xpAmount;
+            
+            let nextXP = (userStats.level || 1) * 100;
+            let leveledUp = false;
+            while (userStats.xp >= nextXP) {
+                userStats.level++;
+                userStats.xp -= nextXP;
+                nextXP = userStats.level * 100;
+                leveledUp = true;
+            }
+            
+            await OnyxCore.DB.saveUser(userStats);
+            renderLeveling();
+            updateLocks();
+            
+            if (leveledUp && typeof OnyxUI !== 'undefined') {
+                OnyxUI.playFeedback('success');
+                OnyxUI.addReasoningLog(`PROMOÇÃO: Operador ${userStats.id.toUpperCase()} promovido ao NÍVEL ${userStats.level}!`);
+            }
+        }
+
 
         async function updateDashboardRadar() {
             if (!userStats) return;
@@ -576,6 +975,12 @@
 
             userStats = await OnyxCore.DB.getUser(user);
             if (!userStats) userStats = { id: user, level: 1, xp: 0 };
+
+            // Inicializar Motor de Rede ONYX
+            if (typeof OnyxNetwork !== 'undefined') {
+                await OnyxNetwork.init(userStats.id, userStats.level, '👤');
+                setupNetworkListeners();
+            }
 
             document.getElementById('logged-user-name').textContent = userStats.id;
             
