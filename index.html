@@ -6,9 +6,111 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ONYX - Supernova Assessment</title>
     <link rel="stylesheet" href="css/style.css">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@700;900&family=JetBrains+Mono:wght@500;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@700;900&family=JetBrains+Mono:wght@500;800&display=swap" rel="stylesheet">
+    
+    <!-- Legacy Browser & Retro-Compatibility Polyfill Suite (1990-Present) -->
+    <script>
+        (function() {
+            if (!window.console) { window.console = { log: function() {}, error: function() {}, warn: function() {}, info: function() {} }; }
+            if (!Array.prototype.forEach) {
+                Array.prototype.forEach = function(callback, thisArg) {
+                    for (var i = 0; i < this.length; i++) { if (i in this) callback.call(thisArg, this[i], i, this); }
+                };
+            }
+            if (!Array.prototype.map) {
+                Array.prototype.map = function(callback, thisArg) {
+                    var arr = [];
+                    for (var i = 0; i < this.length; i++) { if (i in this) arr.push(callback.call(thisArg, this[i], i, this)); }
+                    return arr;
+                };
+            }
+            if (!Array.prototype.indexOf) {
+                Array.prototype.indexOf = function(searchElement, fromIndex) {
+                    var k = fromIndex || 0;
+                    if (k < 0) k = Math.max(0, this.length + k);
+                    for (; k < this.length; k++) { if (k in this && this[k] === searchElement) return k; }
+                    return -1;
+                };
+            }
+            if (!Array.from) { Array.from = function(object) { return Array.prototype.slice.call(object); }; }
+            if (!window.JSON) {
+                window.JSON = {
+                    parse: function(sJSON) { return eval('(' + sJSON + ')'); },
+                    stringify: function(vContent) {
+                        if (vContent === null) return "null";
+                        if (typeof vContent === "string") return '"' + vContent.replace(/"/g, '\\"') + '"';
+                        if (typeof vContent === "number" || typeof vContent === "boolean") return vContent.toString();
+                        if (vContent instanceof Array) {
+                            var sOutput = "";
+                            for (var i = 0; i < vContent.length; i++) sOutput += (sOutput ? "," : "") + window.JSON.stringify(vContent[i]);
+                            return "[" + sOutput + "]";
+                        }
+                        if (typeof vContent === "object") {
+                            var sOutput = "";
+                            for (var sKey in vContent) {
+                                if (Object.prototype.hasOwnProperty.call(vContent, sKey)) {
+                                    sOutput += (sOutput ? "," : "") + '"' + sKey + '":' + window.JSON.stringify(vContent[sKey]);
+                                }
+                            }
+                            return "{" + sOutput + "}";
+                        }
+                        return "undefined";
+                    }
+                };
+            }
+            if (!window.localStorage) {
+                var storageMock = {
+                    _data: {},
+                    setItem: function(k, v) { this._data[k] = String(v); },
+                    getItem: function(k) { return this._data.hasOwnProperty(k) ? this._data[k] : null; },
+                    removeItem: function(k) { delete this._data[k]; },
+                    clear: function() { this._data = {}; }
+                };
+                window.localStorage = storageMock;
+                window.sessionStorage = storageMock;
+            }
+            if (!window.Promise) {
+                window.Promise = function(executor) {
+                    var self = this;
+                    self.status = 'pending'; self.value = undefined;
+                    self.onResolvedCallback = []; self.onRejectedCallback = [];
+                    function resolve(value) {
+                        if (self.status === 'pending') { self.status = 'fulfilled'; self.value = value; for (var i = 0; i < self.onResolvedCallback.length; i++) self.onResolvedCallback[i](value); }
+                    }
+                    function reject(reason) {
+                        if (self.status === 'pending') { self.status = 'rejected'; self.value = reason; for (var i = 0; i < self.onRejectedCallback.length; i++) self.onRejectedCallback[i](reason); }
+                    }
+                    try { executor(resolve, reject); } catch (e) { reject(e); }
+                };
+                window.Promise.prototype.then = function(onFulfilled, onRejected) {
+                    var self = this;
+                    return new window.Promise(function(resolve, reject) {
+                        if (self.status === 'fulfilled') {
+                            try { var x = onFulfilled(self.value); resolve(x); } catch (e) { reject(e); }
+                        } else if (self.status === 'rejected') {
+                            try { var x = onRejected(self.value); resolve(x); } catch (e) { reject(e); }
+                        } else {
+                            self.onResolvedCallback.push(function(val) { try { var x = onFulfilled(val); resolve(x); } catch (e) { reject(e); } });
+                            self.onRejectedCallback.push(function(reason) { try { var x = onRejected(reason); resolve(x); } catch (e) { reject(e); } });
+                        }
+                    });
+                };
+                window.Promise.resolve = function(val) { return new window.Promise(function(r) { r(val); }); };
+            }
+            
+            // Apple Touch interaction audio unlock
+            window.AudioContext = window.AudioContext || window.webkitAudioContext;
+            var unlockAppleAudio = function() {
+                if (window.speechSynthesis && window.speechSynthesis.speak) { var u = new SpeechSynthesisUtterance(''); window.speechSynthesis.speak(u); }
+                var ctx = null; try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+                if (ctx && ctx.state === 'suspended') { ctx.resume(); }
+                document.removeEventListener('click', unlockAppleAudio);
+                document.removeEventListener('touchend', unlockAppleAudio);
+            };
+            document.addEventListener('click', unlockAppleAudio);
+            document.addEventListener('touchend', unlockAppleAudio);
+        })();
+    </script>
 </head>
 
 <body class="theme-dark">

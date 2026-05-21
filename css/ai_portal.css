@@ -747,3 +747,103 @@ body.onyx-hidpi .metric-glass-card, body.onyx-hidpi .ai-workspace-card {
     box-shadow: 0 12px 40px 0 rgba(0, 240, 255, 0.05) !important;
 }
 
+/* =========================================================================
+   ROBUST PROFESSIONAL RESPONSIVE MEDIA QUERIES
+   ========================================================================= */
+
+@media (max-width: 1024px) {
+    .ai-hub-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    .ai-sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--glass-border);
+        padding-bottom: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .console-header {
+        padding: 15px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .console-header .user-badge-deck {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .ai-menu-list {
+        flex-direction: row;
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 8px;
+        scrollbar-width: thin;
+        flex-wrap: nowrap;
+    }
+    
+    .ai-menu-item {
+        white-space: nowrap;
+        font-size: 0.78rem;
+        padding: 10px 14px;
+    }
+    
+    .ai-viewport {
+        padding: 15px !important;
+        gap: 20px;
+    }
+    
+    .essay-workspace-grid {
+        grid-template-columns: 1fr !important;
+        gap: 20px;
+    }
+    
+    .essay-workspace-grid > div {
+        width: 100% !important;
+    }
+    
+    .simulado-scroll-deck {
+        max-height: 50vh;
+    }
+    
+    .toast-notification {
+        width: 90% !important;
+        left: 5% !important;
+        right: 5% !important;
+        bottom: 15px !important;
+        font-size: 0.75rem;
+    }
+    
+    /* Evolution averages grid spacing */
+    div[style*="grid-template-columns: repeat(5, 1fr)"] {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 6px !important;
+    }
+    div[style*="grid-template-columns: repeat(5, 1fr)"] > div:nth-child(n+4) {
+        grid-column: span 1.5; /* Centered wrapping */
+    }
+}
+
+@media (max-width: 480px) {
+    .console-header h3 {
+        font-size: 1rem;
+    }
+    
+    .ai-logo-sphere {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+    
+    /* Dialog stack */
+    div[style*="grid-template-columns: repeat(5, 1fr)"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    div[style*="grid-template-columns: repeat(5, 1fr)"] > div:last-child {
+        grid-column: span 2;
+    }
+}
+

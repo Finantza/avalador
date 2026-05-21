@@ -5,6 +5,242 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ONYX - Copiloto Cognitivo AI</title>
     <link rel="stylesheet" href="css/ai_portal.css">
+    
+    <!-- Legacy Browser & Retro-Compatibility Polyfill Suite (1990-Present) -->
+    <script>
+        (function() {
+            // 1. Console Polyfill (IE 6-8)
+            if (!window.console) {
+                window.console = { log: function() {}, error: function() {}, warn: function() {}, info: function() {} };
+            }
+
+            // 2. ES5 Array & Object Polyfills (Netscape 4+, IE 5+)
+            if (!Array.prototype.forEach) {
+                Array.prototype.forEach = function(callback, thisArg) {
+                    for (var i = 0; i < this.length; i++) {
+                        if (i in this) callback.call(thisArg, this[i], i, this);
+                    }
+                };
+            }
+            if (!Array.prototype.map) {
+                Array.prototype.map = function(callback, thisArg) {
+                    var arr = [];
+                    for (var i = 0; i < this.length; i++) {
+                        if (i in this) arr.push(callback.call(thisArg, this[i], i, this));
+                    }
+                    return arr;
+                };
+            }
+            if (!Array.prototype.filter) {
+                Array.prototype.filter = function(callback, thisArg) {
+                    var arr = [];
+                    for (var i = 0; i < this.length; i++) {
+                        if (i in this && callback.call(thisArg, this[i], i, this)) arr.push(this[i]);
+                    }
+                    return arr;
+                };
+            }
+            if (!Array.prototype.indexOf) {
+                Array.prototype.indexOf = function(searchElement, fromIndex) {
+                    var k = fromIndex || 0;
+                    if (k < 0) k = Math.max(0, this.length + k);
+                    for (; k < this.length; k++) {
+                        if (k in this && this[k] === searchElement) return k;
+                    }
+                    return -1;
+                };
+            }
+            if (!Array.from) {
+                Array.from = function(object) { return Array.prototype.slice.call(object); };
+            }
+            if (!Object.keys) {
+                Object.keys = function(obj) {
+                    var keys = [];
+                    for (var prop in obj) {
+                        if (Object.prototype.hasOwnProperty.call(obj, prop)) keys.push(prop);
+                    }
+                    return keys;
+                };
+            }
+            if (!String.prototype.trim) {
+                String.prototype.trim = function() { return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, ''); };
+            }
+
+            // 3. JSON Polyfill (IE 7 and older)
+            if (!window.JSON) {
+                window.JSON = {
+                    parse: function(sJSON) { return eval('(' + sJSON + ')'); },
+                    stringify: function(vContent) {
+                        if (vContent === null) return "null";
+                        if (typeof vContent === "string") return '"' + vContent.replace(/"/g, '\\"') + '"';
+                        if (typeof vContent === "number" || typeof vContent === "boolean") return vContent.toString();
+                        if (vContent instanceof Array) {
+                            var sOutput = "";
+                            for (var i = 0; i < vContent.length; i++) sOutput += (sOutput ? "," : "") + window.JSON.stringify(vContent[i]);
+                            return "[" + sOutput + "]";
+                        }
+                        if (typeof vContent === "object") {
+                            var sOutput = "";
+                            for (var sKey in vContent) {
+                                if (Object.prototype.hasOwnProperty.call(vContent, sKey)) {
+                                    sOutput += (sOutput ? "," : "") + '"' + sKey + '":' + window.JSON.stringify(vContent[sKey]);
+                                }
+                            }
+                            return "{" + sOutput + "}";
+                        }
+                        return "undefined";
+                    }
+                };
+            }
+
+            // 4. LocalStorage & SessionStorage Polyfill (IE 5-7, Netscape)
+            if (!window.localStorage) {
+                var storageMock = {
+                    _data: {},
+                    setItem: function(k, v) { this._data[k] = String(v); },
+                    getItem: function(k) { return this._data.hasOwnProperty(k) ? this._data[k] : null; },
+                    removeItem: function(k) { delete this._data[k]; },
+                    clear: function() { this._data = {}; }
+                };
+                window.localStorage = storageMock;
+                window.sessionStorage = storageMock;
+            }
+
+            // 5. Promise Polyfill (Graceful ES6 support on IE 9-11 and early mobile browsers)
+            if (!window.Promise) {
+                window.Promise = function(executor) {
+                    var self = this;
+                    self.status = 'pending';
+                    self.value = undefined;
+                    self.onResolvedCallback = [];
+                    self.onRejectedCallback = [];
+                    function resolve(value) {
+                        if (self.status === 'pending') {
+                            self.status = 'fulfilled';
+                            self.value = value;
+                            for (var i = 0; i < self.onResolvedCallback.length; i++) self.onResolvedCallback[i](value);
+                        }
+                    }
+                    function reject(reason) {
+                        if (self.status === 'pending') {
+                            self.status = 'rejected';
+                            self.value = reason;
+                            for (var i = 0; i < self.onRejectedCallback.length; i++) self.onRejectedCallback[i](reason);
+                        }
+                    }
+                    try { executor(resolve, reject); } catch (e) { reject(e); }
+                };
+                window.Promise.prototype.then = function(onFulfilled, onRejected) {
+                    var self = this;
+                    return new window.Promise(function(resolve, reject) {
+                        if (self.status === 'fulfilled') {
+                            try { var x = onFulfilled(self.value); resolve(x); } catch (e) { reject(e); }
+                        } else if (self.status === 'rejected') {
+                            try { var x = onRejected(self.value); resolve(x); } catch (e) { reject(e); }
+                        } else {
+                            self.onResolvedCallback.push(function(val) {
+                                try { var x = onFulfilled(val); resolve(x); } catch (e) { reject(e); }
+                            });
+                            self.onRejectedCallback.push(function(reason) {
+                                try { var x = onRejected(reason); resolve(x); } catch (e) { reject(e); }
+                            });
+                        }
+                    });
+                };
+                window.Promise.resolve = function(val) { return new window.Promise(function(r) { r(val); }); };
+            }
+
+            // 6. SpeechSynthesis Polyfill (Silent fallback)
+            if (!window.speechSynthesis) {
+                window.speechSynthesis = { speak: function() {}, cancel: function() {}, getVoices: function() { return []; } };
+                window.SpeechSynthesisUtterance = function() { return { text: '', lang: '', rate: 1, pitch: 1 }; };
+            }
+
+            // 7. document.querySelectorAll / getElementsByClassName Polyfill (IE 6-7)
+            if (!document.querySelectorAll) {
+                document.querySelectorAll = function(selectors) {
+                    var style = document.createElement('style'), elements = [], element;
+                    document.documentElement.firstChild.appendChild(style);
+                    document._qsa = [];
+                    style.styleSheet.cssText = selectors + '{x-qsa:expression(document._qsa.push(this))}';
+                    window.scrollBy(0, 0);
+                    style.parentNode.removeChild(style);
+                    while (document._qsa.length) {
+                        element = document._qsa.shift();
+                        element.style.removeAttribute('x-qsa');
+                        elements.push(element);
+                    }
+                    document._qsa = null;
+                    return elements;
+                };
+            }
+            if (!document.querySelector) {
+                document.querySelector = function(selectors) {
+                    var elements = document.querySelectorAll(selectors);
+                    return elements.length ? elements[0] : null;
+                };
+            }
+            
+            // 8. Custom CSS Variable and Flexbox backward compatibility shims
+            var isFlexSupported = (function() {
+                var d = document.createElement('div');
+                try { d.style.display = 'flex'; return d.style.display === 'flex'; } catch(e) { return false; }
+            })();
+            
+            if (!isFlexSupported) {
+                var css = 'body { overflow-x: auto; min-width: 980px; } ' +
+                          '.ai-hub-container, .portal-layout-deck { display: block !important; } ' +
+                          '.ai-sidebar { float: left; width: 240px; margin-right: 20px; } ' +
+                          '.ai-workspace { float: left; width: calc(100% - 280px); } ' +
+                          '.essay-workspace-grid { display: block !important; } ' +
+                          '.essay-workspace-grid > div { float: left; width: 48%; margin-right: 2%; } ' +
+                          '.simulado-deck-scroll, .simulado-scroll-deck { height: auto !important; overflow: visible !important; }';
+                var style = document.createElement('style');
+                style.type = 'text/css';
+                if (style.styleSheet) style.styleSheet.cssText = css;
+                else style.appendChild(document.createTextNode(css));
+                document.getElementsByTagName('head')[0].appendChild(style);
+            }
+
+            // 9. Retro Degradation Support & Notice
+            var supportsES6 = (function() {
+                try { new Function("const a = () => {}; let b = 1;"); return true; } catch (e) { return false; }
+            })();
+            if (!supportsES6) {
+                window.onload = function() {
+                    var banner = document.createElement('div');
+                    banner.style.cssText = 'background:#ef4444; color:#fff; font-family:sans-serif; font-size:12px; padding:10px; text-align:center; position:fixed; top:0; left:0; width:100%; z-index:99999; font-weight:bold;';
+                    banner.innerHTML = '⚠️ SISTEMA OPERANDO EM MODO DE ALTA COMPATIBILIDADE RETRÔ. Algumas micro-animações foram desativadas para garantir a estabilidade do seu navegador.';
+                    document.body.insertBefore(banner, document.body.firstChild);
+                    document.body.style.paddingTop = '40px';
+                };
+            }
+
+            // 10. Apple iOS / macOS Safari Kinetic Scroll & Audio Unlock Shim
+            window.AudioContext = window.AudioContext || window.webkitAudioContext;
+            var unlockAppleAudio = function() {
+                if (window.speechSynthesis && window.speechSynthesis.speak) {
+                    var u = new SpeechSynthesisUtterance('');
+                    window.speechSynthesis.speak(u);
+                }
+                var ctx = null;
+                try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+                if (ctx && ctx.state === 'suspended') { ctx.resume(); }
+                document.removeEventListener('click', unlockAppleAudio);
+                document.removeEventListener('touchend', unlockAppleAudio);
+            };
+            document.addEventListener('click', unlockAppleAudio);
+            document.addEventListener('touchend', unlockAppleAudio);
+
+            // Inject iOS kinetic touch physics stylesheet globally
+            var appleScrollCss = 'div, section, main, article, ul, ol, .chat-messages-area, .simulado-scroll-deck { -webkit-overflow-scrolling: touch !important; }';
+            var appleStyle = document.createElement('style');
+            appleStyle.type = 'text/css';
+            if (appleStyle.styleSheet) appleStyle.styleSheet.cssText = appleScrollCss;
+            else appleStyle.appendChild(document.createTextNode(appleScrollCss));
+            document.getElementsByTagName('head')[0].appendChild(appleStyle);
+        })();
+    </script>
 </head>
 <body>
     <!-- Ambient Blur Backgrounds -->
@@ -40,13 +276,6 @@
                     <span class="nav-icon-lg">💬</span> Study Buddy Chat
                 </button>
             </nav>
-
-            <!-- Navigation Exit -->
-            <div>
-                <button onclick="location.href='dashboard.html'" class="btn-back-core" style="padding:10px 18px; font-size:0.75rem; white-space:nowrap; border-radius:10px;">
-                    🏠 VOLTAR AO DASHBOARD
-                </button>
-            </div>
         </header>
 
         <!-- Main Workspace Deck (Centered Full Width Panel) -->
@@ -504,7 +733,7 @@
                                 ENEM REGULATION ACTIVE
                             </div>
                         </div>
-
+ 
                         <!-- Two Column Grid for Desktop / Stacking for Mobile -->
                         <div class="essay-workspace-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:25px; border-top:1px solid var(--glass-border); padding-top:20px;">
                             
@@ -518,8 +747,11 @@
                                         <option value="acesso">♿ Acessibilidade: A Democratização dos Recursos Digitais de Inclusão</option>
                                         <option value="saude">🧠 Saúde Mental: Desafios e Pressão por Desempenho nos Jovens do Século XXI</option>
                                     </select>
+                                    <button id="btn-generate-ai-theme" class="btn-speech-trigger" onclick="generateAIPredictiveTheme()" style="margin-top:10px; border-color:var(--primary); color:var(--primary); font-size:0.75rem; width:100%; font-weight:800;">
+                                        🔮 GERAR TEMA PREDITIVO COM IA ADAPTATIVA
+                                    </button>
                                 </div>
-
+ 
                                 <div class="glass" style="padding:20px; border-radius:12px; background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); display:flex; flex-direction:column; gap:10px; flex:1;">
                                     <h4 class="u-text-accent" style="margin:0; font-size:0.75rem; font-family:var(--font-mono); font-weight:900; letter-spacing:0.5px; display:flex; align-items:center; gap:6px;">
                                         📄 TEXTO DE APOIO & DIRETRIZES
@@ -531,7 +763,7 @@
                                     </div>
                                 </div>
                             </div>
-
+ 
                             <!-- Right Column: Textarea & Submit -->
                             <div style="display:flex; flex-direction:column; gap:15px;">
                                 <div>
@@ -542,22 +774,93 @@
                                     <textarea id="essay-textarea" class="tutor-select-futuristic u-w-full" style="height:220px; resize:vertical; overflow-y:auto; font-family:'JetBrains Mono', monospace; font-size:0.8rem; line-height:1.6; padding:15px; background:rgba(0,0,0,0.5); color:#fff; border-radius:12px; border:1px solid rgba(255,255,255,0.1);" placeholder="Escreva sua dissertação-argumentativa aqui. Lembre-se: escreva entre 7 e 30 linhas (acima de 150 caracteres). Apresente tese clara, argumentos fundamentados e uma proposta de intervenção social..." oninput="updateEssayCounter(this)"></textarea>
                                     <div id="essay-warning-lbl" style="font-size:0.68rem; color:var(--error); margin-top:5px; font-weight:800; display:none;">⚠️ Sua redação está com menos de 7 linhas (mínimo exigido). Escreva mais para poder ser avaliado!</div>
                                 </div>
-
+ 
                                 <button id="btn-grade-essay" class="btn-onyx-premium u-w-full" style="padding:14px; font-size:0.85rem; border-radius:10px;">
                                     🧠 SUBMETER REDAÇÃO E EXECUTAR ANÁLISE IA
                                 </button>
                             </div>
+                        </div>
+ 
+                        <!-- Evolution History Panel (UX Optimization) -->
+                        <div class="glass u-p-20 u-mt-10" style="border:1px solid var(--glass-border); border-radius:16px;">
+                            <h4 class="u-text-accent" style="margin:0 0 12px 0; font-size:0.8rem; font-family:var(--font-mono); font-weight:900; letter-spacing:0.5px; display:flex; align-items:center; gap:6px;">
+                                📈 HISTÓRICO DE EVOLUÇÃO E MÉDIA DE COMPETÊNCIAS ENEM (IA LEARNED)
+                            </h4>
+                            <div id="essay-history-wrapper"></div>
                         </div>
 
                         <!-- Result Section (Full Width) -->
                         <div id="ai-essay-result" class="u-mt-10"></div>
                     </div>
                 `;
+ 
+                const renderEssayEvolutionHistory = () => {
+                    const historyContainer = document.getElementById('essay-history-wrapper');
+                    if (!historyContainer) return;
+                    
+                    const history = userStats.essayHistory || [];
+                    if (history.length === 0) {
+                        historyContainer.innerHTML = `
+                            <div class="u-text-center u-p-20" style="background:rgba(0,0,0,0.1); border-radius:12px; border:1px dashed rgba(255,255,255,0.06); font-size:0.75rem; color:var(--text-muted);">
+                                Nenhuma redação avaliada ainda. Submeta sua redação acima para registrar seu histórico de evolução!
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    const cardsHTML = history.slice().reverse().map((item) => {
+                        let scoreColor = item.score >= 900 ? 'var(--accent)' : (item.score >= 700 ? 'var(--success)' : '#f59e0b');
+                        return `
+                            <div class="glass u-p-15" style="border: 1px solid var(--glass-border); border-radius:10px; background:rgba(0,0,0,0.25); min-width: 260px; display:flex; flex-direction:column; gap:8px;">
+                                <div class="u-flex-between" style="align-items:center; gap: 10px;">
+                                    <span style="font-size:0.65rem; font-family:var(--font-mono); color:var(--text-muted); font-weight:800;">${item.date}</span>
+                                    <span style="font-size:0.85rem; font-weight:900; color:${scoreColor}; font-family:var(--font-mono);">${item.score}/1000</span>
+                                </div>
+                                <span style="font-size:0.75rem; font-weight:800; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block;" title="${item.theme}">${item.theme}</span>
+                                <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:4px; margin-top:5px; border-top:1px dashed rgba(255,255,255,0.06); padding-top:6px;">
+                                    ${item.scores.map((s, sIdx) => `
+                                        <div style="text-align:center;">
+                                            <span style="display:block; font-size:0.48rem; color:var(--text-muted); font-weight:800; font-family:var(--font-mono);">C${sIdx+1}</span>
+                                            <span style="display:block; font-size:0.62rem; font-weight:900; color:#fff; font-family:var(--font-mono);">${s}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    const numEssays = history.length;
+                    const averages = [0, 0, 0, 0, 0];
+                    history.forEach(item => {
+                        item.scores.forEach((s, idx) => { averages[idx] += s; });
+                    });
+                    const averagesHTML = averages.map((sum, idx) => {
+                        const avg = Math.round(sum / numEssays);
+                        return `
+                            <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); padding:8px 12px; border-radius:8px; text-align:center;">
+                                <span style="display:block; font-size:0.58rem; color:var(--text-muted); font-weight:800; font-family:var(--font-mono);">MÉDIA COMP. ${idx+1}</span>
+                                <span style="display:block; font-size:0.92rem; color:var(--primary); font-weight:900; font-family:var(--font-mono); margin-top:2px;">${avg}</span>
+                            </div>
+                        `;
+                    }).join('');
+ 
+                    historyContainer.innerHTML = `
+                        <div style="display:flex; flex-direction:column; gap:15px; margin-top:10px;">
+                            <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:10px;">
+                                ${averagesHTML}
+                            </div>
+                            <div style="display:flex; gap:12px; overflow-x:auto; padding-bottom:8px; scrollbar-width: thin;">
+                                ${cardsHTML}
+                            </div>
+                        </div>
+                    `;
+                };
 
-                // Set initial motivator text
+                // Set initial motivator text and history
                 setTimeout(() => {
                     const themeSel = document.getElementById('ai-essay-theme');
                     if (themeSel) updateMotivatorText(themeSel.value);
+                    renderEssayEvolutionHistory();
                 }, 50);
 
                 document.getElementById('btn-grade-essay').onclick = async () => {
@@ -785,11 +1088,38 @@
                         OnyxUI.addReasoningLog(`REDAÇÃO: Operador submeteu redação sobre tema ${themeVal}. Nota final obtida: ${totalScore} pontos.`);
                     }
 
-                    // Reward XP and save to database
+                    // Reward XP and save to database (UX evolution tracker)
                     if (userStats) {
+                        userStats.essayHistory = userStats.essayHistory || [];
+                        const themeSel = document.getElementById('ai-essay-theme');
+                        const themeLabelText = themeSel.options[themeSel.selectedIndex].text;
+                        userStats.essayHistory.push({
+                            theme: themeLabelText.replace(/🤖 |🌍 |♿ |🧠 |🔥 |🔮 /, ''),
+                            score: totalScore,
+                            date: new Date().toLocaleDateString('pt-BR'),
+                            scores: [c1, c2, c3, c4, c5]
+                        });
+                        
+                        // Adapt cognitive network using essay data
+                        if (typeof OnyxCognitive !== 'undefined') {
+                            OnyxCognitive.mood = Math.max(-0.8, Math.min(0.8, OnyxCognitive.mood + (totalScore > 800 ? 0.15 : -0.1)));
+                            const comps = [c1, c2, c3, c4, c5];
+                            const lowestCompIdx = comps.indexOf(Math.min(...comps));
+                            OnyxCognitive.vocab = OnyxCognitive.vocab || {};
+                            OnyxCognitive.vocab['redacao_comp_' + (lowestCompIdx + 1)] = true;
+                        }
+
                         let xpGained = Math.floor(totalScore / 10);
                         userStats.xp += xpGained;
-                        await OnyxCore.DB.saveUser(userStats);
+                        
+                        if (window.OnyxDBManager) {
+                            await window.OnyxDBManager.saveUser(userStats.id, userStats);
+                        } else {
+                            await OnyxCore.DB.saveUser(userStats);
+                        }
+                        
+                        // Re-render evolution dashboard!
+                        renderEssayEvolutionHistory();
                         
                         // Show a beautiful toast notification
                         const toast = document.createElement('div');
@@ -983,6 +1313,10 @@
             const motivator = document.getElementById('ai-essay-motivator');
             if (!motivator) return;
             
+            if (theme && theme.startsWith('gerado-')) {
+                return; // Preserve dynamically set adaptive motivator text
+            }
+            
             let text = '';
             if (theme === 'ia-edu') {
                 text = "<strong>TEXTO DE APOIO:</strong> O avanço veloz de ferramentas de inteligência artificial generativa remodelou as salas de aula brasileiras. Ao mesmo tempo que serve como ferramenta de autoaprendizado adaptativo acelerado, há riscos iminentes de plágio, atrofia da escrita autoral e desigualdade no acesso tecnológico. Discorra sobre como conciliar inovação com ética no ensino nacional.";
@@ -994,6 +1328,93 @@
                 text = "<strong>TEXTO DE APOIO:</strong> O aumento de diagnósticos de ansiedade, depressão e estresse entre adolescentes de Ensino Médio reflete uma crise profunda de saúde mental escolar. A cobrança desmedida por performance profissionalizante, vestibulares de alta pressão e a exposição a redes sociais intensificam a vulnerabilidade psicológica dos jovens no século XXI. Proponha ações escolares de acolhimento preventivo.";
             }
             motivator.innerHTML = text;
+        };
+
+        window.generateAIPredictiveTheme = () => {
+            const themeSelect = document.getElementById('ai-essay-theme');
+            if (!themeSelect) return;
+            
+            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('upgrade');
+            
+            // Curated list of high-probability Brazilian ENEM essay topics
+            const predictivePool = [
+                {
+                    value: 'gerado-longevidade',
+                    title: '🤖 Geriatria & Cidadania: Desafios da Inclusão Digital na Terceira Idade',
+                    motivator: '<strong>TEXTO MOTIVADOR (TEMA PREDITIVO IA):</strong><br>O envelhecimento populacional no Brasil é uma realidade demográfica. Contudo, a rápida transição das relações sociais e serviços públicos para o meio digital gerou um abismo de exclusão digital na terceira idade. Ao mesmo tempo que a tecnologia oferece telemedicina e conectividade, a falta de letramento tecnológico, golpes cibernéticos especializados e barreiras de usabilidade isolam a população idosa. Como democratizar o acesso e proteger a terceira idade no ecossistema digital?'
+                },
+                {
+                    value: 'gerado-eletronico',
+                    title: '🤖 Sustentabilidade: Descarte de Lixo Eletrônico e Impacto Socioambiental',
+                    motivator: '<strong>TEXTO MOTIVADOR (TEMA PREDITIVO IA):</strong><br>O consumismo tecnológico impulsionou a obsolescência programada no Brasil. Bilhões de toneladas de lixo eletrônico são gerados anualmente, sendo que a maior parte acaba em lixões a céu aberto. Isso acarreta a contaminação de lençóis freáticos por metais pesados e afeta catadores de materiais recicláveis. Discorra sobre medidas para estruturar a logística reversa nacional e atenuar a pegada de carbono tecnológica.'
+                },
+                {
+                    value: 'gerado-evasao',
+                    title: '🤖 Educação: Caminhos para Combater a Evasão Escolar Pós-Pandemia',
+                    motivator: '<strong>TEXTO MOTIVADOR (TEMA PREDITIVO IA):</strong><br>A evasão escolar no Ensino Médio é uma das principais chagas educacionais brasileiras. A necessidade de ingresso precoce no mercado informal de trabalho, a falta de conectividade doméstica e a desmotivação pedagógica amplificaram esse cenário. Analise caminhos legislativos, financeiros e sociais para trazer os jovens de volta às salas de aula sob as diretrizes do Novo Ensino Médio.'
+                },
+                {
+                    value: 'gerado-biometria',
+                    title: '🤖 Privacidade: Desafios da Segurança de Dados Biométricos no Brasil',
+                    motivator: '<strong>TEXTO MOTIVADOR (TEMA PREDITIVO IA):</strong><br>A segurança e vigilância facial em espaços públicos cresceram de forma exponencial. Se por um lado auxiliam no combate à criminalidade, por outro, há o uso desregulado de dados sensíveis e riscos de vieses raciais e de classe gerados por redes de reconhecimento automatizadas. Apresente propostas para conciliar avanços securitários com as garantias da Lei Geral de Proteção de Dados (LGPD).'
+                },
+                {
+                    value: 'gerado-esporte',
+                    title: '🤖 Cultura: O Esporte Educacional como Motor de Transformação Periférica',
+                    motivator: '<strong>TEXTO MOTIVADOR (TEMA PREDITIVO IA):</strong><br>O esporte escolar vai muito além do bem-estar físico. Em comunidades periféricas brasileiras, a infraestrutura esportiva escolar atua como um refúgio social contra a vulnerabilidade juvenil. No entanto, a crônica falta de investimento em quadras poliesportivas públicas, equipamentos e bolsas acadêmicas obstrui o pleno potencial integrador e disciplinar da prática desportiva. Como valorizar o esporte como política de inclusão?'
+                }
+            ];
+            
+            // Choose randomly
+            let chosen = predictivePool[Math.floor(Math.random() * predictivePool.length)];
+            
+            // Adaptive modification of the motivator text based on cognitive weakness!
+            let compTips = '';
+            if (userStats && userStats.essayHistory && userStats.essayHistory.length > 0) {
+                const history = userStats.essayHistory;
+                const averages = [0, 0, 0, 0, 0];
+                history.forEach(item => { item.scores.forEach((s, idx) => { averages[idx] += s; }); });
+                const weakestIdx = averages.indexOf(Math.min(...averages));
+                
+                if (weakestIdx === 0) {
+                    compTips = '<br><br>💡 <strong>RECOMENDAÇÃO COGNITIVA ADAPTATIVA:</strong> O sistema Onyx notou desvios na Competência 1 (Gramática). Dica: Para este tema, certifique-se de evitar gírias cibernéticas e revise acentuações e concordâncias de verbos impessoais (como o verbo "haver" no sentido de existir).';
+                } else if (weakestIdx === 1) {
+                    compTips = '<br><br>💡 <strong>RECOMENDAÇÃO COGNITIVA ADAPTATIVA:</strong> O sistema Onyx notou desvios na Competência 2 (Compreensão do Tema). Dica: Certifique-se de citar explicitamente as palavras-chave do tema na introdução, desenvolvimento e conclusão.';
+                } else if (weakestIdx === 2) {
+                    compTips = '<br><br>💡 <strong>RECOMENDAÇÃO COGNITIVA ADAPTATIVA:</strong> O sistema Onyx notou desvios na Competência 3 (Argumentação). Dica: Enriqueça seus argumentos citando pensadores relevantes (como Zygmunt Bauman ou a própria Constituição Federal de 1988) para sustentar sua tese.';
+                } else if (weakestIdx === 3) {
+                    compTips = '<br><br>💡 <strong>RECOMENDAÇÃO COGNITIVA ADAPTATIVA:</strong> O sistema Onyx notou desvios na Competência 4 (Coesão). Dica: Abuse de conectivos interparágrafos e intraparágrafos (como "Outrossim", "Em primeira análise", "Por conseguinte", "Com efeito").';
+                } else if (weakestIdx === 4) {
+                    compTips = '<br><br>💡 <strong>RECOMENDAÇÃO COGNITIVA ADAPTATIVA:</strong> O sistema Onyx notou desvios na Competência 5 (Proposta de Intervenção). Dica: Apresente uma proposta completa contendo Agente (Quem), Ação (O que), Meio/Modo (Como), Efeito (Para que) e um Detalhamento de um desses elementos.';
+                }
+            }
+            
+            // Add new option to select if not already present
+            let exists = false;
+            for (let i = 0; i < themeSelect.options.length; i++) {
+                if (themeSelect.options[i].value === chosen.value) {
+                    exists = true;
+                    break;
+                }
+            }
+            
+            if (!exists) {
+                const opt = document.createElement('option');
+                opt.value = chosen.value;
+                opt.innerHTML = chosen.title;
+                themeSelect.appendChild(opt);
+            }
+            
+            themeSelect.value = chosen.value;
+            
+            const motivatorEl = document.getElementById('ai-essay-motivator');
+            if (motivatorEl) {
+                motivatorEl.innerHTML = chosen.motivator + compTips;
+            }
+            
+            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('upgrade');
+            
+            alert(`🔮 TEMA PREDITIVO GERADO ADAPTATIVAMENTE COM SUCESSO!\n\nTema: "${chosen.title.replace('🤖 ', '')}"\n\nO tema e as diretrizes motivadoras foram emulados e ajustados ao seu perfil atual de evolução.`);
         };
 
         window.updateEssayCounter = function(textarea) {

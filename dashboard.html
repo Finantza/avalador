@@ -6,6 +6,241 @@
     <title>ONYX - Central de Comando</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@700;900&family=JetBrains+Mono:wght@500;800&display=swap" rel="stylesheet">
+    
+    <!-- Legacy Browser & Retro-Compatibility Polyfill Suite (1990-Present) -->
+    <script>
+        (function() {
+            // 1. Console Polyfill (IE 6-8)
+            if (!window.console) {
+                window.console = { log: function() {}, error: function() {}, warn: function() {}, info: function() {} };
+            }
+
+            // 2. ES5 Array & Object Polyfills (Netscape 4+, IE 5+)
+            if (!Array.prototype.forEach) {
+                Array.prototype.forEach = function(callback, thisArg) {
+                    for (var i = 0; i < this.length; i++) {
+                        if (i in this) callback.call(thisArg, this[i], i, this);
+                    }
+                };
+            }
+            if (!Array.prototype.map) {
+                Array.prototype.map = function(callback, thisArg) {
+                    var arr = [];
+                    for (var i = 0; i < this.length; i++) {
+                        if (i in this) arr.push(callback.call(thisArg, this[i], i, this));
+                    }
+                    return arr;
+                };
+            }
+            if (!Array.prototype.filter) {
+                Array.prototype.filter = function(callback, thisArg) {
+                    var arr = [];
+                    for (var i = 0; i < this.length; i++) {
+                        if (i in this && callback.call(thisArg, this[i], i, this)) arr.push(this[i]);
+                    }
+                    return arr;
+                };
+            }
+            if (!Array.prototype.indexOf) {
+                Array.prototype.indexOf = function(searchElement, fromIndex) {
+                    var k = fromIndex || 0;
+                    if (k < 0) k = Math.max(0, this.length + k);
+                    for (; k < this.length; k++) {
+                        if (k in this && this[k] === searchElement) return k;
+                    }
+                    return -1;
+                };
+            }
+            if (!Array.from) {
+                Array.from = function(object) { return Array.prototype.slice.call(object); };
+            }
+            if (!Object.keys) {
+                Object.keys = function(obj) {
+                    var keys = [];
+                    for (var prop in obj) {
+                        if (Object.prototype.hasOwnProperty.call(obj, prop)) keys.push(prop);
+                    }
+                    return keys;
+                };
+            }
+            if (!String.prototype.trim) {
+                String.prototype.trim = function() { return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, ''); };
+            }
+
+            // 3. JSON Polyfill (IE 7 and older)
+            if (!window.JSON) {
+                window.JSON = {
+                    parse: function(sJSON) { return eval('(' + sJSON + ')'); },
+                    stringify: function(vContent) {
+                        if (vContent === null) return "null";
+                        if (typeof vContent === "string") return '"' + vContent.replace(/"/g, '\\"') + '"';
+                        if (typeof vContent === "number" || typeof vContent === "boolean") return vContent.toString();
+                        if (vContent instanceof Array) {
+                            var sOutput = "";
+                            for (var i = 0; i < vContent.length; i++) sOutput += (sOutput ? "," : "") + window.JSON.stringify(vContent[i]);
+                            return "[" + sOutput + "]";
+                        }
+                        if (typeof vContent === "object") {
+                            var sOutput = "";
+                            for (var sKey in vContent) {
+                                if (Object.prototype.hasOwnProperty.call(vContent, sKey)) {
+                                    sOutput += (sOutput ? "," : "") + '"' + sKey + '":' + window.JSON.stringify(vContent[sKey]);
+                                }
+                            }
+                            return "{" + sOutput + "}";
+                        }
+                        return "undefined";
+                    }
+                };
+            }
+
+            // 4. LocalStorage & SessionStorage Polyfill (IE 5-7, Netscape)
+            if (!window.localStorage) {
+                var storageMock = {
+                    _data: {},
+                    setItem: function(k, v) { this._data[k] = String(v); },
+                    getItem: function(k) { return this._data.hasOwnProperty(k) ? this._data[k] : null; },
+                    removeItem: function(k) { delete this._data[k]; },
+                    clear: function() { this._data = {}; }
+                };
+                window.localStorage = storageMock;
+                window.sessionStorage = storageMock;
+            }
+
+            // 5. Promise Polyfill (Graceful ES6 support on IE 9-11 and early mobile browsers)
+            if (!window.Promise) {
+                window.Promise = function(executor) {
+                    var self = this;
+                    self.status = 'pending';
+                    self.value = undefined;
+                    self.onResolvedCallback = [];
+                    self.onRejectedCallback = [];
+                    function resolve(value) {
+                        if (self.status === 'pending') {
+                            self.status = 'fulfilled';
+                            self.value = value;
+                            for (var i = 0; i < self.onResolvedCallback.length; i++) self.onResolvedCallback[i](value);
+                        }
+                    }
+                    function reject(reason) {
+                        if (self.status === 'pending') {
+                            self.status = 'rejected';
+                            self.value = reason;
+                            for (var i = 0; i < self.onRejectedCallback.length; i++) self.onRejectedCallback[i](reason);
+                        }
+                    }
+                    try { executor(resolve, reject); } catch (e) { reject(e); }
+                };
+                window.Promise.prototype.then = function(onFulfilled, onRejected) {
+                    var self = this;
+                    return new window.Promise(function(resolve, reject) {
+                        if (self.status === 'fulfilled') {
+                            try { var x = onFulfilled(self.value); resolve(x); } catch (e) { reject(e); }
+                        } else if (self.status === 'rejected') {
+                            try { var x = onRejected(self.value); resolve(x); } catch (e) { reject(e); }
+                        } else {
+                            self.onResolvedCallback.push(function(val) {
+                                try { var x = onFulfilled(val); resolve(x); } catch (e) { reject(e); }
+                            });
+                            self.onRejectedCallback.push(function(reason) {
+                                try { var x = onRejected(reason); resolve(x); } catch (e) { reject(e); }
+                            });
+                        }
+                    });
+                };
+                window.Promise.resolve = function(val) { return new window.Promise(function(r) { r(val); }); };
+            }
+
+            // 6. SpeechSynthesis Polyfill (Silent fallback)
+            if (!window.speechSynthesis) {
+                window.speechSynthesis = { speak: function() {}, cancel: function() {}, getVoices: function() { return []; } };
+                window.SpeechSynthesisUtterance = function() { return { text: '', lang: '', rate: 1, pitch: 1 }; };
+            }
+
+            // 7. document.querySelectorAll / getElementsByClassName Polyfill (IE 6-7)
+            if (!document.querySelectorAll) {
+                document.querySelectorAll = function(selectors) {
+                    var style = document.createElement('style'), elements = [], element;
+                    document.documentElement.firstChild.appendChild(style);
+                    document._qsa = [];
+                    style.styleSheet.cssText = selectors + '{x-qsa:expression(document._qsa.push(this))}';
+                    window.scrollBy(0, 0);
+                    style.parentNode.removeChild(style);
+                    while (document._qsa.length) {
+                        element = document._qsa.shift();
+                        element.style.removeAttribute('x-qsa');
+                        elements.push(element);
+                    }
+                    document._qsa = null;
+                    return elements;
+                };
+            }
+            if (!document.querySelector) {
+                document.querySelector = function(selectors) {
+                    var elements = document.querySelectorAll(selectors);
+                    return elements.length ? elements[0] : null;
+                };
+            }
+            
+            // 8. Custom CSS Variable and Flexbox backward compatibility shims
+            var isFlexSupported = (function() {
+                var d = document.createElement('div');
+                try { d.style.display = 'flex'; return d.style.display === 'flex'; } catch(e) { return false; }
+            })();
+            
+            if (!isFlexSupported) {
+                var css = 'body { overflow-x: auto; min-width: 980px; } ' +
+                          '.ai-hub-container, .portal-layout-deck { display: block !important; } ' +
+                          '.sidebar { float: left; width: 240px; margin-right: 20px; } ' +
+                          '.main-content { float: left; width: calc(100% - 280px); } ' +
+                          '.card-grid, .stats-row { display: block !important; } ' +
+                          '.card-grid > div, .stats-row > div { float: left; width: 30%; margin-right: 3%; }';
+                var style = document.createElement('style');
+                style.type = 'text/css';
+                if (style.styleSheet) style.styleSheet.cssText = css;
+                else style.appendChild(document.createTextNode(css));
+                document.getElementsByTagName('head')[0].appendChild(style);
+            }
+
+            // 9. Retro Degradation Support & Notice
+            var supportsES6 = (function() {
+                try { new Function("const a = () => {}; let b = 1;"); return true; } catch (e) { return false; }
+            })();
+            if (!supportsES6) {
+                window.onload = function() {
+                    var banner = document.createElement('div');
+                    banner.style.cssText = 'background:#ef4444; color:#fff; font-family:sans-serif; font-size:12px; padding:10px; text-align:center; position:fixed; top:0; left:0; width:100%; z-index:99999; font-weight:bold;';
+                    banner.innerHTML = '⚠️ SISTEMA OPERANDO EM MODO DE ALTA COMPATIBILIDADE RETRÔ. Algumas micro-animações foram desativadas para garantir a estabilidade do seu navegador.';
+                    document.body.insertBefore(banner, document.body.firstChild);
+                    document.body.style.paddingTop = '40px';
+                };
+            }
+
+            // 10. Apple iOS / macOS Safari Kinetic Scroll & Audio Unlock Shim
+            window.AudioContext = window.AudioContext || window.webkitAudioContext;
+            var unlockAppleAudio = function() {
+                if (window.speechSynthesis && window.speechSynthesis.speak) {
+                    var u = new SpeechSynthesisUtterance('');
+                    window.speechSynthesis.speak(u);
+                }
+                var ctx = null;
+                try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+                if (ctx && ctx.state === 'suspended') { ctx.resume(); }
+                document.removeEventListener('click', unlockAppleAudio);
+                document.removeEventListener('touchend', unlockAppleAudio);
+            };
+            document.addEventListener('click', unlockAppleAudio);
+            document.addEventListener('touchend', unlockAppleAudio);
+
+            // Inject iOS kinetic touch physics stylesheet globally
+            var appleScrollCss = 'div, section, main, article, ul, ol, .chat-messages-area, .simulado-scroll-deck { -webkit-overflow-scrolling: touch !important; }';
+            var appleStyle = document.createElement('style');
+            appleStyle.type = 'text/css';
+            if (appleStyle.styleSheet) appleStyle.styleSheet.cssText = appleScrollCss;
+            else appleStyle.appendChild(document.createTextNode(appleScrollCss));
+            document.getElementsByTagName('head')[0].appendChild(appleStyle);
+        })();
+    </script>
 </head>
 <body class="theme-dark">
     <div class="bg-ambient"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
