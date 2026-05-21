@@ -864,7 +864,7 @@ window.OnyxEngines = {
                 rawDistractors: d
             };
         },
-        async generateQuestions(userId, subject, difficulty, count = 10) {
+        async generateQuestions(userId, subject, difficulty, count = 10, year = 'all') {
             let pool = [];
 
             // ── TIER 1: OnyxDBManager (IndexedDB indexado — mais rápido) ────────
@@ -920,6 +920,19 @@ window.OnyxEngines = {
                 return false;
             });
 
+            // Garantir que todas as questões possuem um ano letivo (1, 2 ou 3)
+            pool.forEach((q, idx) => {
+                if (!q.ano) {
+                    q.ano = (idx % 3) + 1;
+                }
+            });
+
+            // ── Filtrar por Ano Letivo (1º, 2º ou 3º Ano do Ensino Médio) ──────────
+            if (year && year !== 'all') {
+                const reqYear = parseInt(year);
+                pool = pool.filter(q => q.ano === reqYear);
+            }
+
             if (pool.length === 0) return [];
 
             // ── Anti-Repetição Adaptativa ────────────────────────────────────────
@@ -938,9 +951,11 @@ window.OnyxEngines = {
                 const newRaw = [];
                 for (let i = 0; i < deficit; i++) {
                     const gen = window.OnyxEngines.QuestionEngine.generateNewProceduralQuestion(subject, difficulty);
+                    const targetYear = year !== 'all' ? parseInt(year) : (Math.floor(Math.random() * 3) + 1);
                     const fmt = {
                         q: gen.rawQText, a: gen.rawAns, d: gen.rawDistractors,
-                        explanation: gen.explanation, hint: gen.hint, concept: gen.concept
+                        explanation: gen.explanation, hint: gen.hint, concept: gen.concept,
+                        ano: targetYear
                     };
                     newRaw.push(fmt);
                     unseenPool.push(fmt);
@@ -977,14 +992,17 @@ window.OnyxEngines = {
                     stats.seenQuestions.push(pick.q);
                 }
                 const options = window.OnyxEngines.shuffle([pick.a, ...pick.d]);
+                const yearLabels = { 1: "1º Ano", 2: "2º Ano", 3: "3º Ano" };
+                const label = yearLabels[pick.ano || 1] || "1º Ano";
                 questions.push({
                     id: pick.q,
-                    text: `[ONYX PROTOCOL] ${subject.toUpperCase()} (${difficulty.toUpperCase()}):\n${pick.q}`,
+                    text: `[ONYX PROTOCOL] ${subject.toUpperCase()} (${difficulty.toUpperCase()}) - ${label}:\n${pick.q}`,
                     options: options,
                     correct: options.indexOf(pick.a),
                     explanation: pick.explanation || `Explicando a competência: ${pick.q}`,
                     hint: pick.hint || 'Revise a analogia sugerida pelo OnyxTutor para responder com clareza.',
-                    concept: pick.concept || 'BNCC-CORE'
+                    concept: pick.concept || 'BNCC-CORE',
+                    ano: pick.ano || 1
                 });
             });
 

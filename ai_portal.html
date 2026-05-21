@@ -603,6 +603,15 @@
                                     <option value="45">🎓 SIMULADO OFICIAL ENEM (45 QUESTÕES - PADRÃO OFICIAL)</option>
                                 </select>
                             </div>
+                            <div>
+                                <label class="u-font-07 u-text-muted u-mb-5" style="display:block; font-weight:800;">ANO DO ENSINO MÉDIO</label>
+                                <select id="ai-test-year" class="tutor-select-futuristic u-w-full">
+                                    <option value="all" selected>🎒 REVISÃO INTEGRAL (3 ANOS)</option>
+                                    <option value="1">🌱 1º ANO (BASES & INTRODUÇÃO)</option>
+                                    <option value="2">🌿 2º ANO (SISTEMAS & CONSOLIDAÇÃO)</option>
+                                    <option value="3">🌳 3º ANO (APROFUNDAMENTO & ENEM)</option>
+                                </select>
+                            </div>
                         </div>
 
                         <button id="btn-generate-test" class="btn-onyx-premium u-w-full" style="margin-top:10px;">
@@ -630,6 +639,7 @@
                     const diff = document.getElementById('ai-test-diff').value;
                     const edition = document.getElementById('ai-test-edition').value;
                     const count = parseInt(document.getElementById('ai-test-count').value);
+                    const year = document.getElementById('ai-test-year').value;
                     const resultDiv = document.getElementById('ai-test-result');
                     window.currentSimulateEdition = edition;
                     const loadingText = edition === 'trends' 
@@ -639,7 +649,7 @@
                     resultDiv.innerHTML = `<div class="u-text-center u-p-20"><div class="ai-logo-sphere pulse" style="margin: 0 auto; width: 30px; height: 30px; font-size:0.8rem;">🤖</div><p class="u-font-07 u-text-muted u-mt-10">${loadingText}</p></div>`;
 
                     // Generate questions procedural
-                    const qPool = await OnyxEngines.QuestionEngine.generateQuestions(userStats.id, sub, diff, count);
+                    const qPool = await OnyxEngines.QuestionEngine.generateQuestions(userStats.id, sub, diff, count, year);
                     
                     if (qPool.length === 0) {
                         resultDiv.innerHTML = `<p class="u-text-muted u-font-08 u-text-center">Matéria selecionada indisponível na calibração atual.</p>`;
@@ -672,7 +682,13 @@
                         robotica: "🤖 ROBÓTICA",
                         empreendedorismo: "💼 EMPREENDEDORISMO",
                         ciencia_de_dados: "📊 CIÊNCIA DE DADOS",
-                        inteligencia_artificial: "🤖 INTELIGÊNCIA ARTIFICIAL"
+                        inteligencia_artificial: "🤖 INTELIGÊNCIA ARTIFICIAL",
+                        educacao_financeira: "💳 POUPANÇA ATIVA & FINANÇAS",
+                        marketing_digital: "📢 MARKETING DIGITAL",
+                        desenvolvimento_jogos: "🎮 DESENVOLVIMENTO DE JOGOS",
+                        seguranca_informacao: "🛡️ SEGURANÇA DA INFORMAÇÃO",
+                        design_digital: "✨ DESIGN DIGITAL",
+                        producao_audiovisual: "🎥 PRODUÇÃO AUDIOVISUAL"
                     };
                     const humanSubject = subjectNames[sub] || "📚 ENEM";
 

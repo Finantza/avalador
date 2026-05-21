@@ -688,11 +688,22 @@ window.OnyxDatabase = (function() {
                 { materia: 'tecnologia', termo: 'API REST', desc: 'interface que permite comunicação entre sistemas usando requisições HTTP padronizadas', key: 'Cloud', bncc: 'EM13IF06' },
                 { materia: 'tecnologia', termo: 'Banco NoSQL', desc: 'banco de dados não relacional flexível projetado para grandes volumes de dados', key: 'Cloud', bncc: 'EM13IF06' },
 
-                // ciencia_de_dados
-                { materia: 'ciencia_de_dados', termo: 'Data Science', desc: 'estudo que extrai insights significativos a partir de grandes volumes de dados', key: 'Analytics', bncc: 'EM13IF07' },
-                { materia: 'ciencia_de_dados', termo: 'Algoritmo K-Means', desc: 'método de agrupamento não supervisionado que divide dados em K grupos similares', key: 'Analytics', bncc: 'EM13IF07' },
-                { materia: 'ciencia_de_dados', termo: 'Pandas Dataframe', desc: 'estrutura de dados bidimensional em tabela com colunas e linhas indexadas', key: 'Analytics', bncc: 'EM13IF07' },
-                { materia: 'ciencia_de_dados', termo: 'Limpeza de Dados', desc: 'processo de corrigir ou remover dados incorretos, duplicados ou nulos', key: 'Analytics', bncc: 'EM13IF07' },
+                // ciencia_de_dados (Expanded high-school curriculum subjects)
+                { materia: 'ciencia_de_dados', termo: 'Data Science', desc: 'estudo interdisciplinar que extrai insights significativos a partir de grandes volumes de dados', key: 'Analytics', bncc: 'EM13IF07' },
+                { materia: 'ciencia_de_dados', termo: 'Algoritmo K-Means', desc: 'método de agrupamento não supervisionado que divide os dados em K grupos similares', key: 'Analytics', bncc: 'EM13IF07' },
+                { materia: 'ciencia_de_dados', termo: 'Pandas Dataframe', desc: 'estrutura de dados bidimensional em tabela com colunas e linhas indexadas no Python', key: 'Analytics', bncc: 'EM13IF07' },
+                { materia: 'ciencia_de_dados', termo: 'Limpeza de Dados', desc: 'processo de corrigir ou remover dados incorretos, corrompidos, duplicados ou nulos de um dataset', key: 'Analytics', bncc: 'EM13IF07' },
+                { materia: 'ciencia_de_dados', termo: 'Análise Exploratória (EDA)', desc: 'estudo inicial dos dados para descobrir padrões, detectar anomalias e testar hipóteses usando estatística', key: 'Analytics', bncc: 'EM13IF07' },
+                { materia: 'ciencia_de_dados', termo: 'Regressão Linear', desc: 'modelo matemático que prevê o valor de uma variável contínua com base no comportamento de outra', key: 'Analytics', bncc: 'EM13IF07' },
+                { materia: 'ciencia_de_dados', termo: 'Árvore de Decisão', desc: 'algoritmo de aprendizado supervisionado que divide os dados com base em regras de perguntas sim/não', key: 'Analytics', bncc: 'EM13IF07' },
+                { materia: 'ciencia_de_dados', termo: 'SQL (Structured Query Language)', desc: 'linguagem padrão usada para gerenciar, consultar e manipular bancos de dados relacionais', key: 'Analytics', bncc: 'EM13IF07' },
+                { materia: 'ciencia_de_dados', termo: 'LGPD e Ética de Dados', desc: 'leis e diretrizes que regulam a privacidade, consentimento e tratamento seguro de dados de cidadãos', key: 'Analytics', bncc: 'EM13IF07' },
+                { materia: 'ciencia_de_dados', termo: 'Visualização de Dados', desc: 'representação gráfica de informações (como gráficos de dispersão, barras e linhas) para facilitar a compreensão', key: 'Analytics', bncc: 'EM13IF07' },
+                { materia: 'ciencia_de_dados', termo: 'Data Storytelling', desc: 'técnica de contar uma história envolvente e explicativa combinando dados, visuais e narrativas', key: 'Analytics', bncc: 'EM13IF07' },
+                { materia: 'ciencia_de_dados', termo: 'Outliers (Valores Discrepantes)', desc: 'dados que se desviam drasticamente do padrão geral da amostra e que podem distorcer médias estatísticas', key: 'Analytics', bncc: 'EM13IF07' },
+                { materia: 'ciencia_de_dados', termo: 'Correlação Estatística', desc: 'medida que indica a força e a direção da relação linear entre duas variáveis numéricas', key: 'Analytics', bncc: 'EM13IF07' },
+                { materia: 'ciencia_de_dados', termo: 'Banco de Dados Relacional', desc: 'sistema de armazenamento estruturado em tabelas que se conectam por chaves primárias e estrangeiras', key: 'Analytics', bncc: 'EM13IF07' },
+                { materia: 'ciencia_de_dados', termo: 'Python para Dados', desc: 'linguagem de programação mais popular do mercado de dados devido a bibliotecas como Pandas e NumPy', key: 'Analytics', bncc: 'EM13IF07' },
 
                 // educacao_financeira
                 { materia: 'educacao_financeira', termo: 'Reserva de Emergência', desc: 'capital guardado correspondente a 6 meses de custos para imprevistos financeiros', key: 'Planejamento', bncc: 'EM13IF08' },
@@ -893,8 +904,12 @@ window.OnyxDatabase = (function() {
             }
         }
 
-        // Retorna embaralhado e limitado a 20 itens
-        return shuffle(pool).slice(0, 20);
+        // Retorna embaralhado e limitado a 20 itens, com o ano do ensino médio atribuído de forma homogênea (1º, 2º e 3º ano)
+        const finalPool = shuffle(pool).slice(0, 20);
+        finalPool.forEach((q, idx) => {
+            q.ano = (idx % 3) + 1;
+        });
+        return finalPool;
     }
 
     // Inicialização assíncrona do Banco de Dados procedural no navegador

@@ -2575,14 +2575,54 @@
                             <h4 class="u-text-accent u-mb-15">✍️ GERADOR AUTOMATIZADO DE SIMULADOS ENEM DO NOVO ENSINO MÉDIO</h4>
                             <p class="u-font-08 u-text-muted u-mb-20">Gere imediatamente listas de exercícios com perguntas, dicas cognitivas, justificativas da BNCC e o gabarito oficial.</p>
                             
-                            <div class="u-grid-2 u-mb-20" style="gap:15px;">
+                            <div class="u-grid-3 u-mb-20" style="gap:15px;">
                                 <div>
                                     <label class="u-font-07 u-text-muted u-mb-5" style="display:block;">DISCIPLINA FILTRO</label>
                                     <select id="ai-test-sub" class="tutor-select-futuristic u-w-full">
-                                        <option value="algebra">ÁLGEBRA & FUNÇÕES</option>
-                                        <option value="portugues">PORTUGUÊS & SINTAXE</option>
-                                        <option value="biologia">BIOLOGIA & SISTEMAS</option>
-                                        <option value="historia">HISTÓRIA & SOCIEDADE</option>
+                                        <optgroup label="📚 LINGUAGENS E SUAS TECNOLOGIAS">
+                                            <option value="portugues">PORTUGUÊS & GRAMÁTICA</option>
+                                            <option value="literatura">LITERATURA BRASILEIRA</option>
+                                            <option value="ingles">INGLÊS INSTRUMENTAL</option>
+                                            <option value="artes">ARTES & EXPRESSÃO</option>
+                                            <option value="educacao_fisica">EDUCAÇÃO FÍSICA & SAÚDE</option>
+                                        </optgroup>
+                                        <optgroup label="➗ MATEMÁTICA E SUAS TECNOLOGIAS">
+                                            <option value="algebra" selected>ÁLGEBRA & FUNÇÕES</option>
+                                            <option value="geometria">GEOMETRIA PLANAR & ESPACIAL</option>
+                                            <option value="estatistica">ESTATÍSTICA & PROBABILIDADE</option>
+                                            <option value="matematica_financeira">MATEMÁTICA FINANCEIRA</option>
+                                        </optgroup>
+                                        <optgroup label="🧪 CIÊNCIAS DA NATUREZA">
+                                            <option value="fisica">FÍSICA GERAL & DINÂMICA</option>
+                                            <option value="quimica">QUÍMICA GERAL & ATÔMICA</option>
+                                            <option value="biologia">BIOLOGIA & SISTEMAS</option>
+                                        </optgroup>
+                                        <optgroup label="🌍 CIÊNCIAS HUMANAS">
+                                            <option value="historia">HISTÓRIA & SOCIEDADE</option>
+                                            <option value="geografia">GEOGRAFIA & GEOPOLÍTICA</option>
+                                            <option value="filosofia">FILOSOFIA & ÉTICA</option>
+                                            <option value="sociologia">SOCIOLOGIA & CULTURA</option>
+                                        </optgroup>
+                                        <optgroup label="💻 ITINERÁRIOS TÉCNICOS & PROFISSIONAIS">
+                                            <option value="tecnologia">TECNOLOGIA & SOCIEDADE</option>
+                                            <option value="programacao">LÓGICA DE PROGRAMAÇÃO</option>
+                                            <option value="robotica">ROBÓTICA & ARDUINO</option>
+                                            <option value="empreendedorismo">EMPREENDEDORISMO CANVAS</option>
+                                            <option value="ciencia_de_dados">CIÊNCIA DE DADOS & PANDAS</option>
+                                            <option value="inteligencia_artificial">INTELIGÊNCIA ARTIFICIAL</option>
+                                            <option value="educacao_financeira">FINANÇAS PESSOAIS</option>
+                                            <option value="marketing_digital">MARKETING DIGITAL</option>
+                                            <option value="desenvolvimento_jogos">GAME DESIGN & LÓGICA</option>
+                                            <option value="seguranca_informacao">SEGURANÇA DA INFORMAÇÃO</option>
+                                            <option value="design_digital">DESIGN DIGITAL & FIGMA</option>
+                                            <option value="producao_audiovisual">PRODUÇÃO AUDIOVISUAL</option>
+                                        </optgroup>
+                                        <optgroup label="🌟 CURRICULARES EXTRAS">
+                                            <option value="biblioteca_digital">BIBLIOTECA DIGITAL</option>
+                                            <option value="laboratorio_virtual">LABORATÓRIO VIRTUAL</option>
+                                            <option value="projeto_vida">PROJETO DE VIDA</option>
+                                            <option value="inclusao_acessibilidade">ACESSIBILIDADE E INCLUSÃO</option>
+                                        </optgroup>
                                     </select>
                                 </div>
                                 <div>
@@ -2591,6 +2631,15 @@
                                         <option value="easy">ENEM REGULAR (FÁCIL)</option>
                                         <option value="medium">ENEM TRADICIONAL (MÉDIO)</option>
                                         <option value="hard">ENEM AVALIAÇÃO DE ELITE (DIFÍCIL)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="u-font-07 u-text-muted u-mb-5" style="display:block;">ANO DO ENSINO MÉDIO</label>
+                                    <select id="ai-test-year" class="tutor-select-futuristic u-w-full">
+                                        <option value="all" selected>🎒 REVISÃO INTEGRAL (3 ANOS)</option>
+                                        <option value="1">🌱 1º ANO (BASES)</option>
+                                        <option value="2">🌿 2º ANO (SISTEMAS)</option>
+                                        <option value="3">🌳 3º ANO (ENEM)</option>
                                     </select>
                                 </div>
                             </div>
@@ -2605,12 +2654,13 @@
                         if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('alert');
                         const sub = document.getElementById('ai-test-sub').value;
                         const diff = document.getElementById('ai-test-diff').value;
+                        const year = document.getElementById('ai-test-year').value;
                         const resultDiv = document.getElementById('ai-test-result');
 
                         resultDiv.innerHTML = `<div class="u-text-center"><span class="loader"></span></div>`;
 
                         // Fetch procedural questions from OnyxDatabase
-                        const qPool = await OnyxEngines.QuestionEngine.generateQuestions(userStats.id, sub, diff, 3);
+                        const qPool = await OnyxEngines.QuestionEngine.generateQuestions(userStats.id, sub, diff, 3, year);
                         
                         let questionsHTML = qPool.map((q, idx) => `
                             <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.07); padding:15px; border-radius:8px; margin-bottom:15px;">
