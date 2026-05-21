@@ -273,6 +273,7 @@
 
     <script src="legacy/tutor.js"></script>
     <script src="js/onyx_core.js"></script>
+    <script src="js/onyx_cognitive.js"></script>
     <script src="js/onyx_db_manager.js"></script>
     <script src="js/onyx_database.js"></script>
     <script>var module = { exports: {} };</script>
@@ -356,6 +357,11 @@
             const chatLog = document.getElementById('arena-chat-log');
             if (!chatLog) return;
 
+            // Learn and adapt interaction cognitive memory in real-time
+            if (typeof OnyxCognitive !== 'undefined') {
+                OnyxCognitive.processInteraction(sender, text);
+            }
+
             const timeStr = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             
             const msgEl = document.createElement('div');
@@ -403,14 +409,13 @@
                 replyText = `Escolha um domínio no topo da arena, clique em desafiar ao lado de qualquer operador e complete o quiz de 3 questões sob o tempo limite!`;
             }
 
-            if (replyText) {
-                // Simulate human-like typing latency
-                setTimeout(() => {
-                    const randomBot = adversaryPool[Math.floor(Math.random() * adversaryPool.length)];
-                    const botAvatar = randomBot.avatar + " 🔵";
-                    appendChatMessage(randomBot.name, botAvatar, replyText, Date.now());
-                }, 1500 + Math.random() * 1500);
-            }
+            // Simulate human-like typing latency
+            setTimeout(() => {
+                const randomBot = adversaryPool[Math.floor(Math.random() * adversaryPool.length)];
+                const botAvatar = randomBot.avatar + " 🔵";
+                const responseText = replyText || (typeof OnyxCognitive !== 'undefined' ? OnyxCognitive.generateEvolvedBotResponse(randomBot.name) : "Transmissão calibrada.");
+                appendChatMessage(randomBot.name, botAvatar, responseText, Date.now());
+            }, 1500 + Math.random() * 1500);
         }
 
         let botChatInterval = null;
@@ -1178,6 +1183,11 @@
 
             userStats = await OnyxCore.DB.getUser(user);
             if (!userStats) userStats = { id: user, level: 1, xp: 0 };
+
+            // Inicializar Aprendizado de Interações de IA
+            if (typeof OnyxCognitive !== 'undefined') {
+                OnyxCognitive.init();
+            }
 
             // Inicializar Motor de Rede ONYX
             if (typeof OnyxNetwork !== 'undefined') {

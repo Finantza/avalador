@@ -43,6 +43,10 @@
                     <span class="nav-icon-lg">👪</span>
                     Portal de Pais
                 </button>
+                <button class="role-menu-item" data-tab="tab-online-surveillance">
+                    <span class="nav-icon-lg">📡</span>
+                    Operadores Online
+                </button>
             </nav>
 
             <!-- Navigation Back -->
@@ -81,6 +85,8 @@
 
     <!-- Script imports -->
     <script src="js/onyx_core.js"></script>
+    <script src="js/onyx_network.js"></script>
+    <script src="js/onyx_cognitive.js"></script>
     <script src="js/onyx_db_manager.js"></script>
     <script src="js/onyx_database.js"></script>
     <script src="js/onyx_engines.js"></script>
@@ -109,6 +115,16 @@
                 alert("🚨 ACESSO RESTRITO A GESTORES\n\nEste terminal administrativo é reservado exclusivamente a diretores, professores e funcionários credenciados.");
                 location.href = 'dashboard.html';
                 return;
+            }
+
+            // Sincronizar Motor de Rede em Tempo Real no modo Gestor
+            if (typeof OnyxNetwork !== 'undefined') {
+                await OnyxNetwork.init(userStats.id, userStats.level, '💼');
+                OnyxNetwork.onOperatorsUpdated = () => {
+                    if (activeTab === 'tab-online-surveillance') {
+                        renderWorkspace();
+                    }
+                };
             }
 
             document.getElementById('logged-user-name').innerHTML = userStats.id.toUpperCase() + ` <span style="color:var(--accent); font-size:0.7rem; font-weight:800; font-family:var(--font-mono);">[GESTOR]</span>`;
@@ -323,6 +339,103 @@
                                     <button onclick="sendParentMsg()" class="btn-academic-primary" style="padding:10px 15px; font-size:0.75rem;">ENVIAR</button>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            else if (activeTab === 'tab-online-surveillance') {
+                // Generate combined list of real-time WebSocket active operators and high-end bot agents
+                const netOps = typeof OnyxNetwork !== 'undefined' ? Array.from(OnyxNetwork.activeOperators.values()) : [];
+                
+                const botOps = [
+                    { name: 'Onyx_Master', level: 30, avatar: '🇧🇷 💎', publicIp: '186.221.4.15', isLAN: false, status: 'searching', region: 'REDE REMOTA (WAN)', ping: 42 },
+                    { name: 'Data_Slayer', level: 25, avatar: '🇧🇷 ⚔️', publicIp: '200.142.19.8', isLAN: false, status: 'in-battle', region: 'REDE REMOTA (WAN)', ping: 68 },
+                    { name: 'Code_Reaper', level: 22, avatar: '🇧🇷 💀', publicIp: '177.89.54.120', isLAN: false, status: 'searching', region: 'REDE REMOTA (WAN)', ping: 55 },
+                    { name: 'Byte_Knight', level: 18, avatar: '🇧🇷 🛡️', publicIp: '189.5.43.2', isLAN: false, status: 'in-battle', region: 'REDE REMOTA (WAN)', ping: 70 },
+                    { name: 'Nova_Prime', level: 15, avatar: '🇧🇷 ✨', publicIp: '187.32.112.56', isLAN: false, status: 'searching', region: 'REDE REMOTA (WAN)', ping: 48 },
+                    { name: 'X-Phantom', level: 12, avatar: '🇧🇷 👤', publicIp: '191.242.8.99', isLAN: true, status: 'searching', region: 'REDE LOCAL (LAN)', ping: 4 },
+                    { name: 'Cyber_Wolf', level: 8, avatar: '🇧🇷 🐺', publicIp: '179.15.220.14', isLAN: true, status: 'searching', region: 'REDE LOCAL (LAN)', ping: 12 },
+                    { name: 'Null_Pointer', level: 5, avatar: '🇧🇷 👾', publicIp: '186.204.1.33', isLAN: false, status: 'searching', region: 'REDE REMOTA (WAN)', ping: 52 }
+                ];
+
+                const combined = [...netOps];
+                botOps.forEach(bot => {
+                    if (!combined.some(x => x.name === bot.name)) {
+                        combined.push(bot);
+                    }
+                });
+
+                const cardsHTML = combined.map(op => {
+                    const typeBadge = op.isLAN 
+                        ? `<span style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:var(--success); padding:3px 8px; border-radius:4px; font-size:0.6rem; font-weight:800; font-family:var(--font-mono);">LOCAL (LAN)</span>`
+                        : `<span style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); color:var(--accent); padding:3px 8px; border-radius:4px; font-size:0.6rem; font-weight:800; font-family:var(--font-mono);">REMOTO (WAN)</span>`;
+                    
+                    const statusBadge = op.status === 'in-battle'
+                        ? `<span class="status-dot pulse" style="background:var(--error); width:8px; height:8px; display:inline-block; margin-right:6px;"></span><strong style="color:var(--error); font-size:0.7rem;">EM COMBATE</strong>`
+                        : `<span class="status-dot pulse" style="background:var(--success); width:8px; height:8px; display:inline-block; margin-right:6px;"></span><strong style="color:var(--accent); font-size:0.7rem;">DISPONÍVEL</strong>`;
+
+                    const pingVal = op.ping || Math.floor(Math.random() * 40 + 15);
+                    const pingColor = pingVal < 45 ? 'var(--success)' : (pingVal < 80 ? 'var(--accent)' : 'var(--error)');
+
+                    return `
+                        <div class="metric-glass-card" style="padding:15px; border:1px solid var(--glass-border); border-radius:12px; display:flex; align-items:center; justify-content:space-between; gap:15px; animation: contentReveal 0.2s forwards; background: rgba(255,255,255,0.01);">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <div style="font-size:1.8rem; background:rgba(255,255,255,0.03); border-radius:50%; width:45px; height:45px; display:flex; align-items:center; justify-content:center; border:1px solid var(--glass-border);">
+                                    ${op.avatar}
+                                </div>
+                                <div>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <strong style="color:#fff; font-size:0.9rem;">${op.name}</strong>
+                                        <span style="font-size:0.65rem; color:var(--text-muted); font-weight:800; background:rgba(255,255,255,0.05); padding:2px 6px; border-radius:3px;">LVL ${op.level}</span>
+                                    </div>
+                                    <div class="u-font-06 u-text-muted u-mt-5" style="font-family:var(--font-mono); font-weight:800;">
+                                        IP: ${op.publicIp || '127.0.0.1'} | PING: <span style="color:${pingColor}; font-weight:900;">${pingVal}ms</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+                                ${typeBadge}
+                                <div style="display:flex; align-items:center;">
+                                    ${statusBadge}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                container.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:20px;">
+                        <div class="u-flex-between" style="align-items:center;">
+                            <div>
+                                <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">📡 VIGILÂNCIA DE OPERADORES ONLINE (REAL-TIME CONCIERGE)</h2>
+                                <p style="margin:0;" class="u-text-muted u-font-08">Painel estratégico para monitorar conexões de alunos e bots em LAN e WAN.</p>
+                            </div>
+                            <div class="academic-badge" style="background:var(--success); color:#000; font-weight:900; font-family:var(--font-mono);">
+                                SCANNER OPERATIVO
+                            </div>
+                        </div>
+
+                        <!-- Metrics Grid -->
+                        <div class="metrics-card-grid" style="border-top:1px solid var(--glass-border); padding-top:20px; display:grid; grid-template-columns: repeat(3, 1fr); gap:15px;">
+                            <div class="metric-glass-card">
+                                <span class="u-font-07 u-text-muted" style="display:block; font-weight:800; font-family:var(--font-mono);">TOTAL DETECTADO</span>
+                                <span class="u-font-15 u-weight-900 u-mt-5" style="display:block; color:#fff;">${combined.length} Operadores</span>
+                            </div>
+                            <div class="metric-glass-card">
+                                <span class="u-font-07 u-text-muted" style="display:block; font-weight:800; font-family:var(--font-mono);">CONEXÕES LAN</span>
+                                <span class="u-font-15 u-weight-900 u-mt-5" style="display:block; color:var(--success);">${combined.filter(x => x.isLAN).length} Ativos</span>
+                            </div>
+                            <div class="metric-glass-card">
+                                <span class="u-font-07 u-text-muted" style="display:block; font-weight:800; font-family:var(--font-mono);">CONEXÕES WAN</span>
+                                <span class="u-font-15 u-weight-900 u-mt-5" style="display:block; color:var(--accent);">${combined.filter(x => !x.isLAN).length} Ativos</span>
+                            </div>
+                        </div>
+
+                        <!-- Operators Grid -->
+                        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap:15px; margin-top:10px;">
+                            ${cardsHTML}
                         </div>
                     </div>
                 `;

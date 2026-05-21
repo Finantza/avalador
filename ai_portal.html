@@ -15,64 +15,54 @@
     </div>
 
     <div class="ai-deck-wrapper">
-        <!-- Sidebar Navigator -->
-        <aside class="ai-sidebar">
-            <div class="sidebar-branding" onclick="location.href='dashboard.html'" title="Voltar à Home (Dashboard)">
-                <div class="ai-logo-sphere">🤖</div>
+        <!-- Modern Horizontal Console Header -->
+        <header class="console-header">
+            <div class="sidebar-branding" onclick="location.href='dashboard.html'" title="Voltar ao Dashboard">
+                <div class="ai-logo-sphere" style="animation: pulseSphere 2.5s infinite;">🧠</div>
                 <div>
-                    <h3>ONYX AI</h3>
-                    <span class="u-text-accent u-font-07">COPILOTO COGNITIVO</span>
+                    <h3 style="margin:0; font-family:var(--font-header); font-size:1.15rem; color:#fff; font-weight:800; letter-spacing:0.5px; line-height:1.2;">ONYX AI</h3>
+                    <span class="u-text-accent u-font-07" style="font-family:var(--font-mono); font-weight:900; letter-spacing:0.5px; text-transform:uppercase;">Copiloto Adaptativo</span>
                 </div>
             </div>
 
-            <!-- Tab Buttons -->
-            <nav class="ai-menu-list">
-                <button class="ai-menu-item active" data-tab="tab-planos">
-                    <span class="nav-icon-lg">📝</span>
-                    Planos de Aula AI
+            <!-- Tab Buttons Row -->
+            <nav class="ai-menu-list" style="margin: 0; display:flex; gap:6px;">
+                <button class="ai-menu-item active" data-tab="tab-planos" style="padding:10px 14px; font-size:0.8rem;">
+                    <span class="nav-icon-lg">📝</span> Planos de Aula
                 </button>
-                <button class="ai-menu-item" data-tab="tab-simulados">
-                    <span class="nav-icon-lg">✍️</span>
-                    Simulados ENEM
+                <button class="ai-menu-item" data-tab="tab-simulados" style="padding:10px 14px; font-size:0.8rem;">
+                    <span class="nav-icon-lg">✍️</span> Simulados ENEM
                 </button>
-                <button class="ai-menu-item" data-tab="tab-redacao">
-                    <span class="nav-icon-lg">🖋️</span>
-                    Redação Nota 1000
+                <button class="ai-menu-item" data-tab="tab-redacao" style="padding:10px 14px; font-size:0.8rem;">
+                    <span class="nav-icon-lg">🖋️</span> Redação Nota 1000
                 </button>
-                <button class="ai-menu-item" data-tab="tab-study-buddy">
-                    <span class="nav-icon-lg">💬</span>
-                    Study Buddy Chat
+                <button class="ai-menu-item" data-tab="tab-study-buddy" style="padding:10px 14px; font-size:0.8rem;">
+                    <span class="nav-icon-lg">💬</span> Study Buddy Chat
                 </button>
             </nav>
 
-            <!-- Navigation Back -->
-            <div class="back-btn-container">
-                <button onclick="location.href='dashboard.html'" class="btn-back-core">
-                    🏠 VOLTAR À HOME
+            <!-- Navigation Exit -->
+            <div>
+                <button onclick="location.href='dashboard.html'" class="btn-back-core" style="padding:10px 18px; font-size:0.75rem; white-space:nowrap; border-radius:10px;">
+                    🏠 VOLTAR AO DASHBOARD
                 </button>
             </div>
-        </aside>
+        </header>
 
-        <!-- Main Operational Deck -->
-        <main class="ai-viewport">
-            <!-- Header Block -->
-            <header class="ai-header-deck">
+        <!-- Main Workspace Deck (Centered Full Width Panel) -->
+        <main class="ai-viewport" style="min-height: 600px;">
+            <!-- Header User Profile Info Bar (Ultra Clean) -->
+            <div class="u-flex-between" style="align-items:center; border-bottom:1px solid var(--glass-border); padding-bottom:15px; margin-bottom:10px; flex-wrap:wrap; gap:10px;">
                 <div>
-                    <h1>PORTAL DE INTELIGÊNCIA ARTIFICIAL</h1>
-                    <p class="u-text-muted u-font-08">Ecossistema adaptativo de suporte a docentes e operadores do Ensino Médio.</p>
+                    <span class="u-font-06 u-text-muted" style="font-weight:800; letter-spacing:0.5px; text-transform:uppercase; display:block;">CONEXÃO INTELIGENTE ATIVA</span>
+                    <span id="logged-user-name" style="font-family:var(--font-header); color:#fff; font-weight:bold; font-size:0.9rem;">...</span>
                 </div>
-                <div class="portal-header-actions">
-                    <div class="portal-header-meta">
-                        <div class="u-font-07 u-text-muted meta-label">OPERADOR LOGADO</div>
-                        <span id="logged-user-name" class="meta-user">...</span>
-                    </div>
-                    <div class="ai-system-badge">
-                        ONYX-GPT v5.2
-                    </div>
+                <div class="academic-badge" style="background:rgba(0, 240, 255, 0.1); border:1px solid rgba(0, 240, 255, 0.2); color:var(--primary); font-weight:900; font-family:var(--font-mono); font-size:0.7rem; padding:5px 12px; border-radius:20px; text-transform:uppercase; letter-spacing:0.5px;">
+                    💎 NÚCLEO COGNITIVO ONLINE
                 </div>
-            </header>
+            </div>
 
-            <!-- Workspace Card -->
+            <!-- Workspace Card (Now Full Width) -->
             <section id="workspace-card" class="ai-workspace-card">
                 <!-- Content injected dynamically via JavaScript -->
             </section>
@@ -89,8 +79,51 @@
         </div>
     </div>
 
+    <!-- Welcome Tour Modal (UX Optimization) -->
+    <div id="ux-tour-modal" class="modal-glass-hint">
+        <div class="modal-hint-box" style="max-width: 520px; border-color: var(--primary); box-shadow: 0 0 35px var(--primary-glow); text-align: left; transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);">
+            <div style="display:flex; align-items:center; gap:15px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:15px; margin-bottom:15px;">
+                <div class="ai-logo-sphere" style="width:40px; height:40px;">🧠</div>
+                <div>
+                    <h3 style="margin:0; font-family:var(--font-header); color:#fff; font-size:1.1rem; letter-spacing:0.5px;">CONEXÃO COGNITIVA ESTABELECIDA</h3>
+                    <span style="font-size:0.65rem; color:var(--primary); font-family:var(--font-mono); font-weight:800; letter-spacing:1px; text-transform:uppercase;">Guia de Sobrevivência Pedagógica Onyx</span>
+                </div>
+            </div>
+            <div style="font-size:0.78rem; color:var(--text-main); line-height:1.6; display:flex; flex-direction:column; gap:12px;">
+                <p style="margin:0; color:var(--text-muted);">Bem-vindo ao portal autônomo da rede **Onyx Cognitive**. Aqui estão as principais ferramentas integradas ao seu desempenho:</p>
+                <div style="display:flex; gap:12px; align-items:flex-start; background:rgba(255,255,255,0.01); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.02);">
+                    <span style="background:var(--primary-glow); color:var(--primary); font-weight:bold; font-family:var(--font-mono); padding:2px 8px; border-radius:4px; font-size:0.7rem; margin-top:2px;">01</span>
+                    <div>
+                        <strong style="color:#fff; display:block; margin-bottom:2px;">TUTOR STUDY BUDDY CHAT</strong>
+                        Tire dúvidas sobre temas BNCC. Termos sublinhados com linha pontilhada podem ser clicados para revelar explicações simplificadas.
+                    </div>
+                </div>
+                <div style="display:flex; gap:12px; align-items:flex-start; background:rgba(255,255,255,0.01); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.02);">
+                    <span style="background:var(--accent-glow); color:var(--accent); font-weight:bold; font-family:var(--font-mono); padding:2px 8px; border-radius:4px; font-size:0.7rem; margin-top:2px;">02</span>
+                    <div>
+                        <strong style="color:#fff; display:block; margin-bottom:2px;">LABORATÓRIO DE REDAÇÃO</strong>
+                        Submeta dissertações em tempo real e receba relatórios analíticos segmentados nas 5 Competências oficiais do ENEM.
+                    </div>
+                </div>
+                <div style="display:flex; gap:12px; align-items:flex-start; background:rgba(255,255,255,0.01); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.02);">
+                    <span style="background:rgba(192,132,252,0.15); color:#c084fc; font-weight:bold; font-family:var(--font-mono); padding:2px 8px; border-radius:4px; font-size:0.7rem; margin-top:2px;">03</span>
+                    <div>
+                        <strong style="color:#fff; display:block; margin-bottom:2px;">COMPILADOR DE SIMULADOS</strong>
+                        Gere exames procedurais customizados. Ao acionar o simulado, a tela expande para oferecer o máximo de conforto na leitura.
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top:20px; display:flex; justify-content:flex-end;">
+                <button id="btn-close-tour" class="btn-onyx-premium" style="padding:10px 22px; font-size:0.75rem; border-radius:8px; border-color:var(--primary); font-weight:800;">
+                    INICIAR JORNADA COGNITIVA 🚀
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Script imports -->
     <script src="js/onyx_core.js"></script>
+    <script src="js/onyx_cognitive.js"></script>
     <script src="js/onyx_db_manager.js"></script>
     <script src="js/onyx_database.js"></script>
     <script src="js/onyx_engines.js"></script>
@@ -114,6 +147,10 @@
             userStats = await OnyxCore.DB.getUser(userName);
             if (!userStats) userStats = { id: userName, level: 1, xp: 0 };
 
+            if (typeof OnyxCognitive !== 'undefined') {
+                OnyxCognitive.init();
+            }
+
             const userRole = userStats.role || 'aluno';
             document.getElementById('logged-user-name').innerHTML = userStats.id.toUpperCase() + 
                 (userRole === 'gestor' 
@@ -131,11 +168,35 @@
                 };
             });
 
+            // Trigger tour modal if not shown before (UX Optimization)
+            setTimeout(() => {
+                const tourShown = localStorage.getItem('onyx_hub_tour_completed');
+                if (!tourShown) {
+                    const tourModal = document.getElementById('ux-tour-modal');
+                    if (tourModal) tourModal.classList.add('active');
+                }
+            }, 800);
+
+            const closeTourBtn = document.getElementById('btn-close-tour');
+            if (closeTourBtn) {
+                closeTourBtn.onclick = () => {
+                    const tourModal = document.getElementById('ux-tour-modal');
+                    if (tourModal) {
+                        tourModal.classList.remove('active');
+                        localStorage.setItem('onyx_hub_tour_completed', 'true');
+                        if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
+                    }
+                };
+            }
+
             renderWorkspace();
         }
 
         function renderWorkspace() {
             const container = document.getElementById('workspace-card');
+            if (container) {
+                container.classList.remove('expanded-simulado');
+            }
             const userRole = userStats.role || 'aluno';
             
             if (activeTab === 'tab-planos') {
@@ -323,6 +384,17 @@
                     </div>
                 `;
 
+                window.resetSimuladoMode = () => {
+                    const workspace = document.getElementById('workspace-card');
+                    if (workspace) {
+                        workspace.classList.remove('expanded-simulado');
+                    }
+                    const resultDiv = document.getElementById('ai-test-result');
+                    if (resultDiv) {
+                        resultDiv.innerHTML = '';
+                    }
+                };
+
                 document.getElementById('btn-generate-test').onclick = async () => {
                     if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('alert');
                     const sub = document.getElementById('ai-test-sub').value;
@@ -343,6 +415,12 @@
                     if (qPool.length === 0) {
                         resultDiv.innerHTML = `<p class="u-text-muted u-font-08 u-text-center">Matéria selecionada indisponível na calibração atual.</p>`;
                         return;
+                    }
+
+                    // Dynamically expand workspace card for maximum reading space
+                    const workspace = document.getElementById('workspace-card');
+                    if (workspace) {
+                        workspace.classList.add('expanded-simulado');
                     }
 
                     const subjectNames = {
@@ -377,7 +455,7 @@
                             ? `<span class="u-font-06 u-text-accent" style="background:rgba(14,165,233,0.15); border:1px solid var(--primary); padding:2px 8px; border-radius:4px; font-weight:bold;">🔥 IA TREND-SENSING 2026</span>` 
                             : `<span class="u-font-06 u-text-muted" style="background:rgba(255,255,255,0.05); padding:2px 8px; border-radius:4px;">MATRIZ DE REFERÊNCIA HISTÓRICA</span>`;
                         return `
-                            <div class="mock-exam-question-card" id="${questionId}-card">
+                            <div class="mock-exam-question-card" id="${questionId}-card" style="margin-bottom:0;">
                                 <div class="u-flex-between u-mb-10">
                                     <span class="u-text-accent u-font-07 u-weight-900" style="font-family:var(--font-mono);">${editionLabel} - ${humanSubject} - QUESTÃO ${idx + 1} (${q.concept || 'BNCC-CORE'})</span>
                                     ${subLabel}
@@ -399,11 +477,16 @@
 
                     resultDiv.innerHTML = `
                         <div style="border:1px solid var(--glass-border); background:rgba(255,255,255,0.02); border-radius:16px; padding:25px; margin-top:10px; animation: contentReveal 0.3s forwards;">
-                            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--glass-border); padding-bottom:15px; margin-bottom:20px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--glass-border); padding-bottom:15px; margin-bottom:20px; flex-wrap:wrap; gap:15px;">
                                 <h3 style="color:#fff; font-family:var(--font-header); margin:0;">📄 SIMULADO ENEM HISTÓRICO ATIVO</h3>
-                                <button onclick="alert('📤 Compilação finalizada! Gabarito oficial sincronizado e PDF gerado para download.')" class="btn-speech-trigger" style="border-color:var(--primary); color:var(--primary);">EXPORTAR PDF DO SIMULADO</button>
+                                <div style="display:flex; gap:10px; align-items:center;">
+                                    <button onclick="alert('📤 Compilação finalizada! Gabarito oficial sincronizado e PDF gerado para download.')" class="btn-speech-trigger" style="border-color:var(--primary); color:var(--primary);">EXPORTAR PDF</button>
+                                    <button onclick="resetSimuladoMode()" class="btn-speech-trigger" style="border-color:var(--error); color:var(--error); background:rgba(239,68,68,0.05);">❌ SAIR DO SIMULADO</button>
+                                </div>
                             </div>
-                            ${questionsHTML}
+                            <div class="simulado-scroll-deck">
+                                ${questionsHTML}
+                            </div>
                         </div>
                     `;
                 };
@@ -412,46 +495,62 @@
             else if (activeTab === 'tab-redacao') {
                 container.innerHTML = `
                     <div style="display:flex; flex-direction:column; gap:20px; animation: contentReveal 0.3s forwards;">
-                        <div>
-                            <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">🖋️ LABORATÓRIO DE REDAÇÃO NOTA 1000 - ENEM</h2>
-                            <p style="margin:0;" class="u-text-muted u-font-08">Redija sua redação com base nos temas sociais e científicos mais pesquisados da atualidade. A IA corrigirá seu texto segundo as 5 Competências oficiais do ENEM.</p>
+                        <div class="u-flex-between" style="align-items:center;">
+                            <div>
+                                <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">🖋️ LABORATÓRIO DE REDAÇÃO NOTA 1000 - ENEM</h2>
+                                <p style="margin:0;" class="u-text-muted u-font-08">Redija sua redação com base nos temas sociais e científicos mais pesquisados da atualidade. A IA corrigirá seu texto segundo as 5 Competências oficiais do ENEM.</p>
+                            </div>
+                            <div class="academic-badge" style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:var(--accent); font-weight:900; font-family:var(--font-mono); font-size:0.7rem; padding:4px 10px; border-radius:20px; text-transform:uppercase; letter-spacing:0.5px;">
+                                ENEM REGULATION ACTIVE
+                            </div>
                         </div>
 
-                        <div style="display:flex; flex-direction:column; gap:15px; border-top:1px solid var(--glass-border); padding-top:20px;">
-                            <div>
-                                <label class="u-font-07 u-text-muted u-mb-5" style="display:block; font-weight:800;">ESCOLHA O TEMA DE REDAÇÃO</label>
-                                <select id="ai-essay-theme" class="tutor-select-futuristic u-w-full" onchange="updateMotivatorText(this.value)">
-                                    <option value="ia-edu">🤖 IA Generativa: Impactos e Desafios da IA na Educação Brasileira</option>
-                                    <option value="clima">🌍 Crise Climática: Caminhos para Enfrentar as Mudanças no Território Nacional</option>
-                                    <option value="acesso">♿ Acessibilidade: A Democratização dos Recursos Digitais de Inclusão</option>
-                                    <option value="saude">🧠 Saúde Mental: Desafios e Pressão por Desempenho nos Jovens do Século XXI</option>
-                                </select>
-                            </div>
+                        <!-- Two Column Grid for Desktop / Stacking for Mobile -->
+                        <div class="essay-workspace-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:25px; border-top:1px solid var(--glass-border); padding-top:20px;">
+                            
+                            <!-- Left Column: Topic & Guidelines -->
+                            <div style="display:flex; flex-direction:column; gap:15px;">
+                                <div>
+                                    <label class="u-font-07 u-text-muted u-mb-5" style="display:block; font-weight:800; letter-spacing:0.5px;">1. SELECIONE O TEMA DA PROPOSTA</label>
+                                    <select id="ai-essay-theme" class="tutor-select-futuristic u-w-full" onchange="updateMotivatorText(this.value)" style="padding:12px !important;">
+                                        <option value="ia-edu">🤖 IA Generativa: Impactos e Desafios da IA na Educação Brasileira</option>
+                                        <option value="clima">🌍 Crise Climática: Caminhos para Enfrentar as Mudanças no Território Nacional</option>
+                                        <option value="acesso">♿ Acessibilidade: A Democratização dos Recursos Digitais de Inclusão</option>
+                                        <option value="saude">🧠 Saúde Mental: Desafios e Pressão por Desempenho nos Jovens do Século XXI</option>
+                                    </select>
+                                </div>
 
-                            <div class="glass" style="padding:15px; border-radius:10px; background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.05);">
-                                <h4 class="u-text-accent" style="margin:0 0 8px 0; font-size:0.75rem; font-family:var(--font-mono);">📄 TEXTO DE APOIO E DIRETRIZES DA BANCA</h4>
-                                <div style="max-height: 80px; overflow-y: auto; padding-right: 5px;">
-                                    <div id="ai-essay-motivator" style="font-size:0.75rem; color:var(--text-muted); line-height:1.5;">
-                                        TEXTO MOTIVADOR: O avanço veloz de ferramentas de inteligência artificial generativa remodelou as salas de aula brasileiras. Ao mesmo tempo que serve como ferramenta de autoaprendizado adaptativo acelerado, há riscos iminentes de plágio, atrofia da escrita autoral e desigualdade no acesso tecnológico. Discorra sobre como conciliar inovação com ética no ensino nacional.
+                                <div class="glass" style="padding:20px; border-radius:12px; background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); display:flex; flex-direction:column; gap:10px; flex:1;">
+                                    <h4 class="u-text-accent" style="margin:0; font-size:0.75rem; font-family:var(--font-mono); font-weight:900; letter-spacing:0.5px; display:flex; align-items:center; gap:6px;">
+                                        📄 TEXTO DE APOIO & DIRETRIZES
+                                    </h4>
+                                    <div style="flex:1; overflow-y:auto; padding-right:5px; max-height: 250px;">
+                                        <div id="ai-essay-motivator" style="font-size:0.78rem; color:var(--text-muted); line-height:1.6; text-align:justify;">
+                                            TEXTO MOTIVADOR: O avanço veloz de ferramentas de inteligência artificial generativa remodelou as salas de aula brasileiras. Ao mesmo tempo que serve como ferramenta de autoaprendizado adaptativo acelerado, há riscos iminentes de plágio, atrofia da escrita autoral e desigualdade no acesso tecnológico. Discorra sobre como conciliar inovação com ética no ensino nacional.
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div>
-                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-                                    <label class="u-font-07 u-text-muted" style="font-weight:800;">TEXTO DA SUA REDAÇÃO</label>
-                                    <span id="essay-counter-lbl" style="font-family:var(--font-mono); font-size:0.7rem; color:var(--primary); font-weight:bold;">0 Caracteres | 0 Palavras | ~0 Linhas</span>
+                            <!-- Right Column: Textarea & Submit -->
+                            <div style="display:flex; flex-direction:column; gap:15px;">
+                                <div>
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                                        <label class="u-font-07 u-text-muted" style="font-weight:800; letter-spacing:0.5px;">2. TEXTO DA SUA DISSERTAÇÃO</label>
+                                        <span id="essay-counter-lbl" style="font-family:var(--font-mono); font-size:0.7rem; color:var(--primary); font-weight:bold;">0 Caracteres | 0 Palavras | ~0 Linhas</span>
+                                    </div>
+                                    <textarea id="essay-textarea" class="tutor-select-futuristic u-w-full" style="height:220px; resize:vertical; overflow-y:auto; font-family:'JetBrains Mono', monospace; font-size:0.8rem; line-height:1.6; padding:15px; background:rgba(0,0,0,0.5); color:#fff; border-radius:12px; border:1px solid rgba(255,255,255,0.1);" placeholder="Escreva sua dissertação-argumentativa aqui. Lembre-se: escreva entre 7 e 30 linhas (acima de 150 caracteres). Apresente tese clara, argumentos fundamentados e uma proposta de intervenção social..." oninput="updateEssayCounter(this)"></textarea>
+                                    <div id="essay-warning-lbl" style="font-size:0.68rem; color:var(--error); margin-top:5px; font-weight:800; display:none;">⚠️ Sua redação está com menos de 7 linhas (mínimo exigido). Escreva mais para poder ser avaliado!</div>
                                 </div>
-                                <textarea id="essay-textarea" class="tutor-select-futuristic u-w-full" style="height:220px; resize:vertical; overflow-y:auto; font-family:'JetBrains Mono', monospace; font-size:0.8rem; line-height:1.6; padding:15px; background:rgba(0,0,0,0.5); color:#fff; border-radius:12px; border:1px solid rgba(255,255,255,0.1);" placeholder="Escreva sua dissertação-argumentativa aqui. Lembre-se: escreva entre 7 e 30 linhas (acima de 150 caracteres). Apresente tese clara, argumentos fundamentados e uma proposta de intervenção social..." oninput="updateEssayCounter(this)"></textarea>
-                                <div id="essay-warning-lbl" style="font-size:0.68rem; color:var(--error); margin-top:5px; font-weight:800; display:none;">⚠️ Sua redação está com menos de 7 linhas (mínimo exigido). Escreva mais para poder ser avaliado!</div>
+
+                                <button id="btn-grade-essay" class="btn-onyx-premium u-w-full" style="padding:14px; font-size:0.85rem; border-radius:10px;">
+                                    🧠 SUBMETER REDAÇÃO E EXECUTAR ANÁLISE IA
+                                </button>
                             </div>
-
-                            <button id="btn-grade-essay" class="btn-onyx-premium u-w-full" style="margin-top:10px;">
-                                🧠 SUBMETER REDAÇÃO E EXECUTAR ANÁLISE IA
-                            </button>
-
-                            <div id="ai-essay-result" class="u-mt-10"></div>
                         </div>
+
+                        <!-- Result Section (Full Width) -->
+                        <div id="ai-essay-result" class="u-mt-10"></div>
                     </div>
                 `;
 
@@ -710,23 +809,84 @@
             } 
             
             else if (activeTab === 'tab-study-buddy') {
+                window.toggleDiagnosticsDetail = () => {
+                    const panel = document.getElementById('diag-detail-panel');
+                    const btn = document.getElementById('diag-toggle-btn');
+                    if (panel && btn) {
+                        const isHidden = panel.style.display === 'none';
+                        panel.style.display = isHidden ? 'block' : 'none';
+                        btn.textContent = isHidden ? 'RECOLHER MATRIZ ▲' : 'EXPANDIR MATRIZ ▼';
+                    }
+                };
+
+                const renderDiagnostics = () => {
+                    const dominant = typeof OnyxCognitive !== 'undefined' ? OnyxCognitive.getDominantInterest().toUpperCase() : 'NENHUM';
+                    const moodVal = typeof OnyxCognitive !== 'undefined' ? OnyxCognitive.mood : 0.2;
+                    const learnedWords = typeof OnyxCognitive !== 'undefined' ? Object.keys(OnyxCognitive.vocab).slice(0, 8) : [];
+                    const wordsList = learnedWords.length > 0 
+                        ? learnedWords.map(w => `<span style="background:rgba(0, 240, 255, 0.1); border:1px solid rgba(0, 240, 255, 0.2); padding:3px 8px; border-radius:4px; font-size:0.7rem; font-family:var(--font-mono); color:var(--primary); font-weight:800; animation: pulse 2s infinite;">${w}</span>`).join(' ')
+                        : `<span class="u-text-muted" style="font-size:0.75rem;">Nenhuma palavra catalogada ainda. Digite dúvidas para ensinar a IA!</span>`;
+                    
+                    const moodDesc = moodVal > 0.4 ? '🏆 ENTUSIASMADO / APOIADOR' : (moodVal < -0.2 ? '💀 ANALÍTICO / DESAFIADOR' : '🤖 NEUTRO / ADAPTATIVO');
+                    const moodColor = moodVal > 0.4 ? 'var(--success)' : (moodVal < -0.2 ? 'var(--error)' : 'var(--accent)');
+
+                    return `
+                        <div class="glass" style="border:1px solid var(--glass-border); border-radius:12px; background:rgba(0,0,0,0.25); overflow:hidden;">
+                            <div class="u-flex-between" style="align-items:center; padding:12px 20px; cursor:pointer;" onclick="toggleDiagnosticsDetail()">
+                                <span style="font-size:0.75rem; font-family:var(--font-mono); font-weight:800; color:var(--primary); display:flex; align-items:center; gap:8px;">
+                                    🧠 MATRIZ COGNITIVA: <span id="diag-summary-lbl" style="color:#fff; font-weight:600; font-size:0.72rem;">🎯 ${dominant} | ${moodDesc}</span>
+                                </span>
+                                <span id="diag-toggle-btn" style="font-size:0.7rem; font-family:var(--font-mono); color:var(--text-muted); font-weight:800; letter-spacing:0.5px;">EXPANDIR MATRIZ ▼</span>
+                            </div>
+                            <div id="diag-detail-panel" style="display:none; padding:15px 20px; border-top:1px dashed rgba(255,255,255,0.08); background:rgba(0,0,0,0.15);">
+                                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px;">
+                                    <div>
+                                        <span class="u-font-06 u-text-muted" style="display:block; font-weight:800; letter-spacing:0.5px;">DOMÍNIO COGNITIVO DOMINANTE</span>
+                                        <span id="diag-dominant" style="font-size:0.9rem; color:#fff; font-weight:900; display:block; margin-top:3px;">🎯 ${dominant}</span>
+                                    </div>
+                                    <div>
+                                        <span class="u-font-06 u-text-muted" style="display:block; font-weight:800; letter-spacing:0.5px;">HUMOR E TOM DO COPILOTO</span>
+                                        <span id="diag-mood" style="font-size:0.9rem; color:${moodColor}; font-weight:900; display:block; margin-top:3px;">${moodDesc}</span>
+                                    </div>
+                                    <div style="grid-column: span 2;">
+                                        <span class="u-font-06 u-text-muted" style="display:block; font-weight:800; margin-bottom:5px; letter-spacing:0.5px;">VOCABULÁRIO ABSORVIDO DA REDE (TOP 8 PALAVRAS)</span>
+                                        <div id="diag-vocab" style="display:flex; flex-wrap:wrap; gap:6px;">
+                                            ${wordsList}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                };
+
                 container.innerHTML = `
-                    <div style="display:flex; flex-direction:column; gap:20px;">
-                        <div>
-                            <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">💬 STUDY BUDDY CHAT - COPILOTO ADAPTATIVO DA BNCC</h2>
-                            <p style="margin:0;" class="u-text-muted u-font-08">Tire dúvidas pedagógicas com o tutor AI! Termos técnicos grifados podem ser clicados para revelar analogias simplificadas.</p>
+                    <div style="display:flex; flex-direction:column; gap:20px; animation: contentReveal 0.3s forwards;">
+                        <div class="u-flex-between" style="align-items:center;">
+                            <div>
+                                <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">💬 STUDY BUDDY CHAT - COPILOTO ADAPTATIVO DA BNCC</h2>
+                                <p style="margin:0;" class="u-text-muted u-font-08">Tire dúvidas pedagógicas com o tutor AI! Termos técnicos grifados podem ser clicados para revelar analogias simplificadas.</p>
+                            </div>
+                            <div class="academic-badge" style="background:rgba(14,165,233,0.1); border:1px solid rgba(14,165,233,0.3); color:var(--primary); font-weight:900; font-family:var(--font-mono); font-size:0.7rem; padding:4px 10px; border-radius:20px; text-transform:uppercase; letter-spacing:0.5px;">
+                                NÚCLEO COGNITIVO ATIVO
+                            </div>
                         </div>
 
-                        <div class="chat-deck-container">
-                            <div id="ai-chat-window" class="chat-messages-area">
-                                <div class="chat-bubble ai-tutor">
-                                    Olá, ${userStats.id}! Sou seu copiloto de estudos adaptativo. Pergunte-me qualquer dúvida sobre a BNCC, biologia, álgebra ou outros temas escolares!
+                        <!-- Heuristic Adaptation Diagnostics Panel -->
+                        <div id="diagnostics-panel-wrapper">
+                            ${renderDiagnostics()}
+                        </div>
+
+                        <div class="chat-deck-container" style="border: 1px solid var(--glass-border); border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.3); display: flex; flex-direction: column;">
+                            <div id="ai-chat-window" class="chat-messages-area" style="min-height: 260px; max-height: 460px; height: auto; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap:12px;">
+                                <div class="chat-bubble ai-tutor" style="align-self: flex-start; background: rgba(255,255,255,0.03); border:1px solid var(--glass-border); color: #fff; padding: 12px 15px; border-radius: 12px; font-size: 0.8rem; max-width: 80%; border-left: 3px solid var(--primary); line-height: 1.5;">
+                                    Olá, ${userStats.id}! Sou seu copiloto de estudos adaptativo. Minha rede neural está conectada ao seu vocabulário e interesses. Pergunte-me qualquer dúvida sobre a BNCC ou matérias!
                                 </div>
                             </div>
                             
-                            <div class="chat-input-bar">
-                                <input type="text" id="ai-chat-input" placeholder="Pergunte: 'O que é mitocôndria?' ou 'Qual o papel da Álgebra?'" class="chat-text-input" autocomplete="off">
-                                <button id="btn-ai-chat-send" class="btn-onyx-premium" style="padding:12px 24px; font-size:0.8rem; border-radius:10px; box-shadow:none;">PERGUNTAR</button>
+                            <div class="chat-input-bar" style="display: flex; border-top: 1px solid var(--glass-border); background: rgba(0,0,0,0.5); padding: 12px; gap: 10px; align-items:center;">
+                                <input type="text" id="ai-chat-input" placeholder="Pergunte: 'O que é mitocôndria?' ou ensine-me novos conceitos..." class="chat-text-input" style="flex: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); padding: 12px 15px; border-radius: 8px; color: #fff; font-size: 0.8rem; outline: none; transition: border-color 0.3s;" autocomplete="off">
+                                <button id="btn-ai-chat-send" class="btn-onyx-premium" style="padding: 12px 24px; font-size: 0.8rem; border-radius: 8px; box-shadow: none; white-space:nowrap; background:var(--primary); color:#fff; border:none; cursor:pointer; font-weight:800; font-family:var(--font-header);">PERGUNTAR</button>
                             </div>
                         </div>
                     </div>
@@ -735,6 +895,13 @@
                 const chatInput = document.getElementById('ai-chat-input');
                 const chatWindow = document.getElementById('ai-chat-window');
 
+                const updateDiagnosticsDOM = () => {
+                    const wrapper = document.getElementById('diagnostics-panel-wrapper');
+                    if (wrapper) {
+                        wrapper.innerHTML = renderDiagnostics();
+                    }
+                };
+
                 const sendMessage = () => {
                     const text = chatInput.value.trim();
                     if (!text) return;
@@ -742,9 +909,14 @@
 
                     if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
 
+                    // 1. Process and Learn from User Question
+                    if (typeof OnyxCognitive !== 'undefined') {
+                        OnyxCognitive.processInteraction(userStats.id, text);
+                    }
+
                     // Append Student Message
                     chatWindow.innerHTML += `
-                        <div class="chat-bubble student">
+                        <div class="chat-bubble student" style="align-self: flex-end; background: var(--primary); color: #fff; padding: 12px 15px; border-radius: 12px; font-size: 0.8rem; max-width: 80%; line-height: 1.5; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);">
                             ${text}
                         </div>
                     `;
@@ -766,7 +938,12 @@
                         } else if (query.includes('algoritmo') || query.includes('código')) {
                             rawAnswer = "Um Algoritmo é simplesmente uma receita de bolo passo-a-passo. É a ordem lógica de comandos que o computador segue cegamente para cozinhar um resultado final.";
                         } else {
-                            rawAnswer = "Essa é uma excelente pergunta conectada diretamente com as competências globais da BNCC. Pense neste conceito em escala do seu cotidiano escolar, imagine como ele atua no dia-a-dia e use nossos laboratórios digitais para colocar a mão na massa!";
+                            // Evolve dialogue dynamically using learned vocab & dominant interests!
+                            if (typeof OnyxCognitive !== 'undefined') {
+                                rawAnswer = OnyxCognitive.generateEvolvedBotResponse('TUTOR_ONYX');
+                            } else {
+                                rawAnswer = "Essa é uma excelente pergunta conectada diretamente com as competências globais da BNCC. Pense neste conceito em escala do seu cotidiano escolar, imagine como ele atua no dia-a-dia e use nossos laboratórios digitais para colocar a mão na massa!";
+                            }
                         }
 
                         // Apply simplifyText to inject neon highlight tags
@@ -777,20 +954,23 @@
 
                         const aiMsgId = 'ai-msg-' + Date.now();
                         chatWindow.innerHTML += `
-                            <div class="chat-bubble ai-tutor">
+                            <div class="chat-bubble ai-tutor" style="align-self: flex-start; background: rgba(255,255,255,0.03); border:1px solid var(--glass-border); color: #fff; padding: 12px 15px; border-radius: 12px; font-size: 0.8rem; max-width: 80%; border-left: 3px solid var(--accent); line-height: 1.5; display:flex; flex-direction:column; gap:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
                                 <div id="${aiMsgId}">${processedAnswer}</div>
-                                <div class="audio-narration-deck">
-                                    <button onclick="narrateSpeech('${aiMsgId}', 'waveform-${aiMsgId}')" class="btn-speech-trigger">🔊 OUVIR EXPLICAÇÃO</button>
-                                    <div class="waveform-anim" id="waveform-${aiMsgId}">
-                                        <div class="wave-bar"></div>
-                                        <div class="wave-bar"></div>
-                                        <div class="wave-bar"></div>
-                                        <div class="wave-bar"></div>
+                                <div class="audio-narration-deck" style="display:flex; align-items:center; gap:10px;">
+                                    <button onclick="narrateSpeech('${aiMsgId}', 'waveform-${aiMsgId}')" class="btn-speech-trigger" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:4px 10px; border-radius:6px; font-size:0.65rem; color:var(--accent); cursor:pointer; font-weight:800; transition:all 0.2s;">🔊 OUVIR EXPLICAÇÃO</button>
+                                    <div class="waveform-anim" id="waveform-${aiMsgId}" style="display:none; gap:2px; height:12px; align-items:center;">
+                                        <div class="wave-bar" style="width:2px; height:100%; background:var(--accent); animation: wave 1.2s ease-in-out infinite;"></div>
+                                        <div class="wave-bar" style="width:2px; height:60%; background:var(--accent); animation: wave 0.8s ease-in-out infinite;"></div>
+                                        <div class="wave-bar" style="width:2px; height:80%; background:var(--accent); animation: wave 1.0s ease-in-out infinite;"></div>
+                                        <div class="wave-bar" style="width:2px; height:40%; background:var(--accent); animation: wave 0.6s ease-in-out infinite;"></div>
                                     </div>
                                 </div>
                             </div>
                         `;
                         chatWindow.scrollTop = chatWindow.scrollHeight;
+                        
+                        // Update diagnostics panel in place!
+                        updateDiagnosticsDOM();
                     }, 700);
                 };
 
