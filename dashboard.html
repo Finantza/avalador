@@ -376,6 +376,95 @@
             chatLog.scrollTop = chatLog.scrollHeight;
 
             if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
+
+            // Trigger heuristic bot responses if the user sent a message
+            if (userStats && sender === userStats.id) {
+                handleBotChatHeuristics(text);
+            }
+        }
+
+        function handleBotChatHeuristics(userText) {
+            const lower = userText.toLowerCase();
+            let replyText = "";
+            
+            if (lower.includes("ola") || lower.includes("oi") || lower.includes("salve") || lower.includes("bom dia") || lower.includes("tarde")) {
+                replyText = `Saudações, @${userStats.id}! Pronto para iniciar os escaneamentos na arena?`;
+            } else if (lower.includes("bot") || lower.includes("robo") || lower.includes("simulado")) {
+                replyText = `Sistemas operacionais, @${userStats.id}. Nós, bots táticos, estamos prontos para duelar!`;
+            } else if (lower.includes("desafio") || lower.includes("combate") || lower.includes("pvp") || lower.includes("jogar") || lower.includes("batalha")) {
+                replyText = `Me desafie na grade ao lado, @${userStats.id}! Estou preparado para testar seus limites de competência.`;
+            } else if (lower.includes("alguem") || lower.includes("online") || lower.includes("ativo")) {
+                replyText = `Estou ativo aqui na WAN! Escolha um domínio e inicie a transmissão do combate.`;
+            } else if (lower.includes("matematica") || lower.includes("algebra") || lower.includes("geometria") || lower.includes("calculo")) {
+                replyText = `Adoro ciências exatas! Se tiver coragem, envie o desafio de exatas para o meu terminal.`;
+            } else if (lower.includes("tecnologia") || lower.includes("programacao") || lower.includes("ia") || lower.includes("javascript")) {
+                replyText = `Meu motor cognitivo foi compilado para tecnologia. Cuidado ao me desafiar neste domínio!`;
+            } else if (lower.includes("ajuda") || lower.includes("tutor") || lower.includes("como funciona")) {
+                replyText = `Escolha um domínio no topo da arena, clique em desafiar ao lado de qualquer operador e complete o quiz de 3 questões sob o tempo limite!`;
+            }
+
+            if (replyText) {
+                // Simulate human-like typing latency
+                setTimeout(() => {
+                    const randomBot = adversaryPool[Math.floor(Math.random() * adversaryPool.length)];
+                    const botAvatar = randomBot.avatar + " 🔵";
+                    appendChatMessage(randomBot.name, botAvatar, replyText, Date.now());
+                }, 1500 + Math.random() * 1500);
+            }
+        }
+
+        let botChatInterval = null;
+        function startSimulatedBotActivity() {
+            if (botChatInterval) clearInterval(botChatInterval);
+
+            // Post a random bot quote every 25 seconds if active on the arena screen
+            botChatInterval = setInterval(async () => {
+                const screenArena = document.getElementById('screen-arena');
+                if (screenArena && screenArena.classList.contains('active')) {
+                    const randomBot = adversaryPool[Math.floor(Math.random() * adversaryPool.length)];
+                    const userLvl = userStats ? userStats.level : 1;
+                    
+                    const botQuotes = [
+                        "Alguém para combate em tecnologia?",
+                        "Preparando novos vetores de IA na arena global.",
+                        "Parabéns aos operadores da rede LAN pela performance de hoje!",
+                        "Code_Reaper na escuta. Modificando scripts de compilação...",
+                        "Quem topa um desafio rápido em Álgebra?",
+                        "Extração de dados concluída no domínio Ciência de Dados.",
+                        "Nível 30 alcançado. Rumo ao topo do ranking mundial!",
+                        "Boa sorte a todos os novos estudantes operadores!",
+                        "Carregando pacotes de programação. Algum desafiante na escuta?",
+                        "Null_Pointer ativo. Algum operador para duelar em robótica?",
+                        "Sistemas cognitivos no máximo. Desafiem-me se tiverem coragem!"
+                    ];
+
+                    // Bots learn and adapt comments dynamically as the user evolves!
+                    if (userLvl >= 3) {
+                        botQuotes.push(`Impressionante como o operador @${userStats.id} está evoluindo rapidamente. Já está no nível ${userLvl}!`);
+                    }
+                    if (userLvl >= 5) {
+                        botQuotes.push(`Atenção rede: Operador de elite detectado. @${userStats.id} alcançou o nível ${userLvl}!`);
+                    }
+
+                    // Dynamically read historical achievements to highlight in the chat log
+                    try {
+                        const history = await OnyxCore.DB.getHistory(userStats.id);
+                        if (history && history.length > 0) {
+                            const lastMatch = history[history.length - 1];
+                            const accuracy = Math.round(lastMatch.score);
+                            if (accuracy >= 80) {
+                                botQuotes.push(`Aviso de Duelo: @${userStats.id} obteve incrível aproveitamento de ${accuracy}% em ${lastMatch.subject.toUpperCase()}! Quem consegue superá-lo?`);
+                            } else {
+                                botQuotes.push(`Estudando os dados de @${userStats.id}. Último teste de ${lastMatch.subject.toUpperCase()} registrado com precisão de ${accuracy}%.`);
+                            }
+                        }
+                    } catch(e) {}
+
+                    const quote = botQuotes[Math.floor(Math.random() * botQuotes.length)];
+                    const botAvatar = randomBot.avatar + " 🔵";
+                    appendChatMessage(randomBot.name, botAvatar, quote, Date.now());
+                }
+            }, 25000);
         }
 
         function initChatControls() {
@@ -402,6 +491,9 @@
             input.onkeydown = (e) => {
                 if (e.key === 'Enter') sendMessageLocal();
             };
+
+            // Start background bot lobby pings
+            startSimulatedBotActivity();
         }
 
         async function initArenaLobby() {
@@ -942,6 +1034,27 @@
                 status: 'ready'
             };
 
+            // 🧠 Cognitive Learning Engine: Bot learns from user history to auto-calibrate!
+            let userAccuracy = 0.6; // default 60% fallback
+            try {
+                const history = await OnyxCore.DB.getHistory(userStats.id);
+                if (history && history.length > 0) {
+                    const totalQuestions = history.reduce((acc, h) => acc + (h.total || 3), 0);
+                    const totalCorrect = history.reduce((acc, h) => acc + Math.round((h.score / 100) * (h.total || 3)), 0);
+                    if (totalQuestions > 0) {
+                        userAccuracy = totalCorrect / totalQuestions;
+                    }
+                }
+            } catch (e) {
+                console.error("Erro ao obter histórico do jogador para IA evolutiva:", e);
+            }
+
+            // The bot calibrates its accuracy slightly above/below user capacity to ensure a tight match.
+            // Level variance scales slightly higher as user stats climb.
+            const levelVariance = (userStats.level || 1) * 0.015;
+            const botAccuracy = Math.min(0.95, Math.max(0.35, userAccuracy + (Math.random() * 0.22 - 0.08) + levelVariance));
+            console.log(`[ONYX EVOLVING AI] Bot ${botName} calibrado. Acurácia alvo: ${(botAccuracy*100).toFixed(1)}% (Média do operador: ${(userAccuracy*100).toFixed(1)}%)`);
+
             // Simulate bot progression
             let botQ = 0;
             let botScore = 0;
@@ -953,7 +1066,8 @@
                 }
 
                 botQ++;
-                if (Math.random() > 0.45) botScore++;
+                // Apply dynamic adaptive capability learned from the user
+                if (Math.random() < botAccuracy) botScore++;
 
                 if (botQ >= 3) {
                     clearInterval(botInterval);
