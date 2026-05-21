@@ -202,10 +202,43 @@
                             </select>
                         </div>
                     </header>
-                    <div class="arena-grid" id="arena-lobby">
-                        <!-- Matches will appear here -->
-                        <div class="glass u-p-20 u-text-center">
-                            <p class="u-opacity-06">BUSCANDO OPERADORES ATIVOS...</p>
+                    <div class="u-grid-layout" style="grid-template-columns: 1fr 360px; gap: 30px; margin-bottom: 30px;">
+                        <div>
+                            <h3 class="u-font-header u-mb-15" style="font-size: 1rem; color: #fff; font-weight: 800; display: flex; align-items: center; gap: 10px; letter-spacing: 0.5px;">
+                                ⚔️ OPERADORES DISPONÍVEIS NA REDE
+                                <span class="status-dot pulse" style="background: var(--primary); width: 6px; height: 6px;"></span>
+                            </h3>
+                            <div class="arena-grid" id="arena-lobby" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+                                <!-- Matches will appear here -->
+                                <div class="glass u-p-20 u-text-center">
+                                    <p class="u-opacity-06">BUSCANDO OPERADORES ATIVOS...</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Global Terminal Chat Panel -->
+                        <div class="glass u-p-20" style="display: flex; flex-direction: column; height: 520px; border: 1px solid var(--glass-border); background: rgba(15, 23, 42, 0.45); border-radius: 20px;">
+                            <div class="u-flex-between u-mb-15" style="align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 12px;">
+                                <h4 class="u-font-header u-text-primary" style="font-size: 0.8rem; font-weight: 900; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;">
+                                    💬 TRANSMISSÕES GLOBAIS (WAN)
+                                </h4>
+                                <span class="status-dot pulse" style="background: var(--success); width: 6px; height: 6px;"></span>
+                            </div>
+                            
+                            <!-- Chat message log viewport -->
+                            <div id="arena-chat-log" style="flex: 1; overflow-y: auto; font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 10px; padding-right: 5px; margin-bottom: 15px;">
+                                <div style="color: var(--primary); font-style: italic; opacity: 0.8; line-height: 1.4;">
+                                    [ONYX SECURE]: Link global sincronizado. Suas mensagens serão transmitidas a todos os operadores conectados à Internet.
+                                </div>
+                            </div>
+                            
+                            <!-- Chat input bar -->
+                            <div style="display: flex; gap: 10px; border-top: 1px solid var(--glass-border); padding-top: 12px; align-items: center;">
+                                <input type="text" id="arena-chat-input" placeholder="Transmitir na rede..." style="flex: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); border-radius: 8px; padding: 12px; font-size: 0.75rem; color: #fff; font-family: var(--font-mono); transition: all 0.2s;" />
+                                <button id="btn-arena-chat-send" class="btn-onyx" style="padding: 10px 16px; font-size: 0.75rem; background: var(--primary); color: #fff; border: none; border-radius: 8px; font-weight: 800; cursor: pointer; transition: all 0.2s;">
+                                    ENVIAR
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -312,6 +345,62 @@
 
             OnyxNetwork.onBattleEnded = (battleData) => {
                 handleBattleFinished(battleData);
+            };
+
+            OnyxNetwork.onChatMessageReceived = (msg) => {
+                appendChatMessage(msg.sender, msg.avatar, msg.text, msg.timestamp);
+            };
+        }
+
+        function appendChatMessage(sender, avatar, text, timestamp) {
+            const chatLog = document.getElementById('arena-chat-log');
+            if (!chatLog) return;
+
+            const timeStr = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            
+            const msgEl = document.createElement('div');
+            msgEl.className = 'chat-log-line';
+            msgEl.style.lineHeight = '1.4';
+            msgEl.style.animation = 'fadeIn 0.2s';
+            
+            // Safe escape text to prevent HTML injection
+            const cleanText = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            
+            msgEl.innerHTML = `
+                <span style="color: var(--text-muted); font-size: 0.65rem;">[${timeStr}]</span>
+                <span style="color: var(--accent); font-weight: 800;">${avatar} ${sender}:</span>
+                <span style="color: #fff;">${cleanText}</span>
+            `;
+            
+            chatLog.appendChild(msgEl);
+            chatLog.scrollTop = chatLog.scrollHeight;
+
+            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
+        }
+
+        function initChatControls() {
+            const sendBtn = document.getElementById('btn-arena-chat-send');
+            const input = document.getElementById('arena-chat-input');
+
+            if (!sendBtn || !input) return;
+
+            const sendMessageLocal = () => {
+                const text = input.value;
+                if (!text || text.trim() === '') return;
+
+                // Send via network engine
+                OnyxNetwork.sendChatMessage(text);
+
+                // Add to own chat UI (since notify_self is disabled in WebSocket channel)
+                appendChatMessage(userStats.id, OnyxNetwork.avatar, text, Date.now());
+
+                // Clear input
+                input.value = '';
+            };
+
+            sendBtn.onclick = sendMessageLocal;
+            input.onkeydown = (e) => {
+                if (e.key === 'Enter') sendMessageLocal();
             };
         }
 
@@ -980,6 +1069,7 @@
             if (typeof OnyxNetwork !== 'undefined') {
                 await OnyxNetwork.init(userStats.id, userStats.level, '👤');
                 setupNetworkListeners();
+                initChatControls();
             }
 
             document.getElementById('logged-user-name').textContent = userStats.id;

@@ -28,18 +28,31 @@ window.OnyxNetwork = {
     async init(username, level, avatar) {
         this.username = username;
         this.level = level;
-        this.avatar = avatar || '👤';
+        
+        // Helper to turn country code into flag emoji
+        function getFlagEmoji(countryCode) {
+            if (!countryCode || countryCode.length !== 2) return '🇧🇷';
+            const codePoints = countryCode
+                .toUpperCase()
+                .split('')
+                .map(char => 127397 + char.charCodeAt(0));
+            return String.fromCodePoint(...codePoints);
+        }
 
-        // 1. Try to fetch public IP for LAN/WAN detection
+        // 1. Try to fetch public IP and Country Geolocation for LAN/WAN detection and Flags
         try {
-            const res = await fetch('https://api.ipify.org?format=json');
+            const res = await fetch('https://ipapi.co/json/');
             const data = await res.json();
-            this.publicIp = data.ip;
-            console.log(`[ONYX NET] IP Público detectado: ${this.publicIp}`);
+            this.publicIp = data.ip || '127.0.0.1';
+            this.countryCode = data.country_code || 'BR';
+            this.countryName = data.country_name || 'Brasil';
+            this.avatar = getFlagEmoji(this.countryCode) + ' ' + (avatar || '👤');
+            console.log(`[ONYX NET] IP: ${this.publicIp}, País: ${this.countryName}, Avatar: ${this.avatar}`);
         } catch (e) {
-            console.warn('[ONYX NET] Falha ao obter IP público. Usando fallback de rede local.', e);
-            // Fallback random local IP style
-            this.publicIp = '192.168.1.' + Math.floor(Math.random() * 254 + 1);
+            console.warn('[ONYX NET] Falha ao obter geolocalização. Usando dados padrão.', e);
+            this.publicIp = '127.0.0.1';
+            this.countryCode = 'BR';
+            this.avatar = '🇧🇷 ' + (avatar || '👤');
         }
 
         // 2. Initialize local BroadcastChannel (cross-tab sync)
@@ -183,6 +196,12 @@ window.OnyxNetwork = {
 
             case 'cancel_battle':
                 this.handleBattleCancelled(msg);
+                break;
+
+            case 'chat':
+                if (this.onChatMessageReceived) {
+                    this.onChatMessageReceived(msg);
+                }
                 break;
         }
     },
@@ -442,5 +461,20 @@ window.OnyxNetwork = {
         if (this.onBattleEnded) {
             this.onBattleEnded(endedBattle);
         }
+    },
+
+    /**
+     * Broadcast a global chat transmission to the lobby
+     */
+    sendChatMessage(text) {
+        if (!text || text.trim() === '') return;
+        const payload = {
+            type: 'chat',
+            sender: this.username,
+            avatar: this.avatar,
+            text: text.trim(),
+            timestamp: Date.now()
+        };
+        this.sendMessage(payload);
     }
 };
