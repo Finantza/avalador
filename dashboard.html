@@ -437,13 +437,13 @@
                             </select>
                         </div>
                     </header>
-                    <div class="u-grid-layout" style="grid-template-columns: 1fr 360px; gap: 30px; margin-bottom: 30px;">
+                    <div class="u-grid-layout arena-grid-layout">
                         <div>
-                            <h3 class="u-font-header u-mb-15" style="font-size: 1rem; color: #fff; font-weight: 800; display: flex; align-items: center; gap: 10px; letter-spacing: 0.5px;">
+                            <h3 class="u-font-header u-mb-15 arena-section-title">
                                 ⚔️ OPERADORES DISPONÍVEIS NA REDE
-                                <span class="status-dot pulse" style="background: var(--primary); width: 6px; height: 6px;"></span>
+                                <span class="status-dot pulse status-dot-primary"></span>
                             </h3>
-                            <div class="arena-grid" id="arena-lobby" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+                            <div class="arena-grid arena-grid-lobby-custom" id="arena-lobby">
                                 <!-- Matches will appear here -->
                                 <div class="glass u-p-20 u-text-center">
                                     <p class="u-opacity-06">BUSCANDO OPERADORES ATIVOS...</p>
@@ -452,25 +452,25 @@
                         </div>
                         
                         <!-- Global Terminal Chat Panel -->
-                        <div class="glass u-p-20" style="display: flex; flex-direction: column; height: 520px; border: 1px solid var(--glass-border); background: rgba(15, 23, 42, 0.45); border-radius: 20px;">
-                            <div class="u-flex-between u-mb-15" style="align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 12px;">
-                                <h4 class="u-font-header u-text-primary" style="font-size: 0.8rem; font-weight: 900; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;">
+                        <div class="glass u-p-20 arena-chat-panel">
+                            <div class="u-flex-between u-mb-15 arena-chat-header">
+                                <h4 class="u-font-header u-text-primary arena-chat-title">
                                     💬 TRANSMISSÕES GLOBAIS (WAN)
                                 </h4>
-                                <span class="status-dot pulse" style="background: var(--success); width: 6px; height: 6px;"></span>
+                                <span class="status-dot pulse status-dot-success"></span>
                             </div>
                             
                             <!-- Chat message log viewport -->
-                            <div id="arena-chat-log" style="flex: 1; overflow-y: auto; font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 10px; padding-right: 5px; margin-bottom: 15px;">
-                                <div style="color: var(--primary); font-style: italic; opacity: 0.8; line-height: 1.4;">
+                            <div id="arena-chat-log" class="arena-chat-log-viewport">
+                                <div class="arena-chat-system-msg">
                                     [ONYX SECURE]: Link global sincronizado. Suas mensagens serão transmitidas a todos os operadores conectados à Internet.
                                 </div>
                             </div>
                             
                             <!-- Chat input bar -->
-                            <div style="display: flex; gap: 10px; border-top: 1px solid var(--glass-border); padding-top: 12px; align-items: center;">
-                                <input type="text" id="arena-chat-input" placeholder="Transmitir na rede..." style="flex: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); border-radius: 8px; padding: 12px; font-size: 0.75rem; color: #fff; font-family: var(--font-mono); transition: all 0.2s;" />
-                                <button id="btn-arena-chat-send" class="btn-onyx" style="padding: 10px 16px; font-size: 0.75rem; background: var(--primary); color: #fff; border: none; border-radius: 8px; font-weight: 800; cursor: pointer; transition: all 0.2s;">
+                            <div class="arena-chat-input-bar">
+                                <input type="text" id="arena-chat-input" placeholder="Transmitir na rede..." class="arena-chat-input-field" />
+                                <button id="btn-arena-chat-send" class="btn-onyx arena-chat-send-btn">
                                     ENVIAR
                                 </button>
                             </div>
@@ -1436,9 +1436,43 @@
             const userRole = userStats.role || 'aluno';
             const roleEl = document.getElementById('logged-user-role');
             if (roleEl) {
-                roleEl.innerHTML = userRole === 'gestor' 
-                    ? `<span style="color:var(--accent); font-weight:800;">💼 GESTOR DO SISTEMA</span>` 
-                    : `<span style="color:var(--primary); font-weight:800;">🎒 ESTUDANTE</span>`;
+                if (userStats.id === 'OPERADOR MÓVEL') {
+                    roleEl.innerHTML = `<span style="color:var(--success); font-weight:800;">📱 PERFIL MÓVEL ATIVO</span>`;
+                } else {
+                    roleEl.innerHTML = userRole === 'gestor' 
+                        ? `<span style="color:var(--accent); font-weight:800;">💼 GESTOR DO SISTEMA</span>` 
+                        : `<span style="color:var(--primary); font-weight:800;">🎒 ESTUDANTE</span>`;
+                }
+            }
+
+            // Exibir mensagem de boas-vindas exclusiva do perfil móvel uma vez por sessão
+            if (userStats.id === 'OPERADOR MÓVEL' && !sessionStorage.getItem('onyx_mobile_welcome')) {
+                sessionStorage.setItem('onyx_mobile_welcome', 'true');
+                setTimeout(() => {
+                    openOverlay("CONEXÃO PORTÁTIL CONFIGURADA", `
+                        <div class="u-p-20 u-text-center">
+                            <div style="font-size: 3rem; margin-bottom: 15px; filter: drop-shadow(0 0 10px var(--primary));">📱</div>
+                            <h2 class="u-font-header u-text-primary" style="font-weight:900; font-size:1.4rem;">BEM-VINDO AO ONYX MOBILE</h2>
+                            <p class="u-text-muted u-mt-10" style="line-height: 1.6; font-size:0.85rem;">
+                                O sistema detectou que você está acessando a plataforma através de um <strong style="color:#fff;">smartphone ou tablet</strong>.
+                            </p>
+                            <div class="glass u-p-15 u-mt-15 u-mb-20" style="border: 1px solid var(--glass-border); border-radius: 8px; text-align: left; background: rgba(255,255,255,0.02);">
+                                <p class="u-font-08" style="color: var(--accent); font-weight:800; margin: 0 0 8px 0;">⚙️ AJUSTES APLICADOS:</p>
+                                <ul style="margin: 0; padding: 0 0 0 15px; font-size: 0.75rem; color: rgba(255,255,255,0.85); line-height: 1.6;">
+                                    <li>Perfil de operador móvel autenticado automaticamente.</li>
+                                    <li>Interface adaptativa compacta ativa.</li>
+                                    <li>Rolagem otimizada para telas sensíveis ao toque.</li>
+                                    <li>Performance gráfica calibrada.</li>
+                                </ul>
+                            </div>
+                            <button onclick="closeOverlay()" class="btn-onyx btn-primary u-w-full" style="padding:12px;">INICIAR OPERAÇÃO</button>
+                        </div>
+                    `);
+                    if (typeof OnyxUI !== 'undefined') {
+                        OnyxUI.playFeedback('success');
+                        OnyxUI.addReasoningLog("AJUSTES DE DISPOSITIVO: Exibindo painel móvel otimizado.");
+                    }
+                }, 800);
             }
 
             // Centralized profile permission toggler

@@ -255,8 +255,42 @@
             } else {
                 await OnyxCore.DB.init();
             }
-            if (OnyxCore.Session.getCurrentUser()) {
+            
+            const currentUser = OnyxCore.Session.getCurrentUser();
+            if (currentUser) {
                 location.href = 'dashboard.html';
+                return;
+            }
+
+            // Check if device is mobile or tablet (Standard check + responsive breakpoint)
+            const isMobileOrTablet = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+                || (window.innerWidth <= 1024);
+
+            // Bypasses auto-login if they explicitly pressed 'Logout'
+            const hasManualLogout = localStorage.getItem('onyx_manual_logout') === 'true';
+
+            if (isMobileOrTablet && !hasManualLogout) {
+                const mobileUser = 'OPERADOR MÓVEL';
+                showMsg("APARELHO PORTÁTIL DETECTADO. CARREGANDO PERFIL...", false);
+                
+                // Start Boot Sequence for Mobile
+                bootOverlay.classList.add('active');
+                const bootSteps = [
+                    "INICIALIZANDO NÚCLEO PORTÁTIL ONYX...",
+                    "DISPOSITIVO MÓVEL/TABLET DETECTADO",
+                    "AUTENTICANDO PERFIL AUTOMÁTICO: OPERADOR MÓVEL...",
+                    "ESTABELECENDO CANAL SEGURO DE DADOS...",
+                    "SESSÃO DE ACESSO INICIADA."
+                ];
+                
+                let htmlContent = "";
+                for(let i=0; i<bootSteps.length; i++) {
+                    htmlContent += `<div>> ${bootSteps[i]}</div>`;
+                    bootOverlay.innerHTML = htmlContent;
+                    await new Promise(r => setTimeout(r, 600));
+                }
+                
+                setTimeout(() => OnyxCore.Session.login(mobileUser), 500);
             }
         };
     </script>

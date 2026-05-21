@@ -1424,5 +1424,117 @@ body.onyx-hidpi .glass {
     transform: translateY(-4px);
 }
 
+/* =========================================================================
+   CLEAN ARENA STYLING / ANTI-INLINE DEPRECATION SUITE
+   ========================================================================= */
+
+.arena-grid-layout {
+    grid-template-columns: 1fr 360px;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.arena-section-title {
+    font-size: 1rem;
+    color: #fff;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: 0.5px;
+}
+
+.status-dot-primary {
+    background: var(--primary);
+    width: 6px;
+    height: 6px;
+}
+
+.arena-grid-lobby-custom {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.arena-chat-panel {
+    display: flex;
+    flex-direction: column;
+    height: 520px;
+    border: 1px solid var(--glass-border);
+    background: rgba(15, 23, 42, 0.45);
+    border-radius: 20px;
+}
+
+.arena-chat-header {
+    align-items: center;
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 12px;
+}
+
+.arena-chat-title {
+    font-size: 0.8rem;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-dot-success {
+    background: var(--success);
+    width: 6px;
+    height: 6px;
+}
+
+.arena-chat-log-viewport {
+    flex: 1;
+    overflow-y: auto;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-right: 5px;
+    margin-bottom: 15px;
+}
+
+.arena-chat-system-msg {
+    color: var(--primary);
+    font-style: italic;
+    opacity: 0.8;
+    line-height: 1.4;
+}
+
+.arena-chat-input-bar {
+    display: flex;
+    gap: 10px;
+    border-top: 1px solid var(--glass-border);
+    padding-top: 12px;
+    align-items: center;
+}
+
+.arena-chat-input-field {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 0.75rem;
+    color: #fff;
+    font-family: var(--font-mono);
+    transition: all 0.2s;
+}
+
+.arena-chat-send-btn {
+    padding: 10px 16px;
+    font-size: 0.75rem;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
 
 

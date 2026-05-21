@@ -254,39 +254,39 @@
         <!-- Modern Horizontal Console Header -->
         <header class="console-header">
             <div class="sidebar-branding" onclick="location.href='dashboard.html'" title="Voltar ao Dashboard">
-                <div class="ai-logo-sphere" style="animation: pulseSphere 2.5s infinite;">🧠</div>
+                <div class="ai-logo-sphere header-logo-sphere">🧠</div>
                 <div>
-                    <h3 style="margin:0; font-family:var(--font-header); font-size:1.15rem; color:#fff; font-weight:800; letter-spacing:0.5px; line-height:1.2;">ONYX AI</h3>
-                    <span class="u-text-accent u-font-07" style="font-family:var(--font-mono); font-weight:900; letter-spacing:0.5px; text-transform:uppercase;">Copiloto Adaptativo</span>
+                    <h3 class="header-title">ONYX AI</h3>
+                    <span class="u-text-accent u-font-07 header-subtitle">Copiloto Adaptativo</span>
                 </div>
             </div>
 
             <!-- Tab Buttons Row -->
-            <nav class="ai-menu-list" style="margin: 0; display:flex; gap:6px;">
-                <button class="ai-menu-item active" data-tab="tab-planos" style="padding:10px 14px; font-size:0.8rem;">
+            <nav class="ai-menu-list nav-menu-list">
+                <button class="ai-menu-item active tab-btn-custom" data-tab="tab-planos">
                     <span class="nav-icon-lg">📝</span> Planos de Aula
                 </button>
-                <button class="ai-menu-item" data-tab="tab-simulados" style="padding:10px 14px; font-size:0.8rem;">
+                <button class="ai-menu-item tab-btn-custom" data-tab="tab-simulados">
                     <span class="nav-icon-lg">✍️</span> Simulados ENEM
                 </button>
-                <button class="ai-menu-item" data-tab="tab-redacao" style="padding:10px 14px; font-size:0.8rem;">
+                <button class="ai-menu-item tab-btn-custom" data-tab="tab-redacao">
                     <span class="nav-icon-lg">🖋️</span> Redação Nota 1000
                 </button>
-                <button class="ai-menu-item" data-tab="tab-study-buddy" style="padding:10px 14px; font-size:0.8rem;">
+                <button class="ai-menu-item tab-btn-custom" data-tab="tab-study-buddy">
                     <span class="nav-icon-lg">💬</span> Study Buddy Chat
                 </button>
             </nav>
         </header>
 
         <!-- Main Workspace Deck (Centered Full Width Panel) -->
-        <main class="ai-viewport" style="min-height: 600px;">
+        <main class="ai-viewport main-viewport-custom">
             <!-- Header User Profile Info Bar (Ultra Clean) -->
-            <div class="u-flex-between" style="align-items:center; border-bottom:1px solid var(--glass-border); padding-bottom:15px; margin-bottom:10px; flex-wrap:wrap; gap:10px;">
+            <div class="u-flex-between user-info-bar">
                 <div>
-                    <span class="u-font-06 u-text-muted" style="font-weight:800; letter-spacing:0.5px; text-transform:uppercase; display:block;">CONEXÃO INTELIGENTE ATIVA</span>
-                    <span id="logged-user-name" style="font-family:var(--font-header); color:#fff; font-weight:bold; font-size:0.9rem;">...</span>
+                    <span class="u-font-06 u-text-muted active-connection-lbl">CONEXÃO INTELIGENTE ATIVA</span>
+                    <span id="logged-user-name" class="user-name-display">...</span>
                 </div>
-                <div class="academic-badge" style="background:rgba(0, 240, 255, 0.1); border:1px solid rgba(0, 240, 255, 0.2); color:var(--primary); font-weight:900; font-family:var(--font-mono); font-size:0.7rem; padding:5px 12px; border-radius:20px; text-transform:uppercase; letter-spacing:0.5px;">
+                <div class="academic-badge cognitive-badge-custom">
                     💎 NÚCLEO COGNITIVO ONLINE
                 </div>
             </div>
@@ -310,40 +310,40 @@
 
     <!-- Welcome Tour Modal (UX Optimization) -->
     <div id="ux-tour-modal" class="modal-glass-hint">
-        <div class="modal-hint-box" style="max-width: 520px; border-color: var(--primary); box-shadow: 0 0 35px var(--primary-glow); text-align: left; transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);">
-            <div style="display:flex; align-items:center; gap:15px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:15px; margin-bottom:15px;">
-                <div class="ai-logo-sphere" style="width:40px; height:40px;">🧠</div>
+        <div class="modal-hint-box tour-modal-box">
+            <div class="tour-header">
+                <div class="ai-logo-sphere tour-sphere">🧠</div>
                 <div>
-                    <h3 style="margin:0; font-family:var(--font-header); color:#fff; font-size:1.1rem; letter-spacing:0.5px;">CONEXÃO COGNITIVA ESTABELECIDA</h3>
-                    <span style="font-size:0.65rem; color:var(--primary); font-family:var(--font-mono); font-weight:800; letter-spacing:1px; text-transform:uppercase;">Guia de Sobrevivência Pedagógica Onyx</span>
+                    <h3 class="tour-title">CONEXÃO COGNITIVA ESTABELECIDA</h3>
+                    <span class="tour-subtitle">Guia de Sobrevivência Pedagógica Onyx</span>
                 </div>
             </div>
-            <div style="font-size:0.78rem; color:var(--text-main); line-height:1.6; display:flex; flex-direction:column; gap:12px;">
-                <p style="margin:0; color:var(--text-muted);">Bem-vindo ao portal autônomo da rede **Onyx Cognitive**. Aqui estão as principais ferramentas integradas ao seu desempenho:</p>
-                <div style="display:flex; gap:12px; align-items:flex-start; background:rgba(255,255,255,0.01); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.02);">
-                    <span style="background:var(--primary-glow); color:var(--primary); font-weight:bold; font-family:var(--font-mono); padding:2px 8px; border-radius:4px; font-size:0.7rem; margin-top:2px;">01</span>
+            <div class="tour-body">
+                <p class="tour-welcome-p">Bem-vindo ao portal autônomo da rede **Onyx Cognitive**. Aqui estão as principais ferramentas integradas ao seu desempenho:</p>
+                <div class="tour-item">
+                    <span class="tour-step-badge tour-badge-primary">01</span>
                     <div>
-                        <strong style="color:#fff; display:block; margin-bottom:2px;">TUTOR STUDY BUDDY CHAT</strong>
+                        <strong class="tour-item-title">TUTOR STUDY BUDDY CHAT</strong>
                         Tire dúvidas sobre temas BNCC. Termos sublinhados com linha pontilhada podem ser clicados para revelar explicações simplificadas.
                     </div>
                 </div>
-                <div style="display:flex; gap:12px; align-items:flex-start; background:rgba(255,255,255,0.01); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.02);">
-                    <span style="background:var(--accent-glow); color:var(--accent); font-weight:bold; font-family:var(--font-mono); padding:2px 8px; border-radius:4px; font-size:0.7rem; margin-top:2px;">02</span>
+                <div class="tour-item">
+                    <span class="tour-step-badge tour-badge-accent">02</span>
                     <div>
-                        <strong style="color:#fff; display:block; margin-bottom:2px;">LABORATÓRIO DE REDAÇÃO</strong>
+                        <strong class="tour-item-title">LABORATÓRIO DE REDAÇÃO</strong>
                         Submeta dissertações em tempo real e receba relatórios analíticos segmentados nas 5 Competências oficiais do ENEM.
                     </div>
                 </div>
-                <div style="display:flex; gap:12px; align-items:flex-start; background:rgba(255,255,255,0.01); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.02);">
-                    <span style="background:rgba(192,132,252,0.15); color:#c084fc; font-weight:bold; font-family:var(--font-mono); padding:2px 8px; border-radius:4px; font-size:0.7rem; margin-top:2px;">03</span>
+                <div class="tour-item">
+                    <span class="tour-step-badge tour-badge-purple">03</span>
                     <div>
-                        <strong style="color:#fff; display:block; margin-bottom:2px;">COMPILADOR DE SIMULADOS</strong>
+                        <strong class="tour-item-title">COMPILADOR DE SIMULADOS</strong>
                         Gere exames procedurais customizados. Ao acionar o simulado, a tela expande para oferecer o máximo de conforto na leitura.
                     </div>
                 </div>
             </div>
-            <div style="margin-top:20px; display:flex; justify-content:flex-end;">
-                <button id="btn-close-tour" class="btn-onyx-premium" style="padding:10px 22px; font-size:0.75rem; border-radius:8px; border-color:var(--primary); font-weight:800;">
+            <div class="tour-footer">
+                <button id="btn-close-tour" class="btn-onyx-premium tour-close-btn">
                     INICIAR JORNADA COGNITIVA 🚀
                 </button>
             </div>
@@ -381,10 +381,15 @@
             }
 
             const userRole = userStats.role || 'aluno';
-            document.getElementById('logged-user-name').innerHTML = userStats.id.toUpperCase() + 
-                (userRole === 'gestor' 
-                    ? ` <span style="color:var(--accent); font-size:0.7rem; font-weight:800; font-family:var(--font-mono);">[GESTOR]</span>` 
-                    : ` <span style="color:var(--primary); font-size:0.7rem; font-weight:800; font-family:var(--font-mono);">[ESTUDANTE]</span>`);
+            if (userStats.id === 'OPERADOR MÓVEL') {
+                document.getElementById('logged-user-name').innerHTML = userStats.id.toUpperCase() + 
+                    ` <span style="color:var(--success); font-size:0.7rem; font-weight:800; font-family:var(--font-mono);">[DISPOSITIVO MÓVEL]</span>`;
+            } else {
+                document.getElementById('logged-user-name').innerHTML = userStats.id.toUpperCase() + 
+                    (userRole === 'gestor' 
+                        ? ` <span style="color:var(--accent); font-size:0.7rem; font-weight:800; font-family:var(--font-mono);">[GESTOR]</span>` 
+                        : ` <span style="color:var(--primary); font-size:0.7rem; font-weight:800; font-family:var(--font-mono);">[ESTUDANTE]</span>`);
+            }
 
             // Set up sidebar tabs
             document.querySelectorAll('.ai-menu-item').forEach(btn => {

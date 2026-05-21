@@ -59,6 +59,8 @@ window.OnyxCore = {
                 store.put({ id: 'aluno', password: '1234', level: 1, xp: 0, role: 'aluno' });
                 // Usuário de testes: Gestor
                 store.put({ id: 'gestor', password: '1234', level: 5, xp: 150, role: 'gestor' });
+                // Usuário de testes: Mobile/Tablet
+                store.put({ id: 'OPERADOR MÓVEL', password: '1234', level: 1, xp: 0, role: 'aluno' });
                 // Fallback anterior
                 store.put({ id: 'OPERADOR TESTE', password: '1234', level: 1, xp: 0, role: 'aluno' });
             } catch(e) {}
@@ -249,10 +251,12 @@ window.OnyxCore = {
     Session: {
         login(user) {
             localStorage.setItem('onyx_active_user', user);
+            localStorage.removeItem('onyx_manual_logout');
             window.location.href = 'dashboard.html';
         },
         logout() {
             localStorage.removeItem('onyx_active_user');
+            localStorage.setItem('onyx_manual_logout', 'true');
             window.location.href = 'index.html';
         },
         getCurrentUser() {
