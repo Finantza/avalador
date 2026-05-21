@@ -379,9 +379,18 @@ window.OnyxCore = {
 // GLOBAL ANTI-CHEAT SYSTEM (ONYX PROTOCOL SECURITY)
 // =========================================================================
 (function() {
+    let penaltyTriggered = false;
+
     async function triggerGlobalCheatPenalty(reason) {
+        if (penaltyTriggered) return;
+        penaltyTriggered = true;
+
         const user = localStorage.getItem('onyx_active_user');
-        if (!user) return;
+        if (!user) {
+            alert(`⚠️ [SEGURANÇA GLOBAL ONYX] Ação Bloqueada / Acesso Não Autorizado (${reason})!`);
+            window.location.reload();
+            return;
+        }
         
         try {
             await OnyxCore.DB.init();
@@ -392,7 +401,7 @@ window.OnyxCore = {
                 }
                 stats.xp = 0; // Reset current level XP to 0 as penalty
                 await OnyxCore.DB.saveUser(stats);
-                alert(`⚠️ [SEGURANÇA GLOBAL ONYX] Tentativa de ver o código detectada (${reason})! Você violou as diretrizes do protocolo. Penalidade aplicada: -1 Nível.`);
+                alert(`⚠️ [SEGURANÇA GLOBAL ONYX] Tentativa de ver o código ou copiar/recortar detectada (${reason})! Você violou as diretrizes do protocolo. Penalidade aplicada: -1 Nível.`);
             }
         } catch (err) {
             console.error("[ANTI-CHEAT GLOBAL] Erro ao aplicar penalidade:", err);
@@ -402,27 +411,103 @@ window.OnyxCore = {
 
     // 1. Context Menu Blocker (Right Click)
     document.addEventListener('contextmenu', (e) => {
-        const user = localStorage.getItem('onyx_active_user');
-        if (!user) return;
-        
         e.preventDefault();
+        e.stopPropagation();
         triggerGlobalCheatPenalty('Clique Direito / Inspecionar');
     });
 
-    // 2. Keyboard Shortcuts Blocker (F12, Inspect, View Source)
+    // 2. Keyboard Shortcuts Blocker (F12, Inspect, View Source, Copy, Paste, Cut, Print, Save)
     document.addEventListener('keydown', (e) => {
-        const user = localStorage.getItem('onyx_active_user');
-        if (!user) return;
-
         const isF12 = e.key === 'F12' || e.keyCode === 123;
-        const isInspectCombos = e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c');
-        const isViewSource = e.ctrlKey && (e.key === 'U' || e.key === 'u');
+        const hasModifier = e.ctrlKey || e.metaKey; // Ctrl on Windows/Linux, Cmd on Mac
         
-        if (isF12 || isInspectCombos || isViewSource) {
+        // Inspecting combos
+        const isInspectI = hasModifier && e.shiftKey && (e.key === 'I' || e.key === 'i');
+        const isInspectJ = hasModifier && e.shiftKey && (e.key === 'J' || e.key === 'j');
+        const isInspectC = hasModifier && e.shiftKey && (e.key === 'C' || e.key === 'c');
+        const isViewSource = hasModifier && (e.key === 'U' || e.key === 'u');
+        
+        // Copy/Paste/Cut shortcuts
+        const isCopy = hasModifier && (e.key === 'C' || e.key === 'c');
+        const isPaste = hasModifier && (e.key === 'V' || e.key === 'v');
+        const isCut = hasModifier && (e.key === 'X' || e.key === 'x');
+        
+        // Save and Print shortcuts
+        const isSave = hasModifier && (e.key === 'S' || e.key === 's');
+        const isPrint = hasModifier && (e.key === 'P' || e.key === 'p');
+
+        if (isF12 || isInspectI || isInspectJ || isInspectC || isViewSource || isCopy || isPaste || isCut || isSave || isPrint) {
             e.preventDefault();
-            triggerGlobalCheatPenalty('Atalhos de Desenvolvedor');
+            e.stopPropagation();
+            triggerGlobalCheatPenalty('Atalho de Teclado Bloqueado');
         }
     });
+
+    // 3. Document Copy, Paste, Cut Events Blocker
+    document.addEventListener('copy', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        triggerGlobalCheatPenalty('Copiar Conteúdo');
+    });
+
+    document.addEventListener('paste', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        triggerGlobalCheatPenalty('Colar Conteúdo');
+    });
+
+    document.addEventListener('cut', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        triggerGlobalCheatPenalty('Recortar Conteúdo');
+    });
+
+    // 4. Block Text Selection (Makes it impossible to highlight code/text)
+    document.addEventListener('selectstart', (e) => {
+        e.preventDefault();
+    });
+
+    // 5. Block Dragging (Prevents dragging elements/images to desktop/inspect)
+    document.addEventListener('dragstart', (e) => {
+        e.preventDefault();
+    });
+
+    // 6. Advanced DevTools Console Countermeasure
+    try {
+        let devtoolsDetector = new Image();
+        Object.defineProperty(devtoolsDetector, 'id', {
+            get: function() {
+                triggerGlobalCheatPenalty('Invasão de Console de Desenvolvedor');
+            }
+        });
+        setInterval(() => {
+            console.log('%c', devtoolsDetector);
+            console.clear();
+        }, 1000);
+    } catch (e) {}
+
+    // 7. Advanced DevTools Window Mismatch Detector (Docked DevTools)
+    setInterval(() => {
+        const threshold = 160;
+        const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+        const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+        if (widthThreshold || heightThreshold) {
+            triggerGlobalCheatPenalty('Painel de Desenvolvimento Lateral/Inferior Aberto');
+        }
+    }, 1000);
+
+    // 8. Infinite debugger loops when devtools are active
+    (function() {
+        function checkDevToolsPause() {
+            const startTime = performance.now();
+            debugger;
+            const endTime = performance.now();
+            if (endTime - startTime > 100) {
+                triggerGlobalCheatPenalty('Depurador de Código / Breakpoint Ativo');
+            }
+        }
+        setInterval(checkDevToolsPause, 1000);
+    })();
 })();
 
 // =========================================================================

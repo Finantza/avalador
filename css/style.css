@@ -54,6 +54,17 @@ body {
     overflow-x: hidden;
     min-height: 100vh;
     animation: fadeInPage 0.8s var(--transition-premium);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+input, textarea {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
 }
 
 @keyframes fadeInPage {
