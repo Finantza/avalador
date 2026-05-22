@@ -1031,7 +1031,104 @@ window.OnyxEngines = {
                 concept = "Acessibilidade Escolar Digital";
                 explanation = `Para garantir uma escola digital plenamente inclusiva, o recurso de "${item.t}" atua para: ${item.d}.`;
                 hint = "Pense em normas WCAG de contraste de cores, descrição textual de mídias ou formatos flexíveis de engajamento pedagógico.";
+            } else if (sub === 'engenharia_software') {
+                const swTerms = [
+                    { t: 'Princípio da Responsabilidade Única (SRP)', d: 'cada classe ou módulo deve ter apenas uma razão para mudar, reduzindo acoplamento e facilitando manutenção' },
+                    { t: 'Padrão de Projeto Strategy', d: 'encapsulamento de famílias de algoritmos intercambiáveis em classes separadas, permitindo troca em tempo de execução' },
+                    { t: 'Test-Driven Development (TDD)', d: 'metodologia onde testes automatizados são escritos antes do código de produção, guiando o design por ciclos Red-Green-Refactor' },
+                    { t: 'Microsserviços (Microservices)', d: 'arquitetura que decompõe o sistema em serviços pequenos e independentes comunicando-se por APIs, melhorando escalabilidade e resiliência' },
+                    { t: 'Integração Contínua (CI/CD)', d: 'prática de integrar código frequentemente em pipeline automatizado com build, testes e deploy contínuo, reduzindo riscos de integração' },
+                    { t: 'Débito Técnico (Technical Debt)', d: 'custo implícito de retrabalho gerado por soluções rápidas e mal estruturadas que exigirão refatoração futura' }
+                ];
+                const item = swTerms[Math.floor(Math.random() * swTerms.length)];
+                q = `Na Engenharia de Software contemporânea, qual é a definição precisa e a aplicação prática do conceito de "${item.t}"?`;
+                a = item.d;
+                d = [`A remoção completa de documentação técnica para agilizar o processo de deploy`, `A utilização exclusiva de linguagens compiladas em detrimento de interpretadas`, `A proibição de atualizações incrementais em favor de reescritas totais do sistema`];
+                concept = `Engenharia de Software — ${item.t}`;
+                explanation = `${item.t} refere-se a: ${item.d}. É um princípio fundamental para sistemas escaláveis e manuteníveis.`;
+                hint = `Analise o impacto do conceito no ciclo de vida do software e na qualidade do código.`;
+            } else if (sub === 'redes_computadores') {
+                const netTerms = [
+                    { t: 'Protocolo TCP (Transmission Control Protocol)', d: 'protocolo orientado a conexão que garante entrega confiável e ordenada de pacotes usando handshaking de três vias e controle de fluxo' },
+                    { t: 'Roteamento por Estado de Link (OSPF)', d: 'algoritmo de roteamento dinâmico que constrói mapa completo da topologia e usa Dijkstra para calcular caminhos de menor custo' },
+                    { t: 'NAT (Network Address Translation)', d: 'técnica que mapeia múltiplos endereços IP privados para um único IP público, conservando o espaço de endereçamento IPv4' },
+                    { t: 'TLS/SSL Handshake', d: 'processo de negociação criptográfica que estabelece chaves de sessão simétricas usando criptografia assimétrica, garantindo confidencialidade e autenticidade' },
+                    { t: 'SDN (Software Defined Networking)', d: 'arquitetura que separa o plano de controle do plano de dados, centralizando a inteligência de roteamento em controladores programáveis' },
+                    { t: 'Modelo OSI — Camada de Rede', d: 'camada responsável pelo endereçamento lógico (IP), roteamento entre redes diferentes e fragmentação de pacotes' }
+                ];
+                const item = netTerms[Math.floor(Math.random() * netTerms.length)];
+                q = `No estudo avançado de Redes de Computadores, qual é a definição técnica e a função operacional de "${item.t}"?`;
+                a = item.d;
+                d = [`O protocolo que define apenas o formato visual de páginas web estáticas`, `A camada exclusiva de autenticação biométrica de dispositivos na borda da rede`, `O mecanismo de armazenamento local de dados em cache de discos SSD`];
+                concept = `Redes — ${item.t}`;
+                explanation = `${item.t}: ${item.d}. É um componente crítico da infraestrutura de comunicação digital moderna.`;
+                hint = `Associe o conceito à camada do modelo OSI e ao problema de comunicação que ele resolve.`;
+            } else if (sub === 'banco_de_dados') {
+                const dbTerms = [
+                    { t: 'Normalização (3ª Forma Normal — 3FN)', d: 'processo de eliminação de dependências transitivas, garantindo que atributos não-chave dependam apenas da chave primária' },
+                    { t: 'Índice B-Tree', d: 'estrutura de dados balanceada usada em bancos de dados para acelerar buscas com complexidade O(log n), mantendo dados ordenados em disco' },
+                    { t: 'Propriedades ACID', d: 'conjunto de garantias transacionais: Atomicidade (tudo ou nada), Consistência (estado válido), Isolamento (transações independentes) e Durabilidade (persistência após commit)' },
+                    { t: 'Teorema CAP (Consistência, Disponibilidade, Particionamento)', d: 'princípio que afirma que sistemas distribuídos só podem garantir no máximo dois dos três atributos simultaneamente' },
+                    { t: 'Query Plan (Plano de Execução)', d: 'sequência de operações físicas gerada pelo otimizador do SGBD para executar uma query SQL com mínimo de custo de I/O e CPU' },
+                    { t: 'Banco de Dados Orientado a Documentos (NoSQL)', d: 'paradigma que armazena dados como documentos JSON/BSON semi-estruturados, priorizando flexibilidade de schema e escalabilidade horizontal' }
+                ];
+                const item = dbTerms[Math.floor(Math.random() * dbTerms.length)];
+                q = `No domínio de Banco de Dados e Sistemas de Gerenciamento (SGBD), qual é a definição precisa de "${item.t}" e sua relevância na arquitetura de sistemas?`;
+                a = item.d;
+                d = [`O processo de geração automática de backups incrementais semanais sem intervenção humana`, `A criptografia de ponta a ponta aplicada nas queries de leitura do banco`, `O mecanismo de replicação geográfica de instâncias de banco de dados em múltiplos continentes`];
+                concept = `Banco de Dados — ${item.t}`;
+                explanation = `${item.t}: ${item.d}. Este conceito é fundamental para design de sistemas confiáveis e performáticos.`;
+                hint = `Analise se o conceito é relacionado a estrutura de dados, garantias transacionais ou paradigma de armazenamento.`;
+            } else if (sub === 'cloud_computing') {
+                const cloudTerms = [
+                    { t: 'Arquitetura Serverless (FaaS)', d: 'modelo onde o desenvolvedor escreve funções que são executadas sob demanda na nuvem, sem gerenciar servidores, com billing por execução' },
+                    { t: 'Kubernetes (K8s)', d: 'plataforma de orquestração de contêineres que automatiza deploy, scaling e gerenciamento de aplicações containerizadas em clusters' },
+                    { t: 'Modelo IaaS vs PaaS vs SaaS', d: 'camadas de abstração em nuvem: IaaS fornece infraestrutura virtual, PaaS provê plataforma de desenvolvimento, SaaS entrega software pronto para uso' },
+                    { t: 'Auto Scaling Horizontal', d: 'capacidade de adicionar ou remover instâncias de um serviço automaticamente baseado em métricas de carga, garantindo disponibilidade e custo-eficiência' },
+                    { t: 'CDN (Content Delivery Network)', d: 'rede de servidores distribuídos globalmente que armazenam cópias de conteúdo estático próximos ao usuário final, reduzindo latência e carga no servidor de origem' },
+                    { t: 'Zero Trust Security Architecture', d: 'modelo de segurança que não confia implicitamente em nenhum usuário ou dispositivo, exigindo verificação contínua e acesso mínimo privilegiado' }
+                ];
+                const item = cloudTerms[Math.floor(Math.random() * cloudTerms.length)];
+                q = `Na área de Computação em Nuvem e Arquitetura de Sistemas Distribuídos, qual é a definição técnica de "${item.t}" e qual problema computacional ele resolve?`;
+                a = item.d;
+                d = [`O método de armazenamento de dados em fita magnética para backup offline de longa duração`, `A técnica de compressão de imagens JPEG para redução de consumo de banda em dispositivos móveis`, `O processo de configuração manual de firewalls físicos em data centers locais`];
+                concept = `Cloud Computing — ${item.t}`;
+                explanation = `${item.t}: ${item.d}. É um conceito central para profissionais de arquitetura de nuvem e DevOps.`;
+                hint = `Identifique se o conceito trata de escalabilidade, segurança, entrega de conteúdo ou modelo de serviço.`;
+            } else if (sub === 'sistemas_embarcados') {
+                const embTerms = [
+                    { t: 'GPIO (General Purpose Input/Output)', d: 'pinos de propósito geral de microcontroladores que podem ser configurados como entrada ou saída digital para interagir com sensores e atuadores físicos' },
+                    { t: 'Protocolo I2C (Inter-Integrated Circuit)', d: 'barramento serial síncrono de dois fios (SDA e SCL) que permite comunicação de múltiplos dispositivos periféricos com um mestre usando endereçamento de 7 bits' },
+                    { t: 'RTOS (Real-Time Operating System)', d: 'sistema operacional que garante respostas a eventos em prazos determinísticos e previsíveis, essencial para sistemas de controle crítico e tempo real' },
+                    { t: 'PWM (Pulse Width Modulation)', d: 'técnica de modulação digital que varia a largura do pulso de um sinal quadrado para controlar a potência média entregue a cargas como motores e LEDs' },
+                    { t: 'MQTT (Message Queuing Telemetry Transport)', d: 'protocolo de mensageria leve baseado em publish-subscribe, projetado para dispositivos IoT com recursos limitados de CPU, memória e largura de banda' },
+                    { t: 'Watchdog Timer', d: 'mecanismo de hardware que reinicia o sistema automaticamente caso o software falhe em resetar um contador dentro de um período, prevenindo travamentos em sistemas embarcados críticos' }
+                ];
+                const item = embTerms[Math.floor(Math.random() * embTerms.length)];
+                q = `No desenvolvimento de Sistemas Embarcados e Internet das Coisas (IoT), qual é a definição funcional e aplicação prática de "${item.t}"?`;
+                a = item.d;
+                d = [`O protocolo de comunicação de alto nível usado exclusivamente em supercomputadores de processamento paralelo`, `O mecanismo de renderização de gráficos 3D em GPUs para realidade virtual imersiva`, `O algoritmo de compressão de dados usado em streaming de vídeo 8K em redes 5G`];
+                concept = `Sistemas Embarcados — ${item.t}`;
+                explanation = `${item.t}: ${item.d}. Este recurso é crítico para desenvolvimento de hardware inteligente e IoT industrial.`;
+                hint = `Associe o conceito à interface de hardware, protocolo de comunicação serial ou gestão de tempo real.`;
+            } else if (sub === 'matematica_computacional') {
+                const mathCompTerms = [
+                    { t: 'Complexidade de Tempo O(n log n)', d: 'classe de eficiência de algoritmos como MergeSort e HeapSort que dividem o problema recursivamente, sendo ótima para ordenação comparativa' },
+                    { t: 'Algoritmo de Dijkstra', d: 'algoritmo guloso para encontrar caminhos mínimos em grafos ponderados com arestas não-negativas, com complexidade O((V+E) log V) usando fila de prioridade' },
+                    { t: 'Transformada de Fourier Rápida (FFT)', d: 'algoritmo eficiente que decompõe um sinal temporal em suas componentes de frequência em O(n log n), fundamental em processamento de sinais e compressão de áudio' },
+                    { t: 'Programação Dinâmica (Memoization)', d: 'técnica que resolve problemas complexos dividindo-os em subproblemas sobrepostos e armazenando resultados intermediários para evitar recálculos redundantes' },
+                    { t: 'Árvore Geradora Mínima (Algoritmo de Kruskal)', d: 'algoritmo guloso que constrói a MST de um grafo selecionando arestas de menor peso que não formam ciclo, usando estrutura Union-Find para eficiência' },
+                    { t: 'Método dos Mínimos Quadrados', d: 'técnica de regressão que minimiza a soma dos quadrados dos resíduos entre os valores observados e os preditos pelo modelo matemático ajustado' }
+                ];
+                const item = mathCompTerms[Math.floor(Math.random() * mathCompTerms.length)];
+                q = `Em Matemática Computacional e Análise de Algoritmos, qual é a definição formal e a aplicação em engenharia de "${item.t}"?`;
+                a = item.d;
+                d = [`A técnica de arredondamento de valores decimais para otimizar o armazenamento em memória RAM de 32 bits`, `O processo de criptografia de chave pública baseado em decomposição de números primos de 2048 bits`, `O método de renderização de gráficos poligonais por rasterização inversa em pipelines de GPU`];
+                concept = `Matemática Computacional — ${item.t}`;
+                explanation = `${item.t}: ${item.d}. Este conceito é essencial para cientistas de dados e engenheiros de algoritmos.`;
+                hint = `Identifique se é um algoritmo de grafos, técnica de otimização ou análise de complexidade.`;
             } else {
+
                 // Fallback for safety
                 q = `Questão de diagnóstico geral de proficiência na disciplina de ${sub}. Qual das seguintes alternativas apresenta o entendimento cientificamente aceito para este campo de estudos?`;
                 a = `A aplicação do método empírico fundamentado para validação de hipóteses e conceitos práticos`;

@@ -1546,6 +1546,276 @@ body.onyx-hidpi .glass {
     cursor: pointer;
     transition: all 0.2s;
 }
+/* ================================================================
+   CATEGORIA BÔNUS — NÚCLEO TECH AVANÇADO — PREMIUM STYLES
+   ================================================================ */
 
+/* CSS custom property for gold palette */
+:root {
+    --bonus-gold: hsl(45, 95%, 55%);
+    --bonus-gold-glow: rgba(250, 204, 21, 0.25);
+    --bonus-gold-dark: hsl(38, 92%, 40%);
+    --bonus-elite: hsl(280, 85%, 65%);
+    --bonus-elite-glow: rgba(168, 85, 247, 0.25);
+}
+
+/* Bonus category filter button — distinct golden glow */
+.btn-cat-bonus {
+    background: linear-gradient(135deg, rgba(250,204,21,0.08), rgba(168,85,247,0.08)) !important;
+    border: 1px solid rgba(250,204,21,0.3) !important;
+    color: var(--bonus-gold) !important;
+    font-weight: 900 !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-cat-bonus::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(250,204,21,0.12), transparent);
+    transform: translateX(-100%);
+    animation: bonusSweep 3s ease-in-out infinite;
+}
+
+.btn-cat-bonus.active {
+    background: linear-gradient(135deg, rgba(250,204,21,0.2), rgba(168,85,247,0.15)) !important;
+    border-color: var(--bonus-gold) !important;
+    box-shadow: 0 0 20px var(--bonus-gold-glow), 0 0 40px rgba(168,85,247,0.1) !important;
+}
+
+@keyframes bonusSweep {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Bonus Banner — shown above the bonus grid */
+.bonus-category-banner {
+    background: linear-gradient(135deg,
+        rgba(250,204,21,0.06) 0%,
+        rgba(168,85,247,0.06) 50%,
+        rgba(250,204,21,0.04) 100%
+    );
+    border: 1px solid rgba(250,204,21,0.25);
+    border-radius: 20px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.bonus-category-banner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--bonus-gold), var(--bonus-elite), var(--bonus-gold), transparent);
+    animation: borderFlow 3s ease-in-out infinite;
+}
+
+@keyframes borderFlow {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+}
+
+.bonus-banner-icon {
+    font-size: 2.8rem;
+    filter: drop-shadow(0 0 12px var(--bonus-gold));
+    animation: iconPulse 2s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+@keyframes iconPulse {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px var(--bonus-gold)); }
+    50% { transform: scale(1.05); filter: drop-shadow(0 0 18px var(--bonus-gold)); }
+}
+
+.bonus-banner-text h3 {
+    font-family: var(--font-header);
+    font-size: 1.1rem;
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--bonus-gold), var(--bonus-elite));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.bonus-banner-text p {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.5;
+}
+
+.bonus-banner-badge {
+    margin-left: auto;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, rgba(250,204,21,0.15), rgba(168,85,247,0.1));
+    border: 1px solid rgba(250,204,21,0.4);
+    border-radius: 12px;
+    padding: 12px 18px;
+    text-align: center;
+}
+
+.bonus-banner-badge .badge-level {
+    font-family: var(--font-mono);
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--bonus-gold);
+    line-height: 1;
+    display: block;
+    text-shadow: 0 0 15px var(--bonus-gold-glow);
+}
+
+.bonus-banner-badge .badge-label {
+    font-size: 0.55rem;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 800;
+    margin-top: 4px;
+    display: block;
+}
+
+/* Bonus Subject Card — unlocked state */
+.card-subject.bonus-unlocked {
+    border-color: rgba(250,204,21,0.4) !important;
+    background: linear-gradient(135deg,
+        rgba(250,204,21,0.04),
+        rgba(168,85,247,0.04)
+    ) !important;
+    position: relative;
+}
+
+.card-subject.bonus-unlocked::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, var(--bonus-gold), var(--bonus-elite), var(--bonus-gold));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: exclude;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+.card-subject.bonus-unlocked:hover::before {
+    opacity: 1;
+}
+
+.card-subject.bonus-unlocked:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px rgba(250,204,21,0.12), 0 8px 20px rgba(168,85,247,0.08) !important;
+    border-color: var(--bonus-gold) !important;
+}
+
+.card-subject.bonus-unlocked .card-title {
+    background: linear-gradient(90deg, var(--bonus-gold), #fff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Elite badge on the bonus card icon */
+.card-elite-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, var(--bonus-gold), var(--bonus-elite));
+    color: #0a0a0a;
+    font-size: 0.45rem;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    padding: 3px 7px;
+    border-radius: 5px;
+    font-family: var(--font-mono);
+}
+
+/* Bonus Card LOCKED — special golden lock overlay */
+.card-subject.bonus-locked {
+    border: 1px solid rgba(250,204,21,0.2) !important;
+    background: rgba(15, 12, 5, 0.6) !important;
+    cursor: not-allowed;
+    opacity: 1 !important;
+    filter: none !important;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Scan line animation for locked bonus cards */
+.card-subject.bonus-locked::after {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 0;
+    right: 0;
+    height: 60%;
+    background: linear-gradient(180deg, transparent, rgba(250,204,21,0.05), transparent);
+    animation: bonusScan 3s ease-in-out infinite;
+}
+
+@keyframes bonusScan {
+    0% { top: -60%; }
+    100% { top: 120%; }
+}
+
+.lock-overlay-bonus {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg,
+        rgba(10, 8, 2, 0.75),
+        rgba(15, 5, 25, 0.75)
+    );
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    border-radius: inherit;
+}
+
+.lock-overlay-bonus .lock-icon {
+    font-size: 1.4rem;
+    filter: drop-shadow(0 0 8px var(--bonus-gold));
+    animation: lockPulse 2s ease-in-out infinite;
+}
+
+@keyframes lockPulse {
+    0%, 100% { filter: drop-shadow(0 0 5px var(--bonus-gold-glow)); }
+    50% { filter: drop-shadow(0 0 14px var(--bonus-gold)); }
+}
+
+.lock-overlay-bonus .lock-level {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 900;
+    color: var(--bonus-gold);
+    letter-spacing: 2px;
+    text-shadow: 0 0 8px var(--bonus-gold-glow);
+}
+
+.lock-overlay-bonus .lock-hint {
+    font-size: 0.5rem;
+    color: rgba(250,204,21,0.5);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Subject grid — bonus section separator */
+.bonus-grid-section {
+    animation: fadeIn 0.5s ease-out;
+}
 
 

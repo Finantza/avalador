@@ -1618,7 +1618,8 @@
                 { id: 'natureza', n: '🧬 NATUREZA' },
                 { id: 'humanas', n: '🌍 HUMANAS' },
                 { id: 'itinerarios', n: '🚀 ITINERÁRIOS' },
-                { id: 'extras', n: '✨ EXTRAS' }
+                { id: 'extras', n: '✨ EXTRAS' },
+                { id: 'bonus', n: '🔐 BÔNUS LVL 20' }
             ];
             
             filterContainer.innerHTML = categories.map(cat => `
@@ -1681,19 +1682,94 @@
                 { id: 'biblioteca_digital', n: 'BIBLIOTECA DIG.', i: '🏛️', d: 'Pesquisa acadêmica e normas ABNT.', cat: 'extras' },
                 { id: 'laboratorio_virtual', n: 'LAB. VIRTUAL', i: '🧪', d: 'Simulação e experimentos virtuais.', cat: 'extras' },
                 { id: 'projeto_vida', n: 'PROJETO DE VIDA', i: '🌟', d: 'Metas SMART, SWOT e autoconhecimento.', cat: 'extras' },
-                { id: 'inclusao_acessibilidade', n: 'INCLUSÃO & ACES.', i: '♿', d: 'WCAG, braille, libras e alt text.', cat: 'extras' }
+                { id: 'inclusao_acessibilidade', n: 'INCLUSÃO & ACES.', i: '♿', d: 'WCAG, braille, libras e alt text.', cat: 'extras' },
+
+                // ===== BÔNUS — NÚCLEO TECH AVANÇADO (LVL 20) =====
+                { id: 'engenharia_software', n: 'ENGENHARIA DE SW', i: '⚙️', d: 'Arquitetura de sistemas, padrões SOLID e DevOps.', cat: 'bonus' },
+                { id: 'redes_computadores', n: 'REDES DE COMP.', i: '🌐', d: 'Protocolos TCP/IP, roteamento e infraestrutura.', cat: 'bonus' },
+                { id: 'banco_de_dados', n: 'BANCO DE DADOS', i: '🗄️', d: 'SQL avançado, modelagem relacional e NoSQL.', cat: 'bonus' },
+                { id: 'cloud_computing', n: 'CLOUD COMPUTING', i: '☁️', d: 'AWS, Azure, GCP e arquitetura serverless.', cat: 'bonus' },
+                { id: 'sistemas_embarcados', n: 'SIST. EMBARCADOS', i: '🔬', d: 'Microcontroladores, IoT e programação de hardware.', cat: 'bonus' },
+                { id: 'matematica_computacional', n: 'MAT. COMPUTAC.', i: '📟', d: 'Algoritmos numéricos, grafos e complexidade O(n).', cat: 'bonus' },
+                { id: 'ciencia_de_dados', n: 'CIÊNCIA DE DADOS', i: '📉', d: 'Análise de dados, pandas e visualização avançada.', cat: 'bonus' },
+                { id: 'inteligencia_artificial', n: 'INTEL. ARTIFICIAL', i: '🤖', d: 'Redes neurais profundas e IA generativa.', cat: 'bonus' },
+                { id: 'seguranca_informacao', n: 'CIBERSEGURANÇA', i: '🛡️', d: 'Criptografia avançada, pentest e resposta a incidentes.', cat: 'bonus' },
+                { id: 'programacao', n: 'PROGRAMAÇÃO ADV.', i: '🐍', d: 'Algoritmos complexos, design patterns e otimização.', cat: 'bonus' }
             ];
 
-            const filteredSubjects = activeCategoryFilter === 'all' 
-                ? allSubjects 
+            // For 'all' filter, exclude bonus subjects (they appear only in bonus tab)
+            const filteredSubjects = activeCategoryFilter === 'all'
+                ? allSubjects.filter(s => s.cat !== 'bonus')
                 : allSubjects.filter(s => s.cat === activeCategoryFilter);
 
             const grid = document.getElementById('subject-options');
             if (!grid) return;
-            
+
+            // --- Bonus banner injection ---
+            let bonusBanner = document.getElementById('bonus-category-banner');
+            if (activeCategoryFilter === 'bonus') {
+                const userLevel = userStats.level || 1;
+                const isElite = userLevel >= 20;
+                if (!bonusBanner) {
+                    bonusBanner = document.createElement('div');
+                    bonusBanner.id = 'bonus-category-banner';
+                    bonusBanner.className = 'bonus-category-banner';
+                    grid.parentNode.insertBefore(bonusBanner, grid);
+                }
+                bonusBanner.innerHTML = `
+                    <div class="bonus-banner-icon">🔐</div>
+                    <div class="bonus-banner-text">
+                        <h3>NÚCLEO TECH AVANÇADO</h3>
+                        <p>
+                            Disciplinas de elite em <strong style="color:rgba(250,204,21,0.9)">TI, Engenharia de Software e Ciência de Dados</strong>.
+                            ${isElite
+                                ? '<br><span style="color:#10b981;font-weight:800;">✅ ACESSO LIBERADO — Bem-vindo à elite ONYX!</span>'
+                                : `<br>Você está no <strong style="color:rgba(250,204,21,0.9);">LVL ${userLevel}</strong>. Alcance o <strong style="color:rgba(250,204,21,0.9);">LVL 20</strong> para desbloquear estas missões.`
+                            }
+                        </p>
+                    </div>
+                    <div class="bonus-banner-badge">
+                        <span class="badge-level">${isElite ? '✓' : '20'}</span>
+                        <span class="badge-label">${isElite ? 'ELITE' : 'NÍVEL REQ.'}</span>
+                    </div>
+                `;
+            } else if (bonusBanner) {
+                bonusBanner.remove();
+            }
+
             grid.innerHTML = filteredSubjects.map(s => {
                 const config = OnyxCore.ProgressionConfig.subjects[s.id] || 1;
                 const isLocked = userStats.level < config;
+                const isBonus = s.cat === 'bonus';
+
+                if (isBonus) {
+                    // Bonus card: special treatment
+                    if (isLocked) {
+                        return `
+                            <div class="card-subject bonus-locked glass"
+                                 data-subject="${s.id}" data-desc="${s.d}">
+                                <span class="card-icon" style="opacity:0.35;">${s.i}</span>
+                                <span class="card-title" style="color:rgba(255,255,255,0.3); -webkit-text-fill-color:unset;">${s.n}</span>
+                                <div class="lock-overlay-bonus">
+                                    <span class="lock-icon">🔐</span>
+                                    <span class="lock-level">LVL 20</span>
+                                    <span class="lock-hint">ELITE REQUIRED</span>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        return `
+                            <div class="card-subject bonus-unlocked glass ${selectedSub === s.id ? 'active' : ''}"
+                                 data-subject="${s.id}" data-desc="${s.d}">
+                                <span class="card-elite-badge">ELITE</span>
+                                <span class="card-icon">${s.i}</span>
+                                <span class="card-title">${s.n}</span>
+                            </div>
+                        `;
+                    }
+                }
+
+                // Standard card
                 return `
                     <div class="card-subject glass ${isLocked ? 'locked' : ''} ${selectedSub === s.id ? 'active' : ''}" 
                          data-subject="${s.id}" data-desc="${s.d}">
@@ -1706,7 +1782,7 @@
 
             document.querySelectorAll('.card-subject').forEach(card => {
                 card.onclick = () => {
-                    if (card.classList.contains('locked')) return;
+                    if (card.classList.contains('locked') || card.classList.contains('bonus-locked')) return;
                     document.querySelectorAll('.card-subject').forEach(c => c.classList.remove('active'));
                     card.classList.add('active');
                     selectedSub = card.dataset.subject;

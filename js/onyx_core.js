@@ -356,7 +356,14 @@ window.OnyxCore = {
             educacao_fisica: 5, programacao: 5, marketing_digital: 5, laboratorio_virtual: 5,
             design_digital: 6, ciencia_de_dados: 6, educacao_financeira: 6,
             producao_audiovisual: 7, inteligencia_artificial: 7, seguranca_informacao: 7,
-            desenvolvimento_jogos: 8
+            desenvolvimento_jogos: 8,
+            // ===== CATEGORIA BÔNUS — NÚCLEO TECH AVANÇADO (LVL 20) =====
+            engenharia_software: 20,
+            redes_computadores: 20,
+            banco_de_dados: 20,
+            cloud_computing: 20,
+            sistemas_embarcados: 20,
+            matematica_computacional: 20
         },
         difficulties: { 
             easy: 1, 
