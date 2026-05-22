@@ -85,11 +85,11 @@ window.OnyxCore = {
                 const store = tx.objectStore('global_stats');
                 
                 const defaultUsers = [
-                    { id: 'aluno', password: hashedPassword, level: 1, xp: 0, role: 'aluno' },
-                    { id: 'gestor', password: hashedPassword, level: 10, xp: 300, role: 'gestor' },
-                    { id: 'responsavel', password: hashedPassword, level: 1, xp: 0, role: 'responsavel' },
-                    { id: 'OPERADOR MÓVEL', password: hashedPassword, level: 1, xp: 0, role: 'aluno' },
-                    { id: 'OPERADOR TESTE', password: hashedPassword, level: 1, xp: 0, role: 'aluno' }
+                    { id: 'aluno', password: hashedPassword, level: 1, xp: 0, role: 'aluno', coins: 0, inventory: { tutor: 3 } },
+                    { id: 'gestor', password: hashedPassword, level: 10, xp: 300, role: 'gestor', coins: 0, inventory: { tutor: 3 } },
+                    { id: 'responsavel', password: hashedPassword, level: 1, xp: 0, role: 'responsavel', coins: 0, inventory: { tutor: 3 } },
+                    { id: 'OPERADOR MÓVEL', password: hashedPassword, level: 1, xp: 0, role: 'aluno', coins: 0, inventory: { tutor: 3 } },
+                    { id: 'OPERADOR TESTE', password: hashedPassword, level: 1, xp: 0, role: 'aluno', coins: 0, inventory: { tutor: 3 } }
                 ];
 
                 for (const defUser of defaultUsers) {
@@ -158,11 +158,18 @@ window.OnyxCore = {
 
         async getUser(id) {
             const db = await this.init();
-            if (!db) return { id, level: 1, xp: 0 };
+            if (!db) return { id, level: 1, xp: 0, coins: 0, inventory: { tutor: 3 } };
             return new Promise((resolve) => {
                 const tx = db.transaction(['global_stats'], 'readonly');
                 const request = tx.objectStore('global_stats').get(id);
-                request.onsuccess = () => resolve(request.result || null);
+                request.onsuccess = () => {
+                    let result = request.result;
+                    if (result) {
+                        if (typeof result.coins === 'undefined') result.coins = 0;
+                        if (typeof result.inventory === 'undefined') result.inventory = { tutor: 3 };
+                    }
+                    resolve(result || null);
+                };
                 request.onerror = () => resolve(null);
             });
         },

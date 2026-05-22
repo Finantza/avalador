@@ -29,6 +29,12 @@
                     <div class="streak-badge active streak-badge-lives" id="lives-container">
                         <span class="life-icon">❤️</span><span class="life-icon">❤️</span><span class="life-icon">❤️</span>
                     </div>
+                    <div class="streak-badge active" style="border-color: #facc15; color: #facc15;">
+                        <span class="u-weight-900">🪙 <span id="quiz-coins">0</span></span>
+                    </div>
+                    <div class="streak-badge active" style="border-color: #0ea5e9; color: #0ea5e9;">
+                        <span class="u-weight-900">✨ <span id="quiz-tutor-inv">0</span></span>
+                    </div>
                 </div>
                 <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
                 <div class="quiz-stats">QUESTÃO <span id="current-q">1</span>/10</div>
@@ -76,6 +82,7 @@
     <script src="js/onyx_db_manager.js"></script>
     <script>
         let userName = null;
+        let userStats = null;
         let subject = 'python';
         let difficulty = 'easy';
 
@@ -129,12 +136,15 @@
             
             // Progression gate validation (prevents playing locked content after level loss)
             try {
-                const stats = await OnyxCore.DB.getUser(userName);
-                if (stats) {
+                userStats = await OnyxCore.DB.getUser(userName);
+                if (userStats) {
+                    document.getElementById('quiz-coins').textContent = userStats.coins || 0;
+                    document.getElementById('quiz-tutor-inv').textContent = (userStats.inventory && userStats.inventory.tutor) || 0;
+
                     const subReq = OnyxCore.ProgressionConfig.subjects[subject] || 1;
                     const diffReq = OnyxCore.ProgressionConfig.difficulties[difficulty] || 1;
                     
-                    if (stats.level < subReq || stats.level < diffReq) {
+                    if (userStats.level < subReq || userStats.level < diffReq) {
                         alert("🔴 [ACESSO NEGADO] Esta matéria ou nível foi bloqueado devido ao seu rebaixamento de nível!");
                         location.href = 'dashboard.html';
                         return;
@@ -234,6 +244,19 @@
             const btnTutor = document.getElementById('btn-tutor');
             if (btnTutor) {
                 btnTutor.onclick = () => {
+                    if (btnTutor.style.opacity === '0.5') return; // Prevent multiple uses
+                    
+                    if (!autoSimplify) {
+                        if (!userStats || !userStats.inventory || userStats.inventory.tutor <= 0) {
+                            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
+                            alert("⚠️ Saldo de Dicas do Tutor esgotado! Compre mais na Loja Onyx (Dashboard).");
+                            return;
+                        }
+                        userStats.inventory.tutor -= 1;
+                        document.getElementById('quiz-tutor-inv').textContent = userStats.inventory.tutor;
+                        OnyxCore.DB.saveUser(userStats);
+                    }
+
                     if (!tutorRequested) {
                         tutorRequested = true;
                         tutorConsultedCount++;
@@ -364,6 +387,13 @@
                 
                 const earnedXP = Math.floor(baseXP * parseFloat(comboMultiplier));
                 totalXPGained += earnedXP;
+                
+                // Moedas
+                const earnedCoins = Math.floor(10 * parseFloat(comboMultiplier));
+                if (userStats) {
+                    userStats.coins = (userStats.coins || 0) + earnedCoins;
+                    document.getElementById('quiz-coins').textContent = userStats.coins;
+                }
                 
                 if (clickedBtn) clickedBtn.classList.add('correct');
                 if (typeof OnyxUI !== 'undefined') {
@@ -509,6 +539,12 @@
             try {
                 let stats = await OnyxCore.DB.getUser(userName);
                 if (!stats) stats = { id: userName, level: 1, xp: 0 };
+                
+                // Sincronizar moedas e inventario
+                if (userStats) {
+                    stats.coins = userStats.coins;
+                    if (userStats.inventory) stats.inventory = userStats.inventory;
+                }
                 
                 if (failed) {
                     totalXPGained = 0; // No XP gained on critical failure

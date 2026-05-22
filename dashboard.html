@@ -256,6 +256,7 @@
                 <a href="#" class="nav-item" id="btn-show-arena" data-screen="arena">⚔️ <span>Arena PVP</span></a>
                 <a href="#" class="nav-item" id="btn-show-academic">🏫 <span>Gestão Acadêmica</span></a>
                 <a href="#" class="nav-item" id="btn-show-ai-hub">🤖 <span>Portal de IA</span></a>
+                <a href="#" class="nav-item" id="btn-show-shop" data-screen="shop">🛒 <span>Loja de Suprimentos</span></a>
                 <a href="#" class="nav-item" id="btn-show-ranking">🏆 <span>Classificação</span></a>
                 <a href="#" class="nav-item" id="btn-show-profile">👤 <span>Perfil</span></a>
                 <a href="#" class="nav-item" id="btn-show-glossary">📖 <span>Glossário</span></a>
@@ -488,6 +489,34 @@
                         </div>
                     </div>
                 </section>
+                
+                <!-- Screen: Shop -->
+                <section id="screen-shop" class="screen">
+                    <header class="u-mb-30">
+                        <h2 class="u-font-header u-text-primary">🛒 LOJA DE SUPRIMENTOS ONYX</h2>
+                        <p class="u-text-muted">Adquira recursos táticos usando suas moedas ganhas nas missões.</p>
+                    </header>
+                    <div class="glass u-p-20 u-mb-30 u-flex-between">
+                        <div>
+                            <span class="u-text-accent">SEU SALDO ATUAL:</span>
+                            <div class="u-font-15 u-weight-900" id="shop-coins">0 <span class="u-font-08 u-text-muted">COINS</span></div>
+                        </div>
+                        <div class="u-text-right">
+                            <span class="u-text-muted">CARGAS DO TUTOR:</span>
+                            <div class="u-font-12 u-weight-900 u-text-primary" id="shop-tutor-inv">0</div>
+                        </div>
+                    </div>
+                    <div class="u-grid-2">
+                        <div class="glass u-p-20">
+                            <div class="u-flex-between u-mb-15">
+                                <h3 class="u-font-header u-text-accent">✨ PACOTE TUTOR DE BOLSO</h3>
+                                <span class="u-font-12 u-weight-900">50 <span class="u-font-07">COINS</span></span>
+                            </div>
+                            <p class="u-text-muted u-mb-20 u-font-08">Recarrega o seu inventário com +1 uso da Inteligência Artificial (Onyx Tutor) durante as missões.</p>
+                            <button id="btn-buy-tutor" class="btn-onyx btn-primary u-w-full">COMPRAR CARGA (+1)</button>
+                        </div>
+                    </div>
+                </section>
             </div>
             
             <footer class="u-mt-30 u-opacity-06 u-font-07 u-footer-layout">
@@ -550,7 +579,8 @@
 
         const screens = {
             home: document.getElementById('screen-home'),
-            arena: document.getElementById('screen-arena')
+            arena: document.getElementById('screen-arena'),
+            shop: document.getElementById('screen-shop')
         };
 
         function switchScreen(id) {
@@ -566,7 +596,36 @@
             });
 
             if (id === 'arena') initArenaLobby();
+            if (id === 'shop') renderShop();
         }
+
+        function renderShop() {
+            if(userStats) {
+                document.getElementById('shop-coins').innerHTML = `${userStats.coins || 0} <span class="u-font-08 u-text-muted">COINS</span>`;
+                document.getElementById('shop-tutor-inv').textContent = (userStats.inventory && userStats.inventory.tutor) || 0;
+            }
+        }
+
+        setTimeout(() => {
+            const btnBuyTutor = document.getElementById('btn-buy-tutor');
+            if(btnBuyTutor) {
+                btnBuyTutor.onclick = async () => {
+                    if (!userStats) return;
+                    if ((userStats.coins || 0) >= 50) {
+                        userStats.coins -= 50;
+                        if (!userStats.inventory) userStats.inventory = { tutor: 0 };
+                        userStats.inventory.tutor = (userStats.inventory.tutor || 0) + 1;
+                        await OnyxCore.DB.saveUser(userStats);
+                        if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
+                        renderShop();
+                        alert("Compra efetuada com sucesso! Você ganhou +1 uso do Tutor.");
+                    } else {
+                        if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
+                        alert("Saldo insuficiente para esta compra.");
+                    }
+                };
+            }
+        }, 1000);
 
         document.querySelectorAll('.nav-item[data-screen]').forEach(item => {
             item.onclick = () => switchScreen(item.dataset.screen);
