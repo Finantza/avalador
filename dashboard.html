@@ -348,6 +348,16 @@
                 <!-- Difficulty & Action -->
                 <aside id="screen-home-aside">
                     <div class="u-mb-25">
+                        <h3 class="u-font-header u-font-09 u-text-muted">ANO LETIVO</h3>
+                    </div>
+                    <div class="nav-menu u-mb-30" id="year-options">
+                        <button class="btn-onyx btn-year active" data-year="all">TODOS</button>
+                        <button class="btn-onyx btn-year" data-year="1">1º ANO</button>
+                        <button class="btn-onyx btn-year" data-year="2">2º ANO</button>
+                        <button class="btn-onyx btn-year" data-year="3">3º ANO</button>
+                    </div>
+
+                    <div class="u-mb-25">
                         <h3 class="u-font-header u-font-09 u-text-muted">NÍVEL DE RISCO</h3>
                     </div>
                     <div class="nav-menu u-mb-30" id="difficulty-options">
@@ -519,6 +529,7 @@
     <script>
         let selectedSub = 'matematica';
         let selectedDiff = 'easy';
+        let selectedYear = 'all';
         let userStats = null;
         let onlineOperators = 1240;
         let OnyxDataMotor = null;
@@ -1824,6 +1835,14 @@
             }, 1000);
         }
 
+        document.querySelectorAll('.btn-year').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.btn-year').forEach(b => b.classList.remove('active', 'btn-primary'));
+                btn.classList.add('active', 'btn-primary');
+                selectedYear = btn.dataset.year;
+            };
+        });
+
         document.querySelectorAll('.btn-diff').forEach(btn => {
             btn.onclick = () => {
                 if (btn.classList.contains('locked')) return;
@@ -1836,6 +1855,7 @@
         document.getElementById('btn-start').onclick = () => {
             sessionStorage.setItem('onyx_subject', selectedSub);
             sessionStorage.setItem('onyx_difficulty', selectedDiff);
+            sessionStorage.setItem('onyx_year', selectedYear);
             location.href = 'quiz.html';
         };
 

@@ -118,6 +118,7 @@
 
             subject = sessionStorage.getItem('onyx_subject') || 'python';
             difficulty = sessionStorage.getItem('onyx_difficulty') || 'easy';
+            const year = sessionStorage.getItem('onyx_year') || 'all';
 
             const displayNameEl = document.getElementById('display-name');
             if (displayNameEl) {
@@ -143,8 +144,8 @@
                 console.error("[QUIZ] Erro ao validar travas de nível:", err);
             }
             
-            console.log(`[QUIZ] Gerando novo banco de questões: ${subject} (${difficulty})`);
-            questions = await OnyxEngines.QuestionEngine.generateQuestions(userName, subject, difficulty, 10);
+            console.log(`[QUIZ] Gerando novo banco de questões: ${subject} (${difficulty}) - Ano: ${year}`);
+            questions = await OnyxEngines.QuestionEngine.generateQuestions(userName, subject, difficulty, 10, year);
             
             // Recupera configurações de acessibilidade do Tutor salvas ou cria padrão
             const tutorConfigStr = localStorage.getItem(`onyx_tutor_config_${userName}`);
