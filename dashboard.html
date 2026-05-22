@@ -2719,6 +2719,11 @@
                         // Fetch procedural questions from OnyxDatabase
                         const qPool = await OnyxEngines.QuestionEngine.generateQuestions(userStats.id, sub, diff, 3, year);
                         
+                        window.currentSimuladoPool = qPool;
+                        window.currentSimuladoSubject = sub;
+                        window.currentSimuladoDifficulty = diff;
+                        window.currentSimuladoYear = year;
+
                         let questionsHTML = qPool.map((q, idx) => `
                             <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.07); padding:15px; border-radius:8px; margin-bottom:15px;">
                                 <div class="u-text-accent u-font-07 u-weight-900 u-mb-5">QUESTÃO ${idx + 1} (${q.concept || 'BNCC'})</div>
@@ -2740,7 +2745,7 @@
                             <div class="glass u-p-20" style="border: 1px solid rgba(14,165,233,0.3);">
                                 <div class="u-flex-between u-mb-20">
                                     <h3 style="color:#fff; font-family:'Outfit', sans-serif;">📄 SIMULADO ENEM GERADO</h3>
-                                    <button onclick="alert('📤 [IMPRESSÃO AUTOMÁTICA] Roteiro de folha de respostas e caderno de questões compilados com sucesso. PDF enviado para download.')" class="btn-onyx" style="padding:5px 10px; font-size:0.65rem; background:var(--accent); color:#000; font-weight:800;">EXPORTAR PARA PDF</button>
+                                    <button onclick="OnyxUI.compileStudentSimuladoPDF(userStats.id, window.currentSimuladoSubject, window.currentSimuladoDifficulty, window.currentSimuladoYear, window.currentSimuladoPool)" class="btn-onyx" style="padding:5px 10px; font-size:0.65rem; background:var(--accent); color:#000; font-weight:800;">EXPORTAR PARA PDF</button>
                                 </div>
                                 ${questionsHTML}
                             </div>
