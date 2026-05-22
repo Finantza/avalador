@@ -71,6 +71,22 @@ Um escudo anticheat monitora o operador globalmente em qualquer parte do sistema
 
 ---
 
+## 📘 Documentação de Arquitetura Técnica Avançada
+Para uma compreensão profunda da engenharia e funcionamento matemático do ecossistema Onyx, consulte o manual técnico oficial:
+* **[Manual de Arquitetura e Engenharia de Software](file:///e:/documentos/GitHub/GitHub/avaliiador/avalador/ONYX_SYSTEM_ARCHITECTURE.md)**
+
+### Tópicos cobertos no manual:
+1. **Visão Geral e Diagramas de Fluxo (Mermaid)**
+2. **Engenharia de Dados (IndexedDB v14 e Assinatura SHA-256)**
+3. **Motor Pedagógico Procedural e Sistema do Onyx Tutor**
+4. **Algoritmos Heurísticos de Score, ELO e Desvio Padrão ($\sigma$)**
+5. **Escudo Cibernético de Segurança (DevTools Docked & Debugger Trap)**
+6. **Rede Distribuída PvP Híbrida (WebSockets e BroadcastChannel)**
+7. **Motor de Processamento Cognitivo de NLP & Inteligência de Personas**
+8. **Renderização Visual e Síntese de Áudio via Web Audio API**
+
+---
+
 ## 🚦 Como Rodar o Sistema
 1. **Abra `index.html`** em qualquer navegador atual.
 2. **Crie suas credenciais** na tela de registro.
@@ -78,3 +94,4 @@ Um escudo anticheat monitora o operador globalmente em qualquer parte do sistema
 
 ---
 *V.4.0.0-STABLE | © 2026 Onyx Ecosystem | Desenvolvido por Technovie*
+
