@@ -34,7 +34,7 @@
                     </div>
                 </div>
                 <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
-                <div class="quiz-stats">QUESTÃO <span id="current-q">1</span>/10</div>
+                <div class="quiz-stats">QUESTÃO <span id="current-q">1</span>/<span id="total-q">10</span></div>
             </div>
 
             <div class="quiz-card glass">
@@ -232,6 +232,7 @@
             }
             
             document.getElementById('current-q').textContent = currentQuestionIndex + 1;
+            document.getElementById('total-q').textContent = questions.length;
             
             // Progress
             const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
@@ -452,7 +453,7 @@
             const userAnswerText = idx === -1 ? 'TEMPO ESGOTADO' : q.options[idx];
             tutorAI.responderQuestao(`q_${currentQuestionIndex}`, userAnswerText);
             
-            const difficultyMultiplier = { easy: 10, medium: 20, hard: 40, insane: 80, impossible: 150 };
+            const difficultyMultiplier = { easy: 10, medium: 20, hard: 40, insane: 80, impossible: 150, suicida: 500 };
             const baseXP = difficultyMultiplier[difficulty] || 10;
 
             if (isCorrect) {

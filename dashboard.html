@@ -367,6 +367,7 @@
                         <button class="btn-onyx btn-diff" data-difficulty="hard">DIFÍCIL</button>
                         <button class="btn-onyx btn-diff" data-difficulty="insane">INSANO</button>
                         <button class="btn-onyx btn-diff" data-difficulty="impossible">IMPOSSÍVEL</button>
+                        <button class="btn-onyx btn-diff" id="btn-diff-suicida" data-difficulty="suicida" style="display:none; color: #ef4444; border-color: #ef4444; font-weight: 900; text-shadow: 0 0 10px rgba(239, 68, 68, 0.4);">SUICIDA 💀</button>
                     </div>
 
                     <div class="glass u-p-20 u-mb-30" id="bounties-panel">
@@ -558,6 +559,15 @@
                             <p class="u-text-muted u-mb-20 u-font-08">Pula a questão atual sem sofrer penalidade de erro (não ganha moedas).</p>
                             <button id="btn-buy-skip" class="btn-onyx btn-primary u-w-full" style="background:rgba(139,92,246,0.2); border-color:#8b5cf6;">COMPRAR (+1)</button>
                         </div>
+                        <!-- Item 6 (Suicida) -->
+                        <div class="glass u-p-20" id="shop-card-suicida" style="grid-column: 1 / -1; border: 1px solid #ef4444; box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.1);">
+                            <div class="u-flex-between u-mb-15">
+                                <h3 class="u-font-header" style="color:#ef4444; text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);">🔥 DESBLOQUEAR NÍVEL SUICIDA</h3>
+                                <span class="u-font-12 u-weight-900" style="color:#ef4444;">10000 <span class="u-font-07">COINS</span></span>
+                            </div>
+                            <p class="u-text-muted u-mb-20 u-font-08">Libera a dificuldade extrema SUICIDA. Perguntas hipercomplexas para qualquer matéria com multiplicador maciço de XP (10x).</p>
+                            <button id="btn-buy-suicida" class="btn-onyx btn-primary u-w-full" style="background:rgba(239,68,68,0.2); border-color:#ef4444;">COMPRAR (PASSE DE 3 DIAS)</button>
+                        </div>
                     </div>
                 </section>
             </div>
@@ -651,6 +661,35 @@
                     document.getElementById('shop-fifty-inv').textContent = userStats.inventory.fifty || 0;
                     document.getElementById('shop-time-inv').textContent = userStats.inventory.time || 0;
                     document.getElementById('shop-skip-inv').textContent = userStats.inventory.skip || 0;
+                    
+                    const diffSuicida = document.getElementById('btn-diff-suicida');
+                    const suicidaBtn = document.getElementById('btn-buy-suicida');
+                    const now = Date.now();
+                    
+                    // Legacy migration: if they have 'suicida_unlocked' but no expiration, force an expiration 3 days from now
+                    if (userStats.inventory.suicida_unlocked && !userStats.inventory.suicida_expires) {
+                        userStats.inventory.suicida_expires = now + (3 * 24 * 60 * 60 * 1000);
+                        delete userStats.inventory.suicida_unlocked;
+                        OnyxCore.DB.saveUser(userStats);
+                    }
+
+                    if (userStats.inventory.suicida_expires && now < userStats.inventory.suicida_expires) {
+                        const daysLeft = Math.ceil((userStats.inventory.suicida_expires - now) / (1000 * 60 * 60 * 24));
+                        if (suicidaBtn) {
+                            suicidaBtn.textContent = `ATIVO (${daysLeft} DIAS RESTANTES)`;
+                            suicidaBtn.disabled = true;
+                            suicidaBtn.style.opacity = '0.5';
+                        }
+                        if (diffSuicida) diffSuicida.style.display = 'inline-block';
+                    } else {
+                        userStats.inventory.suicida_expires = null;
+                        if (suicidaBtn) {
+                            suicidaBtn.textContent = 'COMPRAR (PASSE DE 3 DIAS)';
+                            suicidaBtn.disabled = false;
+                            suicidaBtn.style.opacity = '1';
+                        }
+                        if (diffSuicida) diffSuicida.style.display = 'none';
+                    }
                 }
             }
         }
@@ -682,6 +721,29 @@
             setupBuyButton('btn-buy-fifty', 150, 'fifty');
             setupBuyButton('btn-buy-time', 75, 'time');
             setupBuyButton('btn-buy-skip', 200, 'skip');
+
+            const btnSuicida = document.getElementById('btn-buy-suicida');
+            if(btnSuicida) {
+                btnSuicida.onclick = async () => {
+                    if (!userStats) return;
+                    const now = Date.now();
+                    if (userStats.inventory && userStats.inventory.suicida_expires && now < userStats.inventory.suicida_expires) return;
+                    
+                    if ((userStats.coins || 0) >= 10000) {
+                        userStats.coins -= 10000;
+                        if (!userStats.inventory) userStats.inventory = { tutor: 0, life: 0, fifty: 0, time: 0, skip: 0 };
+                        userStats.inventory.suicida_expires = now + (3 * 24 * 60 * 60 * 1000);
+                        delete userStats.inventory.suicida_unlocked;
+                        await OnyxCore.DB.saveUser(userStats);
+                        if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
+                        renderShop();
+                        alert(`Compra efetuada! O Nível Suicida foi desbloqueado com sucesso e está disponível pelos próximos 3 dias.`);
+                    } else {
+                        if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
+                        alert("Saldo insuficiente para desbloquear o Nível Suicida.");
+                    }
+                };
+            }
         }, 1000);
 
         document.querySelectorAll('.nav-item[data-screen]').forEach(item => {
@@ -3253,10 +3315,50 @@
         async function triggerChallenge() {
             if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('alert');
             const alertBox = document.getElementById('emergency-alert');
+            
+            const now = Date.now();
+            const isSuicidaActive = userStats && userStats.inventory && userStats.inventory.suicida_expires && now < userStats.inventory.suicida_expires;
+            
+            if (isSuicidaActive) {
+                let bg = document.getElementById('mandatory-bg');
+                if (!bg) {
+                    bg = document.createElement('div');
+                    bg.id = 'mandatory-bg';
+                    bg.style.position = 'fixed';
+                    bg.style.inset = '0';
+                    bg.style.background = 'rgba(0,0,0,0.85)';
+                    bg.style.zIndex = '10999';
+                    bg.style.backdropFilter = 'blur(10px)';
+                    document.body.appendChild(bg);
+                }
+                
+                // Centralizar o alerta
+                alertBox.style.top = '50%';
+                alertBox.style.right = '50%';
+                alertBox.style.transform = 'translate(50%, -50%)';
+                alertBox.innerHTML = `
+                    <div class="u-weight-900 u-font-12 u-mb-5">💀 DESAFIO OBRIGATÓRIO</div>
+                    <p class="u-font-08">O Passe Suicida está ativo. Você não pode ignorar missões aleatórias. Responda agora para continuar!</p>
+                    <button id="btn-accept-challenge" class="emergency-btn">PROSSEGUIR</button>
+                `;
+            }
+            
             alertBox.style.display = 'block';
             
             document.getElementById('btn-accept-challenge').onclick = async () => {
                 alertBox.style.display = 'none';
+                const bg = document.getElementById('mandatory-bg');
+                if (bg) bg.remove();
+                
+                // Reverter estilos se mudou
+                alertBox.style.top = '20px';
+                alertBox.style.right = '20px';
+                alertBox.style.transform = 'none';
+                alertBox.innerHTML = `
+                    <div class="u-weight-900 u-font-12 u-mb-5">🚨 DESAFIO PRIORITÁRIO</div>
+                    <p class="u-font-08">O sistema detectou uma oportunidade de ganho de XP crítico. Responda agora!</p>
+                    <button id="btn-accept-challenge" class="emergency-btn">ACEITAR DESAFIO</button>
+                `;
                 
                 const diffs = ['easy', 'medium', 'hard', 'insane', 'impossible'];
                 const unlockedDiffs = diffs.filter(d => userStats.level >= (OnyxCore.ProgressionConfig.difficulties[d] || 1));
@@ -3285,6 +3387,13 @@
                 `;
                 
                 openOverlay("DESAFIO RELÂMPAGO", selectionHTML);
+
+                if (isSuicidaActive) {
+                    setTimeout(() => {
+                        const closeBtn = document.querySelector('.btn-close');
+                        if (closeBtn) closeBtn.style.display = 'none';
+                    }, 50);
+                }
 
                 // Add event listeners to the new subject buttons
                 document.querySelectorAll('.btn-challenge-sub').forEach(btn => {
@@ -3319,11 +3428,34 @@
                                     if (typeof OnyxUI !== 'undefined') {
                                         OnyxUI.showXPGain(50);
                                     }
-                                    openOverlay("SUCESSO!", `<div class="u-p-20 u-text-primary u-text-center"><h1 class="u-font-header">VITÓRIA</h1><p class="u-mt-10">Você ganhou 50 XP.</p></div>`);
+
+                                    let extraMsg = '';
+                                    if (isSuicidaActive) {
+                                        userStats.coins = (userStats.coins || 0) + 100;
+                                        extraMsg = '<p class="u-mt-10 u-font-12" style="color:#10b981;">+100 COINS (Bônus Suicida)</p>';
+                                        await OnyxCore.DB.saveUser(userStats);
+                                        if (typeof renderShop === 'function') renderShop();
+                                    }
+
+                                    openOverlay("SUCESSO!", `<div class="u-p-20 u-text-primary u-text-center"><h1 class="u-font-header">VITÓRIA</h1><p class="u-mt-10">Você ganhou 50 XP.</p>${extraMsg}</div>`);
                                     await addGlobalXP(50);
                                 } else {
                                     if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
-                                    openOverlay("FALHA!", `<div class="u-p-20 u-text-center" style="color:var(--error);"><h1 class="u-font-header">DERROTA</h1><p class="u-mt-10">Você perdeu 25 XP.</p></div>`);
+
+                                    let extraMsg = '';
+                                    if (isSuicidaActive) {
+                                        userStats.coins = (userStats.coins || 0) - 1000;
+                                        if (userStats.coins < 0) {
+                                            userStats.coins = 0;
+                                            if (userStats.inventory) userStats.inventory.suicida_expires = null;
+                                            extraMsg = '<p class="u-mt-10 u-font-12" style="color:var(--error); font-weight:900;">-1000 COINS<br>FALÊNCIA! PASSE SUICIDA REVOGADO.</p>';
+                                        } else {
+                                            extraMsg = '<p class="u-mt-10 u-font-12" style="color:var(--error);">-1000 COINS (Penalidade Suicida)</p>';
+                                        }
+                                        if (typeof renderShop === 'function') renderShop();
+                                    }
+
+                                    openOverlay("FALHA!", `<div class="u-p-20 u-text-center" style="color:var(--error);"><h1 class="u-font-header">DERROTA</h1><p class="u-mt-10">Você perdeu 25 XP.</p>${extraMsg}</div>`);
                                     
                                     // Handle penalty securely
                                     userStats.xp = Math.max(0, (userStats.xp || 0) - 25);
@@ -3338,7 +3470,13 @@
             };
 
             // Hide after 15 seconds if not accepted
-            setTimeout(() => { alertBox.style.display = 'none'; }, 15000);
+            if (!isSuicidaActive) {
+                setTimeout(() => { 
+                    const bg = document.getElementById('mandatory-bg');
+                    if (bg) return;
+                    alertBox.style.display = 'none'; 
+                }, 15000);
+            }
         }
 
         window.onload = async () => {

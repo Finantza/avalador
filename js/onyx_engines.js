@@ -8,7 +8,7 @@ window.OnyxEngines = {
     // Ported Heuristic: Adaptive performance weight with Standard Deviation, Streaks, and Tutor scaling
     calculateHeuristicScore(correct, total, timeSpent, difficulty, options = {}) {
         const accuracy = (correct / total);
-        const diffWeight = { easy: 1, medium: 1.5, hard: 2.2, insane: 3.5, impossible: 5 }[difficulty] || 1;
+        const diffWeight = { easy: 1, medium: 1.5, hard: 2.2, insane: 3.5, impossible: 5, suicida: 10 }[difficulty] || 1;
         
         // 1. Time Bonus calculation
         let timeBonus = Math.max(0, (200 - timeSpent) / 200); // Max 200s per mission
@@ -626,7 +626,29 @@ window.OnyxEngines = {
             let explanation = "";
             let hint = "";
 
-            if (sub === 'portugues') {
+            if (lvl === 'suicida') {
+                const contexts = ['fronteiras da pesquisa', 'análise pós-estrutural', 'sistemas dinâmicos não-lineares', 'revisão por pares rigorosa', 'modelagem matemática avançada', 'integração de multi-domínios', 'metodologia disruptiva'];
+                const paradx = ['quântico-filosófico', 'meta-teórico', 'epistemológico avançado', 'ontológico-sistêmico', 'hermenêutico estrutural', 'fenomenológico denso', 'cognitivo-heurístico'];
+                const resolution = ['A integração epistemológica', 'A síntese dialética multivariada', 'O modelo de convergência não-linear', 'A reestruturação axiomática profunda'];
+                const err1 = ['A refutação sistêmica simplista', 'O reducionismo mecanicista extremo', 'A abstração analítica isolada'];
+                
+                const c = contexts[Math.floor(Math.random() * contexts.length)];
+                const p = paradx[Math.floor(Math.random() * paradx.length)];
+                const r = resolution[Math.floor(Math.random() * resolution.length)];
+                const e1 = err1[Math.floor(Math.random() * err1.length)];
+                const randIndex = Math.floor(Math.random() * 1000);
+                
+                q = `[Protocolo Ômega] Analisando criticamente o domínio de ${sub.toUpperCase()} através de uma abordagem de ${c} (Ref: ${randIndex}), considere o impacto cascata de um paradoxo ${p} sobre os axiomas fundamentais da área. Como a teoria unificada contemporânea mitiga e reverte essa singularidade sistêmica de forma irrefutável?`;
+                a = `${r} onde a fundamentação ontológica transcende as anomalias locais, estabilizando o fenômeno independentemente de variações estocásticas.`;
+                d = [
+                    `${e1} baseada em heurísticas de baixa dimensão observacional, o que inerentemente limita a precisão da inferência.`,
+                    `A invalidação sumária da premissa, assumindo levianamente que qualquer variável não-mapeada anula integralmente os postulados consolidados de ${sub.toUpperCase()}.`,
+                    `A conversão arbitrária do evento a uma falácia de correlação espúria, ignorando ativamente a cadeia de causalidade latente.`
+                ];
+                concept = "Hermenêutica Acadêmica (Hipercomplexidade)";
+                explanation = `No nível SUICIDA, a avaliação exige capacidade de transcender negações simples (como "anular" ou "invalidar"). A resposta correta baseia-se em convergência metodológica e integração, refletindo o rigor de análises de fronteira.`;
+                hint = "Lembre-se: paradigmas de extrema complexidade geralmente são resolvidos por integração sintética, não por reducionismos limitados.";
+            } else if (sub === 'portugues') {
                 const plurals = [
                     { s: 'cidadão', p: 'cidadãos', err: ['cidadões', 'cidadães', 'cidadãoes'] },
                     { s: 'caráter', p: 'caracteres', err: ['caráteres', 'caraters', 'carateres'] },
@@ -1288,17 +1310,19 @@ window.OnyxEngines = {
                         attempts++;
                     } while (seenText.has(norm) && attempts < maxAttempts);
 
-                    seenText.add(norm);
+                    if (!seenText.has(norm)) {
+                        seenText.add(norm);
 
-                    const targetYear = year !== 'all' ? parseInt(year) : (Math.floor(Math.random() * 3) + 1);
-                    const fmt = {
-                        q: gen.rawQText, a: gen.rawAns, d: gen.rawDistractors,
-                        explanation: gen.explanation, hint: gen.hint, concept: gen.concept,
-                        ano: targetYear,
-                        baseQText: gen.baseQText
-                    };
-                    newRaw.push(fmt);
-                    unseenPool.push(fmt);
+                        const targetYear = year !== 'all' ? parseInt(year) : (Math.floor(Math.random() * 3) + 1);
+                        const fmt = {
+                            q: gen.rawQText, a: gen.rawAns, d: gen.rawDistractors,
+                            explanation: gen.explanation, hint: gen.hint, concept: gen.concept,
+                            ano: targetYear,
+                            baseQText: gen.baseQText
+                        };
+                        newRaw.push(fmt);
+                        unseenPool.push(fmt);
+                    }
                 }
 
                 // Persistir no OnyxDBManager (question_bank) — caminho principal
@@ -1320,10 +1344,7 @@ window.OnyxEngines = {
             const shuffledPool = window.OnyxEngines.shuffle(unseenPool);
             let selection = [];
             if (shuffledPool.length > 0) {
-                while (selection.length < count) {
-                    selection = selection.concat(window.OnyxEngines.shuffle(shuffledPool));
-                }
-                selection = selection.slice(0, count);
+                selection = shuffledPool.slice(0, count);
             }
             const questions = [];
             

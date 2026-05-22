@@ -383,7 +383,8 @@ window.OnyxCore = {
             medium: 2, 
             hard: 3, 
             insane: 4, 
-            impossible: 5 
+            impossible: 5,
+            suicida: 10
         }
     },
 
@@ -482,7 +483,7 @@ window.OnyxCore = {
         return isLocal || isGestor;
     }
 
-    async function triggerGlobalCheatPenalty(reason) {
+    async function triggerGlobalCheatPenalty(reason, skipAmnesty = false) {
         if (penaltyTriggered) return;
         if (isBypassed()) {
             console.warn(`[ONYX SECURITY BYPASS] Dev-Sandbox ativo. Ação suspeita ignorada: "${reason}"`);
@@ -523,12 +524,14 @@ window.OnyxCore = {
         
         if (!hasBeenWarned) {
             localStorage.setItem(warningKey, 'true');
-            alert(`⚠️ [ALERTA DE SEGURANÇA CIBERNÉTICA ONYX]
+            if (!skipAmnesty) {
+                alert(`⚠️ [ALERTA DE SEGURANÇA CIBERNÉTICA ONYX]
 Ação proibida detectada pelo escudo de segurança: "${reason}".
 
 Esta é uma ADVERTÊNCIA única do Protocolo Onyx. Qualquer desvio futuro ou tentativa de contornar a arena resultará no rebaixamento automático de 1 nível e perda de todo o XP de nível atual!`);
-            penaltyTriggered = false; // Reset trigger state to allow warning/penalties to occur in future sessions
-            return;
+                penaltyTriggered = false; // Reset trigger state to allow warning/penalties to occur in future sessions
+                return;
+            }
         }
 
         try {
@@ -551,7 +554,7 @@ Esta é uma ADVERTÊNCIA única do Protocolo Onyx. Qualquer desvio futuro ou ten
         if (isBypassed()) return;
         e.preventDefault();
         e.stopPropagation();
-        triggerGlobalCheatPenalty('Clique Direito / Inspecionar');
+        triggerGlobalCheatPenalty('Clique Direito / Inspecionar', true);
     });
 
     // 2. Keyboard Shortcuts Blocker (F12, Inspect, View Source, Copy, Paste, Cut, Print, Save)
