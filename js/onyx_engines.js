@@ -1251,7 +1251,7 @@ window.OnyxEngines = {
                 pool = pool.filter(q => q.ano === reqYear);
             }
 
-            if (pool.length === 0) return [];
+            // if (pool.length === 0) return []; // Removed to allow procedural generation
 
             // ── Anti-Repetição Adaptativa ────────────────────────────────────────
             let stats = { seenQuestions: [] };
