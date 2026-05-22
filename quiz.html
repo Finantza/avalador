@@ -40,7 +40,7 @@
                         <circle class="timer-bg" cx="50" cy="50" r="45"></circle>
                         <circle class="timer-path" id="timer-path" cx="50" cy="50" r="45"></circle>
                     </svg>
-                    <span id="timer-text">20s</span>
+                    <span id="timer-text">30s</span>
                 </div>
                 <div class="question-section">
                     <div class="question-header-layout">
@@ -91,7 +91,7 @@
         let totalXPGained = 0;
         let questions = [];
         let timerInterval;
-        let timeLeft = 20;
+        let timeLeft = 30;
         let isAnswering = false;
         let tutorRequested = false;
 
@@ -315,7 +315,7 @@
 
         function resetTimer() {
             clearInterval(timerInterval);
-            timeLeft = 20;
+            timeLeft = 30;
             updateTimerUI();
             timerInterval = setInterval(() => {
                 timeLeft--;
@@ -328,7 +328,7 @@
 
         function updateTimerUI() {
             document.getElementById('timer-text').textContent = `${timeLeft}s`;
-            const offset = 283 - (timeLeft / 20) * 283;
+            const offset = 283 - (timeLeft / 30) * 283;
             document.getElementById('timer-path').style.strokeDashoffset = offset;
         }
 
@@ -359,7 +359,7 @@
                 if (streak > maxStreak) maxStreak = streak;
                 
                 // Speed Bonus
-                const speedBonus = (timeLeft / 20); // up to +1.0
+                const speedBonus = (timeLeft / 30); // up to +1.0
                 comboMultiplier = Math.min(3.0, 1.0 + (streak * 0.1) + speedBonus).toFixed(1);
                 
                 const earnedXP = Math.floor(baseXP * parseFloat(comboMultiplier));
