@@ -548,10 +548,7 @@
                 
                 if (failed) {
                     totalXPGained = 0; // No XP gained on critical failure
-                    if (stats.level > 1) {
-                        stats.level--;
-                    }
-                    stats.xp = 0; // Reset current level XP to 0 as penalty
+                    // Penalidade de nível e zerar XP foi removida
                 } else {
                     const totalTimeSpent = timesList.reduce((sum, t) => sum + t, 0);
                     // Use advanced upgraded Heuristic Score engine to calculate reward
