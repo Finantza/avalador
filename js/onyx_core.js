@@ -71,16 +71,23 @@ window.OnyxCore = {
                 const hashedPassword = await OnyxCore.Crypto.hashSHA256('1234');
                 const tx = this.instance.transaction(['global_stats'], 'readwrite');
                 const store = tx.objectStore('global_stats');
-                // Usuário de testes: Aluno
-                store.put({ id: 'aluno', password: hashedPassword, level: 1, xp: 0, role: 'aluno' });
-                // Usuário de testes: Gestor
-                store.put({ id: 'gestor', password: hashedPassword, level: 5, xp: 150, role: 'gestor' });
-                // Usuário de testes: Responsável
-                store.put({ id: 'responsavel', password: hashedPassword, level: 1, xp: 0, role: 'responsavel' });
-                // Usuário de testes: Mobile/Tablet
-                store.put({ id: 'OPERADOR MÓVEL', password: hashedPassword, level: 1, xp: 0, role: 'aluno' });
-                // Fallback anterior
-                store.put({ id: 'OPERADOR TESTE', password: hashedPassword, level: 1, xp: 0, role: 'aluno' });
+                
+                const defaultUsers = [
+                    { id: 'aluno', password: hashedPassword, level: 1, xp: 0, role: 'aluno' },
+                    { id: 'gestor', password: hashedPassword, level: 5, xp: 150, role: 'gestor' },
+                    { id: 'responsavel', password: hashedPassword, level: 1, xp: 0, role: 'responsavel' },
+                    { id: 'OPERADOR MÓVEL', password: hashedPassword, level: 1, xp: 0, role: 'aluno' },
+                    { id: 'OPERADOR TESTE', password: hashedPassword, level: 1, xp: 0, role: 'aluno' }
+                ];
+
+                for (const defUser of defaultUsers) {
+                    const getReq = store.get(defUser.id);
+                    getReq.onsuccess = () => {
+                        if (!getReq.result) {
+                            store.put(defUser);
+                        }
+                    };
+                }
             } catch(e) {}
         },
 

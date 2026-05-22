@@ -240,6 +240,11 @@ window.OnyxEngines = {
         return arr;
     },
 
+    normalizeQuestionText(q) {
+        if (!q) return "";
+        return String(q).replace(/^\[[^\]]+\d+\]\s*/gi, '').trim().toLowerCase();
+    },
+
     DataBank: null, // Loaded from onyx_database.js
 
     CloudSyncEngine: {
@@ -1040,6 +1045,27 @@ window.OnyxEngines = {
                 hint = "Lembre-se de buscar a opção focada no rigor metodológico e científico.";
             }
 
+            // Guard the base question text
+            const baseQ = q;
+
+            // Generate dynamic contextual parameterization
+            const nomesAlunos = ['Mariana', 'Pedro', 'Ana Clara', 'Gustavo', 'Beatriz', 'Lucas', 'Sofia', 'Rodrigo', 'Larissa', 'Bruno', 'Gabriel', 'Letícia', 'Felipe', 'Camila', 'Matheus', 'Júlia', 'Thiago', 'Manuela', 'Enzo', 'Valentina'];
+            const escolas = ['Colégio Central', 'Escola Técnica Nacional', 'Liceu de Ciências', 'Instituto de Tecnologia', 'Escola Estadual Cora Coralina', 'Liceu de Humanidades', 'Instituto Federal de Tecnologia', 'Colégio D. Pedro II'];
+            const randChoice = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+            // 35% chance to inject randomized student and school context
+            if (Math.random() < 0.35) {
+                const student = randChoice(nomesAlunos);
+                const school = randChoice(escolas);
+                const intros = [
+                    `Durante uma atividade prática no ${school}, o(a) estudante ${student} se deparou com o seguinte problema:\n`,
+                    `Para um trabalho escolar no ${school}, ${student} precisa analisar a seguinte questão:\n`,
+                    `No simulado de preparação do ${school}, a questão formulada para o(a) aluno(a) ${student} diz:\n`,
+                    `Ao realizar um teste no laboratório do ${school}, ${student} registrou a seguinte dúvida:\n`
+                ];
+                q = randChoice(intros) + q;
+            }
+
             return {
                 id: `procedural-gen-${randomId}`,
                 text: `[ONYX PROTOCOL] ${subject.toUpperCase()} (${difficulty.toUpperCase()}):\n${q}`,
@@ -1049,6 +1075,7 @@ window.OnyxEngines = {
                 hint: hint,
                 concept: concept,
                 rawQText: q,
+                baseQText: baseQ,
                 rawAns: a,
                 rawDistractors: d
             };
@@ -1099,12 +1126,16 @@ window.OnyxEngines = {
                 } catch(e) {}
             }
 
-            // ── Deduplicar ───────────────────────────────────────────────────────
+            // ── Deduplicar com Normalização de Textos (Anti-Prefix Loophole) ─────
             const seenText = new Set();
             pool = pool.filter(item => {
-                if (item && item.q && !seenText.has(item.q)) {
-                    seenText.add(item.q);
-                    return true;
+                if (item && item.q) {
+                    const cleanQ = item.baseQText || item.q;
+                    const norm = window.OnyxEngines.normalizeQuestionText(cleanQ);
+                    if (!seenText.has(norm)) {
+                        seenText.add(norm);
+                        return true;
+                    }
                 }
                 return false;
             });
@@ -1134,17 +1165,39 @@ window.OnyxEngines = {
 
             let unseenPool = pool.filter(q => !stats.seenQuestions.includes(q.q));
 
+            // Se o pool de não vistas for insuficiente, recicla as questões vistas deste assunto/dificuldade
+            if (unseenPool.length < count && pool.length > 0) {
+                console.log(`[ONYX ENGINE] Pool de não vistas baixo (${unseenPool.length}/${count}). Reciclando questões de ${subject}/${difficulty}.`);
+                const poolTexts = pool.map(q => q.q);
+                stats.seenQuestions = stats.seenQuestions.filter(qText => !poolTexts.includes(qText));
+                unseenPool = pool.filter(q => !stats.seenQuestions.includes(q.q));
+            }
+
             // ── Geração Procedural sob demanda (deficit) ─────────────────────────
             if (unseenPool.length < count) {
                 const deficit = count - unseenPool.length;
                 const newRaw = [];
                 for (let i = 0; i < deficit; i++) {
-                    const gen = window.OnyxEngines.QuestionEngine.generateNewProceduralQuestion(subject, difficulty);
+                    let gen;
+                    let norm;
+                    let attempts = 0;
+                    const maxAttempts = 15;
+                    
+                    do {
+                        gen = window.OnyxEngines.QuestionEngine.generateNewProceduralQuestion(subject, difficulty);
+                        const cleanQ = gen.baseQText || gen.rawQText;
+                        norm = window.OnyxEngines.normalizeQuestionText(cleanQ);
+                        attempts++;
+                    } while (seenText.has(norm) && attempts < maxAttempts);
+
+                    seenText.add(norm);
+
                     const targetYear = year !== 'all' ? parseInt(year) : (Math.floor(Math.random() * 3) + 1);
                     const fmt = {
                         q: gen.rawQText, a: gen.rawAns, d: gen.rawDistractors,
                         explanation: gen.explanation, hint: gen.hint, concept: gen.concept,
-                        ano: targetYear
+                        ano: targetYear,
+                        baseQText: gen.baseQText
                     };
                     newRaw.push(fmt);
                     unseenPool.push(fmt);
