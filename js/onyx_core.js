@@ -85,11 +85,11 @@ window.OnyxCore = {
                 const store = tx.objectStore('global_stats');
                 
                 const defaultUsers = [
-                    { id: 'aluno', password: hashedPassword, level: 1, xp: 0, role: 'aluno', coins: 0, inventory: { tutor: 3 } },
-                    { id: 'gestor', password: hashedPassword, level: 10, xp: 300, role: 'gestor', coins: 0, inventory: { tutor: 3 } },
-                    { id: 'responsavel', password: hashedPassword, level: 1, xp: 0, role: 'responsavel', coins: 0, inventory: { tutor: 3 } },
-                    { id: 'OPERADOR MÓVEL', password: hashedPassword, level: 1, xp: 0, role: 'aluno', coins: 0, inventory: { tutor: 3 } },
-                    { id: 'OPERADOR TESTE', password: hashedPassword, level: 1, xp: 0, role: 'aluno', coins: 0, inventory: { tutor: 3 } }
+                    { id: 'aluno', password: hashedPassword, level: 1, xp: 0, role: 'aluno', coins: 0, inventory: { tutor: 3, life: 1, fifty: 1, time: 1, skip: 1 } },
+                    { id: 'gestor', password: hashedPassword, level: 10, xp: 300, role: 'gestor', coins: 0, inventory: { tutor: 3, life: 1, fifty: 1, time: 1, skip: 1 } },
+                    { id: 'responsavel', password: hashedPassword, level: 1, xp: 0, role: 'responsavel', coins: 0, inventory: { tutor: 3, life: 1, fifty: 1, time: 1, skip: 1 } },
+                    { id: 'OPERADOR MÓVEL', password: hashedPassword, level: 1, xp: 0, role: 'aluno', coins: 0, inventory: { tutor: 3, life: 1, fifty: 1, time: 1, skip: 1 } },
+                    { id: 'OPERADOR TESTE', password: hashedPassword, level: 1, xp: 0, role: 'aluno', coins: 0, inventory: { tutor: 3, life: 1, fifty: 1, time: 1, skip: 1 } }
                 ];
 
                 for (const defUser of defaultUsers) {
@@ -158,7 +158,7 @@ window.OnyxCore = {
 
         async getUser(id) {
             const db = await this.init();
-            if (!db) return { id, level: 1, xp: 0, coins: 0, inventory: { tutor: 3 } };
+            if (!db) return { id, level: 1, xp: 0, coins: 0, inventory: { tutor: 3, life: 0, fifty: 0, time: 0, skip: 0 } };
             return new Promise((resolve) => {
                 const tx = db.transaction(['global_stats'], 'readonly');
                 const request = tx.objectStore('global_stats').get(id);
@@ -166,7 +166,13 @@ window.OnyxCore = {
                     let result = request.result;
                     if (result) {
                         if (typeof result.coins === 'undefined') result.coins = 0;
-                        if (typeof result.inventory === 'undefined') result.inventory = { tutor: 3 };
+                        if (typeof result.inventory === 'undefined') result.inventory = { tutor: 3, life: 0, fifty: 0, time: 0, skip: 0 };
+                        else {
+                            if (typeof result.inventory.life === 'undefined') result.inventory.life = 0;
+                            if (typeof result.inventory.fifty === 'undefined') result.inventory.fifty = 0;
+                            if (typeof result.inventory.time === 'undefined') result.inventory.time = 0;
+                            if (typeof result.inventory.skip === 'undefined') result.inventory.skip = 0;
+                        }
                     }
                     resolve(result || null);
                 };

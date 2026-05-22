@@ -502,18 +502,61 @@
                             <div class="u-font-15 u-weight-900" id="shop-coins">0 <span class="u-font-08 u-text-muted">COINS</span></div>
                         </div>
                         <div class="u-text-right">
-                            <span class="u-text-muted">CARGAS DO TUTOR:</span>
-                            <div class="u-font-12 u-weight-900 u-text-primary" id="shop-tutor-inv">0</div>
+                            <span class="u-text-muted">INVENTÁRIO TÁTICO:</span>
+                            <div class="u-font-10 u-weight-900 u-text-primary">
+                                ✨ <span id="shop-tutor-inv">0</span> |
+                                ❤️ <span id="shop-life-inv">0</span> |
+                                ✂️ <span id="shop-fifty-inv">0</span> |
+                                ⏳ <span id="shop-time-inv">0</span> |
+                                ⏭️ <span id="shop-skip-inv">0</span>
+                            </div>
                         </div>
                     </div>
                     <div class="u-grid-2">
+                        <!-- Item 1 -->
                         <div class="glass u-p-20">
                             <div class="u-flex-between u-mb-15">
-                                <h3 class="u-font-header u-text-accent">✨ PACOTE TUTOR DE BOLSO</h3>
+                                <h3 class="u-font-header u-text-accent">✨ TUTOR DE BOLSO</h3>
                                 <span class="u-font-12 u-weight-900">50 <span class="u-font-07">COINS</span></span>
                             </div>
-                            <p class="u-text-muted u-mb-20 u-font-08">Recarrega o seu inventário com +1 uso da Inteligência Artificial (Onyx Tutor) durante as missões.</p>
-                            <button id="btn-buy-tutor" class="btn-onyx btn-primary u-w-full">COMPRAR CARGA (+1)</button>
+                            <p class="u-text-muted u-mb-20 u-font-08">Simplifica a leitura de uma questão complexa através da IA.</p>
+                            <button id="btn-buy-tutor" class="btn-onyx btn-primary u-w-full">COMPRAR (+1)</button>
+                        </div>
+                        <!-- Item 2 -->
+                        <div class="glass u-p-20">
+                            <div class="u-flex-between u-mb-15">
+                                <h3 class="u-font-header" style="color:var(--error);">❤️ CORAÇÃO EXTRA</h3>
+                                <span class="u-font-12 u-weight-900">100 <span class="u-font-07">COINS</span></span>
+                            </div>
+                            <p class="u-text-muted u-mb-20 u-font-08">Recupera instantaneamente 1 Vida perdida durante a missão.</p>
+                            <button id="btn-buy-life" class="btn-onyx btn-primary u-w-full" style="background:rgba(239,68,68,0.2); border-color:var(--error);">COMPRAR (+1)</button>
+                        </div>
+                        <!-- Item 3 -->
+                        <div class="glass u-p-20">
+                            <div class="u-flex-between u-mb-15">
+                                <h3 class="u-font-header" style="color:#f59e0b;">✂️ ELIMINADOR 50/50</h3>
+                                <span class="u-font-12 u-weight-900">150 <span class="u-font-07">COINS</span></span>
+                            </div>
+                            <p class="u-text-muted u-mb-20 u-font-08">Remove 2 alternativas incorretas da questão atual.</p>
+                            <button id="btn-buy-fifty" class="btn-onyx btn-primary u-w-full" style="background:rgba(245,158,11,0.2); border-color:#f59e0b;">COMPRAR (+1)</button>
+                        </div>
+                        <!-- Item 4 -->
+                        <div class="glass u-p-20">
+                            <div class="u-flex-between u-mb-15">
+                                <h3 class="u-font-header" style="color:#10b981;">⏳ CONGELADOR DE TEMPO</h3>
+                                <span class="u-font-12 u-weight-900">75 <span class="u-font-07">COINS</span></span>
+                            </div>
+                            <p class="u-text-muted u-mb-20 u-font-08">Adiciona +30 segundos ao relógio da questão atual.</p>
+                            <button id="btn-buy-time" class="btn-onyx btn-primary u-w-full" style="background:rgba(16,185,129,0.2); border-color:#10b981;">COMPRAR (+1)</button>
+                        </div>
+                        <!-- Item 5 -->
+                        <div class="glass u-p-20" style="grid-column: 1 / -1;">
+                            <div class="u-flex-between u-mb-15">
+                                <h3 class="u-font-header" style="color:#8b5cf6;">⏭️ AVANÇO TÁTICO</h3>
+                                <span class="u-font-12 u-weight-900">200 <span class="u-font-07">COINS</span></span>
+                            </div>
+                            <p class="u-text-muted u-mb-20 u-font-08">Pula a questão atual sem sofrer penalidade de erro (não ganha moedas).</p>
+                            <button id="btn-buy-skip" class="btn-onyx btn-primary u-w-full" style="background:rgba(139,92,246,0.2); border-color:#8b5cf6;">COMPRAR (+1)</button>
                         </div>
                     </div>
                 </section>
@@ -602,29 +645,43 @@
         function renderShop() {
             if(userStats) {
                 document.getElementById('shop-coins').innerHTML = `${userStats.coins || 0} <span class="u-font-08 u-text-muted">COINS</span>`;
-                document.getElementById('shop-tutor-inv').textContent = (userStats.inventory && userStats.inventory.tutor) || 0;
+                if(userStats.inventory) {
+                    document.getElementById('shop-tutor-inv').textContent = userStats.inventory.tutor || 0;
+                    document.getElementById('shop-life-inv').textContent = userStats.inventory.life || 0;
+                    document.getElementById('shop-fifty-inv').textContent = userStats.inventory.fifty || 0;
+                    document.getElementById('shop-time-inv').textContent = userStats.inventory.time || 0;
+                    document.getElementById('shop-skip-inv').textContent = userStats.inventory.skip || 0;
+                }
             }
         }
 
-        setTimeout(() => {
-            const btnBuyTutor = document.getElementById('btn-buy-tutor');
-            if(btnBuyTutor) {
-                btnBuyTutor.onclick = async () => {
+        function setupBuyButton(btnId, cost, inventoryKey) {
+            const btn = document.getElementById(btnId);
+            if(btn) {
+                btn.onclick = async () => {
                     if (!userStats) return;
-                    if ((userStats.coins || 0) >= 50) {
-                        userStats.coins -= 50;
-                        if (!userStats.inventory) userStats.inventory = { tutor: 0 };
-                        userStats.inventory.tutor = (userStats.inventory.tutor || 0) + 1;
+                    if ((userStats.coins || 0) >= cost) {
+                        userStats.coins -= cost;
+                        if (!userStats.inventory) userStats.inventory = { tutor: 0, life: 0, fifty: 0, time: 0, skip: 0 };
+                        userStats.inventory[inventoryKey] = (userStats.inventory[inventoryKey] || 0) + 1;
                         await OnyxCore.DB.saveUser(userStats);
                         if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
                         renderShop();
-                        alert("Compra efetuada com sucesso! Você ganhou +1 uso do Tutor.");
+                        alert(`Compra efetuada com sucesso! Você ganhou +1 uso de ${inventoryKey.toUpperCase()}.`);
                     } else {
                         if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
                         alert("Saldo insuficiente para esta compra.");
                     }
                 };
             }
+        }
+
+        setTimeout(() => {
+            setupBuyButton('btn-buy-tutor', 50, 'tutor');
+            setupBuyButton('btn-buy-life', 100, 'life');
+            setupBuyButton('btn-buy-fifty', 150, 'fifty');
+            setupBuyButton('btn-buy-time', 75, 'time');
+            setupBuyButton('btn-buy-skip', 200, 'skip');
         }, 1000);
 
         document.querySelectorAll('.nav-item[data-screen]').forEach(item => {

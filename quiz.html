@@ -32,9 +32,6 @@
                     <div class="streak-badge active" style="border-color: #facc15; color: #facc15;">
                         <span class="u-weight-900">🪙 <span id="quiz-coins">0</span></span>
                     </div>
-                    <div class="streak-badge active" style="border-color: #0ea5e9; color: #0ea5e9;">
-                        <span class="u-weight-900">✨ <span id="quiz-tutor-inv">0</span></span>
-                    </div>
                 </div>
                 <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
                 <div class="quiz-stats">QUESTÃO <span id="current-q">1</span>/10</div>
@@ -51,12 +48,16 @@
                 <div class="question-section">
                     <div class="question-header-layout">
                         <p id="question-text" class="glitch-text question-text-grow">INICIALIZANDO PROTOCOLO...</p>
-                        <button id="btn-tutor" class="btn-onyx btn-tutor-primary">
-                            ✨ TUTOR
-                        </button>
                         <button id="btn-speak" class="btn-onyx btn-speak-primary">
                             🔊 OUVIR
                         </button>
+                    </div>
+                    <div id="tactical-toolbar" class="u-flex u-gap-10 u-mb-15" style="flex-wrap: wrap; justify-content: center; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
+                        <button id="btn-tutor" class="btn-onyx" style="padding:5px 10px; font-size:0.75rem; border-color: #0ea5e9; color: #0ea5e9;">✨ TUTOR (<span id="inv-tutor-qty">0</span>)</button>
+                        <button id="btn-use-life" class="btn-onyx" style="padding:5px 10px; font-size:0.75rem; background: rgba(239,68,68,0.2); border-color: var(--error);">❤️ VIDA (<span id="inv-life-qty">0</span>)</button>
+                        <button id="btn-use-fifty" class="btn-onyx" style="padding:5px 10px; font-size:0.75rem; background: rgba(245,158,11,0.2); border-color: #f59e0b;">✂️ 50/50 (<span id="inv-fifty-qty">0</span>)</button>
+                        <button id="btn-use-time" class="btn-onyx" style="padding:5px 10px; font-size:0.75rem; background: rgba(16,185,129,0.2); border-color: #10b981;">⏳ TEMPO (<span id="inv-time-qty">0</span>)</button>
+                        <button id="btn-use-skip" class="btn-onyx" style="padding:5px 10px; font-size:0.75rem; background: rgba(139,92,246,0.2); border-color: #8b5cf6;">⏭️ PULAR (<span id="inv-skip-qty">0</span>)</button>
                     </div>
                     <div id="options-container" class="options-container"></div>
                 </div>
@@ -139,8 +140,7 @@
                 userStats = await OnyxCore.DB.getUser(userName);
                 if (userStats) {
                     document.getElementById('quiz-coins').textContent = userStats.coins || 0;
-                    document.getElementById('quiz-tutor-inv').textContent = (userStats.inventory && userStats.inventory.tutor) || 0;
-
+                    
                     const subReq = OnyxCore.ProgressionConfig.subjects[subject] || 1;
                     const diffReq = OnyxCore.ProgressionConfig.difficulties[difficulty] || 1;
                     
@@ -240,30 +240,44 @@
             // Reset Timer
             resetTimer();
 
-            // Tutor Logic
+            // Atualizar UI do inventário
+            const updateToolbarUI = () => {
+                if(userStats && userStats.inventory) {
+                    document.getElementById('inv-tutor-qty').textContent = userStats.inventory.tutor || 0;
+                    document.getElementById('inv-life-qty').textContent = userStats.inventory.life || 0;
+                    document.getElementById('inv-fifty-qty').textContent = userStats.inventory.fifty || 0;
+                    document.getElementById('inv-time-qty').textContent = userStats.inventory.time || 0;
+                    document.getElementById('inv-skip-qty').textContent = userStats.inventory.skip || 0;
+                }
+            };
+            updateToolbarUI();
+
+            const consumeItem = (itemKey) => {
+                if (!userStats || !userStats.inventory || (userStats.inventory[itemKey] || 0) <= 0) {
+                    if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
+                    alert(`⚠️ Sem saldo para este item! Compre mais na Loja Onyx.`);
+                    return false;
+                }
+                userStats.inventory[itemKey] -= 1;
+                OnyxCore.DB.saveUser(userStats);
+                updateToolbarUI();
+                if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
+                return true;
+            };
+
+            // 1. Tutor
             const btnTutor = document.getElementById('btn-tutor');
             if (btnTutor) {
+                btnTutor.style.opacity = '1';
                 btnTutor.onclick = () => {
-                    if (btnTutor.style.opacity === '0.5') return; // Prevent multiple uses
-                    
-                    if (!autoSimplify) {
-                        if (!userStats || !userStats.inventory || userStats.inventory.tutor <= 0) {
-                            if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
-                            alert("⚠️ Saldo de Dicas do Tutor esgotado! Compre mais na Loja Onyx (Dashboard).");
-                            return;
-                        }
-                        userStats.inventory.tutor -= 1;
-                        document.getElementById('quiz-tutor-inv').textContent = userStats.inventory.tutor;
-                        OnyxCore.DB.saveUser(userStats);
-                    }
+                    if (btnTutor.style.opacity === '0.5') return;
+                    if (!autoSimplify && !consumeItem('tutor')) return;
 
                     if (!tutorRequested) {
                         tutorRequested = true;
                         tutorConsultedCount++;
                     }
-                    if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
                     
-                    // Simplificação gramatical e cognitiva + Destaque visual de jargões técnicos
                     let simplified = tutorAI.simplificarTexto(q.text, 'moderado');
                     let highlighted = OnyxCore.Tutor.simplifyText(simplified);
                     
@@ -271,20 +285,85 @@
                     textElement.style.fontSize = '1.3rem';
                     textElement.style.lineHeight = '1.6';
                     btnTutor.style.opacity = '0.5';
-                    btnTutor.innerText = 'SIMPLIFICADO ✓';
                     
-                    // Aumenta o tempo em 15s para ler com calma
                     timeLeft += 15;
                     updateTimerUI();
                 };
-                
-                if (autoSimplify) {
-                    btnTutor.style.opacity = '0.5';
-                    btnTutor.innerText = 'SIMPLIFICADO ✓';
-                } else {
-                    btnTutor.style.opacity = '1';
-                    btnTutor.innerText = '✨ TUTOR';
-                }
+                if (autoSimplify) btnTutor.style.opacity = '0.5';
+            }
+
+            // 2. Life
+            const btnLife = document.getElementById('btn-use-life');
+            if (btnLife) {
+                btnLife.style.opacity = lives < 3 ? '1' : '0.5';
+                btnLife.onclick = () => {
+                    if (lives >= 3) {
+                        alert("Sua vida já está cheia!");
+                        return;
+                    }
+                    if (!consumeItem('life')) return;
+                    lives++;
+                    updateLivesUI();
+                    btnLife.style.opacity = lives < 3 ? '1' : '0.5';
+                };
+            }
+
+            // 3. 50/50
+            const btnFifty = document.getElementById('btn-use-fifty');
+            if (btnFifty) {
+                btnFifty.style.opacity = '1';
+                btnFifty.onclick = () => {
+                    if (btnFifty.style.opacity === '0.5') return;
+                    if (!consumeItem('fifty')) return;
+                    
+                    const options = document.querySelectorAll('.option-btn');
+                    let wrongIndexes = [];
+                    q.options.forEach((opt, idx) => {
+                        if (idx !== q.correct) wrongIndexes.push(idx);
+                    });
+                    // Shuffle and pick 2
+                    wrongIndexes.sort(() => Math.random() - 0.5);
+                    const toRemove = wrongIndexes.slice(0, 2);
+                    toRemove.forEach(idx => {
+                        if (options[idx]) {
+                            options[idx].style.opacity = '0.2';
+                            options[idx].style.pointerEvents = 'none';
+                        }
+                    });
+                    btnFifty.style.opacity = '0.5';
+                };
+            }
+
+            // 4. Time
+            const btnTime = document.getElementById('btn-use-time');
+            if (btnTime) {
+                btnTime.style.opacity = '1';
+                btnTime.onclick = () => {
+                    if (btnTime.style.opacity === '0.5') return;
+                    if (!consumeItem('time')) return;
+                    timeLeft += 30;
+                    updateTimerUI();
+                    btnTime.style.opacity = '0.5';
+                };
+            }
+
+            // 5. Skip
+            const btnSkip = document.getElementById('btn-use-skip');
+            if (btnSkip) {
+                btnSkip.style.opacity = '1';
+                btnSkip.onclick = () => {
+                    if (btnSkip.style.opacity === '0.5') return;
+                    if (!consumeItem('skip')) return;
+                    btnSkip.style.opacity = '0.5';
+                    
+                    clearInterval(timerInterval);
+                    currentQuestionIndex++;
+                    if (currentQuestionIndex < questions.length) {
+                        renderQuestion();
+                    } else {
+                        finishMission(false);
+                    }
+                };
             }
 
             // Voice Speech (Leitura em Voz Alta) Logic
