@@ -365,8 +365,8 @@
 
         // Check authentication and initialize
         async function init() {
-            OnyxCore.Session.checkAuth();
-            const userName = OnyxCore.Session.getCurrentUser();
+            const userName = await OnyxCore.Session.checkAuth();
+            if (!userName) return;
             
             if (window.OnyxDBManager) {
                 await window.OnyxDBManager.init();
@@ -381,15 +381,27 @@
             }
 
             const userRole = userStats.role || 'aluno';
+            const loggedUserEl = document.getElementById('logged-user-name');
+            loggedUserEl.textContent = userStats.id.toUpperCase() + " ";
+            
+            const roleSpan = document.createElement('span');
+            roleSpan.style.fontSize = "0.7rem";
+            roleSpan.style.fontWeight = "800";
+            roleSpan.style.fontFamily = "var(--font-mono)";
+            
             if (userStats.id === 'OPERADOR MÓVEL') {
-                document.getElementById('logged-user-name').innerHTML = userStats.id.toUpperCase() + 
-                    ` <span style="color:var(--success); font-size:0.7rem; font-weight:800; font-family:var(--font-mono);">[DISPOSITIVO MÓVEL]</span>`;
+                roleSpan.style.color = "var(--success)";
+                roleSpan.textContent = "[DISPOSITIVO MÓVEL]";
             } else {
-                document.getElementById('logged-user-name').innerHTML = userStats.id.toUpperCase() + 
-                    (userRole === 'gestor' 
-                        ? ` <span style="color:var(--accent); font-size:0.7rem; font-weight:800; font-family:var(--font-mono);">[GESTOR]</span>` 
-                        : ` <span style="color:var(--primary); font-size:0.7rem; font-weight:800; font-family:var(--font-mono);">[ESTUDANTE]</span>`);
+                if (userRole === 'gestor') {
+                    roleSpan.style.color = "var(--accent)";
+                    roleSpan.textContent = "[GESTOR]";
+                } else {
+                    roleSpan.style.color = "var(--primary)";
+                    roleSpan.textContent = "[ESTUDANTE]";
+                }
             }
+            loggedUserEl.appendChild(roleSpan);
 
             // Set up sidebar tabs
             document.querySelectorAll('.ai-menu-item').forEach(btn => {

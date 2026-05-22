@@ -173,6 +173,8 @@
                                 NÚCLEO</button>
                             <button onclick="location.href='register.html'"
                                 class="btn-onyx u-w-full u-mt-10 u-bg-none u-color-white u-border-glass">CRIAR NOVA CREDENCIAL</button>
+                            <button onclick="location.href='parents_portal.html'"
+                                class="btn-onyx u-w-full u-mt-10 u-bg-none u-color-white u-border-glass" style="border-color: rgba(14, 165, 233, 0.45); box-shadow: 0 0 12px rgba(14, 165, 233, 0.15); font-weight: 800;">👪 PORTAL DE PAIS E RESPONSÁVEIS</button>
                         </div>
                     </div>
                 </div>
@@ -218,7 +220,8 @@
             }
 
             const user = await OnyxCore.DB.getUser(name);
-            if (user && user.password === pass) {
+            const hashedPass = await OnyxCore.Crypto.hashSHA256(pass);
+            if (user && user.password === hashedPass) {
                 showMsg("ACESSO AUTORIZADO.", false);
                 
                 // Start Boot Sequence
@@ -238,7 +241,7 @@
                     await new Promise(r => setTimeout(r, 600));
                 }
                 
-                setTimeout(() => OnyxCore.Session.login(name), 500);
+                setTimeout(() => OnyxCore.Session.login(name, user.role), 500);
             } else {
                 showMsg("USUÁRIO OU SENHA INVÁLIDOS.", true);
             }
@@ -258,7 +261,12 @@
             
             const currentUser = OnyxCore.Session.getCurrentUser();
             if (currentUser) {
-                location.href = 'dashboard.html';
+                const userRole = localStorage.getItem('onyx_active_user_role');
+                if (userRole === 'responsavel') {
+                    location.href = 'parents_portal.html';
+                } else {
+                    location.href = 'dashboard.html';
+                }
                 return;
             }
 
@@ -290,7 +298,7 @@
                     await new Promise(r => setTimeout(r, 600));
                 }
                 
-                setTimeout(() => OnyxCore.Session.login(mobileUser), 500);
+                setTimeout(() => OnyxCore.Session.login(mobileUser, 'aluno'), 500);
             }
         };
     </script>

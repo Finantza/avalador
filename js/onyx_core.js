@@ -4,6 +4,21 @@
  */
 
 window.OnyxCore = {
+    Crypto: {
+        async hashSHA256(str) {
+            if (!str) return '';
+            try {
+                const utf8 = new TextEncoder().encode(str);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                return hashHex;
+            } catch (e) {
+                console.error("[ONYX CRYPTO] Falha ao computar hash SHA-256:", e);
+                return '';
+            }
+        }
+    },
     DB: {
         instance: null,
         async init() {
@@ -53,16 +68,19 @@ window.OnyxCore = {
         async createTestUser() {
             if (!this.instance) return;
             try {
+                const hashedPassword = await OnyxCore.Crypto.hashSHA256('1234');
                 const tx = this.instance.transaction(['global_stats'], 'readwrite');
                 const store = tx.objectStore('global_stats');
                 // Usuário de testes: Aluno
-                store.put({ id: 'aluno', password: '1234', level: 1, xp: 0, role: 'aluno' });
+                store.put({ id: 'aluno', password: hashedPassword, level: 1, xp: 0, role: 'aluno' });
                 // Usuário de testes: Gestor
-                store.put({ id: 'gestor', password: '1234', level: 5, xp: 150, role: 'gestor' });
+                store.put({ id: 'gestor', password: hashedPassword, level: 5, xp: 150, role: 'gestor' });
+                // Usuário de testes: Responsável
+                store.put({ id: 'responsavel', password: hashedPassword, level: 1, xp: 0, role: 'responsavel' });
                 // Usuário de testes: Mobile/Tablet
-                store.put({ id: 'OPERADOR MÓVEL', password: '1234', level: 1, xp: 0, role: 'aluno' });
+                store.put({ id: 'OPERADOR MÓVEL', password: hashedPassword, level: 1, xp: 0, role: 'aluno' });
                 // Fallback anterior
-                store.put({ id: 'OPERADOR TESTE', password: '1234', level: 1, xp: 0, role: 'aluno' });
+                store.put({ id: 'OPERADOR TESTE', password: hashedPassword, level: 1, xp: 0, role: 'aluno' });
             } catch(e) {}
         },
 
@@ -199,7 +217,10 @@ window.OnyxCore = {
                 });
             }
             
-            return JSON.stringify(dump);
+            const rawData = JSON.stringify(dump);
+            const signature = await OnyxCore.Crypto.hashSHA256(rawData + "OnyxSaltProtocolSecure1337!");
+            
+            return JSON.stringify({ data: dump, signature: signature });
         },
 
         async importDatabase(jsonData) {
@@ -207,7 +228,21 @@ window.OnyxCore = {
             if (!db) return false;
             
             try {
-                const dump = JSON.parse(jsonData);
+                const parsed = JSON.parse(jsonData);
+                if (!parsed || !parsed.data || !parsed.signature) {
+                    console.error("[ONYX SECURITY] Formato de importação inválido ou assinatura ausente.");
+                    return false;
+                }
+                
+                const rawData = JSON.stringify(parsed.data);
+                const computedSignature = await OnyxCore.Crypto.hashSHA256(rawData + "OnyxSaltProtocolSecure1337!");
+                
+                if (parsed.signature !== computedSignature) {
+                    alert("🚨 [VIOLAÇÃO DE SEGURANÇA ONYX]\nA integridade do backup não pôde ser verificada. O arquivo foi corrompido ou adulterado!");
+                    return false;
+                }
+                
+                const dump = parsed.data;
                 const stores = Object.keys(dump);
                 
                 for (let s of stores) {
@@ -249,13 +284,21 @@ window.OnyxCore = {
     },
 
     Session: {
-        login(user) {
+        login(user, role) {
             localStorage.setItem('onyx_active_user', user);
+            if (role) {
+                localStorage.setItem('onyx_active_user_role', role);
+            }
             localStorage.removeItem('onyx_manual_logout');
-            window.location.href = 'dashboard.html';
+            if (role === 'responsavel') {
+                window.location.href = 'parents_portal.html';
+            } else {
+                window.location.href = 'dashboard.html';
+            }
         },
         logout() {
             localStorage.removeItem('onyx_active_user');
+            localStorage.removeItem('onyx_active_user_role');
             localStorage.setItem('onyx_manual_logout', 'true');
             window.location.href = 'index.html';
         },
@@ -269,6 +312,12 @@ window.OnyxCore = {
                 return null;
             }
             await OnyxCore.DB.init();
+            try {
+                const stats = await OnyxCore.DB.getUser(user);
+                if (stats && stats.role) {
+                    localStorage.setItem('onyx_active_user_role', stats.role);
+                }
+            } catch(e) {}
             return user;
         }
     },
@@ -381,8 +430,19 @@ window.OnyxCore = {
 (function() {
     let penaltyTriggered = false;
 
+    function isBypassed() {
+        const host = window.location.hostname;
+        const isLocal = host === 'localhost' || host === '127.0.0.1' || window.location.protocol === 'file:';
+        const isGestor = localStorage.getItem('onyx_active_user_role') === 'gestor';
+        return isLocal || isGestor;
+    }
+
     async function triggerGlobalCheatPenalty(reason) {
         if (penaltyTriggered) return;
+        if (isBypassed()) {
+            console.warn(`[ONYX SECURITY BYPASS] Dev-Sandbox ativo. Ação suspeita ignorada: "${reason}"`);
+            return;
+        }
         
         const host = window.location.hostname;
         const isLocal = host === 'localhost' || host === '127.0.0.1' || window.location.protocol === 'file:';
@@ -443,6 +503,7 @@ Esta é uma ADVERTÊNCIA única do Protocolo Onyx. Qualquer desvio futuro ou ten
 
     // 1. Context Menu Blocker (Right Click)
     document.addEventListener('contextmenu', (e) => {
+        if (isBypassed()) return;
         e.preventDefault();
         e.stopPropagation();
         triggerGlobalCheatPenalty('Clique Direito / Inspecionar');
@@ -450,6 +511,7 @@ Esta é uma ADVERTÊNCIA única do Protocolo Onyx. Qualquer desvio futuro ou ten
 
     // 2. Keyboard Shortcuts Blocker (F12, Inspect, View Source, Copy, Paste, Cut, Print, Save)
     document.addEventListener('keydown', (e) => {
+        if (isBypassed()) return;
         const isF12 = e.key === 'F12' || e.keyCode === 123;
         const hasModifier = e.ctrlKey || e.metaKey; // Ctrl on Windows/Linux, Cmd on Mac
         
@@ -477,18 +539,21 @@ Esta é uma ADVERTÊNCIA única do Protocolo Onyx. Qualquer desvio futuro ou ten
 
     // 3. Document Copy, Paste, Cut Events Blocker
     document.addEventListener('copy', (e) => {
+        if (isBypassed()) return;
         e.preventDefault();
         e.stopPropagation();
         triggerGlobalCheatPenalty('Copiar Conteúdo');
     });
 
     document.addEventListener('paste', (e) => {
+        if (isBypassed()) return;
         e.preventDefault();
         e.stopPropagation();
         triggerGlobalCheatPenalty('Colar Conteúdo');
     });
 
     document.addEventListener('cut', (e) => {
+        if (isBypassed()) return;
         e.preventDefault();
         e.stopPropagation();
         triggerGlobalCheatPenalty('Recortar Conteúdo');
@@ -496,11 +561,13 @@ Esta é uma ADVERTÊNCIA única do Protocolo Onyx. Qualquer desvio futuro ou ten
 
     // 4. Block Text Selection (Makes it impossible to highlight code/text)
     document.addEventListener('selectstart', (e) => {
+        if (isBypassed()) return;
         e.preventDefault();
     });
 
     // 5. Block Dragging (Prevents dragging elements/images to desktop/inspect)
     document.addEventListener('dragstart', (e) => {
+        if (isBypassed()) return;
         e.preventDefault();
     });
 
@@ -509,10 +576,12 @@ Esta é uma ADVERTÊNCIA única do Protocolo Onyx. Qualquer desvio futuro ou ten
         let devtoolsDetector = new Image();
         Object.defineProperty(devtoolsDetector, 'id', {
             get: function() {
+                if (isBypassed()) return;
                 triggerGlobalCheatPenalty('Invasão de Console de Desenvolvedor');
             }
         });
         setInterval(() => {
+            if (isBypassed()) return;
             console.log('%c', devtoolsDetector);
             console.clear();
         }, 1000);
@@ -520,6 +589,7 @@ Esta é uma ADVERTÊNCIA única do Protocolo Onyx. Qualquer desvio futuro ou ten
 
     // 7. Advanced DevTools Window Mismatch Detector (Docked DevTools)
     setInterval(() => {
+        if (isBypassed()) return;
         const threshold = 160;
         const widthThreshold = window.outerWidth - window.innerWidth > threshold;
         const heightThreshold = window.outerHeight - window.innerHeight > threshold;
@@ -531,6 +601,7 @@ Esta é uma ADVERTÊNCIA única do Protocolo Onyx. Qualquer desvio futuro ou ten
     // 8. Infinite debugger loops when devtools are active
     (function() {
         function checkDevToolsPause() {
+            if (isBypassed()) return;
             const startTime = performance.now();
             debugger;
             const endTime = performance.now();

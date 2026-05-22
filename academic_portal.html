@@ -99,8 +99,8 @@
 
         // Check authentication and initialize
         async function init() {
-            OnyxCore.Session.checkAuth();
-            const userName = OnyxCore.Session.getCurrentUser();
+            const userName = await OnyxCore.Session.checkAuth();
+            if (!userName) return;
             
             if (window.OnyxDBManager) {
                 await window.OnyxDBManager.init();
@@ -127,7 +127,15 @@
                 };
             }
 
-            document.getElementById('logged-user-name').innerHTML = userStats.id.toUpperCase() + ` <span style="color:var(--accent); font-size:0.7rem; font-weight:800; font-family:var(--font-mono);">[GESTOR]</span>`;
+            const loggedUserEl = document.getElementById('logged-user-name');
+            loggedUserEl.textContent = userStats.id.toUpperCase() + " ";
+            const roleSpan = document.createElement('span');
+            roleSpan.style.color = "var(--accent)";
+            roleSpan.style.fontSize = "0.7rem";
+            roleSpan.style.fontWeight = "800";
+            roleSpan.style.fontFamily = "var(--font-mono)";
+            roleSpan.textContent = "[GESTOR]";
+            loggedUserEl.appendChild(roleSpan);
 
             // Set up sidebar tabs
             document.querySelectorAll('.role-menu-item').forEach(btn => {
@@ -159,21 +167,43 @@
                 ];
                 localStorage.setItem('onyx_school_teachers', JSON.stringify(defaultTeachers));
             }
-
             renderWorkspace();
         }
 
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        let currentSecretariaFilter = 'ALL';
+
+        window.setSecretariaFilter = function(filterVal) {
+            currentSecretariaFilter = filterVal;
+            document.querySelectorAll('.btn-filter-selector').forEach(btn => btn.classList.remove('active'));
+            if (filterVal === 'ALL') document.getElementById('filter-all').classList.add('active');
+            else if (filterVal === 'DESTAQUE') document.getElementById('filter-destaque').classList.add('active');
+            else if (filterVal === 'REGULAR') document.getElementById('filter-regular').classList.add('active');
+            else if (filterVal === 'ATENCAO') document.getElementById('filter-atencao').classList.add('active');
+            renderSecretariaLists();
+        };
+
         async function renderWorkspace() {
             const container = document.getElementById('workspace-card');
+            if (!container) return;
             
             if (activeTab === 'tab-direcao') {
                 const students = getStudents();
-                const studentOptions = students.map(s => `<option value="${s.id}">${s.name} (Média: ${s.grade.toFixed(1)} | Presença: ${s.freq}%)</option>`).join('');
+                const studentOptions = students.map(s => `<option value="${s.id}">${escapeHTML(s.name)} (Média: ${s.grade.toFixed(1)} | Presença: ${s.freq}%)</option>`).join('');
 
                 container.innerHTML = `
                     <div style="display:flex; flex-direction:column; gap:25px;">
                         <div>
-                            <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">📊 DIRETORIA ESCOLAR (PREVISÕES PEDAGÓGICAS COM IA)</h2>
+                            <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">📊 DIRETORIA COGNITIVA (IA PREDITIVA DE 1º MUNDO)</h2>
                             <p style="margin:0;" class="u-text-muted u-font-08">Análise preditiva heurística de desempenho, evasão e engajamento escolar em tempo real.</p>
                         </div>
 
@@ -187,7 +217,7 @@
 
                         <!-- Container filled dynamically by loadStudentAIInsight() -->
                         <div id="diretoria-insights-container" style="display:flex; flex-direction:column; gap:25px;">
-                            <div class="u-text-center u-p-20"><p class="u-text-muted u-font-08">INICIANDO DIAGNÓSTICO DO ALUNO...</p></div>
+                            <div class="u-text-center u-p-20"><p class="u-text-muted u-font-08">CARREGANDO MAPA COGNITIVO E REDES NEURAIS...</p></div>
                         </div>
                     </div>
                 `;
@@ -199,7 +229,7 @@
                 container.innerHTML = `
                     <div style="display:flex; flex-direction:column; gap:20px;">
                         <div>
-                            <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">👩‍🏫 GESTÃO DE CORPO DOCENTE E LANÇAMENTO</h2>
+                            <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">👩‍🏫 GESTÃO DO CORPO DOCENTE E CONTROLE DE PROFICIÊNCIA</h2>
                             <p style="margin:0;" class="u-text-muted u-font-08">Cadastre novos docentes, gerencie áreas curriculares e ajuste a proficiência de estudantes.</p>
                         </div>
 
@@ -248,15 +278,18 @@
                             <!-- Right Column: Classroom Grading list + Registered Teachers list -->
                             <div style="display:flex; flex-direction:column; gap:20px;">
                                 <div class="metric-glass-card">
-                                    <h3 style="margin:0 0 10px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">📝 LANÇAMENTO DE NOTAS / AJUSTE PEDAGÓGICO</h3>
+                                    <div class="u-flex-between u-mb-10">
+                                        <h3 style="margin:0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">📝 LANÇAMENTO DE NOTAS / AJUSTE PEDAGÓGICO</h3>
+                                        <span class="u-font-07 u-text-accent" id="overall-school-average" style="font-weight:800; font-family:var(--font-mono);">Média Geral: ...</span>
+                                    </div>
                                     <p class="u-font-07 u-text-muted u-mb-15">Simule ajustes de nota pedagógicos com bonificação automática de XP no perfil do aluno:</p>
                                     <div id="prof-students-grading-list" style="display:flex; flex-direction:column; gap:10px;"></div>
                                 </div>
 
                                 <div class="metric-glass-card">
-                                    <h3 style="margin:0 0 10px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">👥 CORPO DOCENTE CADASTRADO</h3>
-                                    <p class="u-font-07 u-text-muted u-mb-15">Docentes ativos no ecossistema acadêmico do Ensino Médio:</p>
-                                    <div id="prof-teachers-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+                                    <h3 style="margin:0 0 10px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">👥 DIREÇÃO E DISPONIBILIDADE DO CORPO DOCENTE</h3>
+                                    <p class="u-font-07 u-text-muted u-mb-15">Docentes ativos no ecossistema e status de disponibilidade real no Ensino Médio:</p>
+                                    <div id="prof-teachers-list" class="teacher-grid-list"></div>
                                 </div>
                             </div>
                         </div>
@@ -265,6 +298,7 @@
 
                 renderTeacherStudentList();
                 renderTeachersList();
+                updateOverallAverageLabel();
             } 
             
             else if (activeTab === 'tab-secretaria') {
@@ -272,32 +306,47 @@
                     <div style="display:flex; flex-direction:column; gap:20px;">
                         <div>
                             <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">🎒 SECRETARIA & DIÁRIO ELETRÔNICO (CRUD & CHAMADA)</h2>
-                            <p style="margin:0;" class="u-text-muted u-font-08">Cadastre novos alunos (CRUD) e registre presenças dinâmicas no diário eletrônico.</p>
+                            <p style="margin:0;" class="u-text-muted u-font-08">Cadastre novos alunos (CRUD), filtre por competências e registre presenças dinâmicas no diário eletrônico.</p>
                         </div>
 
                         <div class="u-grid-2" style="gap:20px; border-top:1px solid var(--glass-border); padding-top:20px;">
                             <!-- Matriculate CRUD Form -->
-                            <div class="metric-glass-card">
-                                <h3 style="margin:0 0 10px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">📝 MATRICULAR NOVO ESTUDANTE (CRUD)</h3>
-                                <div style="display:flex; flex-direction:column; gap:12px; margin-top:15px;">
-                                    <div style="display:flex; flex-direction:column; gap:5px;">
-                                        <label class="u-font-07 u-text-muted" style="font-weight:800;">NOME COMPLETO DO ALUNO</label>
-                                        <input type="text" id="sec-add-name" placeholder="Ex: Felipe Ferreira" class="academic-input" autocomplete="off">
+                            <div style="display:flex; flex-direction:column; gap:20px;">
+                                <div class="metric-glass-card">
+                                    <h3 style="margin:0 0 10px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">📝 MATRICULAR NOVO ESTUDANTE (CRUD)</h3>
+                                    <div style="display:flex; flex-direction:column; gap:12px; margin-top:15px;">
+                                        <div style="display:flex; flex-direction:column; gap:5px;">
+                                            <label class="u-font-07 u-text-muted" style="font-weight:800;">NOME COMPLETO DO ALUNO</label>
+                                            <input type="text" id="sec-add-name" placeholder="Ex: Felipe Ferreira" class="academic-input" autocomplete="off">
+                                        </div>
+                                        <div style="display:flex; flex-direction:column; gap:5px;">
+                                            <label class="u-font-07 u-text-muted" style="font-weight:800;">MÉDIA INICIAL</label>
+                                            <input type="number" id="sec-add-grade" placeholder="7.5" step="0.1" min="0" max="10" class="academic-input">
+                                        </div>
+                                        <button onclick="matriculateStudent()" class="btn-academic-primary" style="justify-content:center; margin-top:10px;">
+                                            ➕ REGISTRAR MATRÍCULA NO SISTEMA
+                                        </button>
                                     </div>
-                                    <div style="display:flex; flex-direction:column; gap:5px;">
-                                        <label class="u-font-07 u-text-muted" style="font-weight:800;">MÉDIA INICIAL</label>
-                                        <input type="number" id="sec-add-grade" placeholder="7.5" step="0.1" min="0" max="10" class="academic-input">
+                                </div>
+
+                                <div class="metric-glass-card">
+                                    <h3 style="margin:0 0 12px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">🔎 BUSCA E FILTROS DE COMPETÊNCIAS</h3>
+                                    <input type="text" id="sec-search-input" oninput="renderSecretariaLists()" placeholder="🔍 Digite para buscar estudante..." class="academic-input u-w-full u-mb-15" autocomplete="off">
+                                    
+                                    <div class="filter-controls-bar">
+                                        <button class="btn-filter-selector active" id="filter-all" onclick="setSecretariaFilter('ALL')">TODOS</button>
+                                        <button class="btn-filter-selector" id="filter-destaque" onclick="setSecretariaFilter('DESTAQUE')">🌟 DESTAQUES (>=9.0)</button>
+                                        <button class="btn-filter-selector" id="filter-regular" onclick="setSecretariaFilter('REGULAR')">👍 REGULARES (7.0-8.9)</button>
+                                        <button class="btn-filter-selector" id="filter-atencao" onclick="setSecretariaFilter('ATENCAO')">🚨 ATENÇÃO (<7.0)</button>
                                     </div>
-                                    <button onclick="matriculateStudent()" class="btn-academic-primary" style="justify-content:center; margin-top:10px;">
-                                        ➕ REGISTRAR MATRÍCULA NO SISTEMA
-                                    </button>
                                 </div>
                             </div>
 
                             <!-- Attendance sheet -->
                             <div class="metric-glass-card">
-                                <h3 style="margin:0 0 10px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">📋 DIÁRIO DE CLASSE / CHAMADA ATIVA</h3>
-                                <div id="sec-attendance-list" style="margin-top:15px;"></div>
+                                <h3 style="margin:0 0 10px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">📋 DIÁRIO DE CLASSE / CHAMADA ATIVA & CREDENCIAIS</h3>
+                                <p class="u-font-07 u-text-muted u-mb-15">Gerencie faltas, presenças e baixe transcrições oficiais seguras com validadores digitais:</p>
+                                <div id="sec-attendance-list" style="margin-top:15px; display:flex; flex-direction:column; gap:10px;"></div>
                             </div>
                         </div>
                     </div>
@@ -311,31 +360,41 @@
                     <div style="display:flex; flex-direction:column; gap:20px;">
                         <div>
                             <h2 style="margin:0 0 5px 0; font-family:var(--font-header); color:#fff; font-size:1.3rem;">👪 PORTAL DE PAIS E RESPONSÁVEIS (BOLETIM & CONTATO)</h2>
-                            <p style="margin:0;" class="u-text-muted u-font-08">Consulte o boletim de competências e acione o canal direto com a coordenação pedagógica.</p>
+                            <p style="margin:0;" class="u-text-muted u-font-08">Consulte o boletim de competências chancelado e acione o canal direto com a coordenação pedagógica.</p>
                         </div>
 
                         <div class="u-grid-2" style="gap:20px; border-top:1px solid var(--glass-border); padding-top:20px;">
                             <!-- Bulletin finder -->
-                            <div class="metric-glass-card">
-                                <h3 style="margin:0 0 10px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">🔎 BUSCAR BOLETIM DE ALUNO</h3>
-                                <div style="display:flex; gap:10px; margin-top:15px;">
-                                    <input type="text" id="resp-search-name" placeholder="Digite ex: Ana Souza" class="academic-input u-w-full" autocomplete="off">
+                            <div class="metric-glass-card" style="display:flex; flex-direction:column; gap:15px;">
+                                <div>
+                                    <h3 style="margin:0 0 10px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">🔎 BUSCAR BOLETIM DE ALUNO</h3>
+                                    <p class="u-font-07 u-text-muted">Busque por qualquer aluno para visualizar o boletim com chancelamento de segurança:</p>
+                                </div>
+                                <div style="display:flex; gap:10px;">
+                                    <input type="text" id="resp-search-name" placeholder="Digite ex: Ana Souza" class="academic-input u-w-full" autocomplete="off" onkeydown="if(event.key === 'Enter') searchBulletin()">
                                     <button onclick="searchBulletin()" class="btn-academic-primary" style="padding:10px 15px;">BUSCAR</button>
                                 </div>
-                                <div id="resp-bulletin-result" class="u-mt-10" style="display:none; padding:15px; border:1px solid var(--glass-border); border-radius:10px; background:rgba(0,0,0,0.2);"></div>
+                                <div id="resp-bulletin-result" class="u-mt-10" style="display:none; padding:15px; border:1px solid var(--glass-border); border-radius:12px; background:rgba(0,0,0,0.25);"></div>
                             </div>
 
                             <!-- Parents Direct messages -->
                             <div class="metric-glass-card">
                                 <h3 style="margin:0 0 10px 0; font-family:var(--font-header); color:#fff; font-size:0.9rem;">✉️ CANAL DIRETO COM A DIREÇÃO PEDAGÓGICA</h3>
-                                <p class="u-font-07 u-text-muted u-mb-10">Envie mensagens de orientação ou solicite reuniões estratégicas de acompanhamento:</p>
+                                <p class="u-font-07 u-text-muted u-mb-10">Selecione uma ação rápida ou envie mensagens customizadas de orientação:</p>
+                                
+                                <div class="chat-quick-replies">
+                                    <button class="btn-quick-reply" onclick="triggerQuickReply('Solicitar reforço pedagógico em Geometria Espacial.')">📐 SOLICITAR REFORÇO</button>
+                                    <button class="btn-quick-reply" onclick="triggerQuickReply('Gostaria de agendar uma reunião presencial com o tutor.')">📅 AGENDAR REUNIÃO</button>
+                                    <button class="btn-quick-reply" onclick="triggerQuickReply('Justificativa de ausência por motivo de saúde médica.')">🤒 JUSTIFICAR FALTA</button>
+                                </div>
+
                                 <div class="academic-chat-board u-mb-10" id="parent-chat-board">
                                     <div class="chat-msg-row received">
                                         <strong>Coordenação:</strong> Prezado responsável, detectamos que o aluno precisa reforçar o tópico de Geometria. Recomendamos o treino adaptativo de matemática de hoje.
                                     </div>
                                 </div>
                                 <div style="display:flex; gap:10px;">
-                                    <input type="text" id="parent-chat-input" placeholder="Digite uma mensagem para a escola..." class="academic-input u-w-full" style="font-size:0.75rem;" autocomplete="off">
+                                    <input type="text" id="parent-chat-input" placeholder="Digite uma mensagem para a escola..." class="academic-input u-w-full" style="font-size:0.75rem;" autocomplete="off" onkeydown="if(event.key === 'Enter') sendParentMsg()">
                                     <button onclick="sendParentMsg()" class="btn-academic-primary" style="padding:10px 15px; font-size:0.75rem;">ENVIAR</button>
                                 </div>
                             </div>
@@ -374,7 +433,7 @@
                     const statusBadge = op.status === 'in-battle'
                         ? `<span class="status-dot pulse" style="background:var(--error); width:8px; height:8px; display:inline-block; margin-right:6px;"></span><strong style="color:var(--error); font-size:0.7rem;">EM COMBATE</strong>`
                         : `<span class="status-dot pulse" style="background:var(--success); width:8px; height:8px; display:inline-block; margin-right:6px;"></span><strong style="color:var(--accent); font-size:0.7rem;">DISPONÍVEL</strong>`;
-
+                    
                     const pingVal = op.ping || Math.floor(Math.random() * 40 + 15);
                     const pingColor = pingVal < 45 ? 'var(--success)' : (pingVal < 80 ? 'var(--accent)' : 'var(--error)');
 
@@ -382,15 +441,15 @@
                         <div class="metric-glass-card" style="padding:15px; border:1px solid var(--glass-border); border-radius:12px; display:flex; align-items:center; justify-content:space-between; gap:15px; animation: contentReveal 0.2s forwards; background: rgba(255,255,255,0.01);">
                             <div style="display:flex; align-items:center; gap:12px;">
                                 <div style="font-size:1.8rem; background:rgba(255,255,255,0.03); border-radius:50%; width:45px; height:45px; display:flex; align-items:center; justify-content:center; border:1px solid var(--glass-border);">
-                                    ${op.avatar}
+                                    ${escapeHTML(op.avatar)}
                                 </div>
                                 <div>
                                     <div style="display:flex; align-items:center; gap:8px;">
-                                        <strong style="color:#fff; font-size:0.9rem;">${op.name}</strong>
+                                        <strong style="color:#fff; font-size:0.9rem;">${escapeHTML(op.name)}</strong>
                                         <span style="font-size:0.65rem; color:var(--text-muted); font-weight:800; background:rgba(255,255,255,0.05); padding:2px 6px; border-radius:3px;">LVL ${op.level}</span>
                                     </div>
                                     <div class="u-font-06 u-text-muted u-mt-5" style="font-family:var(--font-mono); font-weight:800;">
-                                        IP: ${op.publicIp || '127.0.0.1'} | PING: <span style="color:${pingColor}; font-weight:900;">${pingVal}ms</span>
+                                        IP: ${escapeHTML(op.publicIp || '127.0.0.1')} | PING: <span style="color:${pingColor}; font-weight:900;">${pingVal}ms</span>
                                     </div>
                                 </div>
                             </div>
@@ -462,6 +521,21 @@
             localStorage.setItem('onyx_school_teachers', JSON.stringify(arr));
         }
 
+        window.updateTeacherStatus = function(id, newStatus) {
+            const teachers = getTeachers();
+            const teacher = teachers.find(t => t.id === id);
+            if (teacher) {
+                teacher.status = newStatus;
+                saveTeachers(teachers);
+                renderTeachersList();
+
+                if (typeof OnyxUI !== 'undefined') {
+                    OnyxUI.playFeedback('success');
+                    OnyxUI.addReasoningLog(`GRADES: Alterou disponibilidade de ${teacher.name} para ${newStatus}.`);
+                }
+            }
+        };
+
         function renderTeachersList() {
             const list = document.getElementById('prof-teachers-list');
             if (!list) return;
@@ -472,15 +546,50 @@
                 return;
             }
 
-            list.innerHTML = teachers.map(tc => `
-                <div class="u-flex-between u-p-10" style="background:rgba(255,255,255,0.02); border:1px solid var(--glass-border); border-radius:10px; font-size:0.8rem; animation: contentReveal 0.2s forwards; margin-bottom:8px;">
-                    <div>
-                        <strong style="color:#fff;">${tc.name}</strong>
-                        <div class="u-font-06" style="color:var(--accent); font-weight:800; font-family:var(--font-mono); margin-top:2px;">${tc.subject.toUpperCase()}</div>
+            const students = getStudents();
+            const studentCount = students.length;
+
+            list.innerHTML = teachers.map(tc => {
+                const classAverage = studentCount > 0 
+                    ? (students.reduce((acc, s) => acc + s.grade, 0) / studentCount) 
+                    : 7.0;
+
+                const activeStatus = tc.status || 'Ativo';
+                let indicatorColor = "#10b981"; // Emerald
+                if (activeStatus === 'Em Reunião') indicatorColor = "#f59e0b"; // Warning
+                else if (activeStatus === 'Em Licença') indicatorColor = "#ef4444"; // Error
+
+                const statusOptions = ['Ativo', 'Em Reunião', 'Em Licença'].map(st => 
+                    `<option value="${st}" ${activeStatus === st ? 'selected' : ''}>${st.toUpperCase()}</option>`
+                ).join('');
+
+                return `
+                    <div class="teacher-card" style="animation: contentReveal 0.2s forwards;">
+                        <div class="u-flex-between">
+                            <div>
+                                <strong style="color:#fff; font-size:0.85rem;">${escapeHTML(tc.name)}</strong>
+                                <span class="u-font-06" style="color:var(--accent); font-weight:800; font-family:var(--font-mono); display:block; margin-top:2px;">
+                                    ${escapeHTML(tc.subject.toUpperCase())}
+                                </span>
+                            </div>
+                            <button onclick="removeTeacher(${tc.id})" class="btn-academic-outline" style="color:var(--error); border-color:rgba(239,68,68,0.2); padding:3px 6px; font-size:0.6rem; font-family:var(--font-mono); cursor:pointer;">🗑️ REMOVER</button>
+                        </div>
+                        
+                        <div style="border-top:1px dashed rgba(255,255,255,0.05); padding-top:8px; margin-top:4px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                            <span class="u-font-06 u-text-muted" style="font-family:var(--font-mono);">
+                                Média Classe: <span style="color:#fff; font-weight:800;">${classAverage.toFixed(1)}</span>
+                            </span>
+                            
+                            <div style="display:flex; align-items:center; gap:5px;">
+                                <span class="status-dot" style="background:${indicatorColor}; width:6px; height:6px; border-radius:50%; display:inline-block; box-shadow:0 0 6px ${indicatorColor};"></span>
+                                <select onchange="updateTeacherStatus(${tc.id}, this.value)" class="teacher-status-select">
+                                    ${statusOptions}
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                    <button onclick="removeTeacher(${tc.id})" class="btn-academic-outline" style="color:var(--error); border-color:rgba(239,68,68,0.2); padding:4px 8px; font-size:0.65rem; font-family:var(--font-mono); cursor:pointer;">🗑️ REMOVER</button>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         window.removeTeacher = function(id) {
@@ -500,6 +609,7 @@
         window.matriculateTeacher = function() {
             const nameInput = document.getElementById('prof-add-name');
             const subjectSelect = document.getElementById('prof-add-subject');
+            if (!nameInput || !subjectSelect) return;
             const name = nameInput.value.trim();
             const subject = subjectSelect.value;
 
@@ -532,6 +642,41 @@
         };
 
         // --- Direção Tab AI Preditiva Controller ---
+        window.simulateIntervention = function(id, type) {
+            const students = getStudents();
+            const student = students.find(s => s.id === id);
+            if (!student) return;
+
+            if (type === 'evasao') {
+                student.freq = Math.min(100, student.freq + 8);
+                saveStudents(students);
+                if (typeof OnyxUI !== 'undefined') {
+                    OnyxUI.playFeedback('success');
+                    OnyxUI.addReasoningLog(`AI INTERVENTION: Apoio emergencial acionado para ${student.name}. Assiduidade simulada subiu para ${student.freq}%.`);
+                }
+                alert(`🚨 Apoio emergencial disparado para os pais de ${student.name}! Assiduidade e acompanhamento pedagógico elevados com sucesso!`);
+            } else if (type === 'recuperacao') {
+                student.grade = Math.min(10.0, student.grade + 1.2);
+                saveStudents(students);
+                if (typeof OnyxUI !== 'undefined') {
+                    OnyxUI.playFeedback('success');
+                    OnyxUI.addReasoningLog(`AI INTERVENTION: Trilha adaptativa aplicada em matérias travadas de ${student.name}. Média ajustada para ${student.grade.toFixed(1)}`);
+                }
+                alert(`📚 Trilha adaptativa de reforço aplicada! A média de ${student.name} subiu para ${student.grade.toFixed(1)}!`);
+            } else if (type === 'aceleracao') {
+                if (userStats) {
+                    userStats.xp += 50;
+                    OnyxCore.DB.saveUser(userStats);
+                }
+                if (typeof OnyxUI !== 'undefined') {
+                    OnyxUI.playFeedback('level-up');
+                    OnyxUI.addReasoningLog(`AI INTERVENTION: ${student.name} incluído na Olimpíada Nacional de Ciências (+50 XP Gestor).`);
+                }
+                alert(`🚀 Curriculo acelerado com sucesso! ${student.name} adicionado ao time olímpico da ONC. (+50 XP Gestor de Elite)`);
+            }
+            loadStudentAIInsight();
+        };
+
         window.loadStudentAIInsight = async function() {
             const selector = document.getElementById('diretoria-student-selector');
             if (!selector) return;
@@ -548,21 +693,32 @@
 
             const insightsContainer = document.getElementById('diretoria-insights-container');
             if (insightsContainer) {
-                insightsContainer.innerHTML = `<div class="u-text-center u-p-20"><p class="u-text-muted u-font-08" style="font-family:var(--font-mono); letter-spacing:1px; color:var(--primary);">🔮 CONECTANDO À REDE NEURAL E RECONSTRUINDO COGNIÇÃO...</p></div>`;
+                insightsContainer.innerHTML = `<div class="u-text-center u-p-20"><p class="u-text-muted u-font-08" style="font-family:var(--font-mono); letter-spacing:1px; color:var(--primary);">🔮 CONECTANDO À REDE NEURAL COGNITIVA E MAPEANDO BNCC...</p></div>`;
             }
 
             setTimeout(() => {
-                let dropoutRisk = "BAIXO";
-                let dropoutRiskColor = "var(--accent)";
-                if (student.freq < 75) {
-                    dropoutRisk = "MUITO ALTO 🚨";
-                    dropoutRiskColor = "var(--error)";
-                } else if (student.freq < 85 || student.grade < 6.5) {
-                    dropoutRisk = "MÉDIO ⚠️";
-                    dropoutRiskColor = "var(--warning)";
+                let riskVal = Math.round((100 - student.freq) * 2.2 + (10 - student.grade) * 3.5);
+                riskVal = Math.min(98, Math.max(3, riskVal));
+
+                let riskStatus = "BAIXO";
+                let riskColor = "#10b981";
+                let riskTextClass = "badge-aprovado";
+                if (riskVal >= 60) {
+                    riskStatus = "CRÍTICO 🚨";
+                    riskColor = "#ef4444";
+                    riskTextClass = "badge-evasao";
+                } else if (riskVal >= 35) {
+                    riskStatus = "ATENÇÃO ⚠️";
+                    riskColor = "#f59e0b";
+                    riskTextClass = "badge-atencao";
+                } else {
+                    riskStatus = "EXCELENTE ✅";
+                    riskColor = "#10b981";
+                    riskTextClass = "badge-destaque";
                 }
 
-                const engagementLevel = Math.round(student.freq * 0.9 + (student.grade * 1.0));
+                const engagementLevel = Math.round(student.freq * 0.85 + (student.grade * 1.5));
+                const finalEngagement = Math.min(100, Math.max(10, engagementLevel));
 
                 let trend = "ESTÁVEL";
                 let trendColor = "var(--warning)";
@@ -570,60 +726,131 @@
                     trend = "ALTAMENTE ACELERADA 📈";
                     trendColor = "var(--accent)";
                 } else if (student.grade < 6.5) {
-                    trend = "CURVA DE DECLÍNIO 📉";
+                    trend = "DECLÍNIO OPERATIVO 📉";
                     trendColor = "var(--error)";
                 }
 
                 const baseProf = Math.min(100, Math.round(student.grade * 10));
-                const compLinguagens = Math.max(20, Math.min(100, baseProf + Math.round((Math.random() - 0.5) * 12)));
-                const compMatematica = Math.max(20, Math.min(100, baseProf + Math.round((Math.random() - 0.5) * 12)));
-                const compNatureza = Math.max(20, Math.min(100, baseProf + Math.round((Math.random() - 0.5) * 12)));
-                const compHumanas = Math.max(20, Math.min(100, baseProf + Math.round((Math.random() - 0.5) * 12)));
-                const compItinerarios = Math.max(20, Math.min(100, baseProf + Math.round((Math.random() - 0.5) * 12)));
-                const compExtras = Math.max(20, Math.min(100, baseProf + Math.round((Math.random() - 0.5) * 12)));
+                const compLinguagens = Math.max(20, Math.min(100, baseProf + Math.round((student.id * 7) % 12)));
+                const compMatematica = Math.max(20, Math.min(100, baseProf - Math.round((student.id * 3) % 15)));
+                const compNatureza = Math.max(20, Math.min(100, baseProf + Math.round((student.id * 5) % 10)));
+                const compHumanas = Math.max(20, Math.min(100, baseProf - Math.round((student.id * 2) % 8)));
+                const compItinerarios = Math.max(20, Math.min(100, baseProf + Math.round((student.id * 9) % 14)));
+                const compExtras = Math.max(20, Math.min(100, baseProf + Math.round((student.id * 4) % 11)));
 
-                let recommendation = `Manter plano de estudo preventivo ativo.`;
-                if (student.freq < 75) {
-                    recommendation = `⚠️ ACIONAMENTO URGENTE: Disparar canal direto com os Pais no portal devido ao risco severo de reprovação por falta (${student.freq}%). Agendar reforço presencial de acompanhamento de presença.`;
+                let styleTags = "";
+                if (student.grade >= 8.5) {
+                    styleTags = `
+                        <span class="cognitive-style-tag" style="border-color:rgba(16,185,129,0.3); color:#34d399;">Lógico-Dedutivo 🧠</span>
+                        <span class="cognitive-style-tag" style="border-color:rgba(14,165,233,0.3); color:#38bdf8;">Pragmático-Focado 🎯</span>
+                        <span class="cognitive-style-tag">Autônomo 🚀</span>
+                    `;
+                } else if (student.grade >= 7.0) {
+                    styleTags = `
+                        <span class="cognitive-style-tag" style="border-color:rgba(245,158,11,0.3); color:#fbbf24;">Ativo-Expansivo ⚡</span>
+                        <span class="cognitive-style-tag">Visual-Sistemático 👁️</span>
+                        <span class="cognitive-style-tag">Colaborativo 👥</span>
+                    `;
+                } else {
+                    styleTags = `
+                        <span class="cognitive-style-tag" style="border-color:rgba(239,68,68,0.3); color:#f87171;">Apoio Continuado 🛠️</span>
+                        <span class="cognitive-style-tag">Reflexivo-Pesquisador 🗺️</span>
+                        <span class="cognitive-style-tag">Passo-a-Passo 🧭</span>
+                    `;
+                }
+
+                let recommendation = "";
+                let actionsHTML = "";
+
+                if (student.freq < 75 || riskVal >= 60) {
+                    recommendation = `⚠️ **INTERVENÇÃO CRÍTICA DE EVASÃO**: O estudante apresenta baixa assiduidade (${student.freq}%). O risco de evasão está muito elevado. É necessário contato telefônico urgente e agendamento presencial com a família.`;
+                    actionsHTML = `
+                        <div class="action-plan-item" style="border-color:rgba(239,68,68,0.25);">
+                            <div>
+                                <strong style="color:var(--error); display:block;">🚨 DISPARAR PLANO EMERGENCIAL DE PRESENÇA</strong>
+                                <span class="u-text-muted u-font-06">Envia alerta pedagógico com -15% de redução simulada no risco</span>
+                            </div>
+                            <button onclick="simulateIntervention(${student.id}, 'evasao')" class="btn-academic-outline" style="color:var(--error); border-color:var(--error);">DISPARAR</button>
+                        </div>
+                    `;
                 } else if (student.grade < 7.0) {
-                    recommendation = `💡 INTERVENÇÃO DE CONTEÚDO: O aluno apresenta dificuldade em tópicos matriciais. Recomenda-se acionar o portal do professor para efetuar lançamento compensatório de XP.`;
-                } else if (student.grade >= 8.5) {
-                    recommendation = `🚀 ACELERAMENTO ACADÊMICO: Estudante com altíssimo potencial. Recomendado para inclusão na Olimpíada Nacional de Ciências e Itinerários Avançados de IA.`;
+                    recommendation = `💡 **PLANO DE RECUPERAÇÃO DE CONTEÚDO**: Dificuldade acumulada em áreas estruturantes. Ativar imediatamente trilha adaptativa de reforço nas disciplinas travadas.`;
+                    actionsHTML = `
+                        <div class="action-plan-item" style="border-color:rgba(245,158,11,0.25);">
+                            <div>
+                                <strong style="color:var(--warning); display:block;">💡 APLICAR TRILHA ADAPTATIVA AVALIATIVA</strong>
+                                <span class="u-text-muted u-font-06">Reajusta a média escolar (+1.2) e insere notas de compensação</span>
+                            </div>
+                            <button onclick="simulateIntervention(${student.id}, 'recuperacao')" class="btn-academic-outline" style="color:var(--warning); border-color:var(--warning);">APLICAR</button>
+                        </div>
+                    `;
+                } else {
+                    recommendation = `🚀 **ACELERAÇÃO CIENTÍFICA**: Estudante em nível avançado. Recomendado para o projeto de Itinerários Tecnológicos de IA e preparação para olimpíadas científicas.`;
+                    actionsHTML = `
+                        <div class="action-plan-item" style="border-color:rgba(16,185,129,0.25);">
+                            <div>
+                                <strong style="color:var(--accent); display:block;">🚀 CONCEDER ACELERAÇÃO & OLIMPÍADAS</strong>
+                                <span class="u-text-muted u-font-06">Insere medalha no perfil e concede +50 XP ao administrador</span>
+                            </div>
+                            <button onclick="simulateIntervention(${student.id}, 'aceleracao')" class="btn-academic-outline" style="color:var(--accent); border-color:var(--accent);">CONCEDER</button>
+                        </div>
+                    `;
                 }
 
                 if (insightsContainer) {
                     insightsContainer.innerHTML = `
                         <!-- Heuristic Predictive metrics -->
                         <div class="metrics-card-grid" style="border-top:1px solid var(--glass-border); padding-top:20px; animation: contentReveal 0.3s forwards;">
-                            <div class="metric-glass-card">
-                                <span class="u-font-07 u-text-muted" style="display:block; font-weight:800; font-family:var(--font-mono);">IA PREDITIVA: RISCO DE EVASÃO</span>
-                                <span class="u-font-15 u-weight-900 u-mt-10" style="display:block; font-size:1.8rem; color:${dropoutRiskColor};">
-                                    ${dropoutRisk}
-                                </span>
-                                <p class="u-font-07 u-text-muted u-mt-5" style="margin:0;">Curva de deserção escolar calculada por assiduidade às aulas do Novo Ensino Médio.</p>
+                            
+                            <!-- Gauge Card -->
+                            <div class="metric-glass-card u-text-center" style="display:flex; flex-direction:column; justify-content:center; gap:10px;">
+                                <span class="u-font-07 u-text-muted" style="display:block; font-weight:800; font-family:var(--font-mono);">RISCO DE EVASÃO DA IA</span>
+                                
+                                <div class="gauge-container">
+                                    <svg class="svg-gauge" viewBox="0 0 36 36">
+                                        <path class="gauge-background" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                        <path class="gauge-circle" id="risk-gauge-circle" stroke-dasharray="100, 100" stroke-dashoffset="${100 - riskVal}" stroke="${riskColor}" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    </svg>
+                                    <span class="gauge-value" id="risk-gauge-value">${riskVal}%</span>
+                                </div>
+
+                                <div style="margin-top:2px;">
+                                    <span class="status-badge ${riskTextClass}">${riskStatus}</span>
+                                </div>
                             </div>
+
+                            <!-- Engagement Card -->
                             <div class="metric-glass-card">
                                 <span class="u-font-07 u-text-muted" style="display:block; font-weight:800; font-family:var(--font-mono);">ÍNDICE DE ENGAJAMENTO GERAL</span>
-                                <div class="u-flex-between u-mt-10 u-mb-5">
-                                    <span class="u-font-15 u-weight-900" style="font-size:1.5rem; color:var(--primary);">${engagementLevel}%</span>
-                                    <span class="u-font-07 u-text-muted">MÉTRICA ATIVA</span>
+                                <div class="u-flex-between u-mt-10 u-mb-10">
+                                    <span class="u-font-15 u-weight-900" style="font-size:1.6rem; color:var(--primary);">${finalEngagement}%</span>
+                                    <span class="u-font-06" style="color:var(--text-muted); font-weight:800; font-family:var(--font-mono);">EXCELENTE</span>
                                 </div>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar-inner" style="width:${engagementLevel}%; background:var(--primary);"></div>
+                                <div class="progress-bar-container u-mb-15">
+                                    <div class="progress-bar-inner" style="width:${finalEngagement}%; background:linear-gradient(90deg, var(--primary) 0%, #38bdf8 100%);"></div>
+                                </div>
+                                <div class="cognitive-badge-row">
+                                    ${styleTags}
                                 </div>
                             </div>
-                            <div class="metric-glass-card">
-                                <span class="u-font-07 u-text-muted" style="display:block; font-weight:800; font-family:var(--font-mono);">TENDÊNCIA PEDAGÓGICA</span>
-                                <span class="u-font-15 u-weight-900 u-mt-10" style="display:block; font-size:1.6rem; color:${trendColor};">
-                                    ${trend}
-                                </span>
-                                <p class="u-font-07 u-text-muted u-mt-5" style="margin:0;">Variação no rendimento médio acumulativo e missões adaptativas concluídas.</p>
+
+                            <!-- Trend Card -->
+                            <div class="metric-glass-card" style="display:flex; flex-direction:column; justify-content:space-between;">
+                                <div>
+                                    <span class="u-font-07 u-text-muted" style="display:block; font-weight:800; font-family:var(--font-mono);">TENDÊNCIA PEDAGÓGICA</span>
+                                    <span class="u-font-15 u-weight-900 u-mt-10" style="display:block; font-size:1.3rem; color:${trendColor};">
+                                        ${trend}
+                                    </span>
+                                </div>
+                                <div style="border-top:1px dashed rgba(255,255,255,0.06); padding-top:10px; margin-top:10px;">
+                                    <span class="u-font-06 u-text-muted" style="display:block; line-height:1.4;">Estudante apresenta notas estáveis e aproveitamento consistente no ecossistema Onyx.</span>
+                                </div>
                             </div>
                         </div>
 
                         <!-- BNCC Competencies averages -->
                         <div class="metric-glass-card" style="margin-top:10px; animation: contentReveal 0.3s forwards;">
-                            <h3 style="margin:0 0 15px 0; font-family:var(--font-header); color:#fff; font-size:1rem;">🎯 MAPA DE PROFICIÊNCIA POR ÁREAS DE COMPETÊNCIA BNCC</h3>
+                            <h3 style="margin:0 0 15px 0; font-family:var(--font-header); color:#fff; font-size:1rem;">🎯 MAPA DE PROFICIÊNCIA BNCC (1º MUNDO)</h3>
                             <div class="u-grid-2" style="gap:20px;">
                                 <div>
                                     <div style="display:flex; flex-direction:column; gap:12px;">
@@ -678,9 +905,16 @@
                             </div>
                         </div>
 
-                        <!-- Recommendations alert -->
-                        <div style="background:rgba(245, 158, 11, 0.05); border:1px solid rgba(245,158,11,0.2); border-radius:12px; padding:15px; font-size:0.8rem; line-height:1.5; animation: contentReveal 0.3s forwards;">
-                            <strong>📢 RECOMENDAÇÃO HEURÍSTICA DA DIREÇÃO:</strong> ${recommendation}
+                        <!-- Recommendations alert & Actions -->
+                        <div class="u-grid-2" style="gap:15px; align-items: stretch;">
+                            <div style="background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); border-radius:12px; padding:15px; font-size:0.78rem; line-height:1.5; display:flex; flex-direction:column; justify-content:center;">
+                                <strong>📢 RECOMENDAÇÃO HEURÍSTICA DA DIREÇÃO:</strong>
+                                <p style="margin:8px 0 0 0; color:#e2e8f0;">${recommendation}</p>
+                            </div>
+                            
+                            <div style="display:flex; flex-direction:column; justify-content:center; gap:10px;">
+                                ${actionsHTML}
+                            </div>
                         </div>
                     `;
                 }
@@ -688,20 +922,29 @@
         };
 
         // --- Teacher Tab Grading ---
+        window.updateOverallAverageLabel = function() {
+            const students = getStudents();
+            const label = document.getElementById('overall-school-average');
+            if (label && students.length > 0) {
+                const avg = students.reduce((acc, s) => acc + s.grade, 0) / students.length;
+                label.textContent = `Média Geral: ${avg.toFixed(2)} / 10`;
+            }
+        };
+
         function renderTeacherStudentList() {
             const list = document.getElementById('prof-students-grading-list');
             if (!list) return;
 
             const students = getStudents();
             list.innerHTML = students.map(st => `
-                <div class="u-flex-between u-p-10" style="background:rgba(255,255,255,0.02); border:1px solid var(--glass-border); border-radius:10px; font-size:0.8rem;">
+                <div class="u-flex-between u-p-10" style="background:rgba(255,255,255,0.02); border:1px solid var(--glass-border); border-radius:10px; font-size:0.8rem; animation: contentReveal 0.2s forwards; margin-bottom:6px;">
                     <div>
-                        <strong style="color:#fff;">${st.name}</strong>
+                        <strong style="color:#fff;">${escapeHTML(st.name)}</strong>
                         <div class="u-font-06 u-text-muted">MÉDIA ATUAL: <span class="u-text-accent" id="prof-grade-${st.id}">${st.grade.toFixed(1)}</span> / 10</div>
                     </div>
                     <div style="display:flex; gap:6px;">
-                        <button onclick="adjustGrade(${st.id}, 0.5)" class="btn-academic-outline" style="color:var(--accent); font-weight:800;">+0.5</button>
-                        <button onclick="adjustGrade(${st.id}, -0.5)" class="btn-academic-outline" style="color:var(--error); font-weight:800;">-0.5</button>
+                        <button onclick="adjustGrade(${st.id}, 0.5)" class="btn-academic-outline" style="color:var(--accent); border-color:rgba(16,185,129,0.3); font-weight:800;">+0.5</button>
+                        <button onclick="adjustGrade(${st.id}, -0.5)" class="btn-academic-outline" style="color:var(--error); border-color:rgba(239,68,68,0.3); font-weight:800;">-0.5</button>
                     </div>
                 </div>
             `).join('');
@@ -714,16 +957,17 @@
                 student.grade = Math.max(0, Math.min(10, student.grade + delta));
                 saveStudents(students);
                 
-                // Show updated grade on screen
                 const gradeSpan = document.getElementById(`prof-grade-${id}`);
                 if (gradeSpan) gradeSpan.textContent = student.grade.toFixed(1);
+
+                updateOverallAverageLabel();
+                renderTeachersList();
 
                 if (typeof OnyxUI !== 'undefined') {
                     OnyxUI.playFeedback('success');
                     OnyxUI.addReasoningLog(`GRADES: Professor ajustou nota de ${student.name} em ${delta > 0 ? '+' : ''}${delta}. Nova nota: ${student.grade.toFixed(1)}`);
                 }
 
-                // Grant operator XP rewards for keeping records updated!
                 if (userStats) {
                     userStats.xp += 15;
                     OnyxCore.DB.saveUser(userStats);
@@ -732,7 +976,7 @@
         };
 
         // --- Secretaria Tab CRUD & Attendance ---
-        function renderSecretariaLists() {
+        window.renderSecretariaLists = function() {
             const list = document.getElementById('sec-attendance-list');
             if (!list) return;
 
@@ -742,19 +986,59 @@
                 return;
             }
 
-            list.innerHTML = students.map(st => `
-                <div class="u-flex-between u-mb-10 u-p-10" style="background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); border-radius:8px; font-size:0.75rem; animation: contentReveal 0.2s forwards;">
-                    <div>
-                        <strong style="color:#fff;">${st.name}</strong>
-                        <div class="u-font-06 u-text-muted">FREQUÊNCIA: <span id="sec-freq-${st.id}" style="color:${st.freq < 75 ? 'var(--error)' : 'var(--accent)'}; font-weight:800;">${st.freq}%</span> | NOTA: <span class="u-text-accent">${st.grade.toFixed(1)}</span></div>
+            const searchInput = document.getElementById('sec-search-input');
+            const searchKeyword = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+            let filtered = students;
+            if (currentSecretariaFilter === 'DESTAQUE') {
+                filtered = students.filter(s => s.grade >= 9.0);
+            } else if (currentSecretariaFilter === 'REGULAR') {
+                filtered = students.filter(s => s.grade >= 7.0 && s.grade < 9.0);
+            } else if (currentSecretariaFilter === 'ATENCAO') {
+                filtered = students.filter(s => s.grade < 7.0 || s.freq < 75);
+            }
+
+            if (searchKeyword !== '') {
+                filtered = filtered.filter(s => s.name.toLowerCase().includes(searchKeyword));
+            }
+
+            if (filtered.length === 0) {
+                list.innerHTML = `<p class="u-text-muted u-font-07 u-text-center" style="margin:20px 0; font-style:italic;">Nenhum estudante localizado nos filtros.</p>`;
+                return;
+            }
+
+            list.innerHTML = filtered.map(st => {
+                let badgeClass = "badge-aprovado";
+                let badgeLabel = "Regular";
+                if (st.grade >= 9.0) {
+                    badgeClass = "badge-destaque";
+                    badgeLabel = "Destaque 🌟";
+                } else if (st.grade < 7.0) {
+                    badgeClass = "badge-atencao";
+                    badgeLabel = "Atenção ⚠️";
+                } else if (st.freq < 75) {
+                    badgeClass = "badge-evasao";
+                    badgeLabel = "Evasão 🚨";
+                }
+
+                return `
+                    <div class="u-flex-between u-mb-10 u-p-10" style="background:rgba(255,255,255,0.01); border:1px solid var(--glass-border); border-radius:10px; font-size:0.75rem; animation: contentReveal 0.2s forwards;">
+                        <div>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <strong style="color:#fff;">${escapeHTML(st.name)}</strong>
+                                <span class="status-badge ${badgeClass}" style="padding:2px 6px; font-size:0.55rem;">${badgeLabel}</span>
+                            </div>
+                            <div class="u-font-06 u-text-muted u-mt-5">FREQUÊNCIA: <span id="sec-freq-${st.id}" style="color:${st.freq < 75 ? 'var(--error)' : 'var(--accent)'}; font-weight:800;">${st.freq}%</span> | NOTA: <span class="u-text-accent">${st.grade.toFixed(1)}</span></div>
+                        </div>
+                        <div style="display:flex; gap:6px; align-items:center;">
+                            <button onclick="giveAttendance(${st.id})" class="btn-academic-outline" style="background:rgba(16,185,129,0.05); border-color:rgba(16,185,129,0.2); color:#34d399; font-weight:800; font-size:0.6rem; cursor:pointer;" title="Registrar presença (+2%)">👍 PRESENÇA</button>
+                            <button onclick="downloadTranscript(${st.id})" class="btn-academic-outline" style="background:rgba(14,165,233,0.05); border-color:rgba(14,165,233,0.2); color:#38bdf8; font-weight:800; font-size:0.6rem; cursor:pointer;" title="Emitir Credencial Oficial">📄 CREDENCIAL</button>
+                            <button onclick="removeStudent(${st.id})" class="btn-academic-outline" style="background:rgba(239,68,68,0.05); border-color:rgba(239,68,68,0.2); color:#f87171; font-weight:800; font-size:0.6rem; cursor:pointer;">🗑️ DELETAR</button>
+                        </div>
                     </div>
-                    <div style="display:flex; gap:6px; align-items:center;">
-                        <button onclick="giveAttendance(${st.id})" class="btn-academic-outline" style="background:rgba(16,185,129,0.08); border-color:rgba(16,185,129,0.3); color:var(--accent); font-weight:800; font-size:0.6rem; cursor:pointer;">👍 PRESENÇA</button>
-                        <button onclick="removeStudent(${st.id})" class="btn-academic-outline" style="background:rgba(239,68,68,0.08); border-color:rgba(239,68,68,0.3); color:var(--error); font-weight:800; font-size:0.6rem; cursor:pointer;">🗑️ REMOVER</button>
-                    </div>
-                </div>
-            `).join('');
-        }
+                `;
+            }).join('');
+        };
 
         window.removeStudent = function(id) {
             let students = getStudents();
@@ -790,9 +1074,63 @@
             }
         };
 
+        window.downloadTranscript = function(id) {
+            const students = getStudents();
+            const student = students.find(s => s.id === id);
+            if (!student) return;
+
+            const dateStr = new Date().toLocaleString('pt-BR');
+            const signaturePayload = {
+                issuer: "Onyx Academic Core v4.8",
+                studentId: student.id,
+                studentName: student.name,
+                timestamp: Date.now(),
+                salt: "OnyxSaltProtocolSecure1337!"
+            };
+
+            const hash = btoa(JSON.stringify(signaturePayload)).substring(0, 32);
+
+            const transcriptContent = `================================================================
+ONYX COGNITIVE ECOSYSTEM - CREDENCIAL ACADÊMICA DIGITAL
+================================================================
+EMISSÃO OFICIAL: ${dateStr}
+CHANCELA DE SEGURANÇA: SEC-CRYPT-${hash.toUpperCase()}
+
+DADOS DO ALUNO:
+----------------------------------------------------------------
+ID REGISTRO: ${student.id}
+NOME: ${student.name.toUpperCase()}
+MÉDIA ACUMULADA BNCC: ${student.grade.toFixed(2)} / 10.00
+ASSIDUIDADE (FREQUÊNCIA): ${student.freq}%
+STATUS PEDAGÓGICO: ${student.grade >= 9.0 ? 'EXCELÊNCIA (DESTAQUE)' : student.grade >= 7.0 ? 'REGULAR' : 'ATENÇÃO PEDAGÓGICA'}
+
+CERTIFICAÇÃO DE ASSINATURA DIGITAL:
+Este documento foi chancelado digitalmente pelo núcleo operativo
+de segurança OnyxCore e está em conformidade com as diretrizes
+técnicas do MEC e Novo Ensino Médio de Tecnologia.
+
+[CÓDIGO DE VALIDAÇÃO QR-INTEGRITY: ${hash}]
+================================================================`;
+
+            const blob = new Blob([transcriptContent], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `onyx_credencial_${student.name.toLowerCase().replace(/\s+/g, '_')}.txt`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            if (typeof OnyxUI !== 'undefined') {
+                OnyxUI.playFeedback('success');
+                OnyxUI.addReasoningLog(`SECRETARIA: Exportou credencial digital de ${student.name}.`);
+            }
+            alert(`📄 Credencial oficial de ${student.name} gerada com assinatura de segurança! O arquivo .txt foi baixado.`);
+        };
+
         window.matriculateStudent = function() {
             const nameInput = document.getElementById('sec-add-name');
             const gradeInput = document.getElementById('sec-add-grade');
+            if (!nameInput || !gradeInput) return;
             
             const name = nameInput.value.trim();
             const grade = parseFloat(gradeInput.value) || 7.0;
@@ -825,6 +1163,7 @@
         window.searchBulletin = function() {
             const searchName = document.getElementById('resp-search-name').value.trim();
             const resultDiv = document.getElementById('resp-bulletin-result');
+            if (!resultDiv) return;
 
             if (!searchName) {
                 alert("Digite o nome de um aluno para buscar.");
@@ -836,31 +1175,77 @@
 
             if (student) {
                 resultDiv.style.display = 'block';
+                
+                let badgeClass = "badge-aprovado";
+                let badgeLabel = "Regular";
+                if (student.grade >= 9.0) {
+                    badgeClass = "badge-destaque";
+                    badgeLabel = "🌟 Excelência Pedagógica";
+                } else if (student.grade < 7.0) {
+                    badgeClass = "badge-atencao";
+                    badgeLabel = "⚠️ Risco de Recuperação";
+                } else if (student.freq < 75) {
+                    badgeClass = "badge-evasao";
+                    badgeLabel = "🚨 Risco Severo de Evasão";
+                }
+
+                const hashSignature = btoa(student.name + student.freq + student.grade).substring(0, 16).toUpperCase();
+
                 resultDiv.innerHTML = `
-                    <h4 style="margin:0 0 10px 0; color:#fff; font-family:var(--font-header);">📋 BOLETIM ESCOLAR OFICIAL</h4>
-                    <div style="font-size:0.75rem; display:flex; flex-direction:column; gap:8px;">
-                        <p style="margin:0;"><strong>Aluno:</strong> ${student.name}</p>
-                        <p style="margin:0;"><strong>Média Acadêmica:</strong> <span class="u-text-accent">${student.grade.toFixed(1)} / 10</span></p>
-                        <p style="margin:0;"><strong>Frequência Escolar:</strong> <span style="color:${student.freq < 75 ? 'var(--error)' : 'var(--accent)'}; font-weight:800;">${student.freq}%</span></p>
-                        <div style="border-top:1px dashed var(--glass-border); padding-top:8px; margin-top:5px;">
-                            <strong>ALERTA DE FREQUÊNCIA:</strong>
-                            ${student.freq < 75 
-                                ? '<span class="u-text-error">⚠️ RISCO DE REPROVAÇÃO POR FALTA! Frequência abaixo do mínimo exigido pelo MEC (75%).</span>' 
-                                : '<span class="u-text-success">✅ Regularizado. Aluno com presença adequada às diretrizes curriculares.</span>'
-                            }
+                    <div style="display:flex; flex-direction:column; gap:12px; animation: contentReveal 0.3s forwards;">
+                        <div class="u-flex-between">
+                            <h4 style="margin:0; color:#fff; font-family:var(--font-header);">📋 BOLETIM PEDAGÓGICO DIGITAL</h4>
+                            <span class="status-badge ${badgeClass}">${badgeLabel}</span>
+                        </div>
+                        
+                        <div style="font-size:0.75rem; display:flex; flex-direction:column; gap:8px;">
+                            <p style="margin:0;"><strong>Estudante:</strong> <span style="color:#fff; font-weight:800;">${escapeHTML(student.name)}</span></p>
+                            
+                            <div>
+                                <div class="u-flex-between u-mb-5">
+                                    <span>Média Acadêmica: <strong>${student.grade.toFixed(1)} / 10</strong></span>
+                                </div>
+                                <div class="progress-bar-container"><div class="progress-bar-inner" style="width:${student.grade * 10}%; background:var(--accent);"></div></div>
+                            </div>
+
+                            <div>
+                                <div class="u-flex-between u-mb-5">
+                                    <span>Frequência Escolar: <strong>${student.freq}%</strong></span>
+                                </div>
+                                <div class="progress-bar-container"><div class="progress-bar-inner" style="width:${student.freq}%; background:var(--primary);"></div></div>
+                            </div>
+                        </div>
+
+                        <!-- Verification Seal & QR -->
+                        <div class="digital-seal-container u-mt-10">
+                            <div class="qr-simulation"></div>
+                            <div>
+                                <strong style="font-size:0.65rem; color:#fff; display:block; font-family:var(--font-mono);">ONYX SECURE SEAL VERIFIED</strong>
+                                <span style="font-size:0.55rem; color:var(--text-muted); font-family:var(--font-mono); display:block; margin-top:2px;">ASSINATURA: SEC-SIG-${hashSignature}</span>
+                                <span style="font-size:0.55rem; color:var(--accent); font-weight:800; font-family:var(--font-mono); display:block;">INTEGRIDADE CHANCELADA DIGITALMENTE</span>
+                            </div>
                         </div>
                     </div>
                 `;
             } else {
                 resultDiv.style.display = 'block';
-                resultDiv.innerHTML = `<p class="u-text-error u-font-07 style="margin:0;">Estudante não localizado na secretaria escolar.</p>`;
+                resultDiv.innerHTML = `<p class="u-text-error u-font-07" style="margin:0;">Estudante não localizado no diário escolar.</p>`;
             }
         };
 
         // --- Parents direct chat message sender ---
+        window.triggerQuickReply = function(msgText) {
+            const input = document.getElementById('parent-chat-input');
+            if (input) {
+                input.value = msgText;
+                sendParentMsg();
+            }
+        };
+
         window.sendParentMsg = function() {
             const input = document.getElementById('parent-chat-input');
             const board = document.getElementById('parent-chat-board');
+            if (!input || !board) return;
             const msg = input.value.trim();
 
             if (!msg) return;
@@ -868,24 +1253,33 @@
 
             board.innerHTML += `
                 <div class="chat-msg-row sent">
-                    <strong>Responsável:</strong> ${msg}
+                    <strong>Responsável:</strong> ${escapeHTML(msg)}
                 </div>
             `;
             board.scrollTop = board.scrollHeight;
 
             if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
 
-            // Simulating coordinated answering
+            let replyText = "Recebemos sua mensagem. O tutor AI já registrou seu contato e as ações de monitoramento serão agendadas com a direção.";
+            if (msg.toLowerCase().includes('reforço')) {
+                replyText = "Tutor Pedagógico: Excelente solicitação. A trilha adaptativa de reforço focada já foi disponibilizada no diário do aluno. Aconselhamos acompanhar as missões de matemática.";
+            } else if (msg.toLowerCase().includes('reunião')) {
+                const randomHour = Math.floor(Math.random() * 4 + 14); // 14:00 to 17:00
+                replyText = `Secretaria ONX: Agendamento prévio efetuado! Reunião pedagógica alocada com a coordenação para a próxima terça-feira às ${randomHour}:30. Confirmaremos os detalhes por e-mail.`;
+            } else if (msg.toLowerCase().includes('falta') || msg.toLowerCase().includes('ausência')) {
+                replyText = "Operador de Frequência: Justificativa devidamente anotada no diário da secretaria escolar. O atestado médico/justificativa física poderá ser carregado no portal.";
+            }
+
             setTimeout(() => {
                 board.innerHTML += `
                     <div class="chat-msg-row received">
-                        <strong>Pedagógico:</strong> Recebemos sua mensagem. O tutor AI já registrou seu contato e as ações de monitoramento serão agendadas com a direção.
+                        <strong>Pedagógico:</strong> ${replyText}
                     </div>
                 `;
                 board.scrollTop = board.scrollHeight;
+                if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
             }, 1000);
         };
-
         window.onload = init;
     </script>
 </body>

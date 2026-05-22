@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONYX - Portal de Pais e Responsáveis</title>
+    <link rel="stylesheet" href="css/academic_portal.css">
+    <style>
+        /* Specific enhancements for the Parents Portal standalone experience */
+        .parents-frame {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: var(--bg-dark);
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        .parents-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(6, 11, 20, 0.85);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 15px 40px;
+            backdrop-filter: blur(25px);
+            z-index: 10;
+        }
+
+        .parents-container {
+            flex: 1;
+            padding: 30px 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .portal-tabs-bar {
+            display: flex;
+            gap: 10px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-family: var(--font-header);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .tab-btn.active {
+            background: rgba(14, 165, 233, 0.1);
+            border-color: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 10px rgba(14, 165, 233, 0.15);
+        }
+
+        .parents-tab-content {
+            display: none;
+            animation: contentReveal 0.3s forwards;
+        }
+
+        .parents-tab-content.active {
+            display: block;
+        }
+
+        /* Startup Authentication Overlay */
+        .auth-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(4, 8, 15, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: opacity 0.4s ease, visibility 0.4s;
+        }
+
+        .auth-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .auth-card {
+            background: rgba(10, 18, 30, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            box-sizing: border-box;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes modalPop {
+            from { transform: scale(0.9) translateY(20px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        .observation-bubble {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            position: relative;
+            line-height: 1.5;
+            font-size: 0.82rem;
+        }
+
+        .observation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+            padding-bottom: 6px;
+        }
+
+        .circular-chart {
+            display: block;
+            margin: 10px auto;
+            max-width: 100px;
+            max-height: 100px;
+        }
+
+        .circle-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.04);
+            stroke-width: 2.8;
+        }
+
+        .circle {
+            fill: none;
+            stroke-width: 2.8;
+            stroke-linecap: round;
+            transition: stroke-dasharray 1s ease;
+        }
+
+        .percentage {
+            fill: #fff;
+            font-family: var(--font-header);
+            font-size: 0.55rem;
+            text-anchor: middle;
+            font-weight: 800;
+        }
+
+        /* Custom notifications badge */
+        .admin-bulletin-card {
+            background: rgba(255, 255, 255, 0.01);
+            border-left: 3px solid var(--primary);
+            border-top: 1px solid var(--glass-border);
+            border-right: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        .admin-bulletin-card:hover {
+            background: rgba(255, 255, 255, 0.03);
+            transform: translateX(3px);
+        }
+
+        .tutor-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .chat-input-row {
+            display: flex;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 6px;
+        }
+
+        .chat-input-row input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            padding: 10px;
+            outline: none;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Ambient Blur Backgrounds -->
+    <div class="ambient-blurs">
+        <div class="blur-orb orb-1" style="opacity:0.08;"></div>
+        <div class="blur-orb orb-2" style="opacity:0.08;"></div>
+    </div>
+
+    <!-- 1. Authentication Startup Screen Overlay -->
+    <div id="auth-overlay" class="auth-overlay">
+        <div class="auth-card">
+            <div style="font-size: 3rem; margin-bottom: 15px;">👪</div>
+            <h1 class="u-font-header" style="color: #fff; font-size: 1.6rem; margin: 0 0 5px 0;">PORTAL DE RESPONSÁVEIS</h1>
+            <p class="u-text-muted u-font-08 u-mb-25">Ecossistema Acadêmico de Elite Onyx Academy</p>
+
+            <div id="auth-status" class="u-text-error u-font-07 u-mb-15" style="display:none; font-weight:800;"></div>
+
+            <div style="display:flex; flex-direction:column; gap:15px; text-align: left;">
+                <div style="display:flex; flex-direction:column; gap:5px;">
+                    <label class="u-font-07 u-text-muted" style="font-weight:800; font-family:var(--font-mono);">SELECIONE OU DIGITE O NOME DO ESTUDANTE:</label>
+                    <input type="text" id="parent-student-input" placeholder="Ex: Ana Souza" class="academic-input u-w-full" style="padding:12px; font-size:0.85rem;" autocomplete="off" onkeydown="if(event.key === 'Enter') attemptParentAuth()">
+                </div>
+
+                <div class="u-font-06 u-text-muted" style="line-height:1.4; border-top:1px dashed var(--glass-border); padding-top:10px; margin-top:5px;">
+                    * O acesso ao diário exige a inserção exata do nome do aluno registrado pelo corpo docente na secretaria escolar.
+                </div>
+
+                <button onclick="attemptParentAuth()" class="btn-academic-primary" style="justify-content:center; padding:12px; font-size:0.85rem; font-weight:800; margin-top:10px; width:100%;">
+                    🔒 VINCULAR E ACESSAR DIÁRIO DO ALUNO
+                </button>
+                
+                <button onclick="location.href='index.html'" class="btn-academic-outline" style="justify-content:center; padding:8px; font-size:0.7rem; font-family:var(--font-mono);">
+                    🏠 VOLTAR À TELA DE LOGIN GERAL
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Main Portal Frame -->
+    <div class="parents-frame">
+        <!-- Header -->
+        <header class="parents-nav-header">
+            <div class="sidebar-branding" onclick="location.href='index.html'" title="Sair do Portal">
+                <div class="academic-logo-icon">🏫</div>
+                <div>
+                    <h3 style="font-family: var(--font-header);">ONYX PARENTS</h3>
+                    <span class="u-text-accent u-font-07">ACOMPANHAMENTO DE RESPONSÁVEIS</span>
+                </div>
+            </div>
+
+            <div class="portal-header-actions" style="gap: 15px;">
+                <div class="portal-header-meta">
+                    <div class="u-font-07 u-text-muted meta-label">ESTUDANTE MONITORADO</div>
+                    <span id="monitored-student-name" class="meta-user" style="color:var(--accent); font-weight:800;">Carregando...</span>
+                </div>
+                <button onclick="logoutParents()" class="btn-academic-outline" style="color:var(--error); border-color:rgba(239,68,68,0.25); font-family:var(--font-mono); font-size:0.65rem; padding:6px 12px;">
+                    🚪 DESCONECTAR
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Body Grid -->
+        <main class="parents-container">
+            <div class="u-grid-2" style="gap: 30px; align-items: start;">
+                
+                <!-- Left Sidebar: Student Bulletins, GPA, Presence, Security seal -->
+                <div style="display:flex; flex-direction:column; gap:20px;">
+                    
+                    <!-- General Performance Glass Card -->
+                    <div class="academic-workspace-card" style="padding: 25px;">
+                        <h3 style="margin:0 0 15px 0; font-family:var(--font-header); color:#fff; font-size:1rem; border-bottom:1px solid var(--glass-border); padding-bottom:8px;">📊 DESEMPENHO ACADÊMICO INTEGRADO</h3>
+                        
+                        <div class="u-grid-2" style="gap: 15px; margin-bottom: 20px;">
+                            <!-- GPA indicator -->
+                            <div class="metric-glass-card u-text-center" style="display:flex; flex-direction:column; justify-content:center; align-items:center; gap:8px;">
+                                <span class="u-font-07 u-text-muted" style="font-weight:800; font-family:var(--font-mono);">MÉDIA GERAL (GPA)</span>
+                                <span id="student-gpa" class="u-font-15 u-weight-900" style="font-size:2rem; color:var(--accent);">...</span>
+                                <span id="student-gpa-badge" class="status-badge" style="font-size:0.55rem; padding:2px 6px;">Regular</span>
+                            </div>
+
+                            <!-- Attendance Gauge -->
+                            <div class="metric-glass-card u-text-center" style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                                <span class="u-font-07 u-text-muted" style="font-weight:800; font-family:var(--font-mono); display:block; margin-bottom:4px;">FREQUÊNCIA ESCOLAR</span>
+                                <svg viewBox="0 0 36 36" class="circular-chart">
+                                    <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path class="circle" id="attendance-circle" stroke="var(--primary)" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <text x="18" y="20.3" class="percentage" id="attendance-percentage">0%</text>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- BNCC competencies checklist -->
+                        <h4 style="margin:0 0 12px 0; font-family:var(--font-header); color:#fff; font-size:0.8rem; letter-spacing:0.5px;">🎯 MAPA DE PROFICIÊNCIA BNCC</h4>
+                        <div style="display:flex; flex-direction:column; gap:10px;">
+                            <div>
+                                <div class="u-flex-between u-mb-5 u-font-07">
+                                    <span class="u-text-muted">📚 Linguagens e suas Tecnologias</span>
+                                    <strong class="u-text-accent" id="bncc-linguagens">...</strong>
+                                </div>
+                                <div class="progress-bar-container"><div id="bar-linguagens" class="progress-bar-inner" style="width:0%; background:var(--accent);"></div></div>
+                            </div>
+                            <div>
+                                <div class="u-flex-between u-mb-5 u-font-07">
+                                    <span class="u-text-muted">📐 Matemática e suas Tecnologias</span>
+                                    <strong class="u-text-primary" id="bncc-matematica">...</strong>
+                                </div>
+                                <div class="progress-bar-container"><div id="bar-matematica" class="progress-bar-inner" style="width:0%; background:var(--primary);"></div></div>
+                            </div>
+                            <div>
+                                <div class="u-flex-between u-mb-5 u-font-07">
+                                    <span class="u-text-muted">🧬 Ciências da Natureza</span>
+                                    <strong class="u-text-warning" id="bncc-natureza">...</strong>
+                                </div>
+                                <div class="progress-bar-container"><div id="bar-natureza" class="progress-bar-inner" style="width:0%; background:var(--warning);"></div></div>
+                            </div>
+                            <div>
+                                <div class="u-flex-between u-mb-5 u-font-07">
+                                    <span class="u-text-muted">🌍 Humanas e Sociais Aplicadas</span>
+                                    <strong style="color:#a855f7;" id="bncc-humanas">...</strong>
+                                </div>
+                                <div class="progress-bar-container"><div id="bar-humanas" class="progress-bar-inner" style="width:0%; background:#a855f7;"></div></div>
+                            </div>
+                        </div>
+
+                        <!-- Verification Seal & QR -->
+                        <div class="digital-seal-container u-mt-20">
+                            <div class="qr-simulation"></div>
+                            <div>
+                                <strong style="font-size:0.65rem; color:#fff; display:block; font-family:var(--font-mono);">ONYX SECURE SEAL VERIFIED</strong>
+                                <span id="seal-signature" style="font-size:0.55rem; color:var(--text-muted); font-family:var(--font-mono); display:block; margin-top:2px;">ASSINATURA: SEC-SIG-LOADING</span>
+                                <span style="font-size:0.55rem; color:var(--accent); font-weight:800; font-family:var(--font-mono); display:block;">INTEGRIDADE CHANCELADA DIGITALMENTE</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Board: Observation / Remarks Tab + School Announcements + Bot Chatbot -->
+                <div class="academic-workspace-card" style="padding: 25px; min-height: 500px; display:flex; flex-direction:column;">
+                    <!-- Tabs Selection Bar -->
+                    <div class="portal-tabs-bar">
+                        <button class="tab-btn active" data-tab="tab-observations" onclick="switchPortalTab('tab-observations')">📝 Observações dos Professores</button>
+                        <button class="tab-btn" data-tab="tab-announcements" onclick="switchPortalTab('tab-announcements')">📢 Avisos e Calendário</button>
+                        <button class="tab-btn" data-tab="tab-chatbot" onclick="switchPortalTab('tab-chatbot')">🤖 Assistente IA de Pais</button>
+                    </div>
+
+                    <!-- Tab Content: Teacher Observations -->
+                    <div id="tab-observations" class="parents-tab-content active">
+                        <p class="u-font-07 u-text-muted u-mb-20">Parecer e avaliações formativas do conselho docente sobre o comportamento, dedicação e progresso do estudante:</p>
+                        
+                        <div id="observations-list-container">
+                            <!-- Observation Bubbles inserted dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Tab Content: Announcements -->
+                    <div id="tab-announcements" class="parents-tab-content">
+                        <p class="u-font-07 u-text-muted u-mb-20">Informativos circulares oficiais e cronograma de eventos da administração escolar do Novo Ensino Médio:</p>
+                        
+                        <div class="admin-bulletin-card">
+                            <div class="u-flex-between u-mb-5">
+                                <strong style="color:#fff; font-family:var(--font-header);">📅 Reunião de Pais e Mestres</strong>
+                                <span class="u-font-06 u-text-accent" style="font-family:var(--font-mono); font-weight:800;">PRÓXIMA TERÇA-FEIRA</span>
+                            </div>
+                            <p style="margin:0; font-size:0.75rem; line-height:1.4; color:var(--text-main);">
+                                Convidamos todos os pais e responsáveis a participarem do conselho de competências bimestrais. A reunião ocorrerá no Auditório Principal das 14:00 às 17:30. Nossos tutores pedagógicos estarão disponíveis para discussões de itinerários tecnológicos.
+                            </p>
+                        </div>
+
+                        <div class="admin-bulletin-card" style="border-left-color: var(--accent);">
+                            <div class="u-flex-between u-mb-5">
+                                <strong style="color:#fff; font-family:var(--font-header);">🏫 Oficina Prática de Inteligência Artificial</strong>
+                                <span class="u-font-06 u-text-primary" style="font-family:var(--font-mono); font-weight:800;">MATRÍCULA ABERTA</span>
+                            </div>
+                            <p style="margin:0; font-size:0.75rem; line-height:1.4; color:var(--text-main);">
+                                Estão abertas as inscrições voluntárias para a oficina de robótica e IA aplicada. Alunos que participarem receberão pontuação extra na matriz de Itinerários Profissionais. Acompanhe a trilha adaptativa hoje!
+                            </p>
+                        </div>
+
+                        <div class="admin-bulletin-card" style="border-left-color: var(--warning);">
+                            <div class="u-flex-between u-mb-5">
+                                <strong style="color:#fff; font-family:var(--font-header);">ℹ️ Declaração de Frequência e Atestados</strong>
+                                <span class="u-font-06 u-text-warning" style="font-family:var(--font-mono); font-weight:800;">AVISO SECRETARIA</span>
+                            </div>
+                            <p style="margin:0; font-size:0.75rem; line-height:1.4; color:var(--text-main);">
+                                Lembramos que faltas justificadas por atestado médico devem ser protocoladas diretamente no canal de atendimento ou via Chatbot no botão correspondente em até 48 horas úteis após a ausência.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Tab Content: Chatbot for Parents -->
+                    <div id="tab-chatbot" class="parents-tab-content" style="flex:1; display:flex; flex-direction:column; gap:15px;">
+                        <div class="u-flex-between" style="align-items:center; border-bottom: 1px dashed var(--glass-border); padding-bottom:8px;">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <div class="tutor-avatar">🤖</div>
+                                <div>
+                                    <strong style="color:#fff; font-size:0.8rem; font-family:var(--font-header);">Tutor IA Onyx</strong>
+                                    <span style="font-size:0.6rem; color:var(--accent); font-family:var(--font-mono); display:block;">PORTAL DE ATENDIMENTO DE PAIS</span>
+                                </div>
+                            </div>
+                            <span class="status-badge badge-aprovado" style="font-size:0.55rem;">CONEXÃO SEGURA (SSL)</span>
+                        </div>
+
+                        <p class="u-font-07 u-text-muted" style="margin:0;">Fale com o assistente inteligente ou selecione uma das dúvidas frequentes dos responsáveis:</p>
+
+                        <div class="chat-quick-replies" style="margin-bottom:5px;">
+                            <button class="btn-quick-reply" onclick="triggerParentBot('Como solicitar reforço pedagógico?')">📐 Solicitar Reforço</button>
+                            <button class="btn-quick-reply" onclick="triggerParentBot('Quando é a próxima reunião de pais?')">📅 Reunião Escolar</button>
+                            <button class="btn-quick-reply" onclick="triggerParentBot('Como justificar ausência/falta?')">🤒 Justificar Falta</button>
+                            <button class="btn-quick-reply" onclick="triggerParentBot('Qual a média de aprovação BNCC?')">🎯 Média & Notas</button>
+                        </div>
+
+                        <!-- Scrollable message area -->
+                        <div class="academic-chat-board" id="parents-bot-chat-board" style="height:250px; flex:1; background:rgba(0,0,0,0.3); border-color:var(--glass-border);">
+                            <div class="chat-msg-row received">
+                                <strong>Tutor IA Onyx:</strong> Olá! Sou o assistente de inteligência pedagógica do portal de pais. Estou aqui para esclarecer dúvidas de notas, frequência, justificativas e apoios curriculares. Como posso ajudar você hoje?
+                            </div>
+                        </div>
+
+                        <!-- Typing area -->
+                        <div class="chat-input-row">
+                            <input type="text" id="parents-bot-chat-input" placeholder="Digite uma dúvida sobre o desempenho do aluno..." autocomplete="off" onkeydown="if(event.key === 'Enter') sendParentBotMsg()">
+                            <button onclick="sendParentBotMsg()" class="btn-academic-primary" style="padding:10px 18px; font-size:0.75rem; font-weight:800;">ENVIAR</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Script integrations -->
+    <script src="js/onyx_core.js"></script>
+    <script src="js/onyx_database.js"></script>
+    <script>
+        let currentStudent = null;
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // --- Load/Init Local Students Data ---
+        function getStudents() {
+            return JSON.parse(localStorage.getItem('onyx_school_students') || '[]');
+        }
+
+        // Initialize mock students if empty
+        window.onload = function() {
+            if (!localStorage.getItem('onyx_school_students')) {
+                const defaultStudents = [
+                    { id: 1, name: "Ana Souza", grade: 8.5, freq: 88, status: "Aprovada" },
+                    { id: 2, name: "Rodrigo Silva", grade: 6.2, freq: 72, status: "Atenção" },
+                    { id: 3, name: "Guilherme Santos", grade: 9.1, freq: 95, status: "Destaque" }
+                ];
+                localStorage.setItem('onyx_school_students', JSON.stringify(defaultStudents));
+            }
+            
+            // Auto check URL parameters if any (e.g. ?student=Ana%20Souza)
+            const params = new URLSearchParams(window.location.search);
+            const autoStudent = params.get('student');
+            if (autoStudent) {
+                document.getElementById('parent-student-input').value = autoStudent;
+                attemptParentAuth();
+            } else {
+                // Check sessionStorage for active login
+                const cachedStudent = sessionStorage.getItem('onyx_parent_active_student');
+                if (cachedStudent) {
+                    document.getElementById('parent-student-input').value = cachedStudent;
+                    attemptParentAuth();
+                } else if (localStorage.getItem('onyx_active_user_role') === 'responsavel') {
+                    // Pre-fill and auto login default student for the simulated parent user
+                    document.getElementById('parent-student-input').value = "Ana Souza";
+                    attemptParentAuth();
+                }
+            }
+        };
+
+        // --- Authentication Routine ---
+        window.attemptParentAuth = function() {
+            const inputVal = document.getElementById('parent-student-input').value.trim();
+            const statusDiv = document.getElementById('auth-status');
+            if (!inputVal) {
+                statusDiv.style.display = 'block';
+                statusDiv.textContent = "⚠️ Por favor, preencha o nome do estudante.";
+                return;
+            }
+
+            const students = getStudents();
+            // Find student matching input exactly or partially
+            const matched = students.find(s => s.name.toLowerCase().includes(inputVal.toLowerCase()));
+
+            if (matched) {
+                currentStudent = matched;
+                sessionStorage.setItem('onyx_parent_active_student', matched.name);
+                
+                // Hide Overlay
+                document.getElementById('auth-overlay').classList.add('hidden');
+                statusDiv.style.display = 'none';
+
+                // Load academic dashboard
+                loadStudentDashboard();
+            } else {
+                statusDiv.style.display = 'block';
+                statusDiv.innerHTML = "❌ Estudante não cadastrado no diário acadêmico.<br><span style='font-size:0.6rem; color:var(--text-muted); font-weight:normal;'>Dica de Teste: Ana Souza, Rodrigo Silva ou Guilherme Santos.</span>";
+            }
+        };
+
+        window.logoutParents = function() {
+            sessionStorage.removeItem('onyx_parent_active_student');
+            currentStudent = null;
+            document.getElementById('parent-student-input').value = '';
+            document.getElementById('auth-overlay').classList.remove('hidden');
+            if (window.OnyxCore && OnyxCore.Session) {
+                OnyxCore.Session.logout();
+            }
+        };
+
+        // --- Load Dashboard Details ---
+        function loadStudentDashboard() {
+            if (!currentStudent) return;
+
+            // Student Meta Header
+            document.getElementById('monitored-student-name').textContent = currentStudent.name.toUpperCase();
+
+            // Set GPA and badging
+            document.getElementById('student-gpa').textContent = currentStudent.grade.toFixed(1) + " / 10";
+            
+            const gpaBadge = document.getElementById('student-gpa-badge');
+            gpaBadge.className = 'status-badge';
+            if (currentStudent.grade >= 9.0) {
+                gpaBadge.classList.add('badge-destaque');
+                gpaBadge.textContent = '🌟 EXCELÊNCIA';
+            } else if (currentStudent.grade >= 7.0) {
+                gpaBadge.classList.add('badge-aprovado');
+                gpaBadge.textContent = '👍 REGULAR';
+            } else {
+                gpaBadge.classList.add('badge-atencao');
+                gpaBadge.textContent = '⚠️ EM RISCO';
+            }
+
+            // Attendance circle dasharray calculation
+            const attendCircle = document.getElementById('attendance-circle');
+            const attendPercentage = document.getElementById('attendance-percentage');
+            
+            attendPercentage.textContent = currentStudent.freq + "%";
+            // radius = 15.9155, circumference = 2 * PI * r = 100
+            attendCircle.style.strokeDasharray = `${currentStudent.freq}, 100`;
+
+            if (currentStudent.freq >= 85) {
+                attendCircle.setAttribute('stroke', '#10b981');
+            } else if (currentStudent.freq >= 75) {
+                attendCircle.setAttribute('stroke', '#f59e0b');
+            } else {
+                attendCircle.setAttribute('stroke', '#ef4444');
+            }
+
+            // Mock BNCC Competency distribution specific to this student
+            const baseProf = Math.min(100, Math.round(currentStudent.grade * 10));
+            const compLinguagens = Math.max(20, Math.min(100, baseProf + Math.round((currentStudent.id * 7) % 12)));
+            const compMatematica = Math.max(20, Math.min(100, baseProf - Math.round((currentStudent.id * 3) % 15)));
+            const compNatureza = Math.max(20, Math.min(100, baseProf + Math.round((currentStudent.id * 5) % 10)));
+            const compHumanas = Math.max(20, Math.min(100, baseProf - Math.round((currentStudent.id * 2) % 8)));
+
+            document.getElementById('bncc-linguagens').textContent = compLinguagens + "%";
+            document.getElementById('bar-linguagens').style.width = compLinguagens + "%";
+
+            document.getElementById('bncc-matematica').textContent = compMatematica + "%";
+            document.getElementById('bar-matematica').style.width = compMatematica + "%";
+
+            document.getElementById('bncc-natureza').textContent = compNatureza + "%";
+            document.getElementById('bar-natureza').style.width = compNatureza + "%";
+
+            document.getElementById('bncc-humanas').textContent = compHumanas + "%";
+            document.getElementById('bar-humanas').style.width = compHumanas + "%";
+
+            // Digital QR seal code signature
+            const hashSignature = btoa(currentStudent.name + currentStudent.freq + currentStudent.grade).substring(0, 16).toUpperCase();
+            document.getElementById('seal-signature').textContent = `ASSINATURA: SEC-SIG-${hashSignature}`;
+
+            // Load Teacher Remarks & Observations
+            loadTeacherRemarks();
+        }
+
+        // --- Teacher Remarks Generator ---
+        function loadTeacherRemarks() {
+            const container = document.getElementById('observations-list-container');
+            if (!container || !currentStudent) return;
+
+            let remarks = [];
+            const timestampStr = new Date().toLocaleDateString('pt-BR');
+
+            if (currentStudent.grade >= 9.0) {
+                remarks = [
+                    {
+                        subject: "MATEMÁTICA",
+                        teacher: "Prof. Marcos Aurelio",
+                        remark: "Estudante excepcional. Demonstra facilidade em lógica dedutiva avançada e lidera grupos nas atividades práticas de equações complexas.",
+                        type: "badge-destaque",
+                        typeLabel: "Destaque"
+                    },
+                    {
+                        subject: "ITINERÁRIOS PROFISSIONAIS",
+                        teacher: "Tutor Pedagógico AI",
+                        remark: "Excelente performance nas avaliações adaptativas de ciência de dados. Demonstrando domínio superior na matriz estrutural do Novo Ensino Médio.",
+                        type: "badge-aprovado",
+                        typeLabel: "Aprovado"
+                    }
+                ];
+            } else if (currentStudent.grade >= 7.0) {
+                remarks = [
+                    {
+                        subject: "LINGUAGENS E CÓDIGOS",
+                        teacher: "Prof. Carlos Silveira",
+                        remark: "Estudante participativo e assíduo. Boa compreensão de textos, apresentando interpretação sólida de temas estruturantes e itinerários de comunicação.",
+                        type: "badge-aprovado",
+                        typeLabel: "Consistente"
+                    },
+                    {
+                        subject: "CIÊNCIAS DA NATUREZA",
+                        teacher: "Profa. Julia Mendes",
+                        remark: "O rendimento nas aulas experimentais está dentro do esperado. Muito interessado e demonstra evolução constante nos tópicos biológicos.",
+                        type: "badge-aprovado",
+                        typeLabel: "Regular"
+                    }
+                ];
+            } else {
+                remarks = [
+                    {
+                        subject: "MATEMÁTICA E CÓDIGOS",
+                        teacher: "Prof. Marcos Aurelio",
+                        remark: "Demonstra dificuldades acentuadas em tópicos de Geometria Espacial e raciocínio estatístico. É altamente recomendável que participe da trilha adaptativa de reforço pedagógico.",
+                        type: "badge-atencao",
+                        typeLabel: "Apoio Pedagógico"
+                    },
+                    {
+                        subject: "CIÊNCIAS DA NATUREZA",
+                        teacher: "Profa. Julia Mendes",
+                        remark: "A ausência ou atraso na entrega de atividades práticas afetou negativamente a nota bimestral. Necessita de maior dedicação nos plantões semanais.",
+                        type: "badge-evasao",
+                        typeLabel: "Atenção Crítica"
+                    }
+                ];
+            }
+
+            container.innerHTML = remarks.map(r => `
+                <div class="observation-bubble" style="animation: contentReveal 0.2s forwards;">
+                    <div class="observation-header">
+                        <div>
+                            <span class="u-text-primary u-weight-800" style="font-family:var(--font-mono); font-size:0.65rem;">${r.subject}</span>
+                            <span class="u-text-muted u-font-06" style="margin-left:8px;">${r.teacher}</span>
+                        </div>
+                        <span class="status-badge ${r.type}" style="font-size:0.55rem; padding:2px 6px;">${r.typeLabel}</span>
+                    </div>
+                    <p style="margin:0; color:#e2e8f0; font-size:0.75rem; line-height:1.4;">${escapeHTML(r.remark)}</p>
+                    <div class="u-text-muted u-font-06 u-mt-5" style="text-align:right;">Parecer emitido em: ${timestampStr}</div>
+                </div>
+            `).join('');
+        }
+
+        // --- Tabs Selection logic ---
+        window.switchPortalTab = function(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.tab === tabId) btn.classList.add('active');
+            });
+
+            document.querySelectorAll('.parents-tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+        };
+
+        // --- Parents Chatbot AI Logic ---
+        window.triggerParentBot = function(text) {
+            const input = document.getElementById('parents-bot-chat-input');
+            if (input) {
+                input.value = text;
+                sendParentBotMsg();
+            }
+        };
+
+        window.sendParentBotMsg = function() {
+            const input = document.getElementById('parents-bot-chat-input');
+            const board = document.getElementById('parents-bot-chat-board');
+            if (!input || !board || !currentStudent) return;
+
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            input.value = '';
+
+            // Render parent msg
+            board.innerHTML += `
+                <div class="chat-msg-row sent">
+                    <strong>Responsável:</strong> ${escapeHTML(msg)}
+                </div>
+            `;
+            board.scrollTop = board.scrollHeight;
+
+            let replyText = "Recebi sua mensagem. Registrei sua solicitação e o conselho de coordenação da Onyx Academy responderá no e-mail de contato.";
+            
+            // Context aware responses
+            const lowerMsg = msg.toLowerCase();
+            if (lowerMsg.includes('reforço') || lowerMsg.includes('dificuldade') || lowerMsg.includes('recuperar')) {
+                replyText = `Tutor IA Onyx: O rendimento de ${currentStudent.name} (Nota: ${currentStudent.grade.toFixed(1)}) já foi analisado pelo nosso ecossistema cognitivo. A trilha adaptativa de matemática e plantão de dúvidas já estão disponíveis. O coordenador pedagógico acompanhará a evolução!`;
+            } else if (lowerMsg.includes('reunião') || lowerMsg.includes('agenda')) {
+                replyText = "Tutor IA Onyx: Nossa próxima Reunião de Pais e Mestres está agendada para a próxima terça-feira, a partir das 14h, no Auditório Geral. A participação é fundamental para o alinhamento dos itinerários profissionais.";
+            } else if (lowerMsg.includes('falta') || lowerMsg.includes('ausência') || lowerMsg.includes('justificar')) {
+                replyText = "Tutor IA Onyx: Faltas podem ser justificadas anexando o atestado físico na secretaria do colégio ou enviando o arquivo digitalizado para o e-mail de suporte (secretaria@onyxacademy.com).";
+            } else if (lowerMsg.includes('média') || lowerMsg.includes('nota') || lowerMsg.includes('aprovação')) {
+                replyText = "Tutor IA Onyx: A média mínima para aprovação direta nos itinerários estruturais da BNCC é de 7.0 (setenta por cento). Alunos com média inferior a 7.0 são automaticamente integrados nas turmas de apoio continuado.";
+            }
+
+            // Simulated typing
+            setTimeout(() => {
+                board.innerHTML += `
+                    <div class="chat-msg-row received">
+                        <strong>Tutor IA Onyx:</strong> ${replyText}
+                    </div>
+                `;
+                board.scrollTop = board.scrollHeight;
+            }, 800);
+        };
+    </script>
+</body>
+</html>

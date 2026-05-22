@@ -282,7 +282,16 @@ window.OnyxDatabase = (function() {
                     pool.push({
                         q: `[Morfofuncional ${i+1}] No contexto de prevenção de lesões na prática de "${item.modalidade}", os principais riscos biomecânicos incluem:`,
                         a: item.risco,
-                        d: ['Aumento da capacidade cognitiva visual involuntária', 'Nenhum, pois a prática desportiva elimina qua        else if (sub === 'algebra') {
+                        d: ['Aumento da capacidade cognitiva visual involuntária', 'Nenhum, pois a prática desportiva elimina qualquer possibilidade de trauma físico', 'Hipertrofia imediata generalizada sem fadiga neuromuscular'],
+                        explanation: `A prevenção de lesões na prática esportiva de ${item.modalidade} exige conhecimento sobre biomecânica e fisiologia do exercício, identificando fatores de risco como: ${item.risco}.`,
+                        hint: `Estude as articulações e grupos musculares mais demandados em cada modalidade do Ensino Médio.`,
+                        concept: 'EM13LGG502'
+                    });
+                }
+            }
+        }
+
+        else if (sub === 'algebra') {
             for (let i = 0; i < 20; i++) {
                 const a = randRange(2, 6);
                 const b = randRange(10, 30);
@@ -506,14 +515,6 @@ window.OnyxDatabase = (function() {
                         explanation: `O tempo de coerência diminui inversamente com o número de acoplamentos quânticos sob interferência: Coerência_Cluster = Tempo_Base / N_Qubits = ${systemTime} / 4 = ${resultCoherence} microssegundos.`,
                         hint: `Divida o tempo de coerência original pelo número de qubits acoplados (4) para calcular o enfraquecimento exponencial do sistema.`,
                         concept: 'EM13CNT301 — Coerência de Qubits'
-                    });
-                }
-            }
-        }            a: `${m * a} Newtons`,
-                        d: [`${m + a} Newtons`, `${m / a} Newtons`, `${m * a * 9.8} Newtons`],
-                        explanation: `Pela Segunda Lei de Newton (Princípio Fundamental da Dinâmica), a Força Resultante é o produto da massa do corpo pela sua aceleração: F = m * a = ${m} * ${a} = ${m * a} Newtons.`,
-                        hint: `Multiplique a massa do objeto (em kg) pela aceleração adquirida (em m/s²). A força resultante é medida em Newtons.`,
-                        concept: 'EM13CNT301'
                     });
                 }
             }

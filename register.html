@@ -136,6 +136,7 @@
                     <select id="reg-role" class="onyx-select">
                         <option value="aluno">🎒 ESTUDANTE (ALUNO)</option>
                         <option value="gestor">💼 GESTOR (DIREÇÃO / PROFESSOR)</option>
+                        <option value="responsavel">👪 RESPONSÁVEL (PAIS / RESPONSÁVEIS)</option>
                     </select>
                 </div>
 
@@ -199,7 +200,8 @@
                 return;
             }
 
-            const newUser = { id: name, password: pass, xp: 0, level: 1, role: role };
+            const hashedPassword = await OnyxCore.Crypto.hashSHA256(pass);
+            const newUser = { id: name, password: hashedPassword, xp: 0, level: 1, role: role };
             await OnyxCore.DB.saveUser(newUser);
             
             if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
