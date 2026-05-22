@@ -383,25 +383,57 @@ window.OnyxCore = {
 
     async function triggerGlobalCheatPenalty(reason) {
         if (penaltyTriggered) return;
+        
+        const host = window.location.hostname;
+        const isLocal = host === 'localhost' || host === '127.0.0.1' || window.location.protocol === 'file:';
+        const user = localStorage.getItem('onyx_active_user');
+        
+        let stats = null;
+        if (user && window.OnyxCore && window.OnyxCore.DB) {
+            try {
+                await window.OnyxCore.DB.init();
+                stats = await window.OnyxCore.DB.getUser(user);
+            } catch(e) {}
+        }
+        
+        const isGestor = stats && stats.role === 'gestor';
+        
+        // Developer Bypass Sandbox: Localhost or Gestor role
+        if (isLocal || isGestor) {
+            console.warn(`[ONYX SECURITY BYPASS] Dev-Sandbox ativo. Ação suspeita ignorada: "${reason}"`);
+            return;
+        }
+
         penaltyTriggered = true;
 
-        const user = localStorage.getItem('onyx_active_user');
         if (!user) {
             alert(`⚠️ [SEGURANÇA GLOBAL ONYX] Ação Bloqueada / Acesso Não Autorizado (${reason})!`);
             window.location.reload();
             return;
         }
         
+        // Amnesty system: first deviation gets warned, second gets penalized
+        const warningKey = `onyx_cheat_warn_${user}`;
+        const hasBeenWarned = localStorage.getItem(warningKey);
+        
+        if (!hasBeenWarned) {
+            localStorage.setItem(warningKey, 'true');
+            alert(`⚠️ [ALERTA DE SEGURANÇA CIBERNÉTICA ONYX]
+Ação proibida detectada pelo escudo de segurança: "${reason}".
+
+Esta é uma ADVERTÊNCIA única do Protocolo Onyx. Qualquer desvio futuro ou tentativa de contornar a arena resultará no rebaixamento automático de 1 nível e perda de todo o XP de nível atual!`);
+            penaltyTriggered = false; // Reset trigger state to allow warning/penalties to occur in future sessions
+            return;
+        }
+
         try {
-            await OnyxCore.DB.init();
-            let stats = await OnyxCore.DB.getUser(user);
             if (stats) {
                 if (stats.level > 1) {
                     stats.level--;
                 }
                 stats.xp = 0; // Reset current level XP to 0 as penalty
-                await OnyxCore.DB.saveUser(stats);
-                alert(`⚠️ [SEGURANÇA GLOBAL ONYX] Tentativa de ver o código ou copiar/recortar detectada (${reason})! Você violou as diretrizes do protocolo. Penalidade aplicada: -1 Nível.`);
+                await window.OnyxCore.DB.saveUser(stats);
+                alert(`⚠️ [SEGURANÇA GLOBAL ONYX] Tentativa recorrente de violação detectada (${reason})! Você violou as diretrizes do protocolo de integridade cibernética. Penalidade severa aplicada: -1 Nível.`);
             }
         } catch (err) {
             console.error("[ANTI-CHEAT GLOBAL] Erro ao aplicar penalidade:", err);

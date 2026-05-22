@@ -282,16 +282,7 @@ window.OnyxDatabase = (function() {
                     pool.push({
                         q: `[Morfofuncional ${i+1}] No contexto de prevenção de lesões na prática de "${item.modalidade}", os principais riscos biomecânicos incluem:`,
                         a: item.risco,
-                        d: ['Aumento da capacidade cognitiva visual involuntária', 'Nenhum, pois a prática desportiva elimina qualquer possibilidade de trauma físico', 'Aceleração congênita do crescimento ósseo em adultos'],
-                        explanation: `O esporte ${item.modalidade} exige condicionamento físico adequado para mitigar o risco de: ${item.risco}.`,
-                        hint: `Diferencie lesões agudas (como entorses) de lesões crônicas de estresse de impacto.`,
-                        concept: 'EM13LGG502'
-                    });
-                }
-            }
-        }
-
-        else if (sub === 'algebra') {
+                        d: ['Aumento da capacidade cognitiva visual involuntária', 'Nenhum, pois a prática desportiva elimina qua        else if (sub === 'algebra') {
             for (let i = 0; i < 20; i++) {
                 const a = randRange(2, 6);
                 const b = randRange(10, 30);
@@ -299,21 +290,40 @@ window.OnyxDatabase = (function() {
                 const y = a * x + b;
                 
                 if (lvl === 'easy' || lvl === 'medium') {
+                    // Common errors:
+                    // 1. Division before subtraction (omitting tax subtraction): y / a
+                    const errNoSub = Math.round(y / a);
+                    // 2. Reversing operation sign: (y + b) / a
+                    const errRevSign = Math.round((y + b) / a);
+                    // 3. Multiplied instead of divided: (y - b) * a
+                    const errMult = (y - b) * a;
+
+                    let distractors = [`${errNoSub} km`, `${errRevSign} km`, `${errMult} km`].filter(d => d !== `${x} km`);
+                    if (distractors.length < 3 || new Set(distractors).size !== distractors.length) {
+                        distractors = [`${x+2} km`, `${x-1} km`, `${x+4} km`].map(d => d);
+                    } else {
+                        distractors = distractors.slice(0, 3);
+                    }
+
                     pool.push({
                         q: `[Modelo ${i+1}] Uma empresa de táxi cobra uma taxa fixa de R$ ${b},00 mais R$ ${a},00 por quilômetro rodado. Se a corrida de um aluno custou R$ ${y},00, quantos quilômetros foram percorridos?`,
                         a: `${x} km`,
-                        d: [`${x+2} km`, `${x-1} km`, `${x+4} km`],
+                        d: distractors,
                         explanation: `A equação do custo é dada por C(x) = ${a}x + ${b}. Igualando a R$ ${y}, temos: ${a}x + ${b} = ${y} => ${a}x = ${y - b} => x = ${x}.`,
                         hint: `Subtraia primeiro a taxa fixa do valor total e depois divida o restante pelo preço do quilômetro.`,
                         concept: 'EM13MAT101'
                     });
                 } else {
                     const c = randRange(2, 4);
+                    // Sum and Product distractors:
+                    // 1. Forgot the signs in sum/product: -a and -c
+                    // 2. Mistake by adding/subtracting 1: a+1 and c-1
+                    // 3. No real roots (common default answer)
                     pool.push({
                         q: `[Equilíbrio ${i+1}] Dada a função de custo marginal f(x) = x² - ${a+c}x + ${a*c}. Quais são as raízes reais desta equação que indicam pontos de equilíbrio de produção?`,
                         a: `x = ${a} e x = ${c}`,
                         d: [`x = ${a+1} e x = ${c-1}`, `x = -${a} e x = -${c}`, `Não existem raízes reais para esta função`],
-                        explanation: `As raízes de uma equação quadrática x² - Sx + P = 0 podem ser encontradas por soma (S = ${a+c}) e produto (P = ${a*c}), resultando in x1 = ${a} e x2 = ${c}.`,
+                        explanation: `As raízes de uma equação quadrática x² - Sx + P = 0 podem ser encontradas por soma (S = ${a+c}) e produto (P = ${a*c}), resultando em x1 = ${a} e x2 = ${c}.`,
                         hint: `Use a fórmula de Bhaskara ou o método de Soma e Produto.`,
                         concept: 'EM13MAT302'
                     });
@@ -326,13 +336,29 @@ window.OnyxDatabase = (function() {
                 const r = randRange(3, 8);
                 const h = randRange(10, 20);
                 const areaBase = r * r;
+                const correctVol = 3 * areaBase * h; // pi = 3
                 
                 if (lvl === 'easy' || lvl === 'medium') {
+                    // Common errors:
+                    // 1. Omit multiplier pi (pi = 1): areaBase * h
+                    const errOmitPi = areaBase * h;
+                    // 2. Linear formula (perimeter * height): 2 * 3 * r * h
+                    const errLinear = 2 * 3 * r * h;
+                    // 3. Squaring height instead of radius: 3 * r * h * h
+                    const errSquareHeight = 3 * r * h * h;
+
+                    let distractors = [`${errOmitPi} m³`, `${errLinear} m³`, `${errSquareHeight} m³`].filter(d => d !== `${correctVol} m³`);
+                    if (distractors.length < 3 || new Set(distractors).size !== distractors.length) {
+                        distractors = [`${areaBase * h} m³`, `${2 * 3 * r * h} m³`, `${3 * r * h * h} m³`].map(d => d);
+                    } else {
+                        distractors = distractors.slice(0, 3);
+                    }
+
                     pool.push({
                         q: `[Cálculo ${i+1}] Um reservatório de água possui o formato de um cilindro circular reto com raio da base medindo ${r} metros e altura medindo ${h} metros. Usando pi = 3, qual é o volume total de água suportado?`,
-                        a: `${3 * areaBase * h} m³`,
-                        d: [`${areaBase * h} m³`, `${2 * 3 * r * h} m³`, `${3 * r * h * h} m³`],
-                        explanation: `O volume do cilindro é V = Área da Base * Altura. Área da base = pi * R² = 3 * ${r}² = ${3 * areaBase}. Volume = ${3 * areaBase} * ${h} = ${3 * areaBase * h} metros cúbicos.`,
+                        a: `${correctVol} m³`,
+                        d: distractors,
+                        explanation: `O volume do cilindro é V = Área da Base * Altura. Área da base = pi * R² = 3 * ${r}² = ${3 * areaBase}. Volume = ${3 * areaBase} * ${h} = ${correctVol} metros cúbicos.`,
                         hint: `Lembre-se que 1 m³ equivale a 1.000 litros. O volume é pi * raio * raio * altura.`,
                         concept: 'EM13MAT301'
                     });
@@ -354,17 +380,30 @@ window.OnyxDatabase = (function() {
                 const n1 = randRange(2, 6);
                 const n2 = randRange(6, 10);
                 const n3 = randRange(4, 8);
-                const total = n1 + n2 + n3;
-                const media = (n1 + n2 + n3) / 3;
-                const mediaRound = Math.round(media * 10) / 10;
+                const correctAvg = Math.round(((n1 * 1.5 + n2 + n3) / 3) * 10) / 10;
                 
                 if (lvl === 'easy' || lvl === 'medium') {
+                    // Common errors:
+                    // 1. Forgot the weight of the first grade: (n1 + n2 + n3) / 3
+                    const errNoWeight = Math.round(((n1 + n2 + n3) / 3) * 10) / 10;
+                    // 2. Sum without dividing: n1*1.5 + n2 + n3
+                    const errSumOnly = Math.round((n1 * 1.5 + n2 + n3) * 10) / 10;
+                    // 3. Default constant
+                    const errFlat = 5.0;
+
+                    let distractors = [`${errNoWeight}`, `${errSumOnly}`, `${errFlat}`].filter(d => d !== `${correctAvg}`);
+                    if (distractors.length < 3 || new Set(distractors).size !== distractors.length) {
+                        distractors = [`${correctAvg + 1.2}`, `${correctAvg - 0.8}`, '5.0'].map(d => d);
+                    } else {
+                        distractors = distractors.slice(0, 3);
+                    }
+
                     pool.push({
-                        q: `[Média ${i+1}] Em um trimestre acadêmico, o estudante ${randChoice(nomesAlunos)} obteve as notas ${n1 * 1.5}, ${n2} e ${n3}. Qual é a média final aproximada dele?`,
-                        a: `${Math.round(((n1 * 1.5 + n2 + n3) / 3) * 10) / 10}`,
-                        d: [`${Math.round(((n1 * 1.5 + n2 + n3) / 3) * 10) / 10 + 1.2}`, `${Math.round(((n1 * 1.5 + n2 + n3) / 3) * 10) / 10 - 0.8}`, '5.0'],
-                        explanation: `A média aritmética simples é calculada somando todas as notas obtidas e dividindo a soma pelo número total de avaliações (3).`,
-                        hint: `Some as três notas e depois faça a divisão simples por 3.`,
+                        q: `[Média ${i+1}] Em um trimestre acadêmico, o estudante ${randChoice(nomesAlunos)} obteve as notas ${n1 * 1.5}, ${n2} e ${n3}. Sabendo que a primeira nota tem peso 1,5 e as demais peso 1, qual é a média final aproximada dele?`,
+                        a: `${correctAvg}`,
+                        d: distractors,
+                        explanation: `A média ponderada é calculada somando os produtos das notas por seus respectivos pesos e dividindo pela soma dos pesos: (${n1 * 1.5}*1.5 + ${n2}*1 + ${n3}*1) / (1.5 + 1 + 1).`,
+                        hint: `Some as três notas multiplicadas pelos pesos e divida pela soma de todos os pesos (3,5).`,
                         concept: 'EM13MAT310'
                     });
                 } else {
@@ -388,10 +427,25 @@ window.OnyxDatabase = (function() {
                 const jurosSimples = cap * (taxa / 100) * tempo;
                 
                 if (lvl === 'easy' || lvl === 'medium') {
+                    // Common errors:
+                    // 1. Not dividing rate by 100: cap * taxa * tempo
+                    const errRateFactor = cap * taxa * tempo;
+                    // 2. Subtracted instead of multiplied
+                    const errSub = cap - (taxa * tempo);
+                    // 3. Flat wrong multiplier
+                    const errWrongMult = cap * 1.5;
+
+                    let distractors = [`R$ ${errRateFactor},00`, `R$ ${errSub},00`, `R$ ${errWrongMult},00`].filter(d => d !== `R$ ${jurosSimples},00`);
+                    if (distractors.length < 3 || new Set(distractors).size !== distractors.length) {
+                        distractors = [`R$ ${jurosSimples + 150},00`, `R$ ${jurosSimples - 80},00`, `R$ ${cap * 1.5},00`].map(d => d);
+                    } else {
+                        distractors = distractors.slice(0, 3);
+                    }
+
                     pool.push({
-                        q: `[Aplicação ${i+1}] Se um estudante aplicar R$ ${cap},00 em uma poupança estudantil que rende R$ ${taxa}% de juros simples ao ano, qual será o montante de juros rendido ao final de ${tempo} anos?`,
+                        q: `[Aplicação ${i+1}] Se um estudante aplicar R$ ${cap},00 em uma poupança estudantil que rende ${taxa}% de juros simples ao ano, qual será o montante de juros rendido ao final de ${tempo} anos?`,
                         a: `R$ ${jurosSimples},00`,
-                        d: [`R$ ${jurosSimples + 150},00`, `R$ ${jurosSimples - 80},00`, `R$ ${cap * 1.5},00`],
+                        d: distractors,
                         explanation: `A fórmula dos juros simples é J = C * i * t, onde C = ${cap}, i = ${taxa / 100} e t = ${tempo}. Logo, J = ${cap} * ${taxa / 100} * ${tempo} = R$ ${jurosSimples},00.`,
                         hint: `Lembre-se que no regime de juros simples, o rendimento é calculado sempre em cima do capital inicial depositado.`,
                         concept: 'EM13MAT312'
@@ -417,20 +471,45 @@ window.OnyxDatabase = (function() {
                 const vel = dist / tempo;
                 
                 if (lvl === 'easy' || lvl === 'medium') {
+                    // Common errors:
+                    // 1. Multiplying by 3.6 directly without converting: vel * 3.6
+                    const errKmHError = vel * 3.6;
+                    // 2. Multiplying dist * tempo instead of dividing:
+                    const errMult = dist * tempo;
+                    // 3. Reversing tempo / dist:
+                    const errReverse = (tempo / dist);
+
+                    let distractors = [`${errKmHError.toFixed(1)} m/s`, `${errMult} m/s`, `${errReverse.toFixed(3)} m/s`].filter(d => d !== `${vel} m/s`);
+                    if (distractors.length < 3 || new Set(distractors).size !== distractors.length) {
+                        distractors = [`${vel * 3.6} m/s`, `${vel + 5} m/s`, `${vel - 3} m/s`].map(d => d);
+                    } else {
+                        distractors = distractors.slice(0, 3);
+                    }
+
                     pool.push({
                         q: `[Movimento ${i+1}] Um atleta de corrida de alta performance do ${randChoice(escolas)} percorre uma distância de ${dist} metros em exatamente ${tempo} segundos. Qual é a sua velocidade média?`,
                         a: `${vel} m/s`,
-                        d: [`${vel * 3.6} m/s`, `${vel + 5} m/s`, `${vel - 3} m/s`],
+                        d: distractors,
                         explanation: `A velocidade média é calculada dividindo-se a variação do espaço (distância = ${dist}m) pela variação do tempo (${tempo}s). Vm = S / T = ${vel} m/s.`,
                         hint: `Divida a distância total pelo tempo de trajeto. Se quiser converter para km/h, basta multiplicar por 3.6!`,
                         concept: 'EM13CNT101'
                     });
                 } else {
-                    const m = randRange(2, 10);
-                    const a = randRange(2, 5);
+                    const qubitPower = randRange(2, 6);
+                    const systemTime = qubitPower * 20;
+                    const resultCoherence = systemTime / 4;
+                    
                     pool.push({
-                        q: `[Dinâmica ${i+1}] Um robô de laboratório com massa de ${m} kg é empurrado por um atuador elétrico, sofrendo uma aceleração constante de ${a} m/s². Qual é a força resultante aplicada sobre o robô?`,
-                        a: `${m * a} Newtons`,
+                        q: `[Física Quântica ${i+1}] Em um processador criogênico projetado para 2027, o tempo de coerência de um qubit supercondutor é de ${systemTime} microssegundos. Se acoplarmos 4 qubits adjacentes sob ruído térmico constante, o tempo de coerência útil residual do cluster decai inversamente com o número de acoplamentos. O novo tempo de coerência útil do sistema será:`,
+                        a: `${resultCoherence} microssegundos`,
+                        d: [`${systemTime * 4} microssegundos`, `${systemTime - 4} microssegundos`, `${systemTime} microssegundos`],
+                        explanation: `O tempo de coerência diminui inversamente com o número de acoplamentos quânticos sob interferência: Coerência_Cluster = Tempo_Base / N_Qubits = ${systemTime} / 4 = ${resultCoherence} microssegundos.`,
+                        hint: `Divida o tempo de coerência original pelo número de qubits acoplados (4) para calcular o enfraquecimento exponencial do sistema.`,
+                        concept: 'EM13CNT301 — Coerência de Qubits'
+                    });
+                }
+            }
+        }            a: `${m * a} Newtons`,
                         d: [`${m + a} Newtons`, `${m / a} Newtons`, `${m * a * 9.8} Newtons`],
                         explanation: `Pela Segunda Lei de Newton (Princípio Fundamental da Dinâmica), a Força Resultante é o produto da massa do corpo pela sua aceleração: F = m * a = ${m} * ${a} = ${m * a} Newtons.`,
                         hint: `Multiplique a massa do objeto (em kg) pela aceleração adquirida (em m/s²). A força resultante é medida em Newtons.`,

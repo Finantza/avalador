@@ -5,16 +5,62 @@
 
 window.OnyxEngines = {
     // Ported Heuristic: Adaptive performance weight
-    calculateHeuristicScore(correct, total, timeSpent, difficulty) {
+    // Ported Heuristic: Adaptive performance weight with Standard Deviation, Streaks, and Tutor scaling
+    calculateHeuristicScore(correct, total, timeSpent, difficulty, options = {}) {
         const accuracy = (correct / total);
-        const timeBonus = Math.max(0, (200 - timeSpent) / 200); // Max 200s per mission
         const diffWeight = { easy: 1, medium: 1.5, hard: 2.2, insane: 3.5, impossible: 5 }[difficulty] || 1;
         
-        // Final Score = (Accuracy * 100) * Difficulty + Time Efficiency
-        return Math.floor((accuracy * 100) * diffWeight + (timeBonus * 20));
+        // 1. Time Bonus calculation
+        let timeBonus = Math.max(0, (200 - timeSpent) / 200); // Max 200s per mission
+        
+        // 2. Velocity Consistency (Standard Deviation of speed per question)
+        let consistencyBonus = 0;
+        const historyTimes = options.historyTimes || [];
+        if (historyTimes.length > 1) {
+            const meanTime = historyTimes.reduce((sum, t) => sum + t, 0) / historyTimes.length;
+            const variance = historyTimes.reduce((sum, t) => sum + Math.pow(t - meanTime, 2), 0) / historyTimes.length;
+            const stdDev = Math.sqrt(variance);
+            
+            // Standard Deviation adaptation: low deviation at fast speeds gets a consistency bonus
+            if (stdDev < 4.0 && meanTime < 10.0) {
+                // Highly consistent and fast!
+                consistencyBonus = Math.max(0, 15 - (stdDev * 2.5)); // up to +15 points
+            } else if (stdDev < 2.0) {
+                // Extremely consistent speed
+                consistencyBonus = 10;
+            }
+        }
+        
+        // 3. Streak Milestones Multiplier
+        let streakMultiplier = 1.0;
+        const maxStreak = options.maxStreak || options.streak || 0;
+        if (maxStreak >= 10) {
+            streakMultiplier = 2.0; // 10+ streak
+        } else if (maxStreak >= 5) {
+            streakMultiplier = 1.5; // 5+ streak
+        } else if (maxStreak >= 3) {
+            streakMultiplier = 1.2; // 3+ streak
+        }
+        
+        // 4. Tutor-Assistance Score Scaling
+        let tutorScale = 1.0;
+        const tutorConsultedCount = options.tutorConsultedCount || 0;
+        if (tutorConsultedCount > 0) {
+            // Deduct proportional to help frequency: max 15% penalty
+            tutorScale = Math.max(0.85, 1.0 - (tutorConsultedCount / total) * 0.15);
+        } else if (options.tutorConsulted) {
+            tutorScale = 0.90; // flat 10% penalty if tutor was consulted
+        }
+
+        // Final Upgraded Heuristic Score
+        const baseCalculated = (accuracy * 100) * diffWeight * streakMultiplier;
+        const efficiencyPoints = (timeBonus * 20) + consistencyBonus;
+        
+        const finalScore = Math.floor((baseCalculated + efficiencyPoints) * tutorScale);
+        return Math.max(0, finalScore);
     },
 
-    // Profiling Engine: Analyzes historical data to find weaknesses and trends
+    // Profiling Engine: Analyzes historical data to find weaknesses, cognitive style and XP projections
     async generateProfileInsight(userId) {
         const history = await window.OnyxCore.DB.getHistory(userId);
         
@@ -30,23 +76,32 @@ window.OnyxEngines = {
             biblioteca_digital: 'extras', laboratorio_virtual: 'extras', projeto_vida: 'extras', inclusao_acessibilidade: 'extras'
         };
 
+        const defaultProfile = {
+            status: 'INSUFFICIENT_DATA',
+            recommendation: 'Realize sua primeira missão de treinamento para calibrar os sensores cognitivos da BNCC.',
+            accuracyAvg: 0,
+            weakness: 'N/A',
+            trend: 'ESTÁVEL',
+            trendColor: 'var(--primary)',
+            dropoutRisk: 'BAIXO',
+            dropoutRiskColor: 'var(--success)',
+            engagementLevel: 20,
+            cognitiveStyle: 'Novato',
+            cognitiveStyleDesc: 'Dados insuficientes para mapear seu estilo cognitivo.',
+            xpEstimateText: 'Complete missões para calcular projeção de progresso.',
+            competenciesMap: { linguagens: 0, matematica: 0, natureza: 0, humanas: 0, itinerarios: 0, extras: 0 }
+        };
+
         if (history.length < 1) {
-            return {
-                status: 'INSUFFICIENT_DATA',
-                recommendation: 'Realize sua primeira missão de treinamento para calibrar os sensores cognitivos da BNCC.',
-                accuracyAvg: 0,
-                weakness: 'N/A',
-                trend: 'ESTÁVEL',
-                trendColor: 'var(--primary)',
-                dropoutRisk: 'BAIXO',
-                dropoutRiskColor: 'var(--success)',
-                engagementLevel: 20,
-                competenciesMap: { linguagens: 0, matematica: 0, natureza: 0, humanas: 0, itinerarios: 0, extras: 0 }
-            };
+            return defaultProfile;
         }
 
         const statsMap = {};
         const catMap = { linguagens: { tot: 0, corr: 0 }, matematica: { tot: 0, corr: 0 }, natureza: { tot: 0, corr: 0 }, humanas: { tot: 0, corr: 0 }, itinerarios: { tot: 0, corr: 0 }, extras: { tot: 0, corr: 0 } };
+
+        let totalTimeSpent = 0;
+        let totalTimesCount = 0;
+        let totalTutorConsulted = 0;
 
         history.forEach(h => {
             const sub = h.subject || 'portugues';
@@ -58,6 +113,15 @@ window.OnyxEngines = {
 
             catMap[cat].tot += 10;
             catMap[cat].corr += h.score;
+
+            // Extra metrics if saved
+            if (h.timeSpent) {
+                totalTimeSpent += h.timeSpent;
+                totalTimesCount += 10; // 10 questions per mission
+            }
+            if (h.tutorConsultedCount) {
+                totalTutorConsulted += h.tutorConsultedCount;
+            }
         });
 
         const profiles = Object.entries(statsMap).map(([subject, data]) => {
@@ -97,6 +161,59 @@ window.OnyxEngines = {
         // Engagement Index (0 - 100)
         const engagementLevel = Math.min(100, Math.round((history.length * 15) + (accuracyAvg * 0.3)));
 
+        // Cognitive Style Classifier
+        // Default average speed per question (approx. 10s if not stored)
+        const avgTimePerQuestion = totalTimesCount > 0 ? (totalTimeSpent / totalTimesCount) : 10.0;
+        let cognitiveStyle = 'Aprendiz Metódico';
+        let cognitiveStyleDesc = 'Respostas ponderadas com taxa de acerto equilibrada.';
+
+        if (accuracyAvg >= 80) {
+            if (avgTimePerQuestion < 7.0) {
+                cognitiveStyle = 'Speedrunner';
+                cognitiveStyleDesc = 'Reflexos cognitivos ultra-rápidos com altíssima precisão.';
+            } else if (avgTimePerQuestion >= 7.0 && avgTimePerQuestion < 13.0) {
+                cognitiveStyle = 'Perfeccionista';
+                cognitiveStyleDesc = 'Cadência ideal e foco absoluto em precisão perfeita.';
+            } else {
+                cognitiveStyle = 'Analista Preciso';
+                cognitiveStyleDesc = 'Lento e cirúrgico. Estudo de alternativas com alto rigor analítico.';
+            }
+        } else {
+            if (avgTimePerQuestion < 7.0) {
+                cognitiveStyle = 'Explorador Impulsivo';
+                cognitiveStyleDesc = 'Respostas apressadas. Requer foco em leitura atenta dos enunciados.';
+            } else {
+                cognitiveStyle = 'Aprendiz Metódico';
+                cognitiveStyleDesc = 'Respostas ponderadas. Ótimo progresso em ritmo de consolidação.';
+            }
+        }
+
+        // XP Prediction Projection
+        let xpEstimateText = 'Sensores calibrando próximo nível...';
+        try {
+            const userStats = await window.OnyxCore.DB.getUser(userId);
+            if (userStats) {
+                const currentLevel = userStats.level || 1;
+                const currentXP = userStats.xp || 0;
+                const nextXP = currentLevel * 100;
+                const remainingXP = nextXP - currentXP;
+                
+                // Calculate average XP per history mission
+                const validXPMissions = history.filter(h => !h.failed);
+                const avgXPPerMission = validXPMissions.length > 0
+                    ? validXPMissions.reduce((sum, h) => sum + (h.xpGained || 0), 0) / validXPMissions.length
+                    : 45; // fallback
+                
+                const missionsNeeded = Math.ceil(remainingXP / Math.max(10, avgXPPerMission));
+                const estTimeSeconds = missionsNeeded * Math.max(30, avgTimePerQuestion * 10);
+                const estTimeText = estTimeSeconds > 60
+                    ? `${Math.round(estTimeSeconds / 60)} min`
+                    : `${Math.round(estTimeSeconds)}s`;
+                
+                xpEstimateText = `Faltam aproximadamente ${missionsNeeded} missões (${estTimeText} de foco) para evoluir ao LVL ${currentLevel + 1}.`;
+            }
+        } catch(e) {}
+
         return {
             status: 'OPERATIONAL',
             accuracyAvg,
@@ -107,7 +224,10 @@ window.OnyxEngines = {
             dropoutRiskColor,
             engagementLevel,
             competenciesMap,
-            recommendation: `Sensores indicam atenção especial ao domínio de ${weakness.subject.toUpperCase()}. Sua curva cognitiva está ${trend}.`
+            cognitiveStyle,
+            cognitiveStyleDesc,
+            xpEstimateText,
+            recommendation: `Sensores indicam atenção especial ao domínio de ${weakness.subject.toUpperCase()}. Sua curva cognitiva está ${trend}. Estilo: ${cognitiveStyle}.`
         };
     },
 
@@ -128,43 +248,112 @@ window.OnyxEngines = {
             txt.innerHTML = html;
             return txt.value;
         },
-        async syncOpenTDB() {
-            try {
-                // Fetch 15 computer science questions from OpenTDB
-                const response = await fetch('https://opentdb.com/api.php?amount=15&category=18&type=multiple');
-                const data = await response.json();
-                if (data.response_code !== 0) return 0;
-
-                const newQuestions = [];
-                data.results.forEach(item => {
-                    const diff = item.difficulty; // 'easy', 'medium', 'hard'
-                    const qText = this._decodeHTML(item.question);
-                    const correctAns = this._decodeHTML(item.correct_answer);
-                    const options = item.incorrect_answers.map(opt => this._decodeHTML(opt));
+        async _fetchWithRetry(url, retries = 3, delay = 1000) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url);
+                    if (response.status === 429) {
+                        console.warn(`[CLOUD_SYNC] Rate limit (429) detectado. Re-agendando tentativa ${i + 1}/${retries} em ${delay * 2}ms...`);
+                        await new Promise(r => setTimeout(r, delay * 2));
+                        continue;
+                    }
+                    if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+                    const data = await response.json();
                     
-                    // We only have 3 incorrect + 1 correct = 4 options. Onyx handles 4 options.
-                    // We need to map this to Onyx schema: { q: "", a: "", d: ["", "", ""] }
-                    newQuestions.push({
-                        subject: 'cybersecurity', // mapping CS to cybersecurity for Onyx domains
-                        difficulty: diff,
-                        data: {
-                            q: `[CLOUD_SYNC] ${qText}`,
-                            a: correctAns,
-                            d: options
-                        }
-                    });
-                });
-
-                // Save to IndexedDB
+                    if (data.response_code === 5) {
+                        console.warn(`[CLOUD_SYNC] OpenTDB Rate Limit (código 5) detectado. Re-agendando tentativa ${i + 1}/${retries} em ${delay * 2}ms...`);
+                        await new Promise(r => setTimeout(r, delay * 2));
+                        continue;
+                    }
+                    return data;
+                } catch (err) {
+                    if (i === retries - 1) throw err;
+                    console.warn(`[CLOUD_SYNC] Falha na conexão. Tentando novamente em ${delay}ms...`, err);
+                    await new Promise(r => setTimeout(r, delay));
+                    delay *= 2; // exponential backoff
+                }
+            }
+        },
+        async syncOpenTDB() {
+            const categories = [
+                { id: 18, name: 'Computer Science' },
+                { id: 19, name: 'Mathematics' },
+                { id: 22, name: 'Geography' },
+                { id: 17, name: 'Science & Nature' }
+            ];
+            
+            let totalSynced = 0;
+            const newQuestions = [];
+            
+            for (const cat of categories) {
+                try {
+                    // Fetch 5 questions per category to avoid hitting heavy rate limits
+                    const url = `https://opentdb.com/api.php?amount=5&category=${cat.id}&type=multiple`;
+                    const data = await this._fetchWithRetry(url);
+                    
+                    if (data && data.response_code === 0 && data.results) {
+                        data.results.forEach(item => {
+                            const diff = item.difficulty; // 'easy', 'medium', 'hard'
+                            const qText = this._decodeHTML(item.question);
+                            const correctAns = this._decodeHTML(item.correct_answer);
+                            const options = item.incorrect_answers.map(opt => this._decodeHTML(opt));
+                            
+                            // Map to Onyx disciplines
+                            let targetSubject = 'portugues'; // fallback
+                            if (cat.id === 18) {
+                                targetSubject = 'seguranca_informacao'; // CS -> Information Security
+                            } else if (cat.id === 19) {
+                                const lowerQ = qText.toLowerCase();
+                                if (lowerQ.includes('triangle') || lowerQ.includes('geometry') || lowerQ.includes('angle') || lowerQ.includes('area') || lowerQ.includes('square')) {
+                                    targetSubject = 'geometria';
+                                } else {
+                                    targetSubject = 'algebra';
+                                }
+                            } else if (cat.id === 22) {
+                                targetSubject = 'geografia';
+                            } else if (cat.id === 17) {
+                                const lowerQ = qText.toLowerCase();
+                                if (lowerQ.includes('chemical') || lowerQ.includes('atom') || lowerQ.includes('element') || lowerQ.includes('acid')) {
+                                    targetSubject = 'quimica';
+                                } else if (lowerQ.includes('physics') || lowerQ.includes('gravity') || lowerQ.includes('force') || lowerQ.includes('energy')) {
+                                    targetSubject = 'fisica';
+                                } else {
+                                    targetSubject = 'biologia';
+                                }
+                            }
+                            
+                            newQuestions.push({
+                                subject: targetSubject,
+                                difficulty: diff,
+                                data: {
+                                    q: `[CLOUD_SYNC] ${qText}`,
+                                    a: correctAns,
+                                    d: options,
+                                    concept: `CloudSync - ${cat.name}`,
+                                    explanation: `Questão sincronizada da nuvem (OpenTDB) para a competência de ${targetSubject.toUpperCase()}.`,
+                                    hint: `Essa questão foi importada via API externa para calibrar seu nível interdisciplinar.`
+                                }
+                            });
+                        });
+                    }
+                    
+                    // Respect API rate limits (wait 2 seconds between categories)
+                    await new Promise(r => setTimeout(r, 2000));
+                    
+                } catch (catErr) {
+                    console.error(`[CLOUD_SYNC] Falha ao sincronizar categoria ${cat.name}:`, catErr);
+                }
+            }
+            
+            if (newQuestions.length > 0) {
                 if (window.OnyxCore) {
                     await window.OnyxCore.DB.saveDynamicQuestions(newQuestions);
                 }
-                
-                return newQuestions.length;
-            } catch (err) {
-                console.error("[CLOUD_SYNC] Sync failed:", err);
-                return 0;
+                totalSynced = newQuestions.length;
             }
+            
+            console.log(`[CLOUD_SYNC] Sincronização concluída com sucesso. ${totalSynced} novas questões injetadas.`);
+            return totalSynced;
         }
     },
 

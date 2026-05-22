@@ -85,6 +85,10 @@
         let currentQuestionIndex = 0;
         let score = 0;
         let streak = 0;
+        let maxStreak = 0;
+        let tutorConsultedCount = 0;
+        let timesList = [];
+        let questionStartTime = 0;
         let lives = 3;
         let comboMultiplier = 1.0;
         let totalXPGained = 0;
@@ -183,6 +187,7 @@
         function renderQuestion() {
             isAnswering = false;
             tutorRequested = false;
+            questionStartTime = Date.now();
             
             // Cancela síntese de voz ativa ao mudar de questão
             if (window.speechSynthesis) window.speechSynthesis.cancel();
@@ -197,6 +202,7 @@
             const autoSimplify = window.tutorAI && window.tutorAI.estudante.acessibilidade.simplificacaoTexto;
             if (autoSimplify) {
                 tutorRequested = true;
+                tutorConsultedCount++;
                 let simplified = tutorAI.simplificarTexto(q.text, 'moderado');
                 let highlighted = OnyxCore.Tutor.simplifyText(simplified);
                 textElement.innerHTML = highlighted;
@@ -219,7 +225,10 @@
             const btnTutor = document.getElementById('btn-tutor');
             if (btnTutor) {
                 btnTutor.onclick = () => {
-                    tutorRequested = true;
+                    if (!tutorRequested) {
+                        tutorRequested = true;
+                        tutorConsultedCount++;
+                    }
                     if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('click');
                     
                     // Simplificação gramatical e cognitiva + Destaque visual de jargões técnicos
@@ -322,6 +331,9 @@
             // Cancela síntese de voz ativa quando o usuário responde
             if (window.speechSynthesis) window.speechSynthesis.cancel();
 
+            const timeSpentOnQuestion = Math.max(0.1, (Date.now() - questionStartTime) / 1000);
+            timesList.push(timeSpentOnQuestion);
+
             const q = questions[currentQuestionIndex];
             const isCorrect = idx === q.correct;
             
@@ -335,6 +347,7 @@
             if (isCorrect) {
                 score++;
                 streak++;
+                if (streak > maxStreak) maxStreak = streak;
                 
                 // Speed Bonus
                 const speedBonus = (timeLeft / 20); // up to +1.0
@@ -495,6 +508,14 @@
                     }
                     stats.xp = 0; // Reset current level XP to 0 as penalty
                 } else {
+                    const totalTimeSpent = timesList.reduce((sum, t) => sum + t, 0);
+                    // Use advanced upgraded Heuristic Score engine to calculate reward
+                    totalXPGained = OnyxEngines.calculateHeuristicScore(score, questions.length, totalTimeSpent, difficulty, {
+                        maxStreak: maxStreak,
+                        tutorConsultedCount: tutorConsultedCount,
+                        historyTimes: timesList
+                    });
+
                     stats.xp = (stats.xp || 0) + totalXPGained;
                     
                     // Update Bounties (Added to stats.xp BEFORE level-up check)
@@ -519,8 +540,21 @@
                 }
 
                 await OnyxCore.DB.saveUser(stats);
-                await OnyxCore.DB.saveHistory({ user: userName, subject, difficulty, score, xpGained: totalXPGained, failed });
-                console.log(`[QUIZ] Missão concluída: +${totalXPGained} XP`);
+                
+                // Save upgraded history record
+                await OnyxCore.DB.saveHistory({ 
+                    user: userName, 
+                    subject, 
+                    difficulty, 
+                    score, 
+                    xpGained: totalXPGained, 
+                    failed,
+                    timeSpent: timesList.reduce((sum, t) => sum + t, 0),
+                    tutorConsultedCount: tutorConsultedCount,
+                    maxStreak: maxStreak,
+                    timesList: timesList
+                });
+                console.log(`[QUIZ] Missão concluída com Heurística Upgraded: +${totalXPGained} XP`);
 
                 // Salva o relatório de estudo cognitivo do Tutor
                 try {
@@ -535,42 +569,6 @@
             
             location.href = 'results.html';
         }
-
-        // Anti-Cheat Engine (Inspect Detection)
-        async function triggerCheatPenalty(reason) {
-            try {
-                let stats = await OnyxCore.DB.getUser(userName);
-                if (stats) {
-                    if (stats.level > 1) {
-                        stats.level--;
-                    }
-                    stats.xp = 0; // Reset current level XP to 0 as penalty
-                    await OnyxCore.DB.saveUser(stats);
-                    alert(`⚠️ [PROTOCOL ONYX - SEGURANÇA] Tentativa de ver o código detectada (${reason})! Você violou as diretrizes. Penalidade aplicada: -1 Nível. Retornando ao Dashboard.`);
-                }
-            } catch (err) {
-                console.error("[ANTI-CHEAT] Erro ao aplicar penalidade:", err);
-            }
-            location.href = 'dashboard.html';
-        }
-
-        // 1. Context Menu (Right Click)
-        document.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            triggerCheatPenalty('Clique Direito / Inspecionar');
-        });
-
-        // 2. Keyboard Shortcuts (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U)
-        document.addEventListener('keydown', (e) => {
-            const isF12 = e.key === 'F12' || e.keyCode === 123;
-            const isInspectCombos = e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c');
-            const isViewSource = e.ctrlKey && (e.key === 'U' || e.key === 'u');
-            
-            if (isF12 || isInspectCombos || isViewSource) {
-                e.preventDefault();
-                triggerCheatPenalty('Atalhos de Desenvolvedor');
-            }
-        });
 
         function abandonQuiz() {
             if (confirm("⚠️ ABANDONAR QUEST\n\nTem certeza que deseja desistir desta missão e voltar para a Home? Seu progresso atual nesta missão será perdido.")) {

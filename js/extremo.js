@@ -316,6 +316,37 @@ class TemplateEngine {
             return cleaned.includes('join') && cleaned.includes('group by') && 
                    (cleaned.includes('sum') || cleaned.includes('count') || cleaned.includes('avg'));
           }
+        },
+        expert: {
+          generate: () => ({
+            instructions: 'Você precisa classificar os salários dos funcionários dentro de cada departamento sem pular números no ranking em caso de empate. Qual função de janela SQL resolve isso?',
+            format: 'multipla_escolha',
+            options: ['DENSE_RANK()', 'RANK()', 'ROW_NUMBER()', 'LEAD()', 'LAG()'],
+            hint: 'Dica: RANK() pula posições no ranking em caso de empates (ex: 1, 2, 2, 4), enquanto a função desejada não pula (ex: 1, 2, 2, 3).'
+          }),
+          generateContext: () => ({
+            table: 'funcionarios',
+            partition: 'departamento_id',
+            order: 'salario'
+          }),
+          validate: (answer, ctx) => {
+            return answer.trim().toUpperCase().includes('DENSE_RANK');
+          }
+        },
+        master: {
+          generate: () => ({
+            instructions: 'Para comparar o faturamento do dia atual com o faturamento do dia seguinte em uma análise temporal, qual função de janela SQL você usaria para acessar o registro da próxima linha?',
+            format: 'multipla_escolha',
+            options: ['LEAD()', 'LAG()', 'FIRST_VALUE()', 'NTH_VALUE()', 'ROW_NUMBER()'],
+            hint: 'Dica: LAG() olha para a linha anterior (atrás). A função que você procura olha para a linha da frente (adiante).'
+          }),
+          generateContext: () => ({
+            table: 'vendas_diarias',
+            order: 'data_venda'
+          }),
+          validate: (answer, ctx) => {
+            return answer.trim().toUpperCase().includes('LEAD');
+          }
         }
       },
       visualization: {
@@ -443,6 +474,37 @@ class TemplateEngine {
             const cleaned = answer.trim().toLowerCase();
             return (cleaned.includes('decorou') || cleaned.includes('overfitting') || cleaned.includes('super')) && cleaned.length > 20;
           }
+        },
+        expert: {
+          generate: () => ({
+            instructions: 'Para detectar transações financeiras fraudulentas de forma não supervisionada (sem dados históricos rotulados de fraude), qual destes algoritmos baseados em árvores é mais adequado para isolar anomalias?',
+            format: 'multipla_escolha',
+            options: ['Isolation Forest', 'Random Forest', 'Decision Tree', 'K-Means', 'Gradient Boosting'],
+            hint: 'Dica: Este algoritmo isola pontos anômalos criando partições aleatórias nos atributos. Pontos anômalos requerem menos divisões para serem isolados.'
+          }),
+          generateContext: () => ({
+            algorithm: 'Isolation Forest',
+            problem: 'Detecção de fraude não supervisionada'
+          }),
+          validate: (answer, ctx) => {
+            const cleaned = answer.trim().toLowerCase();
+            return cleaned.includes('isolation') || cleaned.includes('forest');
+          }
+        },
+        master: {
+          generate: () => ({
+            instructions: 'Durante o treinamento de um modelo preditivo, se aplicarmos a normalização (StandardScaler) em todo o dataset de treino e validação juntos antes de realizar o split (train_test_split), qual problema de integridade de dados teremos criado?',
+            format: 'texto',
+            hint: 'Dica: Esse problema ocorre quando informações do conjunto de teste ou validação "vazam" para o conjunto de treinamento, resultando em métricas otimistas irreais.'
+          }),
+          generateContext: () => ({
+            issue: 'data leakage',
+            mitigation: 'Aplicar fit apenas no conjunto de treino'
+          }),
+          validate: (answer, ctx) => {
+            const cleaned = answer.trim().toLowerCase();
+            return cleaned.includes('vazamento') || cleaned.includes('leakage') || cleaned.includes('leak');
+          }
         }
       }
     };
@@ -532,30 +594,37 @@ class AdaptiveEngine {
 
   getAdaptiveDifficulty(studentId, domainId) {
     const model = this._getOrCreateModel(studentId);
-    const domainMastery = model.domainMastery[domainId] || 0.5;
+    
+    // Se o estudante tem Elo calculado, usamos o Elo para definir a dificuldade base
+    if (!model.domainElo) model.domainElo = {};
+    if (!model.domainElo[domainId]) model.domainElo[domainId] = 1000;
+    const elo = model.domainElo[domainId];
+    
+    let eloDifficultyIndex = 1; // elementary por padrão
+    if (elo < 900) eloDifficultyIndex = 0; // beginner
+    else if (elo < 1100) eloDifficultyIndex = 1; // elementary
+    else if (elo < 1350) eloDifficultyIndex = 2; // intermediate
+    else if (elo < 1650) eloDifficultyIndex = 3; // advanced
+    else if (elo < 2000) eloDifficultyIndex = 4; // expert
+    else eloDifficultyIndex = 5; // master
+    
+    // Combina com a lógica original baseada em performance recente para refinamento fino
     const recentPerformance = model.recentPerformance[domainId] || [];
-
-    // Média ponderada dos últimos 10 resultados
     const recentAvg = recentPerformance.length > 0
       ? recentPerformance.slice(-10).reduce((s, r) => s + r, 0) / Math.min(recentPerformance.length, 10)
       : 0.5;
-
-    const combined = domainMastery * 0.6 + recentAvg * 0.4;
-
-    // Zona de Desenvolvimento Proximal: desafio um pouco acima do nível atual
-    const targetDifficulty = combined + 0.15;
-
-    // Mapeia para dificuldade
+      
+    // Se a performance recente for excelente, dá um pequeno boost (+1 na dificuldade)
+    // Se a performance recente for fraca (<0.3), reduz a dificuldade (-1)
+    let finalIndex = eloDifficultyIndex;
+    if (recentAvg >= 0.8 && finalIndex < 5) finalIndex++;
+    if (recentAvg <= 0.3 && finalIndex > 0) finalIndex--;
+    
     const difficultyLevels = Object.keys(DIFFICULTIES);
-    const index = Math.min(
-      Math.floor(targetDifficulty * difficultyLevels.length),
-      difficultyLevels.length - 1
-    );
-
-    return difficultyLevels[index];
+    return difficultyLevels[finalIndex];
   }
 
-  updateModel(studentId, domainId, result, challenge) {
+  updateModel(studentId, domainId, result, challenge, student = null) {
     const model = this._getOrCreateModel(studentId);
 
     // Atualiza performance recente
@@ -587,6 +656,48 @@ class AdaptiveEngine {
 
     model.domainMastery[domainId] = newMastery;
     model.lastSeen[challenge.skill] = now;
+
+    // Cálculo Estatístico de Rating Elo adaptado
+    const DIFFICULTY_ELO = {
+      beginner: 800,
+      elementary: 1000,
+      intermediate: 1200,
+      advanced: 1500,
+      expert: 1800,
+      master: 2200
+    };
+    const targetElo = DIFFICULTY_ELO[challenge.difficulty] || 1200;
+    const K = 32;
+    const actual = result.correct ? 1 : 0;
+
+    if (student) {
+      if (!student.domainElo) student.domainElo = {};
+      if (!student.domainElo[domainId]) student.domainElo[domainId] = 1000;
+      if (!student.globalElo) student.globalElo = 1000;
+
+      // Domain Elo
+      const expectedDomain = 1 / (1 + Math.pow(10, (targetElo - student.domainElo[domainId]) / 400));
+      student.domainElo[domainId] = Math.round(student.domainElo[domainId] + K * (actual - expectedDomain));
+
+      // Global Elo
+      const expectedGlobal = 1 / (1 + Math.pow(10, (targetElo - student.globalElo) / 400));
+      student.globalElo = Math.round(student.globalElo + K * (actual - expectedGlobal));
+
+      model.domainElo = { ...student.domainElo };
+      model.globalElo = student.globalElo;
+    } else {
+      if (!model.domainElo) model.domainElo = {};
+      if (!model.domainElo[domainId]) model.domainElo[domainId] = 1000;
+      if (!model.globalElo) model.globalElo = 1000;
+
+      // Domain Elo
+      const expectedDomain = 1 / (1 + Math.pow(10, (targetElo - model.domainElo[domainId]) / 400));
+      model.domainElo[domainId] = Math.round(model.domainElo[domainId] + K * (actual - expectedDomain));
+
+      // Global Elo
+      const expectedGlobal = 1 / (1 + Math.pow(10, (targetElo - model.globalElo) / 400));
+      model.globalElo = Math.round(model.globalElo + K * (actual - expectedGlobal));
+    }
 
     // Spaced Repetition
     this._scheduleReview(studentId, domainId, challenge, result);
@@ -673,6 +784,8 @@ class AdaptiveEngine {
       this.studentModels.set(studentId, {
         studentId,
         domainMastery: {},
+        domainElo: {},
+        globalElo: 1000,
         recentPerformance: {},
         lastSeen: {},
         reviewSchedule: {},
@@ -902,7 +1015,8 @@ class AnalyticsEngine {
           : 0,
         level: studentProgress.level,
         currentStreak: studentProgress.currentStreak,
-        maxStreak: studentProgress.maxStreak
+        maxStreak: studentProgress.maxStreak,
+        globalElo: studentProgress.globalElo || 1000
       },
       domainPerformance: {},
       difficultyPerformance: {},
@@ -923,7 +1037,8 @@ class AnalyticsEngine {
           total: domainChallenges.length,
           correct,
           accuracy: Math.round((correct / domainChallenges.length) * 100),
-          points: domainChallenges.reduce((s, c) => s + (c.points || 0), 0)
+          points: domainChallenges.reduce((s, c) => s + (c.points || 0), 0),
+          elo: studentProgress.domainElo?.[domainId] || 1000
         };
 
         if (report.domainPerformance[domainId].accuracy >= 80) {
@@ -1280,6 +1395,7 @@ ${challenge.hint}
           <td>${data.icon} ${data.name}</td>
           <td>${data.total}</td>
           <td>${data.accuracy}%</td>
+          <td><strong>${data.elo || 1000}</strong></td>
           <td><div class="progress-bar"><div class="progress-fill" style="width:${data.accuracy}%"></div></div></td>
         </tr>`).join('');
 
@@ -1293,7 +1409,7 @@ ${challenge.hint}
     body { font-family: 'Segoe UI', sans-serif; max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
     h1 { color: #1565C0; }
     .card { background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 1.5rem; margin: 1rem 0; }
-    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin: 1rem 0; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin: 1rem 0; }
     .stat-item { text-align: center; padding: 1rem; background: #f5f5f5; border-radius: 8px; }
     .stat-value { font-size: 2rem; font-weight: bold; color: #1565C0; }
     .stat-label { font-size: 0.85rem; color: #666; }
@@ -1317,13 +1433,14 @@ ${challenge.hint}
       <div class="stat-item"><div class="stat-value">${report.summary?.totalPoints || 0}</div><div class="stat-label">Pontos</div></div>
       <div class="stat-item"><div class="stat-value">${report.summary?.accuracy || 0}%</div><div class="stat-label">Precisão</div></div>
       <div class="stat-item"><div class="stat-value">${report.summary?.currentStreak || 0}</div><div class="stat-label">Sequência</div></div>
+      <div class="stat-item"><div class="stat-value">${report.summary?.globalElo || 1000}</div><div class="stat-label">Global Elo</div></div>
     </div>
   </div>
   
   <div class="card">
     <h2>Desempenho por Domínio</h2>
     <table>
-      <tr><th>Domínio</th><th>Total</th><th>Precisão</th><th>Progresso</th></tr>
+      <tr><th>Domínio</th><th>Total</th><th>Precisão</th><th>Rating Elo</th><th>Progresso</th></tr>
       ${domainRows}
     </table>
   </div>
@@ -1427,6 +1544,8 @@ class UltimateChallengeEngine {
       fastSolutions: 0,
       mentoredCount: 0,
       lastActivity: null,
+      globalElo: 1000,
+      domainElo: {},
       settings: {
         notifications: true,
         weeklyReport: true,
@@ -1437,6 +1556,42 @@ class UltimateChallengeEngine {
     this.students.set(studentId, student);
     this.analytics.trackEvent('student_registered', { studentId });
     
+    return student;
+  }
+
+  buyEquipment(studentId, equipmentId) {
+    const student = this.students.get(studentId);
+    if (!student) throw new Error(`Estudante ${studentId} não encontrado`);
+
+    const equip = this.gamification.equipment.find(e => e.id === equipmentId);
+    if (!equip) throw new Error(`Equipamento ${equipmentId} não existe`);
+
+    if (student.equipment.some(e => e.id === equipmentId)) {
+      throw new Error(`Estudante já possui o equipamento ${equip.name}`);
+    }
+
+    if (equip.unlock === 'points') {
+      if (student.totalPoints < equip.cost) {
+        throw new Error(`Pontos insuficientes para comprar ${equip.name}. Custo: ${equip.cost}, Possui: ${student.totalPoints}`);
+      }
+      student.totalPoints -= equip.cost;
+      student.equipment.push(equip);
+    } else if (equip.unlock === 'achievement') {
+      const achievementMap = {
+        'super_computer': 'solver',
+        'mentor_cape': 'mentor',
+        'crystal_ball': 'perfectionist'
+      };
+      const requiredAchievement = achievementMap[equipmentId];
+      if (requiredAchievement && !student.unlockedAchievements.includes(requiredAchievement)) {
+        throw new Error(`Equipamento bloqueado! Requer a conquista: ${requiredAchievement}`);
+      }
+      student.equipment.push(equip);
+    } else {
+      throw new Error(`Este equipamento não pode ser comprado diretamente.`);
+    }
+
+    this.analytics.trackEvent('equipment_purchased', { studentId, equipmentId });
     return student;
   }
 
@@ -1682,7 +1837,7 @@ class UltimateChallengeEngine {
     student.level = levelInfo.level;
 
     // Sistema adaptativo
-    this.adaptiveEngine.updateModel(studentId, challenge.domain, result, challenge);
+    this.adaptiveEngine.updateModel(studentId, challenge.domain, result, challenge, student);
 
     // Verifica novas conquistas
     const newAchievements = this.gamification.checkNewAchievements(student);
@@ -2056,7 +2211,8 @@ class ChallengeAPI {
       'GET /stats': () => this.engine.getGlobalStatistics(),
       'GET /export/student/:id': (params) => this.engine.exportStudentData(params.id, params.format),
       'GET /export/challenge': (params) => this.engine.exportChallenge(params.challenge, params.format),
-      'GET /demo': () => this.engine.createDemoEnvironment()
+      'GET /demo': () => this.engine.createDemoEnvironment(),
+      'POST /shop/buy': (body) => this.engine.buyEquipment(body.studentId, body.equipmentId)
     };
   }
 
