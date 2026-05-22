@@ -984,10 +984,10 @@ window.OnyxDatabase = (function() {
             }
         }
 
-        // Retorna embaralhado e limitado a 20 itens, com o ano do ensino médio atribuído de forma homogênea (1º, 2º e 3º ano)
+        // Retorna embaralhado e limitado a 20 itens, com o ano do ensino médio atribuído de forma homogênea (1º, 2º e 3º ano) se não especificado
         const finalPool = shuffle(pool).slice(0, 20);
         finalPool.forEach((q, idx) => {
-            q.ano = (idx % 3) + 1;
+            if (!q.ano) q.ano = (idx % 3) + 1;
         });
         return finalPool;
     }

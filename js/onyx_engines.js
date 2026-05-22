@@ -1086,10 +1086,11 @@ window.OnyxEngines = {
             // ── TIER 1: OnyxDBManager (IndexedDB indexado — mais rápido) ────────
             if (window.OnyxDBManager) {
                 try {
-                    const banked = await window.OnyxDBManager.getPool(subject, difficulty);
+                    const reqYear = (year && year !== 'all') ? parseInt(year) : null;
+                    const banked = await window.OnyxDBManager.getPool(subject, difficulty, reqYear);
                     if (banked.length > 0) {
                         pool = banked;
-                        console.log(`[QuestionEngine] DBManager: ${pool.length} questões para ${subject}/${difficulty}`);
+                        console.log(`[QuestionEngine] DBManager: ${pool.length} questões para ${subject}/${difficulty} (Ano: ${year})`);
                     }
                 } catch(e) { console.warn('[QuestionEngine] DBManager falhou, usando fallback.', e); }
             }

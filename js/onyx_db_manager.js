@@ -6,7 +6,7 @@
  */
 
 window.OnyxDBManager = {
-    SEED_FLAG: 'onyx_qbank_seeded_v1',
+    SEED_FLAG: 'onyx_qbank_seeded_v15',
     SEED_FILE: 'data/onyx_database.db',
 
     // ─── SEED ────────────────────────────────────────────────────────────────
@@ -32,11 +32,14 @@ window.OnyxDBManager = {
                     await new Promise((resolve, reject) => {
                         const tx = db.transaction(['question_bank'], 'readwrite');
                         const store = tx.objectStore('question_bank');
-                        questions.forEach(q => {
+                        questions.forEach((q, idx) => {
+                            const qAno = q.ano || ((idx % 3) + 1);
                             store.put({
                                 subject,
                                 difficulty,
                                 sd: `${subject}_${difficulty}`,
+                                ano: qAno,
+                                sda: `${subject}_${difficulty}_${qAno}`,
                                 source: 'seed',
                                 q: q.q, a: q.a, d: q.d,
                                 explanation: q.explanation || '',
@@ -60,14 +63,21 @@ window.OnyxDBManager = {
     },
 
     // ─── GET POOL ─────────────────────────────────────────────────────────────
-    async getPool(subject, difficulty) {
+    async getPool(subject, difficulty, year) {
         const db = await window.OnyxCore.DB.init();
         if (!db) return [];
         return new Promise(resolve => {
             try {
                 const tx = db.transaction(['question_bank'], 'readonly');
-                const idx = tx.objectStore('question_bank').index('sd');
-                const req = idx.getAll(`${subject}_${difficulty}`);
+                const store = tx.objectStore('question_bank');
+                let req;
+                if (year) {
+                    const idx = store.index('sda');
+                    req = idx.getAll(`${subject}_${difficulty}_${year}`);
+                } else {
+                    const idx = store.index('sd');
+                    req = idx.getAll(`${subject}_${difficulty}`);
+                }
                 req.onsuccess = () => resolve(req.result || []);
                 req.onerror = () => resolve([]);
             } catch (e) { resolve([]); }
@@ -88,11 +98,14 @@ window.OnyxDBManager = {
                 const tx = db.transaction(['question_bank'], 'readwrite');
                 const store = tx.objectStore('question_bank');
                 let saved = 0;
-                questions.forEach(q => {
+                questions.forEach((q, idx) => {
                     if (q.q && !existingTexts.has(q.q)) {
+                        const qAno = q.ano || ((idx % 3) + 1);
                         store.put({
                             subject, difficulty,
                             sd: `${subject}_${difficulty}`,
+                            ano: qAno,
+                            sda: `${subject}_${difficulty}_${qAno}`,
                             source: 'generated',
                             savedAt: Date.now(),
                             q: q.q, a: q.a, d: q.d,

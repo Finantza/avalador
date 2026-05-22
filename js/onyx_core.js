@@ -26,12 +26,12 @@ window.OnyxCore = {
             return new Promise((resolve) => {
                 const timeout = setTimeout(() => resolve(null), 3000);
                 try {
-                    // v14: question_bank store com índice sd (subject_difficulty)
-                    const request = indexedDB.open('OnyxEliteDB', 14);
+                    // v15: question_bank store com índices sd, ano, sda
+                    const request = indexedDB.open('OnyxEliteDB', 15);
                     request.onupgradeneeded = (e) => {
                         const db = e.target.result;
                         const oldVer = e.oldVersion;
-                        console.log(`[ONYX] Upgrading DB v${oldVer} → v14...`);
+                        console.log(`[ONYX] Upgrading DB v${oldVer} → v15...`);
                         if (!db.objectStoreNames.contains('global_stats')) {
                             db.createObjectStore('global_stats', { keyPath: 'id' });
                         }
@@ -45,13 +45,25 @@ window.OnyxCore = {
                             db.createObjectStore('dynamic_questions', { autoIncrement: true });
                         }
                         // NOVO: banco persistente de questões indexado por subject+difficulty
+                        let qStore;
                         if (!db.objectStoreNames.contains('question_bank')) {
-                            const qStore = db.createObjectStore('question_bank', { autoIncrement: true });
+                            qStore = db.createObjectStore('question_bank', { autoIncrement: true });
                             qStore.createIndex('subject', 'subject', { unique: false });
                             qStore.createIndex('difficulty', 'difficulty', { unique: false });
                             qStore.createIndex('sd', 'sd', { unique: false }); // "subject_difficulty"
                             qStore.createIndex('source', 'source', { unique: false });
                             console.log('[ONYX] Store question_bank criado com índices.');
+                        } else {
+                            qStore = e.target.transaction.objectStore('question_bank');
+                        }
+                        
+                        if (!qStore.indexNames.contains('ano')) {
+                            qStore.createIndex('ano', 'ano', { unique: false });
+                            console.log('[ONYX] Índice ano adicionado.');
+                        }
+                        if (!qStore.indexNames.contains('sda')) {
+                            qStore.createIndex('sda', 'sda', { unique: false });
+                            console.log('[ONYX] Índice composto sda adicionado.');
                         }
                     };
                     request.onsuccess = (e) => {
@@ -74,7 +86,7 @@ window.OnyxCore = {
                 
                 const defaultUsers = [
                     { id: 'aluno', password: hashedPassword, level: 1, xp: 0, role: 'aluno' },
-                    { id: 'gestor', password: hashedPassword, level: 5, xp: 150, role: 'gestor' },
+                    { id: 'gestor', password: hashedPassword, level: 10, xp: 300, role: 'gestor' },
                     { id: 'responsavel', password: hashedPassword, level: 1, xp: 0, role: 'responsavel' },
                     { id: 'OPERADOR MÓVEL', password: hashedPassword, level: 1, xp: 0, role: 'aluno' },
                     { id: 'OPERADOR TESTE', password: hashedPassword, level: 1, xp: 0, role: 'aluno' }
@@ -83,8 +95,14 @@ window.OnyxCore = {
                 for (const defUser of defaultUsers) {
                     const getReq = store.get(defUser.id);
                     getReq.onsuccess = () => {
-                        if (!getReq.result) {
+                        const existing = getReq.result;
+                        if (!existing) {
                             store.put(defUser);
+                        } else if (existing.id === 'gestor' && existing.level < 10) {
+                            existing.level = 10;
+                            existing.xp = Math.max(existing.xp, 300);
+                            store.put(existing);
+                            console.log("[ONYX CORE] Perfil gestor existente atualizado para nível inicial 10.");
                         }
                     };
                 }
