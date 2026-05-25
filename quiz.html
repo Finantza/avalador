@@ -694,7 +694,7 @@
 
         function abandonQuiz() {
             if (confirm("⚠️ ABANDONAR QUEST\n\nTem certeza que deseja desistir desta missão e voltar para a Home? Seu progresso atual nesta missão será perdido.")) {
-                location.href = 'dashboard.html';
+                location.href = OnyxCore.Session.getHomeURL();
             }
         }
 

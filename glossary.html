@@ -17,7 +17,7 @@
     <div class="glossary-frame">
         <!-- Sidebar Navigator -->
         <aside class="glossary-sidebar">
-            <div class="sidebar-branding" onclick="navigateBack()" title="Voltar à Home (Dashboard)">
+            <div class="sidebar-branding" onclick="navigateBack()" title="Voltar à Home">
                 <div class="glossary-logo-icon">📖</div>
                 <div>
                     <h3>GLOSSÁRIO</h3>
@@ -728,7 +728,7 @@
 
         function navigateBack() {
             window.speechSynthesis.cancel();
-            location.href = 'dashboard.html';
+            location.href = OnyxCore.Session.getHomeURL();
         }
 
         window.onbeforeunload = () => {
