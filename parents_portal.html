@@ -248,8 +248,8 @@
                     🔒 VINCULAR E ACESSAR DIÁRIO DO ALUNO
                 </button>
                 
-                <button onclick="location.href='index.html'" class="btn-academic-outline" style="justify-content:center; padding:8px; font-size:0.7rem; font-family:var(--font-mono);">
-                    🏠 VOLTAR À TELA DE LOGIN GERAL
+                <button onclick="location.href = OnyxCore.Session.getHomeURL();" class="btn-academic-outline" style="justify-content:center; padding:8px; font-size:0.7rem; font-family:var(--font-mono);">
+                    🏠 VOLTAR À HOME
                 </button>
             </div>
         </div>
@@ -259,7 +259,7 @@
     <div class="parents-frame">
         <!-- Header -->
         <header class="parents-nav-header">
-            <div class="sidebar-branding" onclick="location.href='index.html'" title="Sair do Portal">
+            <div class="sidebar-branding" onclick="location.href = OnyxCore.Session.getHomeURL();" title="Voltar à Home">
                 <div class="academic-logo-icon">🏫</div>
                 <div>
                     <h3 style="font-family: var(--font-header);">ONYX PARENTS</h3>

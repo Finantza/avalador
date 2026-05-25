@@ -343,6 +343,13 @@ window.OnyxCore = {
         getCurrentUser() {
             return localStorage.getItem('onyx_active_user');
         },
+        getHomeURL() {
+            const user = this.getCurrentUser();
+            if (!user) return 'index.html';
+            const role = localStorage.getItem('onyx_active_user_role');
+            if (role === 'responsavel') return 'parents_portal.html';
+            return 'dashboard.html';
+        },
         async checkAuth() {
             const user = this.getCurrentUser();
             if (!user) {

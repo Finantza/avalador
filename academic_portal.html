@@ -17,7 +17,7 @@
     <div class="academic-frame">
         <!-- Sidebar Role Selector -->
         <aside class="academic-sidebar">
-            <div class="sidebar-branding" onclick="location.href='dashboard.html'" title="Voltar à Home (Dashboard)">
+            <div class="sidebar-branding" onclick="location.href = OnyxCore.Session.getHomeURL();" title="Voltar à Home">
                 <div class="academic-logo-icon">🏫</div>
                 <div>
                     <h3>ONYX ECO</h3>
@@ -51,7 +51,7 @@
 
             <!-- Navigation Back -->
             <div class="back-btn-container">
-                <button onclick="location.href='dashboard.html'" class="btn-back-core">
+                <button onclick="location.href = OnyxCore.Session.getHomeURL();" class="btn-back-core">
                     🏠 VOLTAR À HOME
                 </button>
             </div>
