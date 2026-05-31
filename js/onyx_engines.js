@@ -73,7 +73,16 @@ window.OnyxEngines = {
             tecnologia: 'itinerarios', programacao: 'itinerarios', robotica: 'itinerarios', empreendedorismo: 'itinerarios',
             ciencia_de_dados: 'itinerarios', inteligencia_artificial: 'itinerarios', educacao_financeira: 'itinerarios', marketing_digital: 'itinerarios',
             desenvolvimento_jogos: 'itinerarios', seguranca_informacao: 'itinerarios', design_digital: 'itinerarios', producao_audiovisual: 'itinerarios',
-            biblioteca_digital: 'extras', laboratorio_virtual: 'extras', projeto_vida: 'extras', inclusao_acessibilidade: 'extras'
+            biblioteca_digital: 'extras', laboratorio_virtual: 'extras', projeto_vida: 'extras', inclusao_acessibilidade: 'extras',
+            // ===== NÚCLEO TECH AVANÇADO =====
+            banco_de_dados: 'itinerarios', redes_computadores: 'itinerarios', sistemas_embarcados: 'itinerarios',
+            engenharia_software: 'itinerarios', cloud_computing: 'itinerarios', matematica_computacional: 'matematica',
+            // ===== NÚCLEO AVANÇADO HUMANAS E EXATAS =====
+            calculo_diferencial: 'matematica', geopolitica_contemporanea: 'humanas', fisica_moderna: 'natureza',
+            antropologia_cultural: 'humanas', quimica_quantica: 'natureza', historiografia_critica: 'humanas',
+            astrofisica_cosmologia: 'natureza', filosofia_da_mente: 'humanas', algebra_linear: 'matematica',
+            sociologia_do_trabalho: 'humanas', quimica_organica_avancada: 'natureza', arqueologia_e_patrimonio: 'humanas',
+            termodinamica_avancada: 'natureza', epistemologia_avancada: 'humanas'
         };
 
         const defaultProfile = {

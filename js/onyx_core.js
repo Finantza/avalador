@@ -377,13 +377,28 @@ window.OnyxCore = {
             design_digital: 6, ciencia_de_dados: 6, educacao_financeira: 6,
             producao_audiovisual: 7, inteligencia_artificial: 7, seguranca_informacao: 7,
             desenvolvimento_jogos: 8,
-            // ===== CATEGORIA BÔNUS — NÚCLEO TECH AVANÇADO (LVL 20) =====
-            engenharia_software: 20,
-            redes_computadores: 20,
+            // ===== NÚCLEO TECH AVANÇADO (DISTRIBUÍDOS DE 20 A 30) =====
             banco_de_dados: 20,
-            cloud_computing: 20,
-            sistemas_embarcados: 20,
-            matematica_computacional: 20
+            redes_computadores: 22,
+            sistemas_embarcados: 24,
+            engenharia_software: 26,
+            cloud_computing: 28,
+            matematica_computacional: 30,
+            // ===== NÚCLEO AVANÇADO HUMANAS E EXATAS (DE 31 A 50) =====
+            calculo_diferencial: 31,
+            geopolitica_contemporanea: 32,
+            fisica_moderna: 34,
+            antropologia_cultural: 35,
+            quimica_quantica: 37,
+            historiografia_critica: 38,
+            astrofisica_cosmologia: 40,
+            filosofia_da_mente: 41,
+            algebra_linear: 43,
+            sociologia_do_trabalho: 44,
+            quimica_organica_avancada: 46,
+            arqueologia_e_patrimonio: 47,
+            termodinamica_avancada: 49,
+            epistemologia_avancada: 50
         },
         difficulties: { 
             easy: 1, 

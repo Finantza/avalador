@@ -257,6 +257,7 @@
                 <a href="#" class="nav-item" id="btn-show-academic">🏫 <span>Gestão Acadêmica</span></a>
                 <a href="#" class="nav-item" id="btn-show-ai-hub">🤖 <span>Portal de IA</span></a>
                 <a href="#" class="nav-item" id="btn-show-shop" data-screen="shop">🛒 <span>Loja de Suprimentos</span></a>
+                <a href="#" class="nav-item" id="btn-show-styles" data-screen="styles">🎨 <span>Personalizar</span></a>
                 <a href="#" class="nav-item" id="btn-show-ranking">🏆 <span>Classificação</span></a>
                 <a href="#" class="nav-item" id="btn-show-profile">👤 <span>Perfil</span></a>
                 <a href="#" class="nav-item" id="btn-show-glossary">📖 <span>Glossário</span></a>
@@ -570,6 +571,83 @@
                         </div>
                     </div>
                 </section>
+
+                <!-- Screen: Styles -->
+                <section id="screen-styles" class="screen">
+                    <header class="u-mb-30">
+                        <h2 class="u-font-header u-text-primary">🎨 ESTILOS & TEMAS ONYX</h2>
+                        <p class="u-text-muted">Ajuste os parâmetros visuais e sonoros do seu terminal holográfico em tempo real.</p>
+                    </header>
+                    <div class="glass u-p-30 styles-screen-panel">
+                        <!-- Theme Presets Selection -->
+                        <div>
+                            <h3 class="u-font-header u-text-accent u-mb-15" style="font-size: 0.95rem; letter-spacing:0.5px;">💎 PRESETS DE TEMA CIBERNÉTICO</h3>
+                            <div class="theme-pickers-grid">
+                                <button class="theme-picker-btn btn-theme-preset active" data-preset="default" style="--primary: #0ea5e9;">
+                                    <div class="theme-dot" style="background: #0ea5e9;"></div>
+                                    <span style="font-family: var(--font-header); font-weight: 800; font-size: 0.8rem; color:#fff;">ONYX CORE</span>
+                                </button>
+                                <button class="theme-picker-btn btn-theme-preset" data-preset="matrix" style="--primary: #10b981;">
+                                    <div class="theme-dot" style="background: #10b981;"></div>
+                                    <span style="font-family: var(--font-header); font-weight: 800; font-size: 0.8rem; color:#fff;">TOXIC MATRIX</span>
+                                </button>
+                                <button class="theme-picker-btn btn-theme-preset" data-preset="cyberpunk" style="--primary: #ec4899;">
+                                    <div class="theme-dot" style="background: #ec4899;"></div>
+                                    <span style="font-family: var(--font-header); font-weight: 800; font-size: 0.8rem; color:#fff;">CYBERPUNK NEON</span>
+                                </button>
+                                <button class="theme-picker-btn btn-theme-preset" data-preset="volcanic" style="--primary: #ef4444;">
+                                    <div class="theme-dot" style="background: #ef4444;"></div>
+                                    <span style="font-family: var(--font-header); font-weight: 800; font-size: 0.8rem; color:#fff;">VOLCANIC HACK</span>
+                                </button>
+                                <button class="theme-picker-btn btn-theme-preset" data-preset="gold" style="--primary: #eab308;">
+                                    <div class="theme-dot" style="background: #eab308;"></div>
+                                    <span style="font-family: var(--font-header); font-weight: 800; font-size: 0.8rem; color:#fff;">CHRONOS GOLD</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Sound Clicks Customizer -->
+                        <div style="border-top: 1px solid var(--glass-border); padding-top: 25px;">
+                            <div class="u-flex-between u-mb-15" style="align-items: center; flex-wrap:wrap; gap:15px;">
+                                <h3 class="u-font-header u-text-accent" style="font-size: 0.95rem; letter-spacing:0.5px; margin:0;">🔊 EFEITOS SONOROS & DIGITAÇÃO COGNITIVA</h3>
+                                <label class="tutor-toggle-label" style="margin:0;">
+                                    <input type="checkbox" id="keyboard-synth-toggle" class="tutor-toggle-checkbox">
+                                    <span>ATIVAR SOM DE TECLADO MECÂNICO</span>
+                                </label>
+                            </div>
+                            
+                            <div class="u-grid-2" style="gap:25px; margin-top:20px;">
+                                <div>
+                                    <label class="u-font-07 u-text-muted u-mb-5" style="display:block; font-weight:800; letter-spacing:0.5px;">PERFIL DE SOM DE TECLAS</label>
+                                    <select id="keyboard-synth-profile" class="tutor-select-futuristic u-w-full" style="padding:10px !important;">
+                                        <option value="mechanical">TECLADO MECÂNICO SWITCH CLICKS</option>
+                                        <option value="retro">RETRO ARCADE 8-BIT BLEEPS</option>
+                                        <option value="synth">SOFT HARP ARPEGGIO CHORDS</option>
+                                    </select>
+                                </div>
+                                <div class="synth-slider-group">
+                                    <label class="u-font-07 u-text-muted u-mb-5" style="display:block; font-weight:800; letter-spacing:0.5px;">VOLUME DO TECLADO: <span id="keyboard-vol-label" style="color:#fff; font-family:var(--font-mono);">30%</span></label>
+                                    <input type="range" id="keyboard-synth-volume" min="0" max="1" step="0.05" class="synth-slider" style="margin-top:10px;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Canvas Backdrop customizer -->
+                        <div style="border-top: 1px solid var(--glass-border); padding-top: 25px;">
+                            <div class="u-flex-between" style="align-items: center; flex-wrap:wrap; gap:15px;">
+                                <div>
+                                    <h3 class="u-font-header u-text-accent" style="font-size: 0.95rem; letter-spacing:0.5px; margin:0;">🌌 RENDERIZADOR DINÂMICO DE AMBIENTE (BACKGROUND)</h3>
+                                    <p class="u-font-07 u-text-muted u-mt-5" style="margin:0;">Ativa um motor gráfico em tempo real para gerar uma nebulosa de dados flutuante e interativa na tela.</p>
+                                </div>
+                                <label class="tutor-toggle-label" style="margin:0;">
+                                    <input type="checkbox" id="canvas-nebula-toggle" class="tutor-toggle-checkbox">
+                                    <span>ATIVAR NEBULA PARTICLE CANVAS</span>
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
             </div>
             
             <footer class="u-mt-30 u-opacity-06 u-font-07 u-footer-layout">
@@ -633,7 +711,8 @@
         const screens = {
             home: document.getElementById('screen-home'),
             arena: document.getElementById('screen-arena'),
-            shop: document.getElementById('screen-shop')
+            shop: document.getElementById('screen-shop'),
+            styles: document.getElementById('screen-styles')
         };
 
         function switchScreen(id) {
@@ -650,7 +729,95 @@
 
             if (id === 'arena') initArenaLobby();
             if (id === 'shop') renderShop();
+            if (id === 'styles') renderStylesControls();
         }
+
+        function applySystemPresetTheme(preset) {
+            document.body.classList.remove('theme-preset-matrix', 'theme-preset-cyberpunk', 'theme-preset-volcanic', 'theme-preset-gold');
+            
+            if (preset && preset !== 'default') {
+                document.body.classList.add('theme-preset-' + preset);
+            }
+            
+            localStorage.setItem('onyx_theme_preset', preset);
+            
+            document.querySelectorAll('.btn-theme-preset').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.preset === preset);
+            });
+
+            // Re-render radar to adapt to colors
+            updateDashboardRadar();
+        }
+
+        function renderStylesControls() {
+            const savedPreset = localStorage.getItem('onyx_theme_preset') || 'default';
+            applySystemPresetTheme(savedPreset);
+
+            if (typeof OnyxUI !== 'undefined' && OnyxUI.KeyboardSynth) {
+                // Initialize elements from saved values
+                const synthToggle = document.getElementById('keyboard-synth-toggle');
+                const synthProfile = document.getElementById('keyboard-synth-profile');
+                const synthVolume = document.getElementById('keyboard-synth-volume');
+                const volLabel = document.getElementById('keyboard-vol-label');
+                const nebulaToggle = document.getElementById('canvas-nebula-toggle');
+
+                if (synthToggle) {
+                    synthToggle.checked = OnyxUI.KeyboardSynth.active;
+                    synthToggle.onchange = () => {
+                        OnyxUI.KeyboardSynth.active = synthToggle.checked;
+                        localStorage.setItem('onyx_keyboard_synth_active', synthToggle.checked ? 'true' : 'false');
+                        OnyxUI.playFeedback('click');
+                    };
+                }
+
+                if (synthProfile) {
+                    synthProfile.value = OnyxUI.KeyboardSynth.profile;
+                    synthProfile.onchange = () => {
+                        OnyxUI.KeyboardSynth.profile = synthProfile.value;
+                        localStorage.setItem('onyx_keyboard_synth_profile', synthProfile.value);
+                        OnyxUI.playFeedback('click');
+                    };
+                }
+
+                if (synthVolume) {
+                    synthVolume.value = OnyxUI.KeyboardSynth.volume;
+                    if (volLabel) volLabel.textContent = `${Math.round(OnyxUI.KeyboardSynth.volume * 100)}%`;
+                    
+                    synthVolume.oninput = () => {
+                        OnyxUI.KeyboardSynth.volume = parseFloat(synthVolume.value);
+                        localStorage.setItem('onyx_keyboard_synth_volume', synthVolume.value);
+                        if (volLabel) volLabel.textContent = `${Math.round(synthVolume.value * 100)}%`;
+                    };
+                }
+
+                if (nebulaToggle) {
+                    nebulaToggle.checked = localStorage.getItem('onyx_canvas_nebula_active') !== 'false';
+                    nebulaToggle.onchange = () => {
+                        const active = nebulaToggle.checked;
+                        localStorage.setItem('onyx_canvas_nebula_active', active ? 'true' : 'false');
+                        OnyxUI.playFeedback('click');
+                        
+                        if (active) {
+                            OnyxUI.initNebulaCanvas();
+                        } else {
+                            const canvas = document.getElementById('ambient-nebula-canvas');
+                            if (canvas) canvas.remove();
+                        }
+                    };
+                }
+            }
+        }
+
+        // Setup click listeners for theme preset buttons
+        setTimeout(() => {
+            document.querySelectorAll('.btn-theme-preset').forEach(btn => {
+                btn.onclick = () => {
+                    const preset = btn.dataset.preset;
+                    applySystemPresetTheme(preset);
+                    if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
+                };
+            });
+        }, 1000);
 
         function renderShop() {
             if(userStats) {
@@ -1181,39 +1348,68 @@
             let battleScore = 0;
 
             const battleHTML = `
-                <div class="u-p-20" style="position: relative;">
+                <div class="u-p-20 combat-hud" style="position: relative;" id="combat-hud-root">
                     <!-- Title Bar -->
                     <div class="u-flex-between u-mb-20" style="border-bottom: 1px solid var(--glass-border); padding-bottom: 12px; align-items: center;">
-                        <span class="u-text-primary u-weight-900 u-font-header" style="font-size: 0.95rem; font-family: var(--font-mono);">⚔️ COMBATE REALTIME: ${battle.subject.toUpperCase()}</span>
+                        <span class="u-text-primary u-weight-900 u-font-header" style="font-size: 0.95rem; font-family: var(--font-mono); letter-spacing:0.5px;">⚔️ SIMULAÇÃO DE COMBATE CIBERNÉTICO: ${battle.subject.toUpperCase()}</span>
                         <div class="status-dot pulse" style="background: var(--success); width: 8px; height: 8px;"></div>
                     </div>
 
-                    <!-- Split Progress Monitors -->
-                    <div class="u-grid-2 u-mb-20" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <div class="glass u-p-10" style="border-left: 3px solid var(--primary); background: rgba(59, 130, 246, 0.02); border-radius: 8px;">
-                            <p class="u-font-06 u-text-muted" style="font-weight: 800;">VOCÊ (OPERADOR)</p>
-                            <h4 id="pvp-self-progress" style="margin-top: 5px; color: #fff; font-size: 1rem; font-family: var(--font-mono); font-weight:800;">Q1/3 • 0 pts</h4>
-                            <div class="xp-mini-bar-outer" style="height: 5px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; margin-top: 8px;">
-                                <div id="pvp-self-bar" class="xp-mini-bar-inner" style="width: 0%; height: 100%; border-radius: 4px; background: var(--primary);"></div>
+                    <!-- Split Progress & Shield Monitors -->
+                    <div class="combat-meters-row u-mb-20">
+                        <!-- Player Monitor -->
+                        <div class="combat-meter-box" style="color: var(--primary);">
+                            <p class="u-font-06 u-text-muted" style="font-weight: 800;">OPERADOR (VOCÊ)</p>
+                            <h4 id="pvp-self-progress" style="margin-top: 5px; color: #fff; font-size: 0.95rem; font-family: var(--font-mono); font-weight:800;">Q1/3 • 0 pts</h4>
+                            
+                            <div class="combat-gauge-container">
+                                <div class="combat-bar-label">
+                                    <span>ESCUDO TÁTICO</span>
+                                    <span id="combat-self-shield-label">100%</span>
+                                </div>
+                                <div class="combat-shield-outer">
+                                    <div id="combat-self-shield-bar" class="combat-shield-inner" style="width: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary));"></div>
+                                </div>
                             </div>
                         </div>
-                        <div class="glass u-p-10" style="border-left: 3px solid var(--accent); background: rgba(245, 158, 11, 0.02); border-radius: 8px;">
-                            <p class="u-font-06 u-text-muted" style="font-weight: 800;">OPONENTE: ${battle.opponent.toUpperCase()}</p>
-                            <h4 id="pvp-opp-progress" style="margin-top: 5px; color: #fff; font-size: 1rem; font-family: var(--font-mono); font-weight:800;">Q1/3 • 0 pts</h4>
-                            <div class="xp-mini-bar-outer" style="height: 5px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; margin-top: 8px;">
-                                <div id="pvp-opp-bar" class="xp-mini-bar-inner" style="width: 0%; height: 100%; border-radius: 4px; background: var(--accent);"></div>
+
+                        <!-- Opponent Monitor -->
+                        <div class="combat-meter-box" style="color: var(--accent);">
+                            <p class="u-font-06 u-text-muted" style="font-weight: 800;">ADVERSÁRIO: ${battle.opponent.toUpperCase()}</p>
+                            <h4 id="pvp-opp-progress" style="margin-top: 5px; color: #fff; font-size: 0.95rem; font-family: var(--font-mono); font-weight:800;">Q1/3 • 0 pts</h4>
+                            
+                            <div class="combat-gauge-container">
+                                <div class="combat-bar-label">
+                                    <span>INTEGRIDADE OPERACIONAL</span>
+                                    <span id="combat-opp-shield-label">100%</span>
+                                </div>
+                                <div class="combat-shield-outer">
+                                    <div id="combat-opp-shield-bar" class="combat-shield-inner" style="width: 100%; background: linear-gradient(90deg, var(--accent), #f59e0b);"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Question text with Onyx Cognitive simplify integration -->
-                    <div id="battle-q-text" class="u-mb-20 u-font-header" style="font-size: 1.05rem; line-height: 1.55; color: #fff; min-height: 90px; font-weight: 700; border: 1px solid rgba(255,255,255,0.03); padding:15px; border-radius:10px; background:rgba(0,0,0,0.2);">
-                        PREPARANDO VETORES DE COMBATE...
+                    <!-- Bot Active Evolving Dialogue Box -->
+                    <div class="glass u-p-15 u-mb-20" id="combat-bot-dialogue-panel" style="border: 1px solid var(--glass-border); border-left: 3px solid var(--accent); background: rgba(245, 158, 11, 0.02); display:none;">
+                        <span class="u-font-06" style="color: var(--accent); font-weight:900; font-family: var(--font-mono);">💬 TRANSMISSÃO DO BOT ADVERSÁRIO:</span>
+                        <p id="combat-bot-commentary" class="u-font-08 u-mt-5" style="color: #fff; line-height: 1.5; font-style: italic; margin-bottom: 0;">Carregando sensores de voz...</p>
+                    </div>
+
+                    <!-- Question text with simplify highlight -->
+                    <div id="battle-q-text" class="u-mb-20 u-font-header" style="font-size: 1.05rem; line-height: 1.55; color: #fff; min-height: 95px; font-weight: 700; border: 1px solid rgba(255,255,255,0.03); padding:18px; border-radius:12px; background:rgba(0,0,0,0.3); box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);">
+                        CALIBRANDO CHAVES DE CRIPTOGRAFIA...
                     </div>
                     
                     <!-- Options container -->
                     <div id="battle-opts" class="nav-menu" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;"></div>
                     
+                    <!-- Console Terminal Log -->
+                    <div class="combat-log-console u-mb-20" id="combat-console-log">
+                        <div class="combat-log-line">Conectando terminal ao barramento de rede local...</div>
+                        <div class="combat-log-line">Firewall de rede tática ativo nas portas 80/443.</div>
+                    </div>
+
                     <!-- Question live countbar -->
                     <div class="battle-timer" style="height: 5px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden;">
                         <div id="battle-timer-bar" class="battle-timer-inner" style="width: 100%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 15s linear;"></div>
@@ -1221,13 +1417,38 @@
 
                     <!-- Abort options -->
                     <div class="u-text-center u-mt-15">
-                        <button id="btn-pvp-surrender" class="btn-onyx u-font-06" style="color: var(--error); border: 1px solid rgba(239,68,68,0.2); background: transparent; padding: 5px 12px; border-radius: 6px; cursor:pointer;">
+                        <button id="btn-pvp-surrender" class="btn-onyx u-font-06" style="color: var(--error); border: 1px solid rgba(239,68,68,0.2); background: transparent; padding: 6px 14px; border-radius: 6px; cursor:pointer; letter-spacing:0.5px;">
                             🏳️ RETIRAR-SE (DESISTIR)
                         </button>
                     </div>
                 </div>
             `;
             openOverlay("COMBATE ATIVO", battleHTML);
+
+            // Activate bot dialogue panel if active
+            const showBotDialogue = () => {
+                const panel = document.getElementById('combat-bot-dialogue-panel');
+                const commentary = document.getElementById('combat-bot-commentary');
+                if (panel && commentary && typeof OnyxCognitive !== 'undefined') {
+                    panel.style.display = 'block';
+                    commentary.textContent = OnyxCognitive.generateEvolvedBotResponse(battle.opponent);
+                }
+            };
+
+            const addCombatConsoleLog = (text, type = '') => {
+                const log = document.getElementById('combat-console-log');
+                if (!log) return;
+                const line = document.createElement('div');
+                line.className = 'combat-log-line';
+                if (type === 'success') line.classList.add('combat-success');
+                if (type === 'error') line.classList.add('combat-error');
+                line.textContent = `[${new Date().toLocaleTimeString()}]: ${text}`;
+                log.appendChild(line);
+                log.scrollTop = log.scrollHeight;
+            };
+
+            showBotDialogue();
+            addCombatConsoleLog(`Sincronização bem-sucedida. Operação PvP iniciada.`);
 
             let timerTimeout = null;
 
@@ -1241,8 +1462,27 @@
                 }
 
                 // Update displays
-                document.getElementById('pvp-self-progress').textContent = `Q${currentIdx + 1}/3 • ${battleScore} pts`;
-                document.getElementById('pvp-self-bar').style.width = `${(currentIdx / 3) * 100}%`;
+                document.getElementById('pvp-self-progress').textContent = `Questão Q${currentIdx + 1}/3 • ${battleScore} pts`;
+                
+                // Live shield calculations
+                const totalErrors = currentIdx - battleScore;
+                const selfShield = 100 - (totalErrors * 33.3);
+                const oppShield = 100 - (battleScore * 33.3);
+
+                const selfBar = document.getElementById('combat-self-shield-bar');
+                const selfLabel = document.getElementById('combat-self-shield-label');
+                const oppBar = document.getElementById('combat-opp-shield-bar');
+                const oppLabel = document.getElementById('combat-opp-shield-label');
+
+                if (selfBar && selfLabel) {
+                    selfBar.style.width = `${Math.max(0, selfShield)}%`;
+                    selfLabel.textContent = `${Math.max(0, Math.round(selfShield))}%`;
+                }
+
+                if (oppBar && oppLabel) {
+                    oppBar.style.width = `${Math.max(0, oppShield)}%`;
+                    oppLabel.textContent = `${Math.max(0, Math.round(oppShield))}%`;
+                }
 
                 updateBattleLiveProgress();
 
@@ -1276,12 +1516,27 @@
                     b.textContent = opt;
                     
                     b.onclick = () => {
+                        const root = document.getElementById('combat-hud-root');
                         if (i === correctIdx) {
                             battleScore++;
                             if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
+                            addCombatConsoleLog(`CORRECT! Breach successful. Adversary shield damaged!`, 'success');
+                            if (root) {
+                                root.classList.add('combat-success-flash');
+                                setTimeout(() => root.classList.remove('combat-success-flash'), 800);
+                            }
                         } else {
                             if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
+                            addCombatConsoleLog(`ERROR! Packet collision. Pings interrupted. Shield damaged!`, 'error');
+                            if (root) {
+                                root.classList.add('combat-warning-flash');
+                                setTimeout(() => root.classList.remove('combat-warning-flash'), 800);
+                            }
                         }
+                        
+                        // Update bot dialog commentary on answer
+                        showBotDialogue();
+
                         currentIdx++;
                         nextQ();
                     };
@@ -1299,6 +1554,15 @@
 
                 timerTimeout = setTimeout(() => {
                     if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('error');
+                    addCombatConsoleLog(`TIMEOUT! Operation buffer overflow. Shield damaged!`, 'error');
+                    
+                    const root = document.getElementById('combat-hud-root');
+                    if (root) {
+                        root.classList.add('combat-warning-flash');
+                        setTimeout(() => root.classList.remove('combat-warning-flash'), 800);
+                    }
+
+                    showBotDialogue();
                     currentIdx++;
                     nextQ();
                 }, 15000);
@@ -1614,6 +1878,20 @@
                 OnyxCognitive.init();
             }
 
+            // Inicializar Aparência de Temas e Áudio
+            const savedPreset = localStorage.getItem('onyx_theme_preset') || 'default';
+            applySystemPresetTheme(savedPreset);
+            
+            if (typeof OnyxUI !== 'undefined') {
+                if (OnyxUI.KeyboardSynth) {
+                    OnyxUI.KeyboardSynth.init();
+                }
+                const isNebulaActive = localStorage.getItem('onyx_canvas_nebula_active') !== 'false';
+                if (isNebulaActive) {
+                    OnyxUI.initNebulaCanvas();
+                }
+            }
+
             // Inicializar Motor de Rede ONYX
             if (typeof OnyxNetwork !== 'undefined') {
                 await OnyxNetwork.init(userStats.id, userStats.level, '👤');
@@ -1808,12 +2086,12 @@
                 { id: 'humanas', n: '🌍 HUMANAS' },
                 { id: 'itinerarios', n: '🚀 ITINERÁRIOS' },
                 { id: 'extras', n: '✨ EXTRAS' },
-                { id: 'bonus', n: '🔐 BÔNUS LVL 20' }
+                { id: 'bonus', n: '🔐 BÔNUS ELITE' }
             ];
             
             filterContainer.innerHTML = categories.map(cat => `
                 <button class="btn-cat btn-cat-${cat.id} ${activeCategoryFilter === cat.id ? 'active' : ''}" data-cat="${cat.id}">
-                    ${cat.n}
+                     ${cat.n}
                 </button>
             `).join('');
             
@@ -1845,7 +2123,7 @@
                 // Natureza
                 { id: 'fisica', n: 'FÍSICA', i: '⚛️', d: 'Leis da mecânica, óptica e termologia.', cat: 'natureza' },
                 { id: 'quimica', n: 'QUÍMICA', i: '🧪', d: 'Tabela periódica, ligações e estequiometria.', cat: 'natureza' },
-                { id: 'biologia', n: 'BIOLOGIA', i: '🧬', d: 'Células, genética, evolução e ecologia.', cat: 'natureza' },
+                { id: 'biologia', n: 'BIOLOGIA', i: '🧬', d: 'Células, genetics, evolução e ecologia.', cat: 'natureza' },
 
                 // Humanas
                 { id: 'historia', n: 'HISTÓRIA', i: '⏳', d: 'História do Brasil e das civilizações.', cat: 'humanas' },
@@ -1873,7 +2151,7 @@
                 { id: 'projeto_vida', n: 'PROJETO DE VIDA', i: '🌟', d: 'Metas SMART, SWOT e autoconhecimento.', cat: 'extras' },
                 { id: 'inclusao_acessibilidade', n: 'INCLUSÃO & ACES.', i: '♿', d: 'WCAG, braille, libras e alt text.', cat: 'extras' },
 
-                // ===== BÔNUS — NÚCLEO TECH AVANÇADO (LVL 20) =====
+                // ===== BÔNUS — NÚCLEO ELITE & AVANÇADO (LVL 20-50) =====
                 { id: 'engenharia_software', n: 'ENGENHARIA DE SW', i: '⚙️', d: 'Arquitetura de sistemas, padrões SOLID e DevOps.', cat: 'bonus' },
                 { id: 'redes_computadores', n: 'REDES DE COMP.', i: '🌐', d: 'Protocolos TCP/IP, roteamento e infraestrutura.', cat: 'bonus' },
                 { id: 'banco_de_dados', n: 'BANCO DE DADOS', i: '🗄️', d: 'SQL avançado, modelagem relacional e NoSQL.', cat: 'bonus' },
@@ -1883,7 +2161,23 @@
                 { id: 'ciencia_de_dados', n: 'CIÊNCIA DE DADOS', i: '📉', d: 'Análise de dados, pandas e visualização avançada.', cat: 'bonus' },
                 { id: 'inteligencia_artificial', n: 'INTEL. ARTIFICIAL', i: '🤖', d: 'Redes neurais profundas e IA generativa.', cat: 'bonus' },
                 { id: 'seguranca_informacao', n: 'CIBERSEGURANÇA', i: '🛡️', d: 'Criptografia avançada, pentest e resposta a incidentes.', cat: 'bonus' },
-                { id: 'programacao', n: 'PROGRAMAÇÃO ADV.', i: '🐍', d: 'Algoritmos complexos, design patterns e otimização.', cat: 'bonus' }
+                { id: 'programacao', n: 'PROGRAMAÇÃO ADV.', i: '🐍', d: 'Algoritmos complexos, design patterns e otimização.', cat: 'bonus' },
+                
+                // Exatas & Humanas Avançadas no Bônus
+                { id: 'calculo_diferencial', n: 'CÁLCULO DIFERENCIAL', i: '📐', d: 'Cálculo diferencial e integral limites e derivadas.', cat: 'bonus' },
+                { id: 'algebra_linear', n: 'ÁLGEBRA LINEAR', i: '➗', d: 'Espaços vetoriais, matrizes e transformações.', cat: 'bonus' },
+                { id: 'fisica_moderna', n: 'FÍSICA MODERNA', i: '⚛️', d: 'Teoria da relatividade, fótons e mecânica quântica.', cat: 'bonus' },
+                { id: 'quimica_quantica', n: 'QUÍMICA QUÂNTICA', i: '🧪', d: 'Orbitais atômicos, espectroscopia e ligações moleculares.', cat: 'bonus' },
+                { id: 'astrofisica_cosmologia', n: 'ASTROFÍSICA & COSMO', i: '🌌', d: 'Ciclo estelar, buracos negros e evolução do universo.', cat: 'bonus' },
+                { id: 'quimica_organica_avancada', n: 'QUÍM. ORGÂNICA ADV', i: '🧪', d: 'Mecanismos de reação, síntese e macromoléculas.', cat: 'bonus' },
+                { id: 'termodinamica_avancada', i: '🔥', n: 'TERMODINÂMICA ADV', d: 'Ciclos térmicos reais, entropia e processos espontâneos.', cat: 'bonus' },
+                { id: 'geopolitica_contemporanea', n: 'GEOPOLÍTICA CONTEMP', i: '🌍', d: 'Novas fronteiras, blocos econômicos e tensões globais.', cat: 'bonus' },
+                { id: 'antropologia_cultural', n: 'ANTROPOLOGIA CULT.', i: '👥', d: 'Diversidade étnica, ritos, mitos e evolução social.', cat: 'bonus' },
+                { id: 'historiografia_critica', n: 'HISTORIOGRAFIA CRÍT', i: '⏳', d: 'Métodos de pesquisa histórica e análise de fontes.', cat: 'bonus' },
+                { id: 'filosofia_da_mente', n: 'FILOSOFIA DA MENTE', i: '🧠', d: 'Problema mente-corpo, consciência e inteligência.', cat: 'bonus' },
+                { id: 'sociologia_do_trabalho', n: 'SOCIOLOGIA TRAB.', i: '👥', d: 'Relações de trabalho na era digital e automação.', cat: 'bonus' },
+                { id: 'arqueologia_e_patrimonio', n: 'ARQUEOLOGIA & PATR.', i: '🏺', d: 'Preservação de sítios arqueológicos e patrimônios da humanidade.', cat: 'bonus' },
+                { id: 'epistemologia_avancada', n: 'EPISTEMOLOGIA ADV.', i: '🧠', d: 'Teoria do conhecimento científico e refutabilidade.', cat: 'bonus' }
             ];
 
             // For 'all' filter, exclude bonus subjects (they appear only in bonus tab)
@@ -1908,17 +2202,17 @@
                 bonusBanner.innerHTML = `
                     <div class="bonus-banner-icon">🔐</div>
                     <div class="bonus-banner-text">
-                        <h3>NÚCLEO TECH AVANÇADO</h3>
+                        <h3>NÚCLEO ELITE & BÔNUS AVANÇADO</h3>
                         <p>
-                            Disciplinas de elite em <strong style="color:rgba(250,204,21,0.9)">TI, Engenharia de Software e Ciência de Dados</strong>.
+                            Disciplinas de alta complexidade em <strong style="color:rgba(250,204,21,0.9)">Ciências Exatas, Humanas e Tecnologia Avançada</strong>.
                             ${isElite
                                 ? '<br><span style="color:#10b981;font-weight:800;">✅ ACESSO LIBERADO — Bem-vindo à elite ONYX!</span>'
-                                : `<br>Você está no <strong style="color:rgba(250,204,21,0.9);">LVL ${userLevel}</strong>. Alcance o <strong style="color:rgba(250,204,21,0.9);">LVL 20</strong> para desbloquear estas missões.`
+                                : `<br>Você está no <strong style="color:rgba(250,204,21,0.9);">LVL ${userLevel}</strong>. Alcance os níveis requeridos (faixa 20 a 50) para desbloquear estas missões.`
                             }
                         </p>
                     </div>
                     <div class="bonus-banner-badge">
-                        <span class="badge-level">${isElite ? '✓' : '20'}</span>
+                        <span class="badge-level">${isElite ? '✓' : '20-50'}</span>
                         <span class="badge-label">${isElite ? 'ELITE' : 'NÍVEL REQ.'}</span>
                     </div>
                 `;
@@ -1941,7 +2235,7 @@
                                 <span class="card-title" style="color:rgba(255,255,255,0.3); -webkit-text-fill-color:unset;">${s.n}</span>
                                 <div class="lock-overlay-bonus">
                                     <span class="lock-icon">🔐</span>
-                                    <span class="lock-level">LVL 20</span>
+                                    <span class="lock-level">LVL ${config}</span>
                                     <span class="lock-hint">ELITE REQUIRED</span>
                                 </div>
                             </div>

@@ -30,7 +30,13 @@ const subjects = [
     'tecnologia', 'programacao', 'robotica', 'empreendedorismo',
     'ciencia_de_dados', 'inteligencia_artificial', 'educacao_financeira', 'marketing_digital',
     'desenvolvimento_jogos', 'seguranca_informacao', 'design_digital', 'producao_audiovisual',
-    'biblioteca_digital', 'laboratorio_virtual', 'projeto_vida', 'inclusao_acessibilidade'
+    'biblioteca_digital', 'laboratorio_virtual', 'projeto_vida', 'inclusao_acessibilidade',
+    // ===== NÚCLEO TECH AVANÇADO =====
+    'engenharia_software', 'redes_computadores', 'banco_de_dados', 'cloud_computing', 'sistemas_embarcados', 'matematica_computacional',
+    // ===== NÚCLEO AVANÇADO HUMANAS E EXATAS =====
+    'calculo_diferencial', 'geopolitica_contemporanea', 'fisica_moderna', 'antropologia_cultural', 'quimica_quantica',
+    'historiografia_critica', 'astrofisica_cosmologia', 'filosofia_da_mente', 'algebra_linear', 'sociologia_do_trabalho',
+    'quimica_organica_avancada', 'arqueologia_e_patrimonio', 'termodinamica_avancada', 'epistemologia_avancada'
 ];
 const difficulties = ['easy', 'medium', 'hard', 'insane', 'impossible'];
 

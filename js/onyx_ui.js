@@ -827,7 +827,29 @@ window.OnyxUI = {
             desenvolvimento_jogos: "Desenvolvimento de Jogos e Design",
             seguranca_informacao: "Cibersegurança e Proteção de Dados",
             design_digital: "Design Digital e Interface do Usuário",
-            producao_audiovisual: "Criação de Conteúdo e Produção Audiovisual"
+            producao_audiovisual: "Criação de Conteúdo e Produção Audiovisual",
+            // ===== NÚCLEO TECH AVANÇADO =====
+            engenharia_software: "Engenharia de Software",
+            redes_computadores: "Redes de Computadores",
+            banco_de_dados: "Banco de Dados & Relacional",
+            cloud_computing: "Computação em Nuvem (Cloud)",
+            sistemas_embarcados: "Sistemas Embarcados & IoT",
+            matematica_computacional: "Matemática Computacional",
+            // ===== NÚCLEO AVANÇADO HUMANAS E EXATAS =====
+            calculo_diferencial: "Cálculo Diferencial & Integral",
+            geopolitica_contemporanea: "Geopolítica Contemporânea",
+            fisica_moderna: "Física Moderna & Quântica",
+            antropologia_cultural: "Antropologia Cultural",
+            quimica_quantica: "Química Quântica",
+            historiografia_critica: "Historiografia Crítica",
+            astrofisica_cosmologia: "Astrofísica e Cosmologia",
+            filosofia_da_mente: "Filosofia da Mente",
+            algebra_linear: "Álgebra Linear & Vetorial",
+            sociologia_do_trabalho: "Sociologia do Trabalho",
+            quimica_organica_avancada: "Química Orgânica Avançada",
+            arqueologia_e_patrimonio: "Arqueologia e Patrimônio",
+            termodinamica_avancada: "Termodinâmica Avançada",
+            epistemologia_avancada: "Epistemologia Avançada"
         };
     },
 
@@ -1121,41 +1143,61 @@ window.OnyxUI = {
         ];
 
         let html = `
-            <div class="doc-info-grid" style="border-color: ${badgeColor};">
-                <div class="info-card">
-                    <span class="info-label">Avaliação Pedagógica</span>
-                    <span class="info-value" style="color: ${badgeColor}; font-weight: 900;">CORREÇÃO DE REDAÇÃO ENEM</span>
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid var(--primary-print); padding-bottom:15px; margin-bottom:25px;">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="width:45px; height:45px; border-radius:50%; background:var(--primary-print); display:flex; align-items:center; justify-content:center; color:#fff; font-family:'Outfit', sans-serif; font-size:1.4rem; font-weight:900; box-shadow:0 0 10px rgba(0,0,0,0.15);">💎</div>
+                    <div>
+                        <h1 style="font-family:'Outfit', sans-serif; font-size:16pt; font-weight:900; color:var(--text-dark); margin:0; letter-spacing:-0.5px;">ONYX ASSESSMENT PLATFORM</h1>
+                        <span style="font-size:7.5pt; font-family:'JetBrains Mono', monospace; color:var(--primary-print); font-weight:800; letter-spacing:1px; text-transform:uppercase;">NÚCLEO DE INTELIGÊNCIA ARTIFICIAL PEDAGÓGICA</span>
+                    </div>
                 </div>
-                <div class="info-card">
-                    <span class="info-label">Tema da Redação</span>
-                    <span class="info-value" style="font-size: 9pt;">${theme}</span>
-                </div>
-                <div class="info-card">
-                    <span class="info-label">Desempenho Verbal</span>
-                    <span class="info-value" style="color: ${badgeColor}; font-weight: 800;">${badgeText}</span>
+                <div style="text-align:right;">
+                    <span style="font-size:7.5pt; font-family:'JetBrains Mono', monospace; background:var(--bg-light); border:1px solid var(--border-light); padding:4px 10px; border-radius:4px; font-weight:800; color:var(--text-dark);">REGISTRO: ONYX-${Math.floor(100000 + Math.random() * 900000)}</span>
                 </div>
             </div>
 
-            <div class="score-circle-print" style="border-color: ${badgeColor}; margin-top: 20px;">
-                <span class="score-circle-value">${totalScore}</span>
-                <span class="score-circle-lbl">PONTOS</span>
+            <div class="doc-info-grid" style="border-color: ${badgeColor}; display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; margin-bottom:25px;">
+                <div class="info-card" style="background:var(--bg-light); border:1px solid var(--border-light); padding:12px; border-radius:6px;">
+                    <span class="info-label" style="display:block; font-size:6.5pt; color:var(--text-muted); font-weight:800; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Avaliação Pedagógica</span>
+                    <span class="info-value" style="display:block; color: ${badgeColor}; font-weight: 900; font-size:10pt;">CORREÇÃO ENEM COGNITIVA</span>
+                </div>
+                <div class="info-card" style="background:var(--bg-light); border:1px solid var(--border-light); padding:12px; border-radius:6px;">
+                    <span class="info-label" style="display:block; font-size:6.5pt; color:var(--text-muted); font-weight:800; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Tema da Redação</span>
+                    <span class="info-value" style="display:block; font-size: 8.5pt; font-weight:bold; color:var(--text-dark); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${theme}</span>
+                </div>
+                <div class="info-card" style="background:var(--bg-light); border:1px solid var(--border-light); padding:12px; border-radius:6px;">
+                    <span class="info-label" style="display:block; font-size:6.5pt; color:var(--text-muted); font-weight:800; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Desempenho Verbal</span>
+                    <span class="info-value" style="display:block; color: ${badgeColor}; font-weight: 800; font-size:9.5pt;">${badgeText}</span>
+                </div>
             </div>
 
-            <div style="margin-bottom: 30px;">
+            <div style="display:flex; gap:30px; align-items:center; margin-bottom:30px; page-break-inside: avoid; break-inside: avoid;">
+                <div class="score-circle-print" style="border: 6px solid ${badgeColor}; width:120px; height:120px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; flex-shrink:0; background:var(--bg-light);">
+                    <span class="score-circle-value" style="font-family:'Outfit', sans-serif; font-size:2.4rem; font-weight:900; color:var(--text-dark); line-height:1;">${totalScore}</span>
+                    <span class="score-circle-lbl" style="font-size:0.6rem; color:var(--text-muted); font-weight:800; letter-spacing:1px; margin-top:2px;">PONTOS</span>
+                </div>
+                
+                <div style="flex:1; background:var(--bg-light); border:1px solid var(--border-light); padding:15px; border-radius:8px;">
+                    <h4 style="margin:0 0 6px 0; font-size:9pt; font-family:'Outfit', sans-serif; color:var(--text-dark); font-weight:800; text-transform:uppercase;">AUTENTICAÇÃO DE PARECER ESCOLAR</h4>
+                    <p style="margin:0; font-size:8pt; color:var(--text-muted); line-height:1.5;">Relatório gerado automaticamente através de análise gramatical e semântica por redes neurais de NLP do ecossistema <strong>Onyx Assessment Platform v5.0</strong>. Este documento é válido como boletim formativo de redação para auditoria e histórico de proficiência do estudante.</p>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 30px; page-break-inside: avoid; break-inside: avoid;">
                 <h3 style="font-size: 11pt; font-weight: 800; text-transform: uppercase; color: var(--text-dark); margin-bottom: 12px; border-bottom: 1px dashed var(--border-light); padding-bottom: 5px;">Mapeamento de Competências ENEM</h3>
-                <div class="essay-competencies">
+                <div class="essay-competencies" style="display:flex; flex-direction:column; gap:12px;">
         `;
 
         scores.forEach((s, idx) => {
             const percent = (s / 200) * 100;
             html += `
                 <div style="page-break-inside: avoid; break-inside: avoid;">
-                    <div class="comp-bar-container">
-                        <span style="font-weight: 600;">Competência ${idx + 1}: ${comps[idx]}</span>
-                        <strong style="font-family: 'JetBrains Mono', monospace; color: var(--primary-print);">${s} / 200</strong>
+                    <div class="comp-bar-container" style="display:flex; justify-content:space-between; font-size:8.5pt; margin-bottom:4px;">
+                        <span style="font-weight: 600; color:var(--text-dark);">Competência ${idx + 1}: ${comps[idx]}</span>
+                        <strong style="font-family: 'JetBrains Mono', monospace; color: var(--primary-print); font-weight:900;">${s} / 200</strong>
                     </div>
-                    <div class="comp-bar-outer">
-                        <div class="comp-bar-inner" style="width: ${percent}%; background-color: ${badgeColor};"></div>
+                    <div class="comp-bar-outer" style="height:6px; background:#e4e4e7; border-radius:3px; overflow:hidden;">
+                        <div class="comp-bar-inner" style="width: ${percent}%; background-color: ${badgeColor}; height:100%; border-radius:3px;"></div>
                     </div>
                 </div>
             `;
@@ -1167,20 +1209,513 @@ window.OnyxUI = {
 
             <div style="margin-bottom: 30px; page-break-inside: avoid; break-inside: avoid;">
                 <h3 style="font-size: 11pt; font-weight: 800; text-transform: uppercase; color: var(--text-dark); margin-bottom: 12px; border-bottom: 1px dashed var(--border-light); padding-bottom: 5px;">Transcrição do Texto Escrito</h3>
-                <div class="essay-text-box">${text}</div>
+                <div class="essay-text-box" style="white-space:pre-wrap; background:var(--bg-light); border:1px solid var(--border-light); border-radius:8px; padding:18px; font-family:'JetBrains Mono', monospace; font-size:8.5pt; color:var(--text-dark); line-height:1.6; text-align:justify;">${text}</div>
             </div>
 
-            <div style="page-break-inside: avoid; break-inside: avoid; background: var(--bg-light); border: 1px solid var(--border-light); border-radius: 8px; padding: 18px; margin-top: 20px;">
-                <h3 style="font-size: 11pt; font-weight: 800; text-transform: uppercase; color: var(--text-dark); margin-bottom: 12px;">
-                    <span>💡 Análise Detalhada & Recomendações da IA</span>
-                </h3>
-                <ul style="padding-left: 20px; font-size: 9.5pt; color: var(--text-muted); display: flex; flex-direction: column; gap: 10px; line-height: 1.5;">
-                    ${correctionsHTML}
-                </ul>
+            <div style="page-break-inside: avoid; break-inside: avoid; background: var(--bg-light); border: 1px solid var(--border-light); border-radius: 8px; padding: 18px; margin-top: 20px; display:flex; justify-content:space-between; align-items:flex-start; gap:20px;">
+                <div style="flex:1;">
+                    <h3 style="font-size: 11pt; font-weight: 800; text-transform: uppercase; color: var(--text-dark); margin-bottom: 12px;">
+                        <span>💡 Análise Detalhada & Recomendações da IA</span>
+                    </h3>
+                    <ul style="padding-left: 20px; font-size: 9pt; color: var(--text-muted); display: flex; flex-direction: column; gap: 8px; line-height: 1.5; margin:0;">
+                        ${correctionsHTML}
+                    </ul>
+                </div>
+                
+                <!-- Official Verification Seal -->
+                <div style="width:100px; display:flex; flex-direction:column; align-items:center; text-align:center; border:1px double var(--primary-print); padding:10px; border-radius:6px; background:#fff; flex-shrink:0;">
+                    <svg width="40" height="40" viewBox="0 0 100 100" style="color:var(--primary-print);">
+                        <polygon points="50,5 90,25 90,75 50,95 10,75 10,25" fill="none" stroke="currentColor" stroke-width="5"/>
+                        <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5"/>
+                        <path d="M40,50 L47,57 L60,40" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span style="font-size:5.5pt; font-family:'JetBrains Mono', monospace; color:var(--primary-print); font-weight:900; margin-top:6px; display:block; letter-spacing:0.5px;">SISTEMA DE VERIFICAÇÃO</span>
+                    <span style="font-size:4.5pt; font-family:'JetBrains Mono', monospace; color:var(--text-muted); display:block; margin-top:2px;">ASSINATURA DIGITAL CRIPTOGRÁFICA</span>
+                </div>
             </div>
         `;
 
         OnyxUI.exportToPDF(`Correcao_Redacao_${theme.replace(/\s+/g, '_')}`, html);
+    },
+
+    // --- NEON NEBULA CANVAS BACKDROP ---
+    initNebulaCanvas() {
+        let canvas = document.getElementById('ambient-nebula-canvas');
+        if (!canvas) {
+            canvas = document.createElement('canvas');
+            canvas.id = 'ambient-nebula-canvas';
+            canvas.style.cssText = `
+                position: fixed;
+                inset: 0;
+                width: 100vw;
+                height: 100vh;
+                z-index: -2;
+                pointer-events: none;
+                background: transparent;
+            `;
+            document.body.insertBefore(canvas, document.body.firstChild);
+        }
+
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        const particles = [];
+        const maxParticles = 60;
+        let mouse = { x: null, y: null, radius: 150 };
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        window.addEventListener('mouseleave', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 3 + 1;
+                this.vx = Math.random() * 0.4 - 0.2;
+                this.vy = Math.random() * 0.4 - 0.2;
+                this.alpha = Math.random() * 0.5 + 0.1;
+                this.grow = true;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Bounce or reset
+                if (this.x < 0 || this.x > width || this.y < 0 || this.y > height) {
+                    this.reset();
+                }
+
+                // Pulse alpha
+                if (this.grow) {
+                    this.alpha += 0.005;
+                    if (this.alpha >= 0.75) this.grow = false;
+                } else {
+                    this.alpha -= 0.005;
+                    if (this.alpha <= 0.15) this.grow = true;
+                }
+
+                // Interact with mouse
+                if (mouse.x !== null && mouse.y !== null) {
+                    const dx = this.x - mouse.x;
+                    const dy = this.y - mouse.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < mouse.radius) {
+                        const force = (mouse.radius - dist) / mouse.radius;
+                        this.x += (dx / dist) * force * 2.0;
+                        this.y += (dy / dist) * force * 2.0;
+                    }
+                }
+            }
+
+            draw(primaryColor, accentColor) {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 3);
+                
+                // Mix in primary/accent colors dynamically from current HSL values
+                grad.addColorStop(0, primaryColor);
+                grad.addColorStop(0.5, accentColor);
+                grad.addColorStop(1, 'transparent');
+
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        for (let i = 0; i < maxParticles; i++) {
+            particles.push(new Particle());
+        }
+
+        function drawLines(primaryColor) {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 100) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = primaryColor;
+                        ctx.globalAlpha = (100 - dist) / 100 * 0.15;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        const tick = () => {
+            // Check if the canvas is still active in DOM
+            if (!document.getElementById('ambient-nebula-canvas')) return;
+
+            // Clear screen gently for trailing glow
+            ctx.clearRect(0, 0, width, height);
+
+            // Read colors dynamically from document styling
+            const style = window.getComputedStyle(document.documentElement);
+            const primary = style.getPropertyValue('--primary').trim() || '#0ea5e9';
+            const accent = style.getPropertyValue('--accent').trim() || '#f59e0b';
+
+            particles.forEach(p => {
+                p.update();
+                p.draw(primary, accent);
+            });
+
+            drawLines(primary);
+            requestAnimationFrame(tick);
+        };
+
+        tick();
+        console.log("[ONYX UI] Nebula Particle Canvas Active.");
+    },
+
+    // --- REAL-TIME MECHANICAL KEYBOARD KEYSTROKE SYNTH ---
+    KeyboardSynth: {
+        active: false,
+        profile: 'mechanical',
+        volume: 0.3,
+        audioCtx: null,
+
+        init() {
+            // Load state from LocalStorage
+            this.active = localStorage.getItem('onyx_keyboard_synth_active') === 'true';
+            this.profile = localStorage.getItem('onyx_keyboard_synth_profile') || 'mechanical';
+            this.volume = parseFloat(localStorage.getItem('onyx_keyboard_synth_volume')) ?? 0.3;
+
+            // Setup global event listener for text typing inputs
+            document.addEventListener('keydown', (e) => {
+                if (!this.active) return;
+                
+                // Only synthesis on actual printable characters typed into inputs or textareas
+                const isInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable;
+                if (!isInput) return;
+
+                // Avoid playing sound on meta/modifier keys
+                const isMeta = e.key === 'Control' || e.key === 'Shift' || e.key === 'Alt' || e.key === 'Meta' || e.key === 'CapsLock';
+                if (isMeta) return;
+
+                this.playClick();
+            }, true);
+            
+            console.log("[ONYX UI] Keyboard Keystroke Sound Synthesizer Ready. Active:", this.active);
+        },
+
+        playClick() {
+            try {
+                if (!this.audioCtx) {
+                    this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                
+                if (this.audioCtx.state === 'suspended') {
+                    this.audioCtx.resume();
+                }
+
+                const now = this.audioCtx.currentTime;
+                
+                if (this.profile === 'mechanical') {
+                    // 🎹 Click Clack Mechanical Switch clicks
+                    // Transient crisp burst (high passed frequency decay)
+                    const osc = this.audioCtx.createOscillator();
+                    const gain = this.audioCtx.createGain();
+                    
+                    osc.connect(gain);
+                    gain.connect(this.audioCtx.destination);
+                    
+                    osc.type = 'triangle';
+                    // Sorteia pitch slightly to mimic keys variation
+                    const pitch = 1400 + Math.random() * 400;
+                    osc.frequency.setValueAtTime(pitch, now);
+                    osc.frequency.exponentialRampToValueAtTime(100, now + 0.02);
+
+                    gain.gain.setValueAtTime(this.volume * 0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.02);
+
+                    osc.start(now);
+                    osc.stop(now + 0.025);
+                } 
+                else if (this.profile === 'retro') {
+                    // 👾 Retro Arcade Bleeps
+                    const osc = this.audioCtx.createOscillator();
+                    const gain = this.audioCtx.createGain();
+                    
+                    osc.connect(gain);
+                    gain.connect(this.audioCtx.destination);
+                    
+                    osc.type = 'square';
+                    const pitch = 500 + Math.random() * 200;
+                    osc.frequency.setValueAtTime(pitch, now);
+                    osc.frequency.setValueAtTime(pitch * 2, now + 0.02);
+
+                    gain.gain.setValueAtTime(this.volume * 0.06, now);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+
+                    osc.start(now);
+                    osc.stop(now + 0.045);
+                }
+                else if (this.profile === 'synth') {
+                    // 🎼 Soft Harp Chords
+                    const osc = this.audioCtx.createOscillator();
+                    const gain = this.audioCtx.createGain();
+                    
+                    osc.connect(gain);
+                    gain.connect(this.audioCtx.destination);
+                    
+                    osc.type = 'sine';
+                    
+                    // Simple pentatonic chords values
+                    const scale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
+                    const pitch = scale[Math.floor(Math.random() * scale.length)];
+                    osc.frequency.setValueAtTime(pitch, now);
+
+                    gain.gain.setValueAtTime(this.volume * 0.25, now);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+
+                    osc.start(now);
+                    osc.stop(now + 0.26);
+                }
+            } catch (e) {
+                console.warn("[ONYX KEYBOARD SYNTH] Error playing mechanical click:", e);
+            }
+        }
+    },
+
+    // --- COGNITIVE BINAURAL STUDY HUMS & RAIN ENGINE ---
+    BinauralHums: {
+        audioCtx: null,
+        oscLeft: null,
+        oscRight: null,
+        noiseNode: null,
+        gainHums: null,
+        gainRain: null,
+        active: false,
+
+        start() {
+            if (this.active) return;
+            try {
+                this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const now = this.audioCtx.currentTime;
+
+                // 1. Set up Master Gains
+                this.gainHums = this.audioCtx.createGain();
+                this.gainRain = this.audioCtx.createGain();
+
+                // Setup Initial volumes
+                const vHums = parseFloat(localStorage.getItem('onyx_synth_hums_volume')) ?? 0.3;
+                const vRain = parseFloat(localStorage.getItem('onyx_synth_rain_volume')) ?? 0.3;
+                this.gainHums.gain.setValueAtTime(vHums * 0.6, now);
+                this.gainRain.gain.setValueAtTime(vRain * 0.5, now);
+
+                // Connect to outputs
+                this.gainHums.connect(this.audioCtx.destination);
+                this.gainRain.connect(this.audioCtx.destination);
+
+                // 2. Set up Binaural Focus Oscillators (Separation for stereo beats)
+                const merger = this.audioCtx.createChannelMerger(2);
+                
+                this.oscLeft = this.audioCtx.createOscillator();
+                this.oscLeft.type = 'sine';
+                this.oscLeft.frequency.setValueAtTime(110, now); // Left Ear: 110Hz
+
+                this.oscRight = this.audioCtx.createOscillator();
+                this.oscRight.type = 'sine';
+                this.oscRight.frequency.setValueAtTime(111.5, now); // Right Ear: 111.5Hz (1.5Hz Delta separation)
+
+                const gainLeft = this.audioCtx.createGain();
+                const gainRight = this.audioCtx.createGain();
+
+                this.oscLeft.connect(gainLeft);
+                this.oscRight.connect(gainRight);
+
+                // Connect left to channel 0, right to channel 1
+                gainLeft.connect(merger, 0, 0);
+                gainRight.connect(merger, 0, 1);
+
+                merger.connect(this.gainHums);
+
+                this.oscLeft.start(now);
+                this.oscRight.start(now);
+
+                // 3. Set up Synthesized White-Noise Rain
+                const bufferSize = 2 * this.audioCtx.sampleRate;
+                const noiseBuffer = this.audioCtx.createBuffer(1, bufferSize, this.audioCtx.sampleRate);
+                const output = noiseBuffer.getChannelData(0);
+                
+                // Fill random values
+                for (let i = 0; i < bufferSize; i++) {
+                    output[i] = Math.random() * 2.0 - 1.0;
+                }
+
+                this.noiseNode = this.audioCtx.createBufferSource();
+                this.noiseNode.buffer = noiseBuffer;
+                this.noiseNode.loop = true;
+
+                // BiquadFilter to transform harsh white noise into soothing low-pass rain hum
+                const filter = this.audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(380, now);
+                filter.Q.setValueAtTime(1.0, now);
+
+                this.noiseNode.connect(filter);
+                filter.connect(this.gainRain);
+                
+                this.noiseNode.start(now);
+
+                this.active = true;
+                console.log("[ONYX BINAURAL ENGINE] Synthesizer focus loops active.");
+            } catch (e) {
+                console.error("[ONYX BINAURAL ENGINE] Error starting synthesizer hums:", e);
+            }
+        },
+
+        stop() {
+            if (!this.active) return;
+            try {
+                const now = this.audioCtx.currentTime;
+                
+                // Fade out smoothly
+                if (this.gainHums) this.gainHums.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
+                if (this.gainRain) this.gainRain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
+
+                setTimeout(() => {
+                    if (this.oscLeft) { this.oscLeft.stop(); this.oscLeft.disconnect(); }
+                    if (this.oscRight) { this.oscRight.stop(); this.oscRight.disconnect(); }
+                    if (this.noiseNode) { this.noiseNode.stop(); this.noiseNode.disconnect(); }
+                    if (this.audioCtx) this.audioCtx.close();
+
+                    this.oscLeft = null;
+                    this.oscRight = null;
+                    this.noiseNode = null;
+                    this.gainHums = null;
+                    this.gainRain = null;
+                    this.audioCtx = null;
+                    this.active = false;
+                    console.log("[ONYX BINAURAL ENGINE] Hums and Synthesized loops stopped.");
+                }, 180);
+            } catch (e) {
+                console.warn("[ONYX BINAURAL ENGINE] Error stopping sound engine:", e);
+                this.active = false;
+            }
+        },
+
+        setVolumes(vHums, vRain) {
+            localStorage.setItem('onyx_synth_hums_volume', vHums.toString());
+            localStorage.setItem('onyx_synth_rain_volume', vRain.toString());
+            
+            if (!this.active || !this.audioCtx) return;
+            const now = this.audioCtx.currentTime;
+            this.gainHums.gain.exponentialRampToValueAtTime(Math.max(0.0001, vHums * 0.6), now + 0.1);
+            this.gainRain.gain.exponentialRampToValueAtTime(Math.max(0.0001, vRain * 0.5), now + 0.1);
+        }
+    },
+    
+    // --- SYNTH PAD DRUM MATRIX PLAYER ---
+    playPadSound(padKey) {
+        try {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            const ctx = new AudioCtx();
+            const now = ctx.currentTime;
+            
+            if (padKey === 'A') {
+                // Low Kick / Bass Thump
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(40, now + 0.15);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+                osc.start(now);
+                osc.stop(now + 0.16);
+            } else if (padKey === 'S') {
+                // Snare Click / Noise Blast
+                const bufferSize = ctx.sampleRate * 0.1;
+                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+                const noise = ctx.createBufferSource();
+                noise.buffer = buffer;
+                const filter = ctx.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.value = 1000;
+                const gain = ctx.createGain();
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(ctx.destination);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+                noise.start(now);
+                noise.stop(now + 0.11);
+            } else if (padKey === 'D') {
+                // Synth Pluck (E4 - 329.63Hz)
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(329.63, now);
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+                osc.start(now);
+                osc.stop(now + 0.21);
+            } else if (padKey === 'F') {
+                // Retro Chime (C5 - 523.25Hz pitch sweep)
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.linearRampToValueAtTime(1046.50, now + 0.15);
+                gain.gain.setValueAtTime(0.06, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+                osc.start(now);
+                osc.stop(now + 0.16);
+            } else if (padKey === 'G') {
+                // Chord Pad (C major chord)
+                const freqs = [261.63, 329.63, 392.00, 523.25];
+                const gain = ctx.createGain();
+                gain.connect(ctx.destination);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+                
+                freqs.forEach(f => {
+                    const osc = ctx.createOscillator();
+                    osc.connect(gain);
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(f, now);
+                    osc.start(now);
+                    osc.stop(now + 0.41);
+                });
+            }
+        } catch (e) {
+            console.warn("[ONYX UI] Error playing pad sound:", e);
+        }
     }
 };
 
