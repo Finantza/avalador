@@ -96,7 +96,7 @@
 
             if (!lastMission) { location.href = 'dashboard.html'; return; }
 
-            const accuracy = (lastMission.score / 10) * 100;
+            const accuracy = (lastMission.score / (lastMission.total || 10)) * 100;
             
             // Display
             document.getElementById('res-name').textContent = user.toUpperCase();

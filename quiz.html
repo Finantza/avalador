@@ -66,7 +66,7 @@
     </main>
 
     <!-- Floating Tutor Panel -->
-    <div id="tutor-floating-panel" class="tutor-floating-panel hidden">
+    <div id="tutor-floating-panel" class="tutor-floating-panel">
         <div class="tutor-header">
             <span class="tutor-icon">🤖</span>
             <span>ONYX TUTOR</span>
@@ -75,12 +75,40 @@
         <div id="tutor-floating-content" class="tutor-floating-body"></div>
     </div>
 
-    <script src="legacy/tutor.js"></script>
-    <script src="js/onyx_ui.js"></script>
-    <script src="js/onyx_database.js"></script>
-    <script src="js/onyx_engines.js"></script>
+    <!-- Level Up Screen Overlay -->
+    <div id="level-up-overlay" class="level-up-overlay">
+        <div class="level-up-container">
+            <div class="level-up-badge-glow">👑</div>
+            <div class="level-up-title">LEVEL UP!</div>
+            <div class="u-text-muted u-mb-30" style="font-size: 1.2rem;">Você alcançou o Nível <span id="level-up-num" style="color: var(--accent); font-weight: 900;">2</span>!</div>
+            <button id="level-up-btn-prosseguir" class="btn-onyx btn-primary" style="padding: 10px 30px; font-weight: 800; cursor: pointer; display: inline-block;">PROSSEGUIR</button>
+        </div>
+    </div>
+
+    <!-- Streak Alert Toast -->
+    <div id="streak-alert-toast" class="streak-alert-toast">
+        <span style="font-size: 2rem;">🔥</span>
+        <div>
+            <div class="u-weight-900 u-color-white" style="font-size: 1.1rem; text-align: left;">STREAK IMPLACÁVEL!</div>
+            <div class="u-font-08" style="color: var(--accent); text-align: left;"><span id="streak-alert-num">5</span> Acertos Consecutivos!</div>
+        </div>
+    </div>
+
+    <!-- Achievement Toast -->
+    <div id="achievement-toast" class="achievement-toast">
+        <span class="achievement-toast-icon">🏆</span>
+        <div>
+            <div class="u-weight-900 u-color-white" style="font-size: 0.9rem; text-align: left;">CONQUISTA DESTRAVADA!</div>
+            <div class="u-font-08 u-text-muted" id="achievement-toast-title" style="text-align: left;">Título da Conquista</div>
+        </div>
+    </div>
+
     <script src="js/onyx_core.js"></script>
     <script src="js/onyx_db_manager.js"></script>
+    <script src="js/onyx_database.js"></script>
+    <script src="js/onyx_engines.js"></script>
+    <script src="js/onyx_ui.js"></script>
+    <script src="legacy/tutor.js"></script>
     <script>
         let userName = null;
         let userStats = null;
@@ -119,6 +147,68 @@
                 }, 8000);
             }
         };
+
+        function playWarningTick() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, ctx.currentTime);
+                gain.gain.setValueAtTime(0.02, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.15);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.15);
+            } catch(e) {}
+        }
+
+        function triggerStreakAlert(streakVal) {
+            const toast = document.getElementById('streak-alert-toast');
+            const countSpan = document.getElementById('streak-alert-num');
+            if (toast && countSpan) {
+                countSpan.textContent = streakVal;
+                toast.classList.add('active');
+                if (typeof OnyxUI !== 'undefined') {
+                    OnyxUI.playFeedback('alert');
+                }
+                setTimeout(() => {
+                    toast.classList.remove('active');
+                }, 2000);
+            }
+        }
+
+        function showLevelUpAnimation(newLevel) {
+            const overlay = document.getElementById('level-up-overlay');
+            const levelNumSpan = document.getElementById('level-up-num');
+            if (overlay && levelNumSpan) {
+                levelNumSpan.textContent = newLevel;
+                overlay.classList.add('active');
+                
+                // Play ascending major arpeggio synth
+                try {
+                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const now = ctx.currentTime;
+                    const freqs = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50]; // C major
+                    freqs.forEach((f, index) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(f, now + index * 0.08);
+                        
+                        gain.gain.setValueAtTime(0, now);
+                        gain.gain.linearRampToValueAtTime(0.12, now + index * 0.08 + 0.02);
+                        gain.gain.exponentialRampToValueAtTime(0.0001, now + index * 0.08 + 0.4);
+                        
+                        osc.start(now + index * 0.08);
+                        osc.stop(now + index * 0.08 + 0.4);
+                    });
+                } catch(e) {}
+            }
+        }
 
         async function startMission() {
             userName = await OnyxCore.Session.checkAuth();
@@ -432,7 +522,17 @@
         function updateTimerUI() {
             document.getElementById('timer-text').textContent = `${timeLeft}s`;
             const offset = 283 - (timeLeft / 30) * 283;
-            document.getElementById('timer-path').style.strokeDashoffset = offset;
+            const timerPath = document.getElementById('timer-path');
+            if (timerPath) {
+                timerPath.style.strokeDashoffset = offset;
+                timerPath.classList.remove('timer-warning', 'timer-critical');
+                if (timeLeft <= 5) {
+                    timerPath.classList.add('timer-critical');
+                    playWarningTick();
+                } else if (timeLeft <= 10) {
+                    timerPath.classList.add('timer-warning');
+                }
+            }
         }
 
         function handleAnswer(idx, clickedBtn = null) {
@@ -669,6 +769,7 @@
                     subject, 
                     difficulty, 
                     score, 
+                    total: questions.length,
                     xpGained: totalXPGained, 
                     failed,
                     timeSpent: timesList.reduce((sum, t) => sum + t, 0),

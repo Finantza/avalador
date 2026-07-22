@@ -203,7 +203,7 @@
             const hashedPassword = await OnyxCore.Crypto.hashSHA256(pass);
             const initialLevel = (role === 'gestor') ? 10 : 1;
             const initialXP = (role === 'gestor') ? 300 : 0;
-            const newUser = { id: name, password: hashedPassword, xp: initialXP, level: initialLevel, role: role };
+            const newUser = { id: name, password: hashedPassword, xp: initialXP, level: initialLevel, role: role, coins: 0, inventory: { tutor: 3, life: 1, fifty: 1, time: 1, skip: 1 } };
             await OnyxCore.DB.saveUser(newUser);
             
             if (typeof OnyxUI !== 'undefined') OnyxUI.playFeedback('success');
