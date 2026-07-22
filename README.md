@@ -1,97 +1,132 @@
-# 💎 Onyx Assessment Platform v4.0 - Premium Edition
-### *The Ultimate Enterprise Educational & Assessment Ecosystem*
+# 💎 Onyx Assessment Platform v3.1.0
+### Plataforma de avaliação educacional com motor de perguntas procedurais e persistência local
 
-Onyx is a high-performance, immersive assessment platform designed for professional technical evaluation and academic training. Built with **Cyber-Terminal Aesthetics** and **Glassmorphism 3.0**, it provides a premium user experience coupled with a robust, laying-friendly heuristic engine.
+Onyx é um sistema de avaliação e treinamento construído inteiramente no navegador usando **HTML5**, **CSS3** e **JavaScript**. Ele combina persistência local em **IndexedDB**, geração de questões procedurais, painel de tutor assistido e um motor heurístico para pontuação adaptativa.
 
 ---
 
-## 📂 Arquitetura de Pastas (Organização do Sistema)
-O ecossistema foi refatorado em uma estrutura de pastas corporativa altamente limpa e modularizada:
+## 📂 Estrutura do Projeto
+O repositório está organizado em módulos claros para interface, dados, motor de avaliação e conteúdo de apoio:
 
 ```text
-ONYX/
+avalador/
 ├── css/
-│   └── style.css                 # Folha de estilos unificada (Glassmorphism 3.0, Animações e Temas)
-├── js/
-│   ├── onyx_core.js              # Utilitários globais, Gerenciador de Sessão e Escudo Anti-Cheat
-│   ├── onyx_database.js          # Motor de Geração Procedural Infinita (22 disciplinas)
-│   ├── onyx_engines.js           # Algoritmos Heurísticos, Perfil de Insights e Controle de Repetição
-│   ├── onyx_ui.js                # Controladores de áudio de feedback e animações da interface
-│   └── extremo.js                # Ultimate Challenge Engine v3.0 (Desafios do Bootcamp de Dados)
+│   ├── academic_portal.css
+│   ├── ai_portal.css
+│   ├── glossary.css
+│   └── style.css
 ├── data/
-│   ├── onyx_knowledge_expanded.json  # Backups de conhecimento estático legados
-│   └── knowledge_db.json
+│   ├── build_seed.js
+│   ├── build_seed_addon.py
+│   ├── build_seed.ps1
+│   ├── inspect_data.py
+│   ├── knowledge_db.json
+│   ├── onyx_knowledge_expanded.json
+│   └── onyx_database.db
+├── js/
+│   ├── extremo.js
+│   ├── onyx_cognitive.js
+│   ├── onyx_core.js
+│   ├── onyx_database.js
+│   ├── onyx_db_manager.js
+│   ├── onyx_engines.js
+│   ├── onyx_network.js
+│   ├── onyx_ui.js
+│   └── syntax_check.js
 ├── legacy/
-│   ├── script.js                 # Código monolítico antigo (Desativado)
-│   ├── motor.js                  # Versão inicial do motor lógico (Desativado)
-│   └── assessment_engine.py      # Protótipo backend em Python (Referência)
-├── index.html                    # Terminal de Autenticação (Login)
-├── register.html                 # Registro de Credenciais de Operador
-├── dashboard.html                # Central de Comando (Menu principal e Arena)
-├── quiz.html                     # Simulador de Missão Ativa (Perguntas e Tutor)
-├── results.html                  # Relatório de Performance Heurística (Feedback e Insights)
-└── README.md                     # Documentação Oficial das Especificações
+│   ├── assessment_engine.py
+│   ├── motor.js
+│   ├── script.js
+│   └── tutor.js
+├── scratch/
+│   ├── check_counts.py
+│   ├── check_html_js_syntax.py
+│   ├── check_syntax.py
+│   ├── extract_questions.py
+│   ├── test_data.js
+│   └── validate_onyx.js
+├── academic_portal.html
+├── ai_portal.html
+├── bug_report.md
+├── dashboard.html
+├── glossary.html
+├── index.html
+├── ONYX_SYSTEM_ARCHITECTURE.md
+├── parents_portal.html
+├── quiz.html
+├── register.html
+├── README.md
+└── results.html
 ```
 
 ---
 
-## 🚀 Novas Funcionalidades e Especificações (v4.0)
+## 🚀 Principais Características
 
-### 1. Sistema Acessível de Aprendizado (Onyx Tutor)
-Criado especialmente para alunos leigos poderem entender termos altamente complexos com analogias cotidianas claras:
-- **Dicionário de Analogias:** Converte termos técnicos (como *Array, SQL, Loop, Variable, etc.*) em links interativos na pergunta.
-- **Janela Flutuante Cyberpunk:** Clicar em um termo abre um painel lateral deslizante animado (`cubic-bezier`), com um robô avatar levitando e fonte **12px**, explicando o conceito de forma lúdica.
-- **Bônus de Tempo:** Ativar o Tutor adiciona automaticamente **+15 segundos** ao cronômetro da questão atual.
-- **Explicações Condicionais de Erro:** Se o aluno errar uma questão, a explicação detalhada de erro só é exibida ao final se ele tiver solicitado a ajuda do **✨ TUTOR** durante a pergunta, otimizando o fluxo de jogo dos usuários profissionais.
-
-### 2. Geração Procedural Infinita & Anti-Repetição
-- **22 Disciplinas Completas:** De Matemática básica e Português até Inteligência Artificial, NLP e Cybersecurity.
-- **Mínimo de 20 Questões por Nível:** Cada disciplina contém exatamente 20 variações de questões por dificuldade (dobro do mínimo de 10 exigido).
-- **Geração On-The-Fly (`getFreshPool`):** Toda vez que um teste inicia, o motor gera variações inéditas a partir de fórmulas matemáticas, nomes e cenários lógicos aleatórios.
-- **Filtro de Histórico de Uso (`seenQuestions`):** Integrado via IndexedDB, o sistema rastreia as perguntas já respondidas pelo perfil do operador. Elas **nunca** se repetem na mesma sessão de jogo e são recicladas de forma inteligente apenas se forem esgotadas.
-
-### 3. Modo Hardcore: Rebaixamento de Nível e Travas Reais
-A progressão agora impõe penalidades severas que trazem emoção real de RPG acadêmico:
-- **Perda de Vidas:** Ao esgotar as 3 vidas (corações ❤️) em uma missão, o usuário sofre uma **Falha Crítica**.
-- **Rebaixamento de Nível:** O nível do operador é reduzido em **-1 Nível** (mínimo Nível 1) e o XP do nível atual é zerado (`xp = 0`). O XP da missão fracassada é cancelado (Ganho = 0).
-- **Rebloqueio Automático:** Matérias e dificuldades conquistadas que exigiam o nível perdido voltam a ficar trancadas com cadeado (`🔒`) no Dashboard na mesma hora.
-- **Anti-Bypass Gate:** O inicializador de quiz (`quiz.html`) valida o nível do usuário na entrada. Se for detectado que o aluno está em um nível bloqueado (por rebaixamento), ele é ejetado sumariamente de volta para o Dashboard.
-
-### 4. Escudo Global Anti-Cheat (Segurança Cibernética)
-Um escudo anticheat monitora o operador globalmente em qualquer parte do sistema (Dashboard, Quiz, Resultados) desde que ele esteja autenticado:
-- **Ações Detectadas:** Bloqueia cliques direitos (`contextmenu`) e atalhos de desenvolvedor no teclado (`F12`, `Ctrl+Shift+I`, `Ctrl+Shift+J`, `Ctrl+Shift+C`, `Ctrl+U`).
-- **Penalização Imediata:** A tentativa de burlar as regras aplicando atalhos reduz o nível em **-1**, zera o XP, exibe um alerta de segurança nacional do Protocolo Onyx e ejeta o trapaceiro direto de volta para o Dashboard!
+- **Interface moderna e responsiva** construída com CSS Glassmorphism e animações.
+- **Autenticação local** e usuários padrão registrados automaticamente em IndexedDB.
+- **Banco de dados local `OnyxEliteDB`** com stores para `global_stats`, `history`, `cached_questions`, `dynamic_questions` e `question_bank`.
+- **Seed inicial de questões** carregada a partir de `data/onyx_database.db` via `js/onyx_db_manager.js`.
+- **Geração procedural** de perguntas em `js/onyx_database.js` para múltiplas disciplinas e níveis de dificuldade.
+- **Motor heurístico de pontuação** em `js/onyx_engines.js` que usa acerto, tempo, consistência e uso do tutor.
+- **Painel de ajuda Tutor** no `quiz.html`, com explicações e dicas por termo técnico.
+- **Persistência offline** usando IndexedDB + localStorage para progresso e configurações.
+- **Modos de níveis e bloqueio de acesso** dependendo do progresso do usuário.
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
-- **Core:** HTML5 Semântico, Javascript ES6+.
-- **CSS:** CSS3 Vanilla moderno (Glassmorphism 3.0, Keyframe Animations, Variáveis nativas).
-- **Database:** IndexedDB (Criptografia local sandbox de alta velocidade).
+## 🔧 Módulos Principais
+
+- `js/onyx_core.js` — sessão, autenticação, hash SHA-256, gerência de IndexedDB e usuários padrão.
+- `js/onyx_db_manager.js` — seed e persistência de questões no `question_bank` com índices por assunto e dificuldade.
+- `js/onyx_database.js` — geração de questões procedurais alinhada a tópicos acadêmicos e BNCC.
+- `js/onyx_engines.js` — cálculo de score adaptativo, análise de perfil e suporte a histórico.
+- `js/onyx_ui.js` — renderização de pontuação, animações e áudio de feedback.
+- `js/onyx_network.js` — infraestrutura de rede e possível pareamento PvP.
+- `legacy/tutor.js` — assistente de estudo e modo tutor legado.
+- `data/onyx_knowledge_expanded.json` — base de conhecimento estático complementando as questões.
 
 ---
 
-## 📘 Documentação de Arquitetura Técnica Avançada
-Para uma compreensão profunda da engenharia e funcionamento matemático do ecossistema Onyx, consulte o manual técnico oficial:
-* **[Manual de Arquitetura e Engenharia de Software](file:///e:/documentos/GitHub/GitHub/avaliiador/avalador/ONYX_SYSTEM_ARCHITECTURE.md)**
+## 📘 Documentação de Referência
 
-### Tópicos cobertos no manual:
-1. **Visão Geral e Diagramas de Fluxo (Mermaid)**
-2. **Engenharia de Dados (IndexedDB v14 e Assinatura SHA-256)**
-3. **Motor Pedagógico Procedural e Sistema do Onyx Tutor**
-4. **Algoritmos Heurísticos de Score, ELO e Desvio Padrão ($\sigma$)**
-5. **Escudo Cibernético de Segurança (DevTools Docked & Debugger Trap)**
-6. **Rede Distribuída PvP Híbrida (WebSockets e BroadcastChannel)**
-7. **Motor de Processamento Cognitivo de NLP & Inteligência de Personas**
-8. **Renderização Visual e Síntese de Áudio via Web Audio API**
+Para detalhes de arquitetura, persistência, segurança e fluxo de dados, consulte:
+
+* `ONYX_SYSTEM_ARCHITECTURE.md`
+* `bug_report.md`
 
 ---
 
-## 🚦 Como Rodar o Sistema
-1. **Abra `index.html`** em qualquer navegador atual.
-2. **Crie suas credenciais** na tela de registro.
-3. **Inicie suas missões** e defenda sua classificação sem trapacear!
+## 🧩 Comportamento Atual do Sistema
+
+- Usuários padrão criados automaticamente no banco local:
+  - `aluno` / senha `1234`
+  - `gestor` / senha `1234`
+  - `responsavel` / senha `1234`
+  - `OPERADOR MÓVEL` / senha `1234`
+  - `OPERADOR TESTE` / senha `1234`
+- O sistema persiste progresso e inventário em IndexedDB.
+- O `quiz.html` valida acesso à matéria / dificuldade com base no nível do usuário.
+- O `dashboard.html` exibe barra de XP, lives, streak e loja de itens.
+- O `quiz.html` oferece itens de suporte como Tutor, Vida, 50/50, Tempo e Pular.
 
 ---
-*V.4.0.0-STABLE | © 2026 Onyx Ecosystem | Desenvolvido por Technovie*
 
+## 🚦 Como Executar
+
+1. Abra `index.html` no navegador.
+2. Se houver problema de carregamento de `data/onyx_database.db`, execute a aplicação via servidor local (por exemplo, Live Server ou `python -m http.server`).
+3. Cadastre um novo operador em `register.html` ou use um dos usuários padrão.
+4. Navegue para `dashboard.html` e inicie uma missão em `quiz.html`.
+
+---
+
+## 💡 Observações
+
+- O projeto funciona melhor em navegadores modernos com suporte a IndexedDB e Web Crypto.
+- A pasta `legacy/` contém implementações antigas e protótipos que não fazem parte do fluxo principal atual.
+- A pasta `scratch/` contém scripts de validação e ferramentas de extração úteis para desenvolvimento.
+
+---
+
+*V.3.1.0-STABLE | © 2026 Onyx Ecosystem*

@@ -469,7 +469,22 @@
         }
 
         // Initialize mock students if empty
-        window.onload = function() {
+        window.onload = async function() {
+            const currentUser = OnyxCore.Session.getCurrentUser();
+            if (!currentUser) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            await OnyxCore.DB.init();
+            const currentUserStats = await OnyxCore.DB.getUser(currentUser);
+            const currentRole = currentUserStats ? currentUserStats.role : null;
+            if (currentRole !== 'responsavel') {
+                alert('🚨 ACESSO RESTRITO A RESPONSÁVEIS.');
+                window.location.href = 'index.html';
+                return;
+            }
+
             if (!localStorage.getItem('onyx_school_students')) {
                 const defaultStudents = [
                     { id: 1, name: "Ana Souza", grade: 8.5, freq: 88, status: "Aprovada" },

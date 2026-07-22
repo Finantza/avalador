@@ -262,7 +262,7 @@
                 <a href="#" class="nav-item" id="btn-show-profile">👤 <span>Perfil</span></a>
                 <a href="#" class="nav-item" id="btn-show-glossary">📖 <span>Glossário</span></a>
                 <a href="#" class="nav-item" id="btn-logout">🚪 <span>Desconectar</span></a>
-                <a href="parents_portal.html" target="_blank" class="nav-item" id="btn-show-parents" style="border-top: 1px dashed rgba(255, 255, 255, 0.15); margin-top: 12px; color: var(--accent); font-weight: 800; text-shadow: 0 0 10px rgba(14, 165, 233, 0.2);">👪 <span>Portal de Pais</span></a>
+                <a href="parents_portal.html" target="_blank" class="nav-item" id="btn-show-parents" style="display:none; border-top: 1px dashed rgba(255, 255, 255, 0.15); margin-top: 12px; color: var(--accent); font-weight: 800; text-shadow: 0 0 10px rgba(14, 165, 233, 0.2);">👪 <span>Portal de Pais</span></a>
             </nav>
             <div class="glass u-p-20 u-mt-20" id="online-users-panel">
                 <div class="u-flex-between">
@@ -1972,6 +1972,15 @@
                     btnAcademic.style.display = 'flex';
                 } else {
                     btnAcademic.style.display = 'none';
+                }
+            }
+
+            const btnShowParents = document.getElementById('btn-show-parents');
+            if (btnShowParents) {
+                if (userRole === 'responsavel') {
+                    btnShowParents.style.display = 'flex';
+                } else {
+                    btnShowParents.style.display = 'none';
                 }
             }
             
